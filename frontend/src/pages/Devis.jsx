@@ -48,7 +48,7 @@ const Devis = () => {
       console.log('Demande de devis envoyée à abrisia0plan@gmail.com:', formData);
       toast({
         title: "Demande envoyée !",
-        description: "Nous vous contacterons sous 24h à l'adresse abrisia0plan@gmail.com",
+        description: "Nous vous contacterons sous 24h à abrisia0plan@gmail.com",
       });
       
       // Reset form
@@ -67,14 +67,14 @@ const Devis = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-b from-stone-50 to-white">
+    <div className="min-h-screen pt-20 bg-gradient-to-b from-amber-50 to-stone-50">
       {/* Hero Section */}
-      <section className="py-16 bg-gradient-to-r from-green-700 to-green-800 text-white">
+      <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Demander un devis
           </h1>
-          <p className="text-xl text-green-100 leading-relaxed">
+          <p className="text-xl text-teal-100 leading-relaxed">
             Simple et rapide - Cochez ce dont vous avez besoin
           </p>
         </div>
@@ -84,7 +84,7 @@ const Devis = () => {
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="shadow-xl border-stone-200 bg-white">
-            <CardHeader className="bg-gradient-to-r from-stone-50 to-white border-b border-stone-200">
+            <CardHeader className="bg-gradient-to-r from-amber-50 to-stone-50 border-b border-stone-200">
               <CardTitle className="text-2xl text-slate-800 text-center">
                 Tableau de demande de devis
               </CardTitle>
@@ -106,7 +106,7 @@ const Devis = () => {
                         value={formData.nom}
                         onChange={handleInputChange}
                         required
-                        className="border-stone-300 focus:border-green-500"
+                        className="border-stone-300 focus:border-teal-500"
                         placeholder="Votre nom et prénom"
                       />
                     </div>
@@ -119,7 +119,7 @@ const Devis = () => {
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="border-stone-300 focus:border-green-500"
+                        className="border-stone-300 focus:border-teal-500"
                         placeholder="votre@email.com"
                       />
                     </div>
@@ -132,7 +132,7 @@ const Devis = () => {
                       type="tel"
                       value={formData.telephone}
                       onChange={handleInputChange}
-                      className="border-stone-300 focus:border-green-500"
+                      className="border-stone-300 focus:border-teal-500"
                       placeholder="(514) 555-0123"
                     />
                   </div>
@@ -141,11 +141,11 @@ const Devis = () => {
                 {/* Type de projet */}
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold text-slate-800 border-b border-stone-200 pb-2">
-                    Type de projet
+                    Type de projet (construction permanente sur fondations)
                   </h3>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {projectTypes.map((type) => (
-                      <div key={type} className="flex items-center space-x-3 p-3 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors">
+                      <div key={type} className="flex items-center space-x-3 p-3 border border-stone-300 rounded-lg hover:bg-amber-50 transition-colors">
                         <input
                           type="radio"
                           id={`type-${type}`}
@@ -153,7 +153,7 @@ const Devis = () => {
                           value={type}
                           checked={formData.projectType === type}
                           onChange={handleInputChange}
-                          className="text-green-600 focus:ring-green-500"
+                          className="text-teal-600 focus:ring-teal-500"
                         />
                         <Label 
                           htmlFor={`type-${type}`} 
@@ -173,7 +173,7 @@ const Devis = () => {
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {planOptions.map((plan) => (
-                      <div key={plan.id} className="flex items-center justify-between p-4 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors">
+                      <div key={plan.id} className="flex items-center justify-between p-4 border border-stone-300 rounded-lg hover:bg-amber-50 transition-colors">
                         <div className="flex items-center space-x-3">
                           <Checkbox
                             id={`plan-${plan.id}`}
@@ -188,19 +188,19 @@ const Devis = () => {
                             {plan.name}
                           </Label>
                         </div>
-                        <span className="text-green-700 font-semibold">{plan.price}</span>
+                        <span className="text-teal-800 font-semibold">{plan.price}</span>
                       </div>
                     ))}
                   </div>
                   
                   {/* Total estimé */}
                   {formData.plansChoisis.length > 0 && (
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 mt-6">
+                    <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mt-6">
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-semibold text-slate-800">Total estimé :</span>
-                        <span className="text-2xl font-bold text-green-700">{calculateTotal()}$</span>
+                        <span className="text-2xl font-bold text-teal-800">{calculateTotal()}$</span>
                       </div>
-                      <p className="text-sm text-green-600 mt-2">Prix indicatif - devis final après étude de votre projet</p>
+                      <p className="text-sm text-teal-700 mt-2">Prix indicatif - devis final après étude de votre projet</p>
                     </div>
                   )}
                 </div>
@@ -216,8 +216,8 @@ const Devis = () => {
                     value={formData.notes}
                     onChange={handleInputChange}
                     rows={8}
-                    className="border-stone-300 focus:border-green-500"
-                    placeholder="Exemple : Mini-maison 25m² sur roues, bois local, isolation naturelle, budget 15000$, pour été 2025. Terrain en pente, accès limité pour grue..."
+                    className="border-stone-300 focus:border-teal-500"
+                    placeholder="Exemple : Mini-maison 35m² sur fondations béton, bois local du Québec, isolation supérieure, budget 25000$, construction été 2025. Terrain plat avec accès facile, services municipaux à proximité..."
                   />
                 </div>
 
@@ -227,7 +227,7 @@ const Devis = () => {
                     type="submit" 
                     size="lg" 
                     disabled={isSubmitting || formData.plansChoisis.length === 0}
-                    className="w-full bg-green-700 hover:bg-green-800 text-white py-4 text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105"
+                    className="w-full bg-teal-800 hover:bg-teal-900 text-white py-4 text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105"
                   >
                     {isSubmitting ? (
                       <>
@@ -254,7 +254,7 @@ const Devis = () => {
           {/* Informations complémentaires */}
           <div className="mt-12 text-center">
             <div className="flex items-center justify-center mb-6">
-              <CheckCircle className="h-6 w-6 text-green-600 mr-2" />
+              <CheckCircle className="h-6 w-6 text-teal-600 mr-2" />
               <span className="text-lg font-medium text-slate-700">Devis gratuit et sans engagement</span>
             </div>
             <div className="max-w-3xl mx-auto space-y-4 text-slate-600">
@@ -262,10 +262,11 @@ const Devis = () => {
                 <strong>Contact :</strong> abrisia0plan@gmail.com
               </p>
               <p>
-                Nous étudions votre projet sous tous les angles et vous proposons un devis détaillé adapté à vos besoins et votre budget.
+                Nous étudions votre projet de construction permanente sur fondations et vous proposons un devis détaillé 
+                conforme au Code du bâtiment du Québec.
               </p>
               <p className="text-sm text-slate-500">
-                <strong>Limite légale :</strong> Dessins de maisons jusqu'à 6000m² de plancher total (incluant sous-sol et étages)
+                <strong>Spécialité :</strong> Constructions permanentes sur fondations jusqu'à 6000m² de plancher total
               </p>
             </div>
           </div>

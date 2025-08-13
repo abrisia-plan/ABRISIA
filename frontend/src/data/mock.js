@@ -1,10 +1,10 @@
-// Mock data for Abrisia Plan website - Updated pricing and services
+// Mock data for Abrisia Plan website - Services réalistes et descriptions précises
 
 export const services = [
   {
     id: 1,
     name: "Mini-maisons",
-    description: "Espaces compacts et fonctionnels, conçus pour une vie simple et durable.",
+    description: "Habitations compactes sur fondations permanentes, optimisées pour le confort.",
     price: "Plans à partir de 800$",
     icon: "Home",
     category: "construction"
@@ -12,7 +12,7 @@ export const services = [
   {
     id: 2,
     name: "Chalets",
-    description: "Refuges chaleureux en harmonie avec la nature environnante.",
+    description: "Refuges quatre saisons en harmonie avec la nature québécoise.",
     price: "Plans à partir de 1200$",
     icon: "Mountain",
     category: "construction"
@@ -20,7 +20,7 @@ export const services = [
   {
     id: 3,
     name: "Maisons résidentielles",
-    description: "Maisons familiales jusqu'à 6000m² de plancher (incluant sous-sol et étages).",
+    description: "Maisons familiales sur fondations jusqu'à 6000m² de plancher total.",
     price: "Plans à partir de 1500$",
     icon: "Building",
     category: "construction"
@@ -28,15 +28,15 @@ export const services = [
   {
     id: 4,
     name: "Extensions",
-    description: "Agrandissements et ajouts pour optimiser votre espace existant.",
+    description: "Agrandissements harmonieux pour optimiser votre espace de vie.",
     price: "Plans à partir de 600$",
     icon: "PlusSquare",
     category: "construction"
   },
   {
     id: 5,
-    name: "Abris sur mesure",
-    description: "Structures protectrices adaptées à vos besoins spécifiques.",
+    name: "Abris et garages",
+    description: "Structures utilitaires sur fondations pour rangement et protection.",
     price: "Plans à partir de 400$",
     icon: "Shield",
     category: "construction"
@@ -58,17 +58,17 @@ export const planOptions = [
   { id: 'plomberie', name: 'Plan de plomberie', price: '400$' },
   { id: 'electricite', name: 'Plan électrique', price: '450$' },
   { id: 'ventilation', name: 'Plan de ventilation', price: '350$' },
-  { id: 'mini-maison', name: 'Mini-maison complète', price: '800$' },
-  { id: 'chalet', name: 'Chalet', price: '1200$' },
+  { id: 'mini-maison', name: 'Mini-maison sur fondations', price: '800$' },
+  { id: 'chalet', name: 'Chalet quatre saisons', price: '1200$' },
   { id: 'maison-complete', name: 'Maison résidentielle complète', price: '1500$' }
 ];
 
 export const projectTypes = [
-  'Mini-maison',
-  'Chalet', 
+  'Mini-maison sur fondations',
+  'Chalet quatre saisons', 
   'Maison résidentielle',
-  'Extension',
-  'Abri/garage',
+  'Extension/agrandissement',
+  'Abri/garage sur fondations',
   'Plans techniques seulement',
   'Autre'
 ];
@@ -77,7 +77,7 @@ export const approaches = [
   {
     id: 1,
     title: "Naturel & durable",
-    description: "Matériaux écologiques et techniques respectueuses de l'environnement.",
+    description: "Matériaux locaux québécois et techniques respectueuses de l'environnement.",
     icon: "Leaf"
   },
   {
@@ -89,7 +89,7 @@ export const approaches = [
   {
     id: 3,
     title: "Transmission entre générations",
-    description: "Savoir-faire traditionnel combiné aux innovations modernes.",
+    description: "Savoir-faire traditionnel québécois allié aux innovations modernes.",
     icon: "Users"
   }
 ];
@@ -109,7 +109,7 @@ export const processSteps = [
   },
   {
     id: 3,
-    title: "Plans détaillés",
+    title: "Plans détaillés",  
     description: "Réalisation des plans techniques complets et professionnels.",
     icon: "FileText"
   },
@@ -124,87 +124,87 @@ export const processSteps = [
 export const inspirationProjects = [
   {
     id: 1,
-    title: "Mini-maison moderne",
+    title: "Mini-maison sur fondations",
     category: "Mini-maison",
     image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000",
-    description: "Espace compact de 25m² avec tout le confort nécessaire",
+    description: "Habitation compacte 35m² sur fondations permanentes",
     details: [
-      "Surface optimisée avec rangements intégrés",
-      "Grandes fenêtres pour la luminosité naturelle", 
-      "Matériaux locaux et durables",
-      "Système de chauffage efficace"
+      "Fondations en béton permanentes",
+      "Isolation supérieure aux normes",
+      "Matériaux locaux québécois", 
+      "Chauffage électrique efficace"
     ],
-    dimensions: "5m x 5m x 3.5m (hauteur)"
+    dimensions: "6m x 6m sur fondations béton"
   },
   {
     id: 2,
-    title: "Chalet familial",
+    title: "Chalet familial quatre saisons",
     category: "Chalet",
     image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994",
-    description: "Refuge chaleureux pour moments en famille",
+    description: "Refuge permanent pour toute la famille",
     details: [
-      "3 chambres avec vue sur la forêt",
-      "Salon avec foyer central en pierre",
-      "Cuisine ouverte en bois massif",
-      "Terrasse couverte plein sud"
+      "3 chambres avec vue sur forêt",
+      "Salon avec foyer en pierre naturelle",
+      "Cuisine en bois massif québécois",
+      "Terrasse couverte orientée sud"
     ],
-    dimensions: "12m x 8m, 2 niveaux"
+    dimensions: "12m x 8m, plain-pied sur fondations"
   },
   {
     id: 3,
-    title: "Abri de jardin multifonction",
+    title: "Garage avec atelier",
     category: "Abris",
     image: "https://images.unsplash.com/photo-1549517045-bc93de075e53",
-    description: "Espace de rangement et atelier",
+    description: "Structure utilitaire multifonction",
     details: [
-      "Zone stockage avec étagères modulables",
-      "Coin atelier avec établi intégré",
-      "Éclairage naturel par puits de lumière",
-      "Ventilation croisée pour séchage"
+      "Fondations béton avec drain français",
+      "Espace véhicules + coin atelier",
+      "Éclairage naturel par fenêtres",
+      "Ventilation pour séchage équipements"
     ],
-    dimensions: "4m x 3m x 2.8m"
+    dimensions: "8m x 6m sur dalle béton"
   },
   {
     id: 4,
-    title: "Extension moderne",
+    title: "Extension cuisine moderne",
     category: "Extension",
     image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
     description: "Agrandissement harmonieux d'une maison existante",
     details: [
       "Nouvelle cuisine ouverte sur jardin",
-      "Intégration parfaite à l'existant",
-      "Matériaux contemporains et durables",
+      "Fondations liées à l'existant",
+      "Matériaux assortis à la maison",
       "Optimisation de la lumière naturelle"
     ],
-    dimensions: "6m x 4m en extension"
+    dimensions: "6m x 4m en extension sur fondations"
   },
   {
     id: 5,
     title: "Détail charpente traditionnelle",
     category: "Détails",
     image: "https://images.unsplash.com/photo-1518005020951-eccb494ad742",
-    description: "Assemblages bois traditionnels",
+    description: "Assemblages bois traditionnels québécois",
     details: [
-      "Tenons-mortaises sans clous",
-      "Bois de chêne local séché naturellement",
-      "Techniques ancestrales préservées",
-      "Résistance exceptionnelle dans le temps"
+      "Tenons-mortaises sans clous métalliques",
+      "Bois de pin rouge local séché naturellement",
+      "Techniques ancestrales du Québec",
+      "Résistance exceptionnelle aux intempéries"
     ],
-    dimensions: "Détail technique"
+    dimensions: "Détail technique de charpente"
   },
   {
     id: 6,
-    title: "Maison familiale 2 étages",
+    title: "Maison familiale traditionnelle",
     category: "Maison",
     image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7",
     description: "Maison complète dans la limite des 6000m² de plancher",
     details: [
       "4 chambres réparties sur 2 niveaux",
-      "Sous-sol aménageable inclus",
-      "Garage intégré",
-      "Respecte les normes québécoises"
+      "Sous-sol aménageable avec fondations profondes",
+      "Garage intégré à la structure",
+      "Conforme aux normes du Code du bâtiment du Québec"
     ],
-    dimensions: "150m² par niveau + sous-sol"
+    dimensions: "150m² par niveau + sous-sol complet"
   }
 ];
 
@@ -212,22 +212,22 @@ export const testimonials = [
   {
     id: 1,
     name: "Marie-Claude Dubois",
-    project: "Plans mini-maison 25m²",
-    text: "Prix très raisonnable pour des plans détaillés. Service personnalisé et à l'écoute de nos contraintes budgétaires.",
+    project: "Plans mini-maison 35m² sur fondations",
+    text: "Plans très détaillés pour notre petite maison permanente. Service professionnel et prix abordable.",
     rating: 5
   },
   {
     id: 2,
     name: "Jean Tremblay",
-    project: "Extension cuisine 30m²",
-    text: "Seulement 600$ pour des plans d'extension complets. Accompagnement de qualité et respect des délais.",
+    project: "Extension cuisine 24m²",
+    text: "Excellente intégration à notre maison existante. Les fondations se marient parfaitement.",
     rating: 5
   },
   {
     id: 3,
     name: "Sophie Leblanc",
-    project: "Chalet 4 saisons",
-    text: "Excellent rapport qualité-prix. Plans techniques impeccables et conseils précieux pour la construction.",
+    project: "Chalet quatre saisons",
+    text: "Notre refuge de famille est magnifique. Construction solide qui traverse bien les hivers québécois.",
     rating: 5
   }
 ];
@@ -238,9 +238,9 @@ export const mockQuotes = [
     clientName: "Pierre Martin",
     email: "pierre@email.com",
     phone: "514-555-0123",
-    projectType: "Mini-maison",
+    projectType: "Mini-maison sur fondations",
     plansDesired: ["architecture", "fondation", "electricite"],
-    notes: "Mini-maison 25m² sur roues pour couple retraité. Budget serré mais qualité importante.",
+    notes: "Mini-maison 35m² sur fondations béton. Terrain en pente douce, accès facile. Budget 20000$ pour plans complets.",
     status: "En attente",
     createdAt: "2024-12-20T10:00:00Z",
     assignedTo: null
@@ -250,9 +250,9 @@ export const mockQuotes = [
     clientName: "Julie Rousseau", 
     email: "julie@email.com",
     phone: "438-555-0456",
-    projectType: "Extension",
+    projectType: "Extension/agrandissement",
     plansDesired: ["architecture", "plomberie"],
-    notes: "Extension cuisine 6m x 4m. Maison existante des années 70 à moderniser.",
+    notes: "Extension cuisine 6m x 4m. Maison brique 1975. Besoin raccord fondations existantes + nouvelle plomberie.",
     status: "En cours",
     createdAt: "2024-12-19T14:30:00Z",
     assignedTo: "Marc Dessinateur"
@@ -264,14 +264,14 @@ export const mockDesigners = [
     id: 1,
     name: "Marc Dessinateur",
     email: "marc@abrisia-plan.ca",
-    specialties: ["Mini-maisons", "Chalets", "Plans techniques"],
+    specialties: ["Mini-maisons", "Chalets", "Plans fondations"],
     activeProjects: 3
   },
   {
     id: 2,
     name: "Sophie Architecte",
     email: "sophie@abrisia-plan.ca", 
-    specialties: ["Extensions", "Maisons résidentielles", "Rénovations"],
+    specialties: ["Extensions", "Maisons résidentielles", "Structures permanentes"],
     activeProjects: 2
   }
 ];
@@ -279,22 +279,22 @@ export const mockDesigners = [
 export const faqItems = [
   {
     id: 1,
-    question: "Vos prix sont-ils vraiment si abordables ?",
-    answer: "Oui ! En fonctionnant avec des frais généraux réduits et des horaires flexibles, nous proposons des tarifs très compétitifs. Plans de fondation dès 300$, extensions dès 600$."
+    question: "Dessinez-vous des maisons mobiles ou sur roues ?",
+    answer: "Non, nous nous spécialisons dans les constructions permanentes sur fondations : mini-maisons, chalets, maisons résidentielles et extensions."
   },
   {
     id: 2,
     question: "Jusqu'à quelle taille de maison pouvez-vous dessiner ?",
-    answer: "Légalement, je peux dessiner des maisons jusqu'à 6000m² de plancher total (incluant sous-sol, rez-de-chaussée et étages)."
+    answer: "Légalement, je peux dessiner des constructions jusqu'à 6000m² de plancher total (incluant sous-sol, rez-de-chaussée et étages)."
   },
   {
     id: 3,
-    question: "Proposez-vous un accompagnement à l'autoconstruction ?",
-    answer: "Absolument ! Nous fournissons conseils techniques, calculs de matériaux et suivi de chantier pour vous accompagner."
+    question: "Vos constructions respectent-elles le Code du bâtiment ?",
+    answer: "Absolument. Tous nos plans respectent le Code du bâtiment du Québec et les normes locales en vigueur."
   },
   {
     id: 4,
-    question: "Travaillez-vous avec des matériaux spécifiques ?",
-    answer: "Nous privilégions les matériaux locaux et durables : bois québécois, isolants naturels, finitions écologiques."
+    question: "Travaillez-vous avec des matériaux québécois ?",
+    answer: "Oui, nous privilégions les matériaux locaux : bois du Québec, isolants régionaux, et fournisseurs de la province."
   }
 ];
