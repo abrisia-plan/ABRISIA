@@ -57,7 +57,7 @@ def verify_token(token: str):
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Middleware pour obtenir l'utilisateur courant"""
-    from .database import get_database
+    from database import get_database
     
     try:
         token = credentials.credentials
