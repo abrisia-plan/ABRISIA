@@ -14,8 +14,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Imports des modules
-from .database import connect_to_mongo, close_mongo_connection
-from .routes import auth, devis, designers, projects
+from database import connect_to_mongo, close_mongo_connection
+from routes import auth, devis, designers, projects
 
 # Lifespan manager pour la DB
 @asynccontextmanager
