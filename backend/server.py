@@ -79,9 +79,9 @@ async def health_check():
     }
 
 # Route racine de l'API
-@api_router.get("/")
-@api_router.get("")
-async def root():
+@app.get("/api")
+@app.get("/api/")
+async def api_root():
     """Route racine de l'API"""
     return {
         "message": "Bienvenue sur l'API Abrisia Plan",
