@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from typing import List
 from datetime import datetime
-from ..models import (
+from models import (
     Devis, DevisCreate, DevisUpdate, DevisResponse, 
     SuccessResponse, ListResponse, DashboardStats
 )
-from ..database import get_database
-from ..auth import require_admin
+from database import get_database
+from auth import require_admin
 from bson import ObjectId
 import logging
 
