@@ -229,7 +229,7 @@ const Contact = () => {
                     type="submit" 
                     size="lg" 
                     disabled={isSubmitting}
-                    className="w-full bg-amber-600 hover:bg-amber-700 text-white py-4 text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105"
+                    className="w-full bg-green-700 hover:bg-green-800 text-white py-4 text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105"
                   >
                     {isSubmitting ? (
                       <>
