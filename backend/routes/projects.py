@@ -5,9 +5,9 @@ import os
 import uuid
 import shutil
 from pathlib import Path
-from ..models import Project, ProjectCreate, ProjectUpdate, SuccessResponse, ListResponse
-from ..database import get_database
-from ..auth import require_admin
+from models import Project, ProjectCreate, ProjectUpdate, SuccessResponse, ListResponse
+from database import get_database
+from auth import require_admin
 from bson import ObjectId
 import logging
 
