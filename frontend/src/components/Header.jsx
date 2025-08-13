@@ -11,13 +11,14 @@ const Header = () => {
     { name: 'Accueil', href: '/' },
     { name: 'Inspiration', href: '/inspiration' },
     { name: 'Demander un devis', href: '/devis' },
+    { name: 'À propos', href: '/about' },
     { name: 'Contact', href: '/contact' }
   ];
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="absolute top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-amber-100/20">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-amber-100/20 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
@@ -31,7 +32,7 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -53,7 +54,7 @@ const Header = () => {
           </nav>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <Button
               variant="ghost"
               size="icon"
@@ -67,7 +68,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-amber-100/20">
+          <div className="lg:hidden py-4 border-t border-amber-100/20">
             <nav className="flex flex-col space-y-3">
               {navigation.map((item) => (
                 <Link
