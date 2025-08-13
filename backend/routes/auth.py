@@ -72,7 +72,7 @@ async def logout():
 async def get_current_user_info(current_user: dict = None):
     """Obtenir les informations de l'utilisateur connecté"""
     # Cette route sera utilisée pour vérifier la validité du token
-    from ..auth import get_current_user
+    from auth import get_current_user
     if not current_user:
         raise HTTPException(status_code=401, detail="Non authentifié")
     
