@@ -8,6 +8,7 @@ import { Checkbox } from '../components/ui/checkbox';
 import { planOptions, projectTypes } from '../data/mock';
 import { Send, CheckCircle } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
+import { devisService, handleApiError } from '../services/api';
 
 const Devis = () => {
   const { toast } = useToast();
@@ -43,20 +44,34 @@ const Devis = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulation d'envoi vers abrisia0plan@gmail.com
-    setTimeout(() => {
-      console.log('Demande de devis envoyée à abrisia0plan@gmail.com:', formData);
-      toast({
-        title: "Demande envoyée !",
-        description: "Nous vous contacterons sous 24h à abrisia0plan@gmail.com",
-      });
+    try {
+      // Envoyer vers l'API réelle
+      const response = await devisService.submit(formData);
       
-      // Reset form
-      setFormData({
-        nom: '', email: '', telephone: '', projectType: '', plansChoisis: [], notes: ''
+      if (response.success) {
+        toast({
+          title: "Demande envoyée !",
+          description: response.message || "Nous vous contacterons sous 24h à abrisia0plan@gmail.com",
+        });
+        
+        // Reset form
+        setFormData({
+          nom: '', email: '', telephone: '', projectType: '', plansChoisis: [], notes: ''
+        });
+      } else {
+        throw new Error(response.message || 'Erreur lors de l\'envoi');
+      }
+      
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      toast({
+        title: "Erreur",
+        description: errorMessage,
+        variant: "destructive"
       });
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   const calculateTotal = () => {

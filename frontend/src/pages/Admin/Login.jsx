@@ -6,6 +6,7 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Lock, User, Home as HomeIcon } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
+import { authService, handleApiError } from '../../services/api';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -28,39 +29,43 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulation de connexion (sera remplacé par l'API réelle)
-    setTimeout(() => {
-      if (credentials.email === 'admin@abrisia-plan.ca' && credentials.password === 'admin123') {
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('adminUser', JSON.stringify({
-          email: credentials.email,
-          name: 'Administrateur Abrisia'
-        }));
+    try {
+      const response = await authService.login(credentials);
+      
+      if (response.success) {
+        // Stocker le token et les infos utilisateur
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('adminUser', JSON.stringify(response.user));
         
         toast({
           title: "Connexion réussie !",
-          description: "Bienvenue dans votre espace administrateur.",
+          description: `Bienvenue ${response.user.name}`,
         });
         
         navigate('/admin/dashboard');
       } else {
-        toast({
-          title: "Erreur de connexion",
-          description: "Email ou mot de passe incorrect.",
-          variant: "destructive"
-        });
+        throw new Error(response.message || 'Erreur de connexion');
       }
+      
+    } catch (error) {
+      const errorMessage = handleApiError(error);
+      toast({
+        title: "Erreur de connexion",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-slate-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-stone-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Logo et titre */}
         <div className="text-center">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-16 bg-amber-600 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-teal-800 rounded-full flex items-center justify-center">
               <HomeIcon className="w-8 h-8 text-white" />
             </div>
           </div>
@@ -69,8 +74,8 @@ const Login = () => {
         </div>
 
         {/* Formulaire de connexion */}
-        <Card className="shadow-2xl border-amber-100">
-          <CardHeader className="bg-gradient-to-r from-amber-50 to-white border-b border-amber-100">
+        <Card className="shadow-2xl border-stone-200">
+          <CardHeader className="bg-gradient-to-r from-amber-50 to-stone-50 border-b border-stone-200">
             <CardTitle className="text-xl text-slate-800 text-center flex items-center justify-center">
               <Lock className="w-5 h-5 mr-2" />
               Connexion
@@ -91,7 +96,7 @@ const Login = () => {
                     value={credentials.email}
                     onChange={handleInputChange}
                     required
-                    className="pl-10 border-amber-200 focus:border-amber-500"
+                    className="pl-10 border-stone-300 focus:border-teal-500"
                     placeholder="admin@abrisia-plan.ca"
                   />
                 </div>
@@ -110,7 +115,7 @@ const Login = () => {
                     value={credentials.password}
                     onChange={handleInputChange}
                     required
-                    className="pl-10 border-amber-200 focus:border-amber-500"
+                    className="pl-10 border-stone-300 focus:border-teal-500"
                     placeholder="••••••••"
                   />
                 </div>
@@ -118,7 +123,7 @@ const Login = () => {
 
               <Button 
                 type="submit" 
-                className="w-full bg-amber-600 hover:bg-amber-700 text-white py-3 text-lg font-semibold rounded-lg transition-all duration-300"
+                className="w-full bg-teal-800 hover:bg-teal-900 text-white py-3 text-lg font-semibold rounded-lg transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -146,7 +151,7 @@ const Login = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="text-slate-600 hover:text-amber-700"
+            className="text-slate-600 hover:text-teal-700"
           >
             ← Retour au site
           </Button>
