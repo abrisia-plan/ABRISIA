@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
-from ..models import UserLogin, LoginResponse, UserResponse, SuccessResponse
-from ..database import get_database
-from ..auth import verify_password, create_access_token
+from models import UserLogin, LoginResponse, UserResponse, SuccessResponse
+from database import get_database
+from auth import verify_password, create_access_token
 import logging
 
 logger = logging.getLogger(__name__)
