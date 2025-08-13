@@ -1,10 +1,11 @@
-// Mock data for Abrisia Plan website
+// Mock data for Abrisia Plan website - Updated pricing and services
 
 export const services = [
   {
     id: 1,
     name: "Mini-maisons",
     description: "Espaces compacts et fonctionnels, conçus pour une vie simple et durable.",
+    price: "Plans à partir de 800$",
     icon: "Home",
     category: "construction"
   },
@@ -12,45 +13,64 @@ export const services = [
     id: 2,
     name: "Chalets",
     description: "Refuges chaleureux en harmonie avec la nature environnante.",
+    price: "Plans à partir de 1200$",
     icon: "Mountain",
     category: "construction"
   },
   {
     id: 3,
-    name: "Roulottes de chantier",
-    description: "Solutions mobiles pratiques pour vos projets temporaires.",
-    icon: "Truck",
+    name: "Maisons résidentielles",
+    description: "Maisons familiales jusqu'à 6000m² de plancher (incluant sous-sol et étages).",
+    price: "Plans à partir de 1500$",
+    icon: "Building",
     category: "construction"
   },
   {
     id: 4,
-    name: "Abris sur mesure",
-    description: "Structures protectrices adaptées à vos besoins spécifiques.",
-    icon: "Shield",
+    name: "Extensions",
+    description: "Agrandissements et ajouts pour optimiser votre espace existant.",
+    price: "Plans à partir de 600$",
+    icon: "PlusSquare",
     category: "construction"
   },
   {
     id: 5,
-    name: "Plans techniques",
-    description: "Dessins détaillés et précis pour tous vos projets de construction.",
-    icon: "FileText",
-    category: "plans"
+    name: "Abris sur mesure",
+    description: "Structures protectrices adaptées à vos besoins spécifiques.",
+    price: "Plans à partir de 400$",
+    icon: "Shield",
+    category: "construction"
   },
   {
     id: 6,
-    name: "Ébénisterie sur mesure",
-    description: "Mobilier et aménagements en bois, créés selon vos désirs. (À venir)",
-    icon: "Hammer",
-    category: "coming-soon"
+    name: "Plans techniques spécialisés",
+    description: "Fondation, plomberie, électricité, ventilation selon vos besoins.",
+    price: "À partir de 300$",
+    icon: "FileText",
+    category: "plans"
   }
 ];
 
-export const planTypes = [
-  { id: 'fondations', name: 'Plan de fondation', description: 'Bases solides pour votre construction' },
-  { id: 'architecture', name: 'Plan architectural', description: 'Structure complète du bâtiment' },
-  { id: 'plomberie', name: 'Plan de plomberie', description: 'Système d\'eau et évacuation' },
-  { id: 'electricite', name: 'Plan d\'électricité', description: 'Installation électrique complète' },
-  { id: 'ventilation', name: 'Plan de ventilation', description: 'Système de ventilation et aération' }
+export const planOptions = [
+  { id: 'fondation', name: 'Plan de fondation', price: '300$' },
+  { id: 'architecture', name: 'Plan architectural complet', price: '800$' },
+  { id: 'extension', name: 'Plan d\'extension', price: '600$' },
+  { id: 'plomberie', name: 'Plan de plomberie', price: '400$' },
+  { id: 'electricite', name: 'Plan électrique', price: '450$' },
+  { id: 'ventilation', name: 'Plan de ventilation', price: '350$' },
+  { id: 'mini-maison', name: 'Mini-maison complète', price: '800$' },
+  { id: 'chalet', name: 'Chalet', price: '1200$' },
+  { id: 'maison-complete', name: 'Maison résidentielle complète', price: '1500$' }
+];
+
+export const projectTypes = [
+  'Mini-maison',
+  'Chalet', 
+  'Maison résidentielle',
+  'Extension',
+  'Abri/garage',
+  'Plans techniques seulement',
+  'Autre'
 ];
 
 export const approaches = [
@@ -146,17 +166,17 @@ export const inspirationProjects = [
   },
   {
     id: 4,
-    title: "Roulotte de chantier",
-    category: "Roulotte",
+    title: "Extension moderne",
+    category: "Extension",
     image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
-    description: "Bureau mobile pour équipes de terrain",
+    description: "Agrandissement harmonieux d'une maison existante",
     details: [
-      "Espace bureau pour 4 personnes",
-      "Coin pause avec kitchenette",
-      "Isolation thermique renforcée",
-      "Installation électrique 220V"
+      "Nouvelle cuisine ouverte sur jardin",
+      "Intégration parfaite à l'existant",
+      "Matériaux contemporains et durables",
+      "Optimisation de la lumière naturelle"
     ],
-    dimensions: "6m x 2.5m sur chassis remorque"
+    dimensions: "6m x 4m en extension"
   },
   {
     id: 5,
@@ -174,17 +194,17 @@ export const inspirationProjects = [
   },
   {
     id: 6,
-    title: "Intérieur mini-maison",
-    category: "Intérieur",
+    title: "Maison familiale 2 étages",
+    category: "Maison",
     image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7",
-    description: "Aménagement optimisé et chaleureux",
+    description: "Maison complète dans la limite des 6000m² de plancher",
     details: [
-      "Mobilier sur mesure multifonction",
-      "Couleurs naturelles apaisantes",
-      "Rangements cachés partout",
-      "Matériaux sains et respirants"
+      "4 chambres réparties sur 2 niveaux",
+      "Sous-sol aménageable inclus",
+      "Garage intégré",
+      "Respecte les normes québécoises"
     ],
-    dimensions: "Aménagement 20m²"
+    dimensions: "150m² par niveau + sous-sol"
   }
 ];
 
@@ -192,22 +212,22 @@ export const testimonials = [
   {
     id: 1,
     name: "Marie-Claude Dubois",
-    project: "Mini-maison familiale",
-    text: "Plans très détaillés et équipe à l'écoute. Notre petite maison correspond exactement à nos rêves !",
+    project: "Plans mini-maison 25m²",
+    text: "Prix très raisonnable pour des plans détaillés. Service personnalisé et à l'écoute de nos contraintes budgétaires.",
     rating: 5
   },
   {
     id: 2,
     name: "Jean Tremblay",
-    project: "Chalet 4 saisons",
-    text: "Accompagnement exceptionnel de A à Z. La flexibilité horaire nous a permis de tout faire à notre rythme.",
+    project: "Extension cuisine 30m²",
+    text: "Seulement 600$ pour des plans d'extension complets. Accompagnement de qualité et respect des délais.",
     rating: 5
   },
   {
     id: 3,
     name: "Sophie Leblanc",
-    project: "Abri de jardin",
-    text: "Projet simple mais traité avec le même soin qu'une grande construction. Service personnalisé remarquable.",
+    project: "Chalet 4 saisons",
+    text: "Excellent rapport qualité-prix. Plans techniques impeccables et conseils précieux pour la construction.",
     rating: 5
   }
 ];
@@ -219,19 +239,8 @@ export const mockQuotes = [
     email: "pierre@email.com",
     phone: "514-555-0123",
     projectType: "Mini-maison",
-    plansDesired: ["Fondations", "Architecture", "Électricité"],
-    projectOption: "Plans + Construction/Accompagnement",
-    dimensions: "6m x 4m, surface habitable 24m²",
-    budget: "15000$ - 25000$",
-    timeline: "Printemps 2025",
-    flexibility: "Weekends et soirées disponibles",
-    materials: "Bois local, isolation naturelle",
-    technicalChoices: {
-      ventilation: true,
-      electricity: "plan-integre",
-      plumbing: "sans"
-    },
-    message: "Projet de tiny house pour couple avec enfant. Recherche autonomie énergétique.",
+    plansDesired: ["architecture", "fondation", "electricite"],
+    notes: "Mini-maison 25m² sur roues pour couple retraité. Budget serré mais qualité importante.",
     status: "En attente",
     createdAt: "2024-12-20T10:00:00Z",
     assignedTo: null
@@ -241,20 +250,9 @@ export const mockQuotes = [
     clientName: "Julie Rousseau", 
     email: "julie@email.com",
     phone: "438-555-0456",
-    projectType: "Abris",
-    plansDesired: ["Architecture", "Fondations"],
-    projectOption: "Plans uniquement",
-    dimensions: "5m x 3m pour stockage équipement",
-    budget: "3000$ - 5000$",
-    timeline: "Été 2025",
-    flexibility: "Horaires de bureau flexible",
-    materials: "Bois traité, toiture métallique",
-    technicalChoices: {
-      ventilation: false,
-      electricity: "sans", 
-      plumbing: "sans"
-    },
-    message: "Abri pour matériel de jardinage et outils. Besoin de ventilation naturelle.",
+    projectType: "Extension",
+    plansDesired: ["architecture", "plomberie"],
+    notes: "Extension cuisine 6m x 4m. Maison existante des années 70 à moderniser.",
     status: "En cours",
     createdAt: "2024-12-19T14:30:00Z",
     assignedTo: "Marc Dessinateur"
@@ -273,7 +271,7 @@ export const mockDesigners = [
     id: 2,
     name: "Sophie Architecte",
     email: "sophie@abrisia-plan.ca", 
-    specialties: ["Abris", "Roulottes", "Détails construction"],
+    specialties: ["Extensions", "Maisons résidentielles", "Rénovations"],
     activeProjects: 2
   }
 ];
@@ -281,22 +279,22 @@ export const mockDesigners = [
 export const faqItems = [
   {
     id: 1,
-    question: "Quels sont vos délais habituels ?",
-    answer: "Entre 2 à 4 semaines selon la complexité du projet. Nous nous adaptons à vos échéances."
+    question: "Vos prix sont-ils vraiment si abordables ?",
+    answer: "Oui ! En fonctionnant avec des frais généraux réduits et des horaires flexibles, nous proposons des tarifs très compétitifs. Plans de fondation dès 300$, extensions dès 600$."
   },
   {
     id: 2,
-    question: "Proposez-vous un accompagnement à l'autoconstruction ?",
-    answer: "Oui ! Nous fournissons conseils techniques, calculs de matériaux et suivi de chantier."
+    question: "Jusqu'à quelle taille de maison pouvez-vous dessiner ?",
+    answer: "Légalement, je peux dessiner des maisons jusqu'à 6000m² de plancher total (incluant sous-sol, rez-de-chaussée et étages)."
   },
   {
     id: 3,
-    question: "Travaillez-vous avec des matériaux spécifiques ?",
-    answer: "Nous privilégions les matériaux locaux et durables : bois québécois, isolants naturels, finitions écologiques."
+    question: "Proposez-vous un accompagnement à l'autoconstruction ?",
+    answer: "Absolument ! Nous fournissons conseils techniques, calculs de matériaux et suivi de chantier pour vous accompagner."
   },
   {
     id: 4,
-    question: "Peut-on modifier les plans en cours de projet ?",
-    answer: "Absolument. Nous incluons 2 révisions, et restons flexibles pour les ajustements nécessaires."
+    question: "Travaillez-vous avec des matériaux spécifiques ?",
+    answer: "Nous privilégions les matériaux locaux et durables : bois québécois, isolants naturels, finitions écologiques."
   }
 ];

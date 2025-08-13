@@ -9,23 +9,23 @@ import * as Icons from 'lucide-react';
 const Home = () => {
   const getIcon = (iconName) => {
     const IconComponent = Icons[iconName] || Icons.Circle;
-    return <IconComponent className="w-8 h-8 text-amber-600" />;
+    return <IconComponent className="w-8 h-8 text-green-700" />;
   };
 
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
+        {/* Background Image - Norwegian Fjord */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1511884642898-4c92249e20b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')`
+            backgroundImage: `url('https://images.unsplash.com/photo-1597965519114-0cf7245df6a2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwxfHxub3J3ZWdpYW4lMjBmam9yZHxlbnwwfHx8fDE3NTUwNjA0NDl8MA&ixlib=rb-4.1.0&q=85')`
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/40"></div>
-          {/* Texture bois légère */}
-          <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-amber-900/20 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50"></div>
+          {/* Texture beige légère */}
+          <div className="absolute inset-0 opacity-15 bg-gradient-to-br from-amber-900/30 to-transparent"></div>
         </div>
 
         {/* Content */}
@@ -43,7 +43,7 @@ const Home = () => {
               </Button>
             </Link>
             <Link to="/devis">
-              <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105">
+              <Button size="lg" className="bg-green-700 hover:bg-green-800 text-white px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105">
                 Demander un devis
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -53,40 +53,49 @@ const Home = () => {
       </section>
 
       {/* Section "Ce qu'on fait" */}
-      <section className="py-20 bg-gradient-to-b from-amber-50 to-white">
+      <section className="py-20 bg-gradient-to-b from-amber-50 to-stone-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-              Ce qu'on fait
+              Nos services de dessin sur mesure
             </h2>
-            <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              Des espaces pensés pour vous, avec le savoir-faire traditionnel et les techniques modernes.
+            <p className="text-xl text-slate-700 max-w-4xl mx-auto leading-relaxed">
+              Dessins techniques professionnels pour tous vos projets. 
+              <strong className="text-green-700"> Maisons jusqu'à 6000m² de plancher</strong> (incluant sous-sol et étages).
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service) => (
-              <Card key={service.id} className={`group hover:shadow-xl transition-all duration-300 border-amber-100 hover:border-amber-300 ${service.category === 'coming-soon' ? 'opacity-75' : ''}`}>
+              <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 border-stone-200 hover:border-green-300 bg-white">
                 <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-amber-100 group-hover:bg-amber-200 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors">
+                  <div className="w-16 h-16 bg-green-50 group-hover:bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors">
                     {getIcon(service.icon)}
                   </div>
-                  <h3 className="text-xl font-semibold text-slate-800 mb-4">{service.name}</h3>
-                  <p className="text-slate-600 leading-relaxed text-sm">{service.description}</p>
-                  {service.category === 'coming-soon' && (
-                    <span className="inline-block mt-3 px-3 py-1 bg-amber-100 text-amber-700 text-xs rounded-full">
-                      À venir
-                    </span>
-                  )}
+                  <h3 className="text-xl font-semibold text-slate-800 mb-3">{service.name}</h3>
+                  <p className="text-slate-600 leading-relaxed text-sm mb-4">{service.description}</p>
+                  <p className="text-lg font-semibold text-green-700">{service.price}</p>
                 </CardContent>
               </Card>
             ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <p className="text-lg text-slate-700 mb-8 max-w-4xl mx-auto leading-relaxed">
+              <strong>Offres de dessin sur mesure</strong> adaptées à votre projet et votre budget. 
+              Nous privilégions la qualité et l'accessibilité pour tous.
+            </p>
+            <Link to="/devis">
+              <Button size="lg" className="bg-green-700 hover:bg-green-800 text-white px-8 py-4 text-lg font-semibold rounded-full">
+                Voir nos tarifs détaillés
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Section "Notre approche" */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20 bg-stone-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
@@ -96,7 +105,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {approaches.map((approach) => (
-              <Card key={approach.id} className="text-center border-amber-100 hover:shadow-lg transition-shadow">
+              <Card key={approach.id} className="text-center border-stone-200 hover:shadow-lg transition-shadow bg-white">
                 <CardContent className="p-8">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     {getIcon(approach.icon)}
@@ -109,7 +118,7 @@ const Home = () => {
           </div>
 
           {/* Bandeau accompagnement */}
-          <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-8 text-center text-white">
+          <div className="bg-gradient-to-r from-green-700 to-green-800 rounded-2xl p-8 text-center text-white">
             <h3 className="text-2xl font-bold mb-4">Accompagnement à l'autoconstruction</h3>
             <p className="text-lg text-green-100 mb-6">
               Calculs de matériaux, conseils techniques et suivi de chantier pour réaliser votre projet en toute sérénité.
@@ -137,7 +146,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {inspirationProjects.slice(0, 6).map((project) => (
-              <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-amber-100 cursor-pointer">
+              <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer bg-white">
                 <div className="relative overflow-hidden h-48">
                   <img
                     src={project.image}
@@ -145,13 +154,13 @@ const Home = () => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-green-700 text-white px-3 py-1 rounded-full text-sm font-medium">
                       {project.category}
                     </span>
                   </div>
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold text-slate-800 mb-2 group-hover:text-amber-700 transition-colors">
+                  <h3 className="text-lg font-semibold text-slate-800 mb-2 group-hover:text-green-700 transition-colors">
                     {project.title}
                   </h3>
                   <p className="text-slate-600 text-sm leading-relaxed">
@@ -164,7 +173,7 @@ const Home = () => {
 
           <div className="text-center">
             <Link to="/inspiration">
-              <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-white px-8 py-4 text-lg font-semibold rounded-full">
+              <Button size="lg" className="bg-green-700 hover:bg-green-800 text-white px-8 py-4 text-lg font-semibold rounded-full">
                 Voir toute la galerie
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -174,7 +183,7 @@ const Home = () => {
       </section>
 
       {/* Section "Comment ça marche ?" */}
-      <section className="py-20 bg-gradient-to-b from-slate-50 to-white">
+      <section className="py-20 bg-gradient-to-b from-stone-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
@@ -190,14 +199,14 @@ const Home = () => {
               <div key={step.id} className="text-center relative">
                 {/* Connecteur */}
                 {index < processSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-amber-200 -z-10">
-                    <div className="w-full h-full bg-gradient-to-r from-amber-300 to-transparent"></div>
+                  <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-stone-200 -z-10">
+                    <div className="w-full h-full bg-gradient-to-r from-green-300 to-transparent"></div>
                   </div>
                 )}
                 
                 {/* Étape */}
-                <div className="bg-white p-8 rounded-2xl shadow-lg border border-amber-100 hover:shadow-xl transition-shadow">
-                  <div className="w-16 h-16 bg-amber-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold">
+                <div className="bg-white p-8 rounded-2xl shadow-lg border border-stone-200 hover:shadow-xl transition-shadow">
+                  <div className="w-16 h-16 bg-green-700 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold">
                     {step.id}
                   </div>
                   <h3 className="text-lg font-semibold text-slate-800 mb-4">{step.title}</h3>
@@ -227,7 +236,7 @@ const Home = () => {
                 <CardContent className="p-8">
                   <div className="flex items-center mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 text-amber-400 fill-current" />
+                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
                   <p className="text-slate-200 mb-6 italic leading-relaxed">
@@ -245,16 +254,16 @@ const Home = () => {
       </section>
 
       {/* Bandeau CTA */}
-      <section className="py-20 bg-gradient-to-r from-amber-600 to-amber-700">
+      <section className="py-20 bg-gradient-to-r from-green-700 to-green-800">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Un projet en tête ?
           </h2>
-          <p className="text-xl text-amber-100 mb-10 leading-relaxed">
+          <p className="text-xl text-green-100 mb-10 leading-relaxed">
             Parlons-en ! Consultation gratuite pour donner vie à vos idées.
           </p>
           <Link to="/devis">
-            <Button size="lg" variant="secondary" className="bg-white text-amber-700 hover:bg-amber-50 px-12 py-4 text-xl font-semibold rounded-full transform hover:scale-105 transition-all duration-300">
+            <Button size="lg" variant="secondary" className="bg-white text-green-700 hover:bg-green-50 px-12 py-4 text-xl font-semibold rounded-full transform hover:scale-105 transition-all duration-300">
               Demander un devis
               <ArrowRight className="ml-3 h-6 w-6" />
             </Button>
