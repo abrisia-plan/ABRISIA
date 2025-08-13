@@ -53,7 +53,7 @@ async def init_collections():
         await db.database.projects.create_index("is_visible")
         
         # Créer utilisateur admin par défaut s'il n'existe pas
-        from .auth import get_password_hash
+        from auth import get_password_hash
         
         existing_admin = await db.database.users.find_one({"email": "admin@abrisia-plan.ca"})
         if not existing_admin:
