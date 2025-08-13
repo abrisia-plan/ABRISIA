@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://6a38904c-8ce7-4bbc-a7ab-48117e9f6744.preview.emergentagent.com')
+BASE_URL = "http://localhost:8001"  # Use local URL since external routing has issues
 API_BASE = f"{BASE_URL}/api"
 
 # Données de test
