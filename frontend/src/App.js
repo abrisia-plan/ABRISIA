@@ -28,6 +28,9 @@ function App() {
                 <Route path="/inspiration" element={<Inspiration />} />
                 <Route path="/devis" element={<Devis />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/mentions-legales" element={<MentionsLegales />} />
+                <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
               </Routes>
               <Footer />
             </>
