@@ -117,8 +117,8 @@ const Contact = () => {
                   <div>
                     <h3 className="font-semibold text-slate-800 mb-1">Courriel</h3>
                     <p className="text-slate-600">
-                      <a href="mailto:info@abrisia-plan.ca" className="hover:text-amber-600 transition-colors">
-                        info@abrisia-plan.ca
+                      <a href="mailto:abrisia0plan@gmail.com" className="hover:text-amber-600 transition-colors">
+                        abrisia0plan@gmail.com
                       </a>
                     </p>
                   </div>
