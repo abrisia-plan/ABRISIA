@@ -20,7 +20,7 @@ const Home = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1597965519114-0cf7245df6a2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwxfHxub3J3ZWdpYW4lMjBmam9yZHxlbnwwfHx8fDE3NTUwNjA0NDl8MA&ixlib=rb-4.1.0&q=85')`
+            backgroundImage: `url('https://images.unsplash.com/photo-1629740053362-220a869d7cc1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzd8MHwxfHNlYXJjaHwzfHxmam9yZCUyMGxhbmRzY2FwZXxlbnwwfHx8fDE3NTUwNjA0NTl8MA&ixlib=rb-4.1.0&q=85')`
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50"></div>
