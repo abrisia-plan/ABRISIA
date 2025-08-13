@@ -8,6 +8,9 @@ import Home from "./pages/Home";
 import Inspiration from "./pages/Inspiration";
 import Devis from "./pages/Devis";
 import Contact from "./pages/Contact";
+import About from "./pages/About";
+import MentionsLegales from "./pages/Legal/MentionsLegales";
+import PolitiqueConfidentialite from "./pages/Legal/PolitiqueConfidentialite";
 import Login from "./pages/Admin/Login";
 import Dashboard from "./pages/Admin/Dashboard";
 
