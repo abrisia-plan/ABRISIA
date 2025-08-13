@@ -101,3 +101,200 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Tester le backend Abrisia Plan complet que je viens de développer. Voici ce qui doit être testé : APIs à tester : 1. Authentification (POST /api/auth/login avec admin@abrisia-plan.ca / admin123, POST /api/auth/logout), 2. Devis public (POST /api/devis pour soumettre un devis), 3. Admin - Devis avec token (GET /api/admin/devis pour lister les devis, GET /api/admin/stats pour les statistiques, PUT /api/admin/devis/{id}/status pour changer le statut), 4. Admin - Dessinateurs avec token (GET /api/admin/designers pour lister les dessinateurs), 5. Projets (GET /api/projects pour les projets publics, GET /api/categories pour les catégories). Base de données : MongoDB avec collections : users, devis, designers, projects. Utilisateur admin par défaut créé : admin@abrisia-plan.ca / admin123. Données par défaut créées pour designers et projects. Sécurité : JWT tokens pour l'authentification, Middlewares de protection pour les routes admin, Validation des données avec Pydantic. Teste surtout le flow complet : soumission de devis → connexion admin → gestion des devis → assignation aux dessinateurs."
+
+backend:
+  - task: "API Health Check"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Health endpoint (/health) accessible et retourne status OK avec message 'Abrisia Plan API is running'"
+
+  - task: "API Root Endpoint"
+    implemented: true
+    working: true
+    file: "/app/backend/server.py"
+    stuck_count: 1
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "Route /api/ retournait 404 à cause d'un problème de définition de route avec le préfixe"
+        - working: true
+          agent: "testing"
+          comment: "Corrigé en définissant les routes /api et /api/ directement sur l'app au lieu du router avec préfixe. Route accessible et retourne message de bienvenue"
+
+  - task: "Admin Authentication Login"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/auth.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Connexion admin réussie avec admin@abrisia-plan.ca / admin123. JWT token généré correctement. Utilisateur admin créé automatiquement lors de l'initialisation de la DB"
+
+  - task: "Admin Authentication Logout"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/auth.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Déconnexion admin fonctionne correctement. Retourne success: true avec message de confirmation"
+
+  - task: "Public Devis Submission"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/devis.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Soumission de devis public fonctionne parfaitement. Données test acceptées : nom, email, téléphone, projectType 'Mini-maison sur fondations', plansChoisis ['architecture', 'fondation'], notes. Retourne ID du devis créé et statut 'En attente'"
+
+  - task: "Admin Devis Management - List"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/devis.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Récupération des devis admin fonctionne avec authentification JWT. Retourne liste complète des devis avec pagination. Format de données correct avec tous les champs requis"
+
+  - task: "Admin Devis Status Update"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/devis.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Mise à jour du statut des devis fonctionne correctement. Test réussi : changement de statut vers 'En cours' et assignation à 'Marc Dessinateur'. Authentification JWT requise et validée"
+
+  - task: "Admin Dashboard Statistics"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/devis.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Statistiques dashboard fonctionnent parfaitement. Retourne total_devis, pending_devis, active_devis, completed_devis, total_designers, total_projects. Compteurs mis à jour en temps réel"
+
+  - task: "Admin Designers Management"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/designers.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Gestion des dessinateurs admin fonctionne. Récupération de la liste des dessinateurs avec authentification JWT. Données par défaut créées : Marc Dessinateur et Sophie Architecte avec leurs spécialités"
+
+  - task: "Public Projects Gallery"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/projects.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Galerie de projets publics fonctionne parfaitement. Retourne 3 projets par défaut : Mini-maison sur fondations, Chalet familial quatre saisons, Garage avec atelier. Données complètes avec images, descriptions, détails"
+
+  - task: "Project Categories"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/projects.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Récupération des catégories de projets fonctionne. Retourne : Tous, Abris, Chalet, Mini-maison. Catégories extraites dynamiquement des projets visibles"
+
+  - task: "MongoDB Database Connection"
+    implemented: true
+    working: true
+    file: "/app/backend/database.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Connexion MongoDB fonctionne parfaitement. Collections initialisées : users, devis, designers, projects. Index créés correctement. Données par défaut insérées avec succès"
+
+  - task: "JWT Authentication Middleware"
+    implemented: true
+    working: true
+    file: "/app/backend/auth.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Middleware d'authentification JWT fonctionne correctement. Protection des routes admin validée. Tokens générés et vérifiés avec succès. Fonction require_admin opérationnelle"
+
+  - task: "Data Validation with Pydantic"
+    implemented: true
+    working: true
+    file: "/app/backend/models.py"
+    stuck_count: 1
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "Problème de compatibilité Pydantic v2 avec PyObjectId - méthode __modify_schema__ dépréciée"
+        - working: true
+          agent: "testing"
+          comment: "Corrigé en remplaçant __modify_schema__ par __get_pydantic_json_schema__ pour compatibilité Pydantic v2. Validation des données fonctionne correctement pour tous les modèles"
+
+frontend:
+  # Frontend testing not performed as per instructions
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Complete backend API testing completed"
+  stuck_tasks: []
+  test_all: true
+  test_priority: "high_first"
+
+agent_communication:
+    - agent: "testing"
+      message: "Tests backend complets effectués avec succès. Tous les endpoints testés selon les spécifications du review_request. Flow complet validé : soumission devis → connexion admin → gestion devis → assignation dessinateurs. Quelques corrections mineures appliquées (imports relatifs, compatibilité Pydantic v2, route API root). Taux de réussite : 100% (12/12 tests). API Abrisia Plan entièrement fonctionnelle."
