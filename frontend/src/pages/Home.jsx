@@ -31,7 +31,7 @@ const Home = () => {
         {/* Content */}
         <div className="relative z-10 text-center text-white max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-            Abrisia – Plans
+            Abrisia Plan
           </h1>
           <p className="text-xl md:text-2xl mb-12 text-amber-100 font-light leading-relaxed">
             Des espaces sur mesure, une vie à votre rythme
