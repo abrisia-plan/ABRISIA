@@ -80,6 +80,7 @@ async def health_check():
 
 # Route racine de l'API
 @api_router.get("/")
+@api_router.get("")
 async def root():
     """Route racine de l'API"""
     return {
