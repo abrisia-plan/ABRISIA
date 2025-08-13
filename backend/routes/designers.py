@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from typing import List
 from datetime import datetime
-from ..models import Designer, DesignerCreate, DesignerUpdate, SuccessResponse, ListResponse
-from ..database import get_database
-from ..auth import require_admin
+from models import Designer, DesignerCreate, DesignerUpdate, SuccessResponse, ListResponse
+from database import get_database
+from auth import require_admin
 from bson import ObjectId
 import logging
 
