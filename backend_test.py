@@ -627,6 +627,7 @@ class AbrisiaAPITester:
         devis_ok = self.test_devis_flow()
         admin_ok = self.test_admin_management_flow()
         public_ok = self.test_public_content_flow()
+        cms_ok = self.test_cms_flow()
         
         # Résumé
         print("\n" + "=" * 60)
@@ -655,6 +656,7 @@ class AbrisiaAPITester:
         print(f"  - Gestion devis: {'✅' if devis_ok else '❌'}")
         print(f"  - Gestion admin: {'✅' if admin_ok else '❌'}")
         print(f"  - Contenu public: {'✅' if public_ok else '❌'}")
+        print(f"  - CMS: {'✅' if cms_ok else '❌'}")
         
         return failed_tests == 0
 
