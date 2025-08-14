@@ -28,6 +28,25 @@ DEVIS_TEST_DATA = {
     "notes": "Projet test pour mini-maison écologique avec fondations permanentes"
 }
 
+# Nouvelles données de test pour les nouvelles options de devis
+DEVIS_NEW_OPTIONS_TEST_DATA = {
+    "nom": "Marie Bouchard",
+    "email": "marie.bouchard@email.com",
+    "telephone": "418-555-0456",
+    "projectType": "Extension/Verrière",
+    "plansChoisis": ["ebenisterie", "accompagnement", "extension"],
+    "notes": "Projet d'extension avec verrière et ébénisterie sur mesure, avec accompagnement autoconstruction"
+}
+
+DEVIS_STRUCTURES_EXTERIEURES_TEST_DATA = {
+    "nom": "Pierre Gagnon",
+    "email": "pierre.gagnon@email.com",
+    "telephone": "418-555-0789",
+    "projectType": "Structures extérieures",
+    "plansChoisis": ["abris", "garage", "gazebo", "galerie", "coin_cuisine"],
+    "notes": "Projet complet de structures extérieures: abri, garage, gazebo avec galerie et coin cuisine extérieur"
+}
+
 class AbrisiaAPITester:
     def __init__(self):
         self.session = requests.Session()
