@@ -56,6 +56,7 @@ export const planOptions = [
   { id: 'architecture', name: 'Plan architectural complet', price: '800$' },
   { id: 'extension', name: 'Plan d\'extension', price: '600$' },
   { id: 'plomberie', name: 'Plan de plomberie', price: '400$' },
+  { id: 'evacuation', name: 'Plan d\'évacuation (drainage/eaux usées)', price: '350$' },
   { id: 'electricite', name: 'Plan électrique', price: '450$' },
   { id: 'ventilation', name: 'Plan de ventilation', price: '350$' },
   { id: 'mini-maison', name: 'Mini-maison sur fondations', price: '800$' },
