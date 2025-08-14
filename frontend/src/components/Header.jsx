@@ -23,10 +23,14 @@ const Header = () => {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-amber-600 rounded-full flex items-center justify-center group-hover:bg-amber-700 transition-colors">
-              <HomeIcon className="w-5 h-5 text-white" />
+            <div className="w-12 h-12 flex items-center justify-center">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
+                alt="Logo Abrisia" 
+                className="w-10 h-10 object-contain"
+              />
             </div>
-            <span className="text-2xl font-bold text-slate-800 group-hover:text-amber-700 transition-colors">
+            <span className="text-2xl font-bold text-slate-800 group-hover:text-teal-700 transition-colors">
               ABRISIA
             </span>
           </Link>
