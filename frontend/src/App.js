@@ -13,6 +13,7 @@ import MentionsLegales from "./pages/Legal/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/Legal/PolitiqueConfidentialite";
 import Login from "./pages/Admin/Login";
 import Dashboard from "./pages/Admin/Dashboard";
+import CMS from "./pages/Admin/CMS";
 
 function App() {
   return (
