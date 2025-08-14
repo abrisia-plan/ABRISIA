@@ -392,7 +392,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "CMS routes testing completed successfully"
+    - "Tests nouvelles fonctionnalités terminés avec succès"
   stuck_tasks: []
   test_all: true
   test_priority: "high_first"
