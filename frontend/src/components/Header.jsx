@@ -72,14 +72,14 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-amber-100/20">
+          <div className="lg:hidden py-4 border-t border-teal-100/20">
             <nav className="flex flex-col space-y-3">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`text-lg font-medium transition-colors hover:text-amber-700 py-2 ${
-                    isActive(item.href) ? 'text-amber-700' : 'text-slate-700'
+                  className={`text-lg font-medium transition-colors hover:text-teal-700 py-2 ${
+                    isActive(item.href) ? 'text-teal-700' : 'text-slate-700'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -87,7 +87,7 @@ const Header = () => {
                 </Link>
               ))}
               <Link to="/admin" onClick={() => setIsMenuOpen(false)}>
-                <Button variant="outline" className="mt-3 border-amber-600 text-amber-700 hover:bg-amber-50 w-full">
+                <Button variant="outline" className="mt-3 border-teal-600 text-teal-700 hover:bg-teal-50 w-full">
                   Connexion Admin
                 </Button>
               </Link>
