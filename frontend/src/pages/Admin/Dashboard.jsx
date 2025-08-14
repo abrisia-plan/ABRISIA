@@ -18,7 +18,8 @@ import {
   CheckCircle,
   AlertCircle,
   XCircle,
-  Loader2
+  Loader2,
+  Settings
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import { devisService, designerService, authService, handleApiError } from '../../services/api';
