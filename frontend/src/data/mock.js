@@ -57,10 +57,7 @@ export const planOptions = [
   { id: 'extension', name: 'Plan d\'extension', price: '600$' },
   { id: 'plomberie', name: 'Plan de plomberie (inclut évacuation)', price: '400$' },
   { id: 'electricite', name: 'Plan électrique', price: '450$' },
-  { id: 'ventilation', name: 'Plan de ventilation', price: '350$' },
-  { id: 'mini-maison', name: 'Mini-maison sur fondations', price: '800$' },
-  { id: 'chalet', name: 'Chalet quatre saisons', price: '1200$' },
-  { id: 'maison-complete', name: 'Maison résidentielle complète', price: '1500$' }
+  { id: 'ventilation', name: 'Plan de ventilation', price: '350$' }
 ];
 
 export const projectTypes = [
