@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["devis"])
 
 @router.post("/devis", response_model=DevisResponse)
-async def submit_devis(devis_data: DevisCreate):
+async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTasks):
     """Soumettre une demande de devis (public)"""
     try:
         db = get_database()
