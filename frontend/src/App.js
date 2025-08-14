@@ -40,6 +40,7 @@ function App() {
           {/* Routes admin sans Header/Footer */}
           <Route path="/admin" element={<Login />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/cms" element={<CMS />} />
         </Routes>
         <Toaster />
       </BrowserRouter>
