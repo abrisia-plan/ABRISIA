@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 # Imports des modules
 from database import connect_to_mongo, close_mongo_connection
-from routes import auth, devis, designers, projects
+from routes import auth, devis, designers, projects, cms, ecommerce, employees
 
 # Lifespan manager pour la DB
 @asynccontextmanager
