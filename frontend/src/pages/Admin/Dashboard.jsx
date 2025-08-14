@@ -163,6 +163,14 @@ const Dashboard = () => {
           </div>
           
           <div className="flex items-center space-x-4">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/admin/cms')}
+              className="border-teal-300 text-teal-700 hover:bg-teal-50"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              CMS
+            </Button>
             <span className="text-slate-700">Bienvenue, {user.name}</span>
             <Button variant="outline" onClick={handleLogout} className="border-red-300 text-red-700 hover:bg-red-50">
               <LogOut className="w-4 h-4 mr-2" />
