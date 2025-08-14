@@ -55,7 +55,7 @@ export const planOptions = [
   // Plans techniques individuels
   { id: 'fondation', name: 'Plan de fondation', price: '300$' },
   { id: 'architecture', name: 'Plan architectural complet', price: '800$' },
-  { id: 'extension', name: 'Plan d\'extension', price: '600$' },
+  { id: 'extension', name: 'Plan d\'extension/verrière', price: '600$' },
   { id: 'plomberie', name: 'Plan de plomberie (inclut évacuation)', price: '400$' },
   { id: 'electricite', name: 'Plan électrique', price: '450$' },
   { id: 'ventilation', name: 'Plan de ventilation', price: '350$' },
@@ -67,7 +67,8 @@ export const planOptions = [
   { id: 'abri-garage', name: 'Abri/garage sur fondations', price: '400$', description: 'Plans pour structures utilitaires' },
   
   // Services
-  { id: 'accompagnement', name: 'Accompagnement à l\'autoconstruction', price: 'Sur devis', description: 'Calculs de matériaux, conseils techniques et suivi de chantier' }
+  { id: 'accompagnement', name: 'Accompagnement à l\'autoconstruction', price: 'Sur devis', description: 'Calculs de matériaux, conseils techniques et suivi de chantier' },
+  { id: 'ebenisterie', name: 'Ébénisterie sur mesure', price: 'Sur devis', description: 'Conception et plans pour meubles et aménagements personnalisés' }
 ];
 
 export const projectTypes = [
