@@ -144,6 +144,94 @@ class DesignerUpdate(BaseModel):
     hourly_rate: Optional[float] = None
     availability_status: Optional[str] = None
 
+# ========== MODÈLES CMS ==========
+class SiteContent(BaseDocument):
+    key: str  # Clé unique pour identifier le contenu
+    value: str  # Valeur du contenu (texte, URL, etc.)
+    type: str  # "text", "html", "image", "number", "json"
+    category: str  # "hero", "services", "about", "contact", etc.
+    description: Optional[str] = ""
+    is_active: bool = True
+
+class SiteContentCreate(BaseModel):
+    key: str
+    value: str
+    type: str
+    category: str
+    description: Optional[str] = ""
+
+class SiteContentUpdate(BaseModel):
+    value: Optional[str] = None
+    type: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+
+class SiteSettingsUpdate(BaseModel):
+    site_name: Optional[str] = None
+    slogan: Optional[str] = None
+    hero_image: Optional[str] = None
+    logo_url: Optional[str] = None
+    primary_color: Optional[str] = None
+    secondary_color: Optional[str] = None
+    accent_color: Optional[str] = None
+    background_color: Optional[str] = None
+    contact_email: Optional[str] = None
+    contact_phone: Optional[str] = None
+    contact_address: Optional[str] = None
+    business_hours: Optional[str] = None
+    facebook_url: Optional[str] = None
+    instagram_url: Optional[str] = None
+    linkedin_url: Optional[str] = None
+    meta_title: Optional[str] = None
+    meta_description: Optional[str] = None
+    meta_keywords: Optional[str] = None
+
+class Service(BaseDocument):
+    name: str
+    description: str
+    price: float
+    icon: Optional[str] = None
+    category: str  # "plans", "technical", "carpentry"
+    is_active: bool = True
+    order: int = 0
+
+class ServiceCreate(BaseModel):
+    name: str
+    description: str
+    price: float
+    icon: Optional[str] = None
+    category: str
+    is_active: bool = True
+    order: int = 0
+
+class ServiceUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    icon: Optional[str] = None
+    category: Optional[str] = None
+    is_active: Optional[bool] = None
+    order: Optional[int] = None
+
+class MediaFile(BaseDocument):
+    filename: str
+    original_name: str
+    file_path: str
+    file_size: int
+    mime_type: str
+    category: str
+    alt_text: Optional[str] = None
+    uploaded_by: str
+
+class MediaFileCreate(BaseModel):
+    filename: str
+    original_name: str
+    file_path: str
+    file_size: int
+    mime_type: str
+    category: str
+    alt_text: Optional[str] = None
+
 # ========== MODÈLES E-COMMERCE - PLANS À VENDRE ==========
 class Product(BaseDocument):
     name: str
