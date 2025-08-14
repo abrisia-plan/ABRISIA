@@ -52,12 +52,21 @@ export const services = [
 ];
 
 export const planOptions = [
+  // Plans techniques individuels
   { id: 'fondation', name: 'Plan de fondation', price: '300$' },
   { id: 'architecture', name: 'Plan architectural complet', price: '800$' },
   { id: 'extension', name: 'Plan d\'extension', price: '600$' },
   { id: 'plomberie', name: 'Plan de plomberie (inclut évacuation)', price: '400$' },
   { id: 'electricite', name: 'Plan électrique', price: '450$' },
   { id: 'ventilation', name: 'Plan de ventilation', price: '350$' },
+  
+  // Projets complets (comme annoncés sur la page d'accueil)
+  { id: 'mini-maison-complete', name: 'Mini-maison complète (plans + détails)', price: '800$', description: 'Plans architecturaux et techniques pour mini-maison' },
+  { id: 'chalet-complet', name: 'Chalet complet (plans + détails)', price: '1200$', description: 'Plans architecturaux et techniques pour chalet quatre saisons' },
+  { id: 'maison-complete', name: 'Maison résidentielle complète', price: '1500$', description: 'Plans architecturaux et techniques pour maison familiale' },
+  { id: 'abri-garage', name: 'Abri/garage sur fondations', price: '400$', description: 'Plans pour structures utilitaires' },
+  
+  // Services
   { id: 'accompagnement', name: 'Accompagnement à l\'autoconstruction', price: 'Sur devis', description: 'Calculs de matériaux, conseils techniques et suivi de chantier' }
 ];
 
