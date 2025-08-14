@@ -37,8 +37,11 @@ async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTask
         # Insérer en base
         result = await db.devis.insert_one(devis_doc)
         
-        # Envoyer notification email (optionnel - à implémenter plus tard)
-        # await send_notification_email(devis_data)
+        # Envoyer la notification email en arrière-plan
+        background_tasks.add_task(
+            email_service.send_devis_notification, 
+            devis_doc
+        )
         
         logger.info(f"✅ Nouveau devis soumis par {devis_data.nom} ({devis_data.email})")
         
