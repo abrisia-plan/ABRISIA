@@ -220,6 +220,105 @@ const Devis = () => {
                   )}
                 </div>
 
+                {/* Section guide pour préciser les attentes */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-6">
+                  <h3 className="text-lg font-semibold text-slate-800 flex items-center">
+                    <span className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">?</span>
+                    Aidez-nous à mieux comprendre vos attentes
+                  </h3>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Type de représentation souhaité */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-slate-700">Que recherchez-vous principalement ?</h4>
+                      <div className="space-y-2">
+                        <label className="flex items-start space-x-3 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="representationType" 
+                            value="technique"
+                            className="mt-1 text-teal-600 focus:ring-teal-500"
+                          />
+                          <div>
+                            <span className="text-sm font-medium text-slate-700">Plans techniques détaillés</span>
+                            <p className="text-xs text-slate-600">Dimensions précises, détails construction, matériaux spécifiés</p>
+                          </div>
+                        </label>
+                        <label className="flex items-start space-x-3 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="representationType" 
+                            value="visuel"
+                            className="mt-1 text-teal-600 focus:ring-teal-500"
+                          />
+                          <div>
+                            <span className="text-sm font-medium text-slate-700">Représentation visuelle/esthétique</span>
+                            <p className="text-xs text-slate-600">Images 3D, croquis, visualisation de votre maison de rêve</p>
+                          </div>
+                        </label>
+                        <label className="flex items-start space-x-3 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="representationType" 
+                            value="both"
+                            className="mt-1 text-teal-600 focus:ring-teal-500"
+                          />
+                          <div>
+                            <span className="text-sm font-medium text-slate-700">Les deux (technique + visuel)</span>
+                            <p className="text-xs text-slate-600">Plans de construction ET visualisations</p>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Préférences matériaux */}
+                    <div className="space-y-3">
+                      <h4 className="font-medium text-slate-700">Préférences de matériaux/technologies</h4>
+                      <div className="space-y-2">
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
+                          <span className="text-sm text-slate-700">Bois local du Québec</span>
+                        </label>
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
+                          <span className="text-sm text-slate-700">Construction écologique/durable</span>
+                        </label>
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
+                          <span className="text-sm text-slate-700">Isolation haute performance</span>
+                        </label>
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
+                          <span className="text-sm text-slate-700">Chauffage géothermique/pompe à chaleur</span>
+                        </label>
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
+                          <span className="text-sm text-slate-700">Récupération eau de pluie</span>
+                        </label>
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
+                          <span className="text-sm text-slate-700">Panneaux solaires</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-blue-200 pt-4">
+                    <h4 className="font-medium text-slate-700 mb-2">Style architectural recherché</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        'Moderne/Contemporain', 'Traditionnel québécois', 'Rustique/Chalet', 
+                        'Minimaliste', 'Industriel', 'Scandinave', 'Autre (à préciser)'
+                      ].map((style) => (
+                        <label key={style} className="flex items-center space-x-2 cursor-pointer bg-white px-3 py-1 rounded border border-blue-200 hover:bg-blue-50">
+                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
+                          <span className="text-sm text-slate-700">{style}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
                 {/* Zone de notes */}
                 <div className="space-y-2">
                   <Label htmlFor="notes" className="text-slate-700 font-medium">
