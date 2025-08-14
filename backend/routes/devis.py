@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks
 from typing import List
 from datetime import datetime
 from models import (
@@ -7,6 +7,7 @@ from models import (
 )
 from database import get_database
 from auth import require_admin
+from email_service import email_service
 from bson import ObjectId
 import logging
 
