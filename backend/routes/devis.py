@@ -3,7 +3,7 @@ from typing import List
 from datetime import datetime
 from models import (
     Devis, DevisCreate, DevisUpdate, DevisResponse, 
-    SuccessResponse, ListResponse, DashboardStats
+    SuccessResponse, ListResponse, SimpleStats
 )
 from database import get_database
 from auth import require_admin
@@ -130,8 +130,8 @@ async def update_devis_status(
         if update_data.status:
             update_fields["status"] = update_data.status
         
-        if update_data.assigned_to is not None:
-            update_fields["assigned_to"] = update_data.assigned_to
+        if update_data.assigned_designer is not None:
+            update_fields["assigned_to"] = update_data.assigned_designer
             
         # Mettre à jour en base
         result = await db.devis.update_one(
@@ -143,7 +143,7 @@ async def update_devis_status(
             raise HTTPException(status_code=404, detail="Devis non trouvé")
         
         # Mettre à jour le compteur de projets actifs du dessinateur
-        if update_data.assigned_to:
+        if update_data.assigned_designer:
             await update_designer_active_projects()
         
         logger.info(f"✅ Devis {devis_id} mis à jour par {current_user['name']}")
@@ -195,7 +195,7 @@ async def delete_devis(
             detail="Erreur lors de la suppression du devis"
         )
 
-@router.get("/admin/stats", response_model=DashboardStats)
+@router.get("/admin/stats", response_model=SimpleStats)
 async def get_dashboard_stats(current_user: dict = Depends(require_admin)):
     """Obtenir les statistiques pour le dashboard"""
     try:
@@ -211,7 +211,7 @@ async def get_dashboard_stats(current_user: dict = Depends(require_admin)):
         total_designers = await db.designers.count_documents({})
         total_projects = await db.projects.count_documents({"is_visible": True})
         
-        return DashboardStats(
+        return SimpleStats(
             total_devis=total_devis,
             pending_devis=pending_devis,
             active_devis=active_devis,
