@@ -618,7 +618,7 @@ class AbrisiaAPITester:
         health_ok = self.test_health_check()
         api_root_ok = self.test_api_root()
         
-        if not health_ok:
+        if not health_ok and not api_root_ok:
             print("❌ L'API n'est pas accessible. Arrêt des tests.")
             return False
         
