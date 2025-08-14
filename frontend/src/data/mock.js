@@ -57,7 +57,8 @@ export const planOptions = [
   { id: 'extension', name: 'Plan d\'extension', price: '600$' },
   { id: 'plomberie', name: 'Plan de plomberie (inclut évacuation)', price: '400$' },
   { id: 'electricite', name: 'Plan électrique', price: '450$' },
-  { id: 'ventilation', name: 'Plan de ventilation', price: '350$' }
+  { id: 'ventilation', name: 'Plan de ventilation', price: '350$' },
+  { id: 'accompagnement', name: 'Accompagnement à l\'autoconstruction', price: 'Sur devis', description: 'Calculs de matériaux, conseils techniques et suivi de chantier' }
 ];
 
 export const projectTypes = [
