@@ -43,7 +43,7 @@ async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTask
             devis_doc
         )
         
-        logger.info(f"✅ Nouveau devis soumis par {devis_data.nom} ({devis_data.email})")
+        logger.info(f"✅ Nouveau devis soumis par {devis_data.nom} ({devis_data.email}) - Email de notification programmé")
         
         return DevisResponse(
             success=True,
