@@ -75,10 +75,21 @@ const Devis = () => {
   };
 
   const calculateTotal = () => {
-    return formData.plansChoisis.reduce((total, planId) => {
+    const total = formData.plansChoisis.reduce((total, planId) => {
       const plan = planOptions.find(p => p.id === planId);
-      return total + (plan ? parseInt(plan.price.replace('$', '')) : 0);
+      if (plan && plan.price !== 'Sur devis') {
+        return total + parseInt(plan.price.replace('$', ''));
+      }
+      return total;
     }, 0);
+    
+    // Vérifier si des services "Sur devis" sont sélectionnés
+    const hasCustomPricing = formData.plansChoisis.some(planId => {
+      const plan = planOptions.find(p => p.id === planId);
+      return plan && plan.price === 'Sur devis';
+    });
+    
+    return { total, hasCustomPricing };
   };
 
   return (
