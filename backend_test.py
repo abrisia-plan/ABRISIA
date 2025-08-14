@@ -606,25 +606,35 @@ class AbrisiaAPITester:
         return login_success and logout_success
     
     def test_devis_flow(self):
-        """Test du flow complet des devis"""
-        print("\n=== TEST FLOW DEVIS ===")
+        """Test du flow complet des devis avec nouvelles options"""
+        print("\n=== TEST FLOW DEVIS AVEC NOUVELLES OPTIONS ===")
         
-        # 1. Soumission de devis (public)
-        devis_id = self.test_submit_devis()
-        if not devis_id:
+        # 1. Soumission de devis classique
+        devis_id_1 = self.test_submit_devis()
+        if not devis_id_1:
             return False
         
-        # 2. Récupération des devis (admin)
+        # 2. Soumission de devis avec nouvelles options (ébénisterie, accompagnement, extension/verrière)
+        devis_id_2 = self.test_submit_devis_new_options()
+        if not devis_id_2:
+            return False
+        
+        # 3. Soumission de devis avec structures extérieures
+        devis_id_3 = self.test_submit_devis_structures_exterieures()
+        if not devis_id_3:
+            return False
+        
+        # 4. Récupération des devis (admin)
         devis_list = self.test_get_admin_devis()
         if devis_list is None:
             return False
         
-        # 3. Mise à jour du statut
-        status_updated = self.test_update_devis_status(devis_id)
+        # 5. Mise à jour du statut du premier devis
+        status_updated = self.test_update_devis_status(devis_id_1)
         if not status_updated:
             return False
         
-        # 4. Vérification des statistiques
+        # 6. Vérification des statistiques
         stats = self.test_get_admin_stats()
         if stats is None:
             return False
