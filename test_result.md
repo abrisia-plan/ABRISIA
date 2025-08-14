@@ -298,3 +298,5 @@ test_plan:
 agent_communication:
     - agent: "testing"
       message: "Tests backend complets effectués avec succès. Tous les endpoints testés selon les spécifications du review_request. Flow complet validé : soumission devis → connexion admin → gestion devis → assignation dessinateurs. Quelques corrections mineures appliquées (imports relatifs, compatibilité Pydantic v2, route API root). Taux de réussite : 100% (12/12 tests). API Abrisia Plan entièrement fonctionnelle."
+    - agent: "main"
+      message: "✅ PROBLÈME DE DÉMARRAGE SERVEUR RÉSOLU: Corrigé les imports manquants dans models.py - ajouté UserUpdate, Designer, DesignerCreate, DesignerUpdate. Le serveur backend démarre maintenant correctement et répond aux requêtes. Prêt pour la suite du développement."
