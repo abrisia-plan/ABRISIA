@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = "http://localhost:8001"  # Use local URL since external routing has issues
+BASE_URL = "https://tiny-house-hub.preview.emergentagent.com"  # Use external URL from frontend/.env
 API_BASE = f"{BASE_URL}/api"
 
 # Données de test
