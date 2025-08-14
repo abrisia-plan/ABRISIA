@@ -240,8 +240,10 @@ const Devis = () => {
                       <p className="text-sm text-teal-700 mt-2">
                         Prix indicatif - devis final après étude de votre projet
                         {calculateTotal().hasCustomPricing && (
-                          <br />
-                          <strong>Services d'accompagnement évalués selon vos besoins spécifiques</strong>
+                          <>
+                            <br />
+                            <strong>Services d'accompagnement évalués selon vos besoins spécifiques</strong>
+                          </>
                         )}
                       </p>
                     </div>
