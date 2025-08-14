@@ -303,6 +303,60 @@ const Devis = () => {
                   </div>
 
                   <div className="border-t border-blue-200 pt-4">
+                    <h4 className="font-medium text-slate-700 mb-3">Comment préférez-vous recevoir la réponse à votre devis ?</h4>
+                    <div className="space-y-2">
+                      <label className="flex items-start space-x-3 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="responsePreference" 
+                          value="phone"
+                          className="mt-1 text-teal-600 focus:ring-teal-500"
+                        />
+                        <div>
+                          <span className="text-sm font-medium text-slate-700">Appel téléphonique</span>
+                          <p className="text-xs text-slate-600">Discussion directe pour répondre à vos questions</p>
+                        </div>
+                      </label>
+                      <label className="flex items-start space-x-3 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="responsePreference" 
+                          value="email"
+                          className="mt-1 text-teal-600 focus:ring-teal-500"
+                        />
+                        <div>
+                          <span className="text-sm font-medium text-slate-700">Par courriel écrit</span>
+                          <p className="text-xs text-slate-600">Devis détaillé par écrit avec documents joints</p>
+                        </div>
+                      </label>
+                      <label className="flex items-start space-x-3 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="responsePreference" 
+                          value="video"
+                          className="mt-1 text-teal-600 focus:ring-teal-500"
+                        />
+                        <div>
+                          <span className="text-sm font-medium text-slate-700">Vidéoconférence</span>
+                          <p className="text-xs text-slate-600">Présentation visuelle avec partage d'écran (Zoom, Teams, etc.)</p>
+                        </div>
+                      </label>
+                      <label className="flex items-start space-x-3 cursor-pointer">
+                        <input 
+                          type="radio" 
+                          name="responsePreference" 
+                          value="flexible"
+                          className="mt-1 text-teal-600 focus:ring-teal-500"
+                        />
+                        <div>
+                          <span className="text-sm font-medium text-slate-700">À votre convenance</span>
+                          <p className="text-xs text-slate-600">Nous vous contacterons selon vos disponibilités</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-blue-200 pt-4">
                     <h4 className="font-medium text-slate-700 mb-2">Style architectural recherché</h4>
                     <div className="flex flex-wrap gap-2">
                       {[
