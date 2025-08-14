@@ -322,8 +322,12 @@ const Devis = () => {
                 {/* Zone de notes */}
                 <div className="space-y-2">
                   <Label htmlFor="notes" className="text-slate-700 font-medium">
-                    Décrivez votre projet (dimensions, matériaux, contraintes, budget, délais...)
+                    Décrivez votre projet en détail
                   </Label>
+                  <div className="text-sm text-slate-600 mb-3 p-3 bg-amber-50 border border-amber-200 rounded">
+                    <strong>💡 Conseil :</strong> Plus vous êtes précis, mieux nous pourrons vous aider ! 
+                    Mentionnez : dimensions, budget, délais, contraintes du terrain, inspirations, etc.
+                  </div>
                   <Textarea
                     id="notes"
                     name="notes"
@@ -331,7 +335,7 @@ const Devis = () => {
                     onChange={handleInputChange}
                     rows={8}
                     className="border-stone-300 focus:border-teal-500"
-                    placeholder="Exemple : Mini-maison 35m² sur fondations béton, bois local du Québec, isolation supérieure, budget 25000$, construction été 2025. Terrain plat avec accès facile, services municipaux à proximité..."
+                    placeholder="Exemple : Mini-maison 35m² sur fondations béton, style scandinave moderne. Bois local, isolation supérieure, chauffage géothermique. Terrain plat avec pente douce vers sud, services municipaux à 50m. Budget construction 180000$, plans requis pour printemps 2025. Inspiration : grandes fenêtres, toit cathédrale, foyer central..."
                   />
                 </div>
 
