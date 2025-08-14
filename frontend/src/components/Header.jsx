@@ -51,7 +51,7 @@ const Header = () => {
               </Link>
             ))}
             <Link to="/admin">
-              <Button variant="outline" className="ml-4 border-amber-600 text-amber-700 hover:bg-amber-50">
+              <Button variant="outline" className="ml-4 border-teal-600 text-teal-700 hover:bg-teal-50">
                 Connexion Admin
               </Button>
             </Link>
