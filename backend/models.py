@@ -546,6 +546,15 @@ class DashboardStats(BaseModel):
     total_users: int
     pending_users: int
 
+# Simple stats model for the current devis dashboard
+class SimpleStats(BaseModel):
+    total_devis: int
+    pending_devis: int
+    active_devis: int
+    completed_devis: int
+    total_designers: int
+    total_projects: int
+
 # ========== MODÈLES HÉRITÉS (pour compatibilité) ==========
 class Devis(BaseDocument):
     nom: str
