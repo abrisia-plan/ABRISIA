@@ -60,6 +60,15 @@ api_router.include_router(designers.router)
 # Routes des projets
 api_router.include_router(projects.router)
 
+# Routes CMS (Content Management System)
+api_router.include_router(cms.router)
+
+# Routes e-commerce
+api_router.include_router(ecommerce.router)
+
+# Routes employés
+api_router.include_router(employees.router)
+
 # Inclure le router principal dans l'app
 app.include_router(api_router)
 
