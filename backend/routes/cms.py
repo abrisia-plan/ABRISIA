@@ -4,15 +4,15 @@ from datetime import datetime
 import os
 import uuid
 from pathlib import Path
-from ..models import (
+from models import (
     SiteContent, SiteContentCreate, SiteContentUpdate,
     SiteSettings, SiteSettingsUpdate,
     Service, ServiceCreate, ServiceUpdate,
     MediaFile, MediaFileCreate,
     SuccessResponse, ListResponse
 )
-from ..database import get_database
-from ..auth import require_admin
+from database import get_database
+from auth import require_admin
 from bson import ObjectId
 import logging
 
