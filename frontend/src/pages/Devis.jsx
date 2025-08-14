@@ -167,8 +167,11 @@ const Devis = () => {
                 {/* Plans désirés - Cases à cocher */}
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold text-slate-800 border-b border-stone-200 pb-2">
-                    Cochez les plans dont vous avez besoin
+                    Cochez les plans dont vous avez besoin (prix à partir de)
                   </h3>
+                  <p className="text-sm text-slate-600 italic">
+                    Les prix indiqués sont des tarifs de base. Le devis final sera ajusté selon la complexité et les spécificités de votre projet.
+                  </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {planOptions.map((plan) => (
                       <div key={plan.id} className="flex items-center justify-between p-4 border border-stone-300 rounded-lg hover:bg-amber-50 transition-colors">
