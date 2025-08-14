@@ -148,12 +148,12 @@ class AbrisiaAPITester:
             self.log_test("Admin Logout", False, f"Erreur: {str(e)}")
             return False
     
-    def test_submit_devis(self):
-        """Test de soumission de devis (public)"""
+    def test_submit_devis_new_options(self):
+        """Test de soumission de devis avec nouvelles options (ébénisterie, accompagnement, extension/verrière)"""
         try:
             response = self.session.post(
                 f"{API_BASE}/devis",
-                json=DEVIS_TEST_DATA,
+                json=DEVIS_NEW_OPTIONS_TEST_DATA,
                 timeout=10
             )
             
@@ -162,19 +162,48 @@ class AbrisiaAPITester:
                 if data.get("success") and data.get("devis"):
                     devis_id = data["devis"].get("id")
                     self.log_test(
-                        "Submit Devis", 
+                        "Submit Devis New Options", 
                         True, 
-                        f"Devis soumis avec succès - ID: {devis_id}"
+                        f"Devis avec nouvelles options soumis avec succès - ID: {devis_id}"
                     )
                     return devis_id
                 else:
-                    self.log_test("Submit Devis", False, "Réponse invalide", data)
+                    self.log_test("Submit Devis New Options", False, "Réponse invalide", data)
                     return None
             else:
-                self.log_test("Submit Devis", False, f"Status code: {response.status_code}", response.text)
+                self.log_test("Submit Devis New Options", False, f"Status code: {response.status_code}", response.text)
                 return None
         except Exception as e:
-            self.log_test("Submit Devis", False, f"Erreur: {str(e)}")
+            self.log_test("Submit Devis New Options", False, f"Erreur: {str(e)}")
+            return None
+    
+    def test_submit_devis_structures_exterieures(self):
+        """Test de soumission de devis avec structures extérieures (abris/garage/gazebo/galerie/coin cuisine)"""
+        try:
+            response = self.session.post(
+                f"{API_BASE}/devis",
+                json=DEVIS_STRUCTURES_EXTERIEURES_TEST_DATA,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and data.get("devis"):
+                    devis_id = data["devis"].get("id")
+                    self.log_test(
+                        "Submit Devis Structures Extérieures", 
+                        True, 
+                        f"Devis structures extérieures soumis avec succès - ID: {devis_id}"
+                    )
+                    return devis_id
+                else:
+                    self.log_test("Submit Devis Structures Extérieures", False, "Réponse invalide", data)
+                    return None
+            else:
+                self.log_test("Submit Devis Structures Extérieures", False, f"Status code: {response.status_code}", response.text)
+                return None
+        except Exception as e:
+            self.log_test("Submit Devis Structures Extérieures", False, f"Erreur: {str(e)}")
             return None
     
     def test_get_admin_devis(self):
