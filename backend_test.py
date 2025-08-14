@@ -352,6 +352,164 @@ class AbrisiaAPITester:
             self.log_test("Get Categories", False, f"Erreur: {str(e)}")
             return None
     
+    # ========== TESTS CMS ==========
+    
+    def test_cms_site_settings(self):
+        """Test de récupération des paramètres du site (CMS)"""
+        if not self.token:
+            self.log_test("CMS Site Settings", False, "Token manquant")
+            return None
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.token}"}
+            response = self.session.get(
+                f"{API_BASE}/admin/cms/settings",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "settings" in data:
+                    settings = data["settings"]
+                    site_name = settings.get("site_name", "N/A")
+                    self.log_test(
+                        "CMS Site Settings", 
+                        True, 
+                        f"Paramètres récupérés - Site: {site_name}"
+                    )
+                    return settings
+                else:
+                    self.log_test("CMS Site Settings", False, "Réponse invalide", data)
+                    return None
+            else:
+                self.log_test("CMS Site Settings", False, f"Status code: {response.status_code}", response.text)
+                return None
+        except Exception as e:
+            self.log_test("CMS Site Settings", False, f"Erreur: {str(e)}")
+            return None
+    
+    def test_cms_services(self):
+        """Test de récupération des services et prix (CMS)"""
+        if not self.token:
+            self.log_test("CMS Services", False, "Token manquant")
+            return None
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.token}"}
+            response = self.session.get(
+                f"{API_BASE}/admin/cms/services",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "data" in data:
+                    services = data["data"]
+                    services_count = len(services)
+                    total = data.get("total", 0)
+                    self.log_test(
+                        "CMS Services", 
+                        True, 
+                        f"Services récupérés - {services_count} services sur {total} total"
+                    )
+                    return services
+                else:
+                    self.log_test("CMS Services", False, "Réponse invalide", data)
+                    return None
+            else:
+                self.log_test("CMS Services", False, f"Status code: {response.status_code}", response.text)
+                return None
+        except Exception as e:
+            self.log_test("CMS Services", False, f"Erreur: {str(e)}")
+            return None
+    
+    def test_cms_upload_media(self):
+        """Test d'upload de média (CMS)"""
+        if not self.token:
+            self.log_test("CMS Upload Media", False, "Token manquant")
+            return None
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.token}"}
+            
+            # Créer un fichier test simple (image 1x1 pixel PNG)
+            test_image_data = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc\xf8\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00IEND\xaeB`\x82'
+            
+            files = {
+                'file': ('test_image.png', test_image_data, 'image/png')
+            }
+            data = {
+                'category': 'test',
+                'alt_text': 'Image de test pour CMS'
+            }
+            
+            response = self.session.post(
+                f"{API_BASE}/admin/cms/upload-media",
+                headers=headers,
+                files=files,
+                data=data,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and data.get("fileUrl"):
+                    file_url = data["fileUrl"]
+                    file_id = data.get("fileId", "N/A")
+                    self.log_test(
+                        "CMS Upload Media", 
+                        True, 
+                        f"Upload réussi - URL: {file_url}, ID: {file_id}"
+                    )
+                    return data
+                else:
+                    self.log_test("CMS Upload Media", False, "Réponse invalide", data)
+                    return None
+            else:
+                self.log_test("CMS Upload Media", False, f"Status code: {response.status_code}", response.text)
+                return None
+        except Exception as e:
+            self.log_test("CMS Upload Media", False, f"Erreur: {str(e)}")
+            return None
+    
+    def test_cms_media_management(self):
+        """Test de gestion des médias (CMS)"""
+        if not self.token:
+            self.log_test("CMS Media Management", False, "Token manquant")
+            return None
+        
+        try:
+            headers = {"Authorization": f"Bearer {self.token}"}
+            response = self.session.get(
+                f"{API_BASE}/admin/cms/media",
+                headers=headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success") and "data" in data:
+                    media_files = data["data"]
+                    media_count = len(media_files)
+                    total = data.get("total", 0)
+                    self.log_test(
+                        "CMS Media Management", 
+                        True, 
+                        f"Médias récupérés - {media_count} fichiers sur {total} total"
+                    )
+                    return media_files
+                else:
+                    self.log_test("CMS Media Management", False, "Réponse invalide", data)
+                    return None
+            else:
+                self.log_test("CMS Media Management", False, f"Status code: {response.status_code}", response.text)
+                return None
+        except Exception as e:
+            self.log_test("CMS Media Management", False, f"Erreur: {str(e)}")
+            return None
+    
     def test_authentication_flow(self):
         """Test du flow complet d'authentification"""
         print("\n=== TEST FLOW AUTHENTIFICATION ===")
