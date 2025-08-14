@@ -189,21 +189,28 @@ const Devis = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {planOptions.map((plan) => (
                       <div key={plan.id} className="flex items-center justify-between p-4 border border-stone-300 rounded-lg hover:bg-amber-50 transition-colors">
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-3 flex-1">
                           <Checkbox
                             id={`plan-${plan.id}`}
                             checked={formData.plansChoisis.includes(plan.id)}
                             onCheckedChange={(checked) => handlePlanChange(plan.id, checked)}
                             className="border-stone-400"
                           />
-                          <Label 
-                            htmlFor={`plan-${plan.id}`} 
-                            className="cursor-pointer font-medium text-slate-700"
-                          >
-                            {plan.name}
-                          </Label>
+                          <div className="flex-1">
+                            <Label 
+                              htmlFor={`plan-${plan.id}`} 
+                              className="cursor-pointer font-medium text-slate-700 block"
+                            >
+                              {plan.name}
+                            </Label>
+                            {plan.description && (
+                              <p className="text-sm text-slate-600 mt-1 cursor-pointer" onClick={() => handlePlanChange(plan.id, !formData.plansChoisis.includes(plan.id))}>
+                                {plan.description}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                        <span className="text-teal-800 font-semibold">{plan.price}</span>
+                        <span className="text-teal-800 font-semibold ml-4">{plan.price}</span>
                       </div>
                     ))}
                   </div>
