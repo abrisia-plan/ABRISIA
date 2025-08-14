@@ -231,9 +231,19 @@ const Devis = () => {
                     <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mt-6">
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-semibold text-slate-800">Total estimé :</span>
-                        <span className="text-2xl font-bold text-teal-800">{calculateTotal()}$</span>
+                        <span className="text-2xl font-bold text-teal-800">
+                          {calculateTotal().total > 0 ? `${calculateTotal().total}$` : ''}
+                          {calculateTotal().hasCustomPricing && calculateTotal().total > 0 && ' + Sur devis'}
+                          {calculateTotal().hasCustomPricing && calculateTotal().total === 0 && 'Sur devis'}
+                        </span>
                       </div>
-                      <p className="text-sm text-teal-700 mt-2">Prix indicatif - devis final après étude de votre projet</p>
+                      <p className="text-sm text-teal-700 mt-2">
+                        Prix indicatif - devis final après étude de votre projet
+                        {calculateTotal().hasCustomPricing && (
+                          <br />
+                          <strong>Services d'accompagnement évalués selon vos besoins spécifiques</strong>
+                        )}
+                      </p>
                     </div>
                   )}
                 </div>
