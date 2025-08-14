@@ -279,6 +279,54 @@ backend:
           agent: "testing"
           comment: "Corrigé en remplaçant __modify_schema__ par __get_pydantic_json_schema__ pour compatibilité Pydantic v2. Validation des données fonctionne correctement pour tous les modèles"
 
+  - task: "CMS Site Settings API"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/cms.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Route GET /api/admin/cms/settings fonctionne parfaitement. Authentification admin requise et validée. Paramètres par défaut créés automatiquement : site_name 'Abrisia Plan', slogan, couleurs, contact, etc. Retourne settings formatés avec ID et timestamp"
+
+  - task: "CMS Services Management API"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/cms.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Route GET /api/admin/cms/services fonctionne correctement. Authentification admin requise et validée. Retourne liste vide (normal pour première utilisation) avec format ListResponse approprié. Prêt pour ajout de services"
+
+  - task: "CMS Media Upload API"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/cms.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Route POST /api/admin/cms/upload-media fonctionne parfaitement. Upload d'image test réussi avec génération UUID unique, validation des extensions (.png accepté), sauvegarde dans /app/uploads/, enregistrement en DB avec métadonnées complètes. Retourne fileUrl et fileId"
+
+  - task: "CMS Media Management API"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/cms.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Route GET /api/admin/cms/media fonctionne correctement. Récupération des fichiers média avec authentification admin. Retourne 1 fichier uploadé lors du test avec métadonnées complètes : filename, originalName, filePath, fileSize, mimeType, category, uploadedBy, createdAt"
+
 frontend:
   # Frontend testing not performed as per instructions
 
