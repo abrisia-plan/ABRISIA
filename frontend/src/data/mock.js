@@ -64,7 +64,7 @@ export const planOptions = [
   { id: 'mini-maison-complete', name: 'Mini-maison complète (plans + détails)', price: '800$', description: 'Plans architecturaux et techniques pour mini-maison' },
   { id: 'chalet-complet', name: 'Chalet complet (plans + détails)', price: '1200$', description: 'Plans architecturaux et techniques pour chalet quatre saisons' },
   { id: 'maison-complete', name: 'Maison résidentielle complète', price: '1500$', description: 'Plans architecturaux et techniques pour maison familiale' },
-  { id: 'abri-garage', name: 'Abri/garage sur fondations', price: '400$', description: 'Plans pour structures utilitaires' },
+  { id: 'abri-garage', name: 'Abris/garage/gazebo/galerie/coin cuisine extérieur', price: '400$', description: 'Plans pour structures extérieures et espaces de vie outdoor' },
   
   // Services
   { id: 'accompagnement', name: 'Accompagnement à l\'autoconstruction', price: 'Sur devis', description: 'Calculs de matériaux, conseils techniques et suivi de chantier' },
