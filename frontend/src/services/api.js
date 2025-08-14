@@ -169,6 +169,79 @@ export const projectService = {
   }
 };
 
+// Services CMS (Content Management System)
+export const cmsService = {
+  // Paramètres du site
+  getSettings: async () => {
+    const response = await api.get('/admin/cms/settings');
+    return response.data;
+  },
+
+  updateSettings: async (settings) => {
+    const response = await api.put('/admin/cms/settings', settings);
+    return response.data;
+  },
+
+  // Services et prix
+  getServices: async () => {
+    const response = await api.get('/admin/cms/services');
+    return response.data;
+  },
+
+  createService: async (serviceData) => {
+    const response = await api.post('/admin/cms/services', serviceData);
+    return response.data;
+  },
+
+  updateService: async (serviceId, updates) => {
+    const response = await api.put(`/admin/cms/services/${serviceId}`, updates);
+    return response.data;
+  },
+
+  deleteService: async (serviceId) => {
+    const response = await api.delete(`/admin/cms/services/${serviceId}`);
+    return response.data;
+  },
+
+  // Contenu du site
+  getContent: async (category = null) => {
+    const params = category ? { category } : {};
+    const response = await api.get('/admin/cms/content', { params });
+    return response.data;
+  },
+
+  createContent: async (contentData) => {
+    const response = await api.post('/admin/cms/content', contentData);
+    return response.data;
+  },
+
+  updateContent: async (contentId, updates) => {
+    const response = await api.put(`/admin/cms/content/${contentId}`, updates);
+    return response.data;
+  },
+
+  // Gestion des médias
+  uploadMedia: async (formData) => {
+    const response = await api.post('/admin/cms/upload-media', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  getMediaFiles: async (category = null) => {
+    const params = category ? { category } : {};
+    const response = await api.get('/admin/cms/media', { params });
+    return response.data;
+  },
+
+  deleteMedia: async (mediaId) => {
+    const response = await api.delete(`/admin/cms/media/${mediaId}`);
+    return response.data;
+  }
+};
+
 // Utilitaires
 export const handleApiError = (error) => {
   if (error.response) {
