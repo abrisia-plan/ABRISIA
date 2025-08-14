@@ -164,34 +164,6 @@ const Devis = () => {
                   </div>
                 </div>
 
-                {/* Type de projet */}
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-slate-800 border-b border-stone-200 pb-2">
-                    Type de projet (construction permanente sur fondations)
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {projectTypes.map((type) => (
-                      <div key={type} className="flex items-center space-x-3 p-3 border border-stone-300 rounded-lg hover:bg-amber-50 transition-colors">
-                        <input
-                          type="radio"
-                          id={`type-${type}`}
-                          name="projectType"
-                          value={type}
-                          checked={formData.projectType === type}
-                          onChange={handleInputChange}
-                          className="text-teal-600 focus:ring-teal-500"
-                        />
-                        <Label 
-                          htmlFor={`type-${type}`} 
-                          className="cursor-pointer font-medium text-slate-700 text-sm"
-                        >
-                          {type}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Plans désirés - Cases à cocher */}
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold text-slate-800 border-b border-stone-200 pb-2">
