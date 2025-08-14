@@ -41,9 +41,9 @@ const Header = () => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`text-lg font-medium transition-colors hover:text-amber-700 ${
+                className={`text-lg font-medium transition-colors hover:text-teal-700 ${
                   isActive(item.href) 
-                    ? 'text-amber-700 border-b-2 border-amber-700 pb-1' 
+                    ? 'text-teal-700 border-b-2 border-teal-700 pb-1' 
                     : 'text-slate-700'
                 }`}
               >
