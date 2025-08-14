@@ -581,6 +581,32 @@ class AbrisiaAPITester:
         
         return True
     
+    def test_cms_flow(self):
+        """Test du flow CMS complet"""
+        print("\n=== TEST FLOW CMS ===")
+        
+        # Test récupération des paramètres du site
+        settings = self.test_cms_site_settings()
+        if settings is None:
+            return False
+        
+        # Test récupération des services
+        services = self.test_cms_services()
+        if services is None:
+            return False
+        
+        # Test upload de média
+        upload_result = self.test_cms_upload_media()
+        if upload_result is None:
+            return False
+        
+        # Test gestion des médias
+        media_files = self.test_cms_media_management()
+        if media_files is None:
+            return False
+        
+        return True
+    
     def run_all_tests(self):
         """Exécuter tous les tests"""
         print(f"🚀 Début des tests pour l'API Abrisia Plan")
