@@ -314,7 +314,7 @@ class AbrisiaAPITester:
             headers = {"Authorization": f"Bearer {self.token}"}
             update_data = {
                 "status": "En cours",
-                "assigned_to": "Marc Dessinateur"
+                "assigned_designer": "Marc Dessinateur"  # Changed from assigned_to to assigned_designer
             }
             
             response = self.session.put(
