@@ -257,7 +257,7 @@ const Devis = () => {
                     Aidez-nous à mieux comprendre vos attentes
                   </h3>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-6">
                     {/* Type de représentation souhaité */}
                     <div className="space-y-3">
                       <h4 className="font-medium text-slate-700">Que recherchez-vous principalement ?</h4>
@@ -297,37 +297,6 @@ const Devis = () => {
                             <span className="text-sm font-medium text-slate-700">Les deux (technique + visuel)</span>
                             <p className="text-xs text-slate-600">Plans de construction ET visualisations</p>
                           </div>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* Préférences matériaux */}
-                    <div className="space-y-3">
-                      <h4 className="font-medium text-slate-700">Préférences de matériaux/technologies</h4>
-                      <div className="space-y-2">
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
-                          <span className="text-sm text-slate-700">Bois local du Québec</span>
-                        </label>
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
-                          <span className="text-sm text-slate-700">Construction écologique/durable</span>
-                        </label>
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
-                          <span className="text-sm text-slate-700">Isolation haute performance</span>
-                        </label>
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
-                          <span className="text-sm text-slate-700">Chauffage géothermique/pompe à chaleur</span>
-                        </label>
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
-                          <span className="text-sm text-slate-700">Récupération eau de pluie</span>
-                        </label>
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
-                          <span className="text-sm text-slate-700">Panneaux solaires</span>
                         </label>
                       </div>
                     </div>
