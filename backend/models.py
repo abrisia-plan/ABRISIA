@@ -107,6 +107,43 @@ class LoginResponse(BaseModel):
     token: str
     user: UserResponse
 
+# ========== MODÈLES DESIGNERS ==========
+class Designer(BaseDocument):
+    name: str
+    email: EmailStr
+    phone: Optional[str] = None
+    specialties: List[str] = []
+    experience_years: Optional[int] = None
+    bio: Optional[str] = None
+    profile_image: Optional[str] = None
+    is_active: bool = True
+    portfolio_items: List[str] = []  # URLs vers portfolio
+    hourly_rate: Optional[float] = None
+    availability_status: str = "available"  # "available", "busy", "unavailable"
+
+class DesignerCreate(BaseModel):
+    name: str
+    email: EmailStr
+    phone: Optional[str] = None
+    specialties: List[str] = []
+    experience_years: Optional[int] = None
+    bio: Optional[str] = None
+    profile_image: Optional[str] = None
+    hourly_rate: Optional[float] = None
+    availability_status: str = "available"
+
+class DesignerUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    phone: Optional[str] = None
+    specialties: Optional[List[str]] = None
+    experience_years: Optional[int] = None
+    bio: Optional[str] = None
+    profile_image: Optional[str] = None
+    is_active: Optional[bool] = None
+    hourly_rate: Optional[float] = None
+    availability_status: Optional[str] = None
+
 # ========== MODÈLES E-COMMERCE - PLANS À VENDRE ==========
 class Product(BaseDocument):
     name: str
