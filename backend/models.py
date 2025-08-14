@@ -82,6 +82,16 @@ class UserResponse(BaseModel):
     specialties: List[str] = []
     bio: Optional[str] = None
 
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    company: Optional[str] = None
+    specialties: Optional[List[str]] = None
+    bio: Optional[str] = None
+    is_active: Optional[bool] = None
+    is_approved: Optional[bool] = None
+    role: Optional[str] = None
+
 class AdminProfile(BaseModel):
     name: str
     bio: str
