@@ -315,17 +315,71 @@ backend:
           agent: "testing"
           comment: "Route POST /api/admin/cms/upload-media fonctionne parfaitement. Upload d'image test réussi avec génération UUID unique, validation des extensions (.png accepté), sauvegarde dans /app/uploads/, enregistrement en DB avec métadonnées complètes. Retourne fileUrl et fileId"
 
-  - task: "CMS Media Management API"
+  - task: "New Devis Options Testing - Extension/Verrière"
     implemented: true
     working: true
-    file: "/app/backend/routes/cms.py"
+    file: "/app/backend/routes/devis.py"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
           agent: "testing"
-          comment: "Route GET /api/admin/cms/media fonctionne correctement. Récupération des fichiers média avec authentification admin. Retourne 1 fichier uploadé lors du test avec métadonnées complètes : filename, originalName, filePath, fileSize, mimeType, category, uploadedBy, createdAt"
+          comment: "Test de soumission de devis avec nouvelles options (extension/verrière, ébénisterie sur mesure, accompagnement autoconstruction) réussi. API accepte les nouvelles planOptions et traite correctement les données. ID généré: 689d82c6260b21b4ca55881d"
+
+  - task: "New Devis Options Testing - Structures Extérieures"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/devis.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Test de soumission de devis avec structures extérieures (abris/garage/gazebo/galerie/coin cuisine) réussi. API traite correctement toutes les nouvelles options. ID généré: 689d82c7260b21b4ca55881e"
+
+  - task: "Devis Status Update Fix"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/devis.py"
+    stuck_count: 1
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "Erreur 'DevisUpdate' object has no attribute 'assigned_to' - problème de mapping entre modèle et route"
+        - working: true
+          agent: "testing"
+          comment: "Corrigé: Mise à jour du mapping assigned_designer vers assigned_to dans la route de mise à jour du statut. Test de mise à jour de statut maintenant fonctionnel"
+
+  - task: "Dashboard Stats Model Fix"
+    implemented: true
+    working: true
+    file: "/app/backend/models.py"
+    stuck_count: 1
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+        - working: false
+          agent: "testing"
+          comment: "Erreur Pydantic - DashboardStats model avait trop de champs requis non fournis par l'endpoint /admin/stats"
+        - working: true
+          agent: "testing"
+          comment: "Corrigé: Ajout du modèle SimpleStats pour correspondre aux données réellement retournées par l'endpoint. Statistiques maintenant fonctionnelles"
+
+  - task: "Complete Devis Flow with New Options"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/devis.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+          agent: "testing"
+          comment: "Flow complet client-admin testé avec succès: soumission devis classique + nouvelles options + structures extérieures → récupération admin → mise à jour statut → statistiques. Toutes les nouvelles fonctionnalités opérationnelles"
 
 frontend:
   # Frontend testing not performed as per instructions
