@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle, Star } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -7,6 +7,60 @@ import { services, approaches, processSteps, inspirationProjects, testimonials }
 import * as Icons from 'lucide-react';
 
 const Home = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState({});
+
+  // Rotation automatique des images par catégorie toutes les 5 secondes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const categories = getUniqueCategories();
+      const newIndexes = {};
+      
+      categories.forEach(category => {
+        const categoryProjects = inspirationProjects.filter(p => p.category === category);
+        const currentIndex = currentImageIndex[category] || 0;
+        newIndexes[category] = (currentIndex + 1) % categoryProjects.length;
+      });
+      
+      setCurrentImageIndex(newIndexes);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [currentImageIndex]);
+
+  // Obtenir les catégories uniques
+  const getUniqueCategories = () => {
+    return [...new Set(inspirationProjects.map(p => p.category))];
+  };
+
+  // Obtenir un projet par catégorie (avec rotation)
+  const getOneProjectPerCategory = () => {
+    const categories = getUniqueCategories();
+    return categories.map(category => {
+      const categoryProjects = inspirationProjects.filter(p => p.category === category);
+      const index = currentImageIndex[category] || 0;
+      return categoryProjects[index];
+    });
+  };
+
+  // Obtenir le nombre de projets par catégorie
+  const getProjectCountByCategory = (category) => {
+    return inspirationProjects.filter(p => p.category === category).length;
+  };
+
+  // Descriptions des catégories
+  const getCategoryDescription = (category) => {
+    const descriptions = {
+      "Maison unifamiliale": "Résidences familiales complètes avec toutes commodités",
+      "Chalet": "Refuges quatre saisons en harmonie avec la nature",
+      "Mini-maison": "Habitations compactes optimisées et fonctionnelles",
+      "Extensions verrières solarium": "Agrandissements lumineux et espaces de vie vitrés",
+      "Autres dessins (ébénisterie)": "Mobilier sur mesure et aménagements personnalisés",
+      "Dessins techniques": "Plans techniques spécialisés (plomberie, électricité, ventilation)",
+      "Dessins architecturaux": "Plans complets et détaillés pour construction"
+    };
+    return descriptions[category] || "Réalisations professionnelles sur mesure";
+  };
+
   const getIcon = (iconName) => {
     const IconComponent = Icons[iconName] || Icons.Circle;
     return <IconComponent className="w-8 h-8 text-teal-800" />;
