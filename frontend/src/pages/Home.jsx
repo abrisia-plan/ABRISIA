@@ -50,15 +50,15 @@ const Home = () => {
   // Descriptions des catégories
   const getCategoryDescription = (category) => {
     const descriptions = {
-      "Maison unifamiliale": "Résidences familiales complètes avec toutes commodités",
-      "Chalet": "Refuges quatre saisons en harmonie avec la nature", 
-      "Mini-maison": "Habitations compactes optimisées et fonctionnelles",
-      "Extensions verrières solarium": "Agrandissements lumineux et espaces de vie vitrés",
-      "Autres dessins (ébénisterie)": "Mobilier sur mesure et aménagements personnalisés",
-      "Dessins techniques": "Plans de fabrication/construction avec dimensions précises, matériaux, détails constructifs pour entrepreneurs",
-      "Dessins architecturaux": "Plans de conception esthétique avec disposition des pièces, style, présentation visuelle pour clients et permis"
+      "Maison unifamiliale": "Inspirations pour résidences familiales complètes",
+      "Chalet": "Idées pour refuges et chalets quatre saisons", 
+      "Mini-maison": "Concepts d'habitations compactes et optimisées",
+      "Extensions verrières solarium": "Inspirations d'agrandissements lumineux",
+      "Autres dessins (ébénisterie)": "Idées d'aménagements et mobilier personnalisé",
+      "Dessins techniques": "Exemples de plans fabrication avec détails constructifs",
+      "Dessins architecturaux": "Exemples de plans présentation et conception esthétique"
     };
-    return descriptions[category] || "Réalisations professionnelles sur mesure";
+    return descriptions[category] || "Inspirations pour vos projets";
   };
 
   const getIcon = (iconName) => {
