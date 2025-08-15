@@ -20,6 +20,14 @@ const Inspiration = () => {
   const [categories, setCategories] = useState(['Tous']);
   const [loading, setLoading] = useState(true);
 
+  // Effet pour détecter la catégorie depuis l'URL
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get('category');
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     loadData();
   }, []);
