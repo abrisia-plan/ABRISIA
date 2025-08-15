@@ -426,45 +426,59 @@ export const inspirationProjects = [
   // 📁 6. DESSINS TECHNIQUES (PLOMBERIE, ÉLECTRICITÉ, VENTILATION)
   {
     id: 21,
-    title: "Plan technique plomberie détaillé",
+    title: "Plan drainage sanitaire et alimentation eau",
     category: "Dessins techniques",
-    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800", 
-    description: "Plans techniques construction avec dimensions précises, matériaux, normes",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/y884rda4_Capture%20d%E2%80%99%C3%A9cran%202025-08-15%20190051.png", 
+    description: "Plans techniques avec dimensions précises, matériaux, normes pour entrepreneurs",
     details: [
-      "Dimensions exactes au millimètre",
-      "Spécifications matériaux et fixations", 
-      "Détails constructifs jonctions/ancrages",
-      "Conformité normes CSA/ISO pour entrepreneurs"
+      "Légende complète avec symboles normalisés",
+      "Tableau spécifications matériaux détaillé", 
+      "Plan drainage sanitaire, pluvial et eau domestique",
+      "Conformité normes pour réalisation sur chantier"
     ],
-    dimensions: "Plans fabrication/construction précis"
+    dimensions: "Plans techniques de fabrication/construction"
   },
   {
     id: 22,
-    title: "Schéma électrique résidentiel technique",
+    title: "Plan drainage sanitaire et pluvial - Vue S-S",
     category: "Dessins techniques",
-    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800",
-    description: "Installation électrique avec toutes spécifications pour réalisation",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/apzkqods_Capture%20d%E2%80%99%C3%A9cran%202025-08-15%20190128.png",
+    description: "Plan technique coté avec positionnement exact équipements sanitaires",
     details: [
-      "Schémas filaires détaillés et cotés",
-      "Références précises composants électriques", 
-      "Sections câbles et protection normalisées",
-      "Instructions montage pour électriciens"
+      "Cotations précises pour installation",
+      "Positionnement exact appareils sanitaires", 
+      "Tracé réseaux drainage et pluvial",
+      "Instructions techniques pour plombiers"
     ],
-    dimensions: "Plans techniques électriques complets"
+    dimensions: "Plans techniques installation précise"
   },
   {
     id: 23,
-    title: "Système ventilation - plans techniques", 
+    title: "Plan structural avec grille de colonnes", 
     category: "Dessins techniques",
-    image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800",
-    description: "Plans ventilation mécanique avec détails construction",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/3x81n40h_Capture%20d%E2%80%99%C3%A9cran%202025-08-15%20190231.png",
+    description: "Plans structuraux avec dimensions exactes et grille de références",
     details: [
-      "Dimensionnement conduits et débits précis",
-      "Spécifications techniques équipements", 
-      "Détails assemblage et supports",
-      "Instructions installation pour techniciens"
+      "Grille de colonnes avec repères précis",
+      "Cotations structurelles au millimètre", 
+      "Détails assemblages et fixations",
+      "Spécifications pour ingénieurs et entrepreneurs"
     ],
-    dimensions: "Plans techniques ventilation détaillés"
+    dimensions: "Plans techniques structurels détaillés"
+  },
+  {
+    id: 24,
+    title: "Coupes techniques fondations - Détails constructifs",
+    category: "Dessins techniques",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/ss0vrxf6_Capture%20d%E2%80%99%C3%A9cran%202025-08-15%20190256.png",
+    description: "Coupes techniques avec spécifications matériaux et assemblages",
+    details: [
+      "Coupes A et B avec détails fondations",
+      "Spécifications isolations et matériaux", 
+      "Dimensions précises et tolérances",
+      "Instructions assemblage pour construction"
+    ],
+    dimensions: "Détails techniques constructifs"
   },
 
   // 📁 7. DESSINS ARCHITECTURAUX (PLANS CONCEPTION/ESTHÉTIQUE)
