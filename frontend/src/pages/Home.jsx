@@ -191,10 +191,10 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-              Notre expertise par catégorie
+              Inspirations par catégorie
             </h2>
             <p className="text-xl text-slate-600 mb-8">
-              Découvrez nos réalisations dans chaque domaine de spécialisation
+              Découvrez des idées et inspirations classées par type de projet
             </p>
           </div>
 
