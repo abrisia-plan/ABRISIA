@@ -207,7 +207,11 @@ const Home = () => {
           {/* Grille des catégories avec une image rotative par catégorie */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
             {getOneProjectPerCategory().map((project) => (
-              <Card key={project.category} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer bg-white">
+              <Card 
+                key={project.category} 
+                className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer bg-white"
+                onClick={() => handleCategoryClick(project.category)}
+              >
                 <div className="relative overflow-hidden h-48">
                   <img
                     src={project.image}
