@@ -1,14 +1,20 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MapPin, Phone, Mail, Home as HomeIcon } from 'lucide-react';
 
 const Footer = () => {
-  // Fonction pour remonter en haut de la page
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+  const navigate = useNavigate();
+
+  // Fonction pour naviguer et remonter en haut
+  const handleNavigation = (path) => {
+    navigate(path);
+    // Utiliser setTimeout pour s'assurer que la navigation est terminée
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }, 100);
   };
 
   return (
