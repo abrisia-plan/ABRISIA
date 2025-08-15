@@ -483,46 +483,74 @@ export const inspirationProjects = [
 
   // 📁 7. DESSINS ARCHITECTURAUX (PLANS CONCEPTION/ESTHÉTIQUE)
   {
-    id: 24,
-    title: "Plans architecturaux maison familiale",
-    category: "Dessins architecturaux", 
-    image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800",
-    description: "Plans de conception esthétique pour présentation client et permis",
-    details: [
-      "Plans étages avec disposition pièces étiquetées",
-      "Élévations montrant style et esthétique",
-      "Coupes avec hauteurs sous plafond",
-      "Présentation visuelle claire pour non-techniciens"
-    ],
-    dimensions: "Plans conception architecturale"
-  },
-  {
     id: 25,
-    title: "Plans architecturaux chalet bois",
-    category: "Dessins architecturaux",
-    image: "https://images.unsplash.com/photo-1503594384566-461fe158e797?w=800",
-    description: "Conception esthétique chalet avec ambiance et style", 
+    title: "Plans architecturaux résidence - Présentation client",
+    category: "Dessins architecturaux", 
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/8o0lr81z_Capture%20d%E2%80%99%C3%A9cran%202025-08-15%20185559.png",
+    description: "Plans de conception esthétique pour présentation et approbation client",
     details: [
-      "Plans montrant forme et volumes",
-      "Élévations avec matériaux et textures", 
-      "Aménagement paysager intégré",
-      "Vision globale du projet pour approbation"
+      "Plans étages avec disposition pièces claire",
+      "Présentation visuelle 'parlante' pour non-techniciens",
+      "Vision globale du projet et circulation",
+      "Communication conception et esthétique"
     ],
     dimensions: "Plans présentation architecturale"
   },
   {
     id: 26,
-    title: "Plans architecturaux mini-maison design",
+    title: "Élévations architecturales - Style et esthétique",
     category: "Dessins architecturaux",
-    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
-    description: "Conception visuelle mini-maison pour communication client",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/p6g3k585_Capture%20d%E2%80%99%C3%A9cran%202025-08-15%20190835.png",
+    description: "Élévations montrant forme, style et matériaux pour validation", 
     details: [
-      "Disposition optimisée des espaces de vie",
-      "Présentation esthétique et ambiance", 
-      "Coupes montrant aménagement vertical",
-      "Plans 'parlants' pour validation concept"
+      "Élévations avec indication matériaux",
+      "Représentation style architectural", 
+      "Présentation esthétique du projet",
+      "Validation concept avec client/autorités"
     ],
-    dimensions: "Plans conception architecturale mini-maison"
+    dimensions: "Élévations conception architecturale"
+  },
+  {
+    id: 27,
+    title: "Plans de présentation - Concept global",
+    category: "Dessins architecturaux",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/l6lg9um1_Capture%20d%E2%80%99%C3%A9cran%202025-08-15%20191157.png",
+    description: "Présentation architecturale complète pour compréhension projet",
+    details: [
+      "Plans lisibles avec ambiance et volumes",
+      "Compréhension globale de l'espace", 
+      "Présentation claire pour permis construction",
+      "Communication visuelle du concept"
+    ],
+    dimensions: "Plans concept architectural"
+  },
+  {
+    id: 28,
+    title: "Rendus architecturaux 3D - Présentation finale",
+    category: "Dessins architecturaux", 
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/a25uh1yy_images.jpg",
+    description: "Rendu 3D architectural pour visualisation finale du projet",
+    details: [
+      "Visualisation 3D réaliste du projet",
+      "Présentation finale pour validation client",
+      "Communication esthétique et ambiance", 
+      "Outil de vente et présentation"
+    ],
+    dimensions: "Rendu architectural 3D"
+  },
+  {
+    id: 29,
+    title: "Plan architectural complet - Documentation projet",
+    category: "Dessins architecturaux",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/n6h155q2_PLAN%20ARCHITECK%20TURAL.png",
+    description: "Documentation architecturale complète pour permis et présentation",
+    details: [
+      "Plans, élévations et coupes architecturales",
+      "Documentation pour autorités municipales", 
+      "Présentation complète du concept",
+      "Compréhension globale du projet"
+    ],
+    dimensions: "Documentation architecturale complète"
   }
 ];
 
