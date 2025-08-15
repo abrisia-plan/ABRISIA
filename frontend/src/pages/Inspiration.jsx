@@ -7,7 +7,7 @@ import { Eye, ArrowRight, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { projectService, handleApiError } from '../services/api';
 import { useToast } from '../hooks/use-toast';
-import { faqItems } from '../data/mock';
+import { faqItems, inspirationProjects } from '../data/mock';
 
 const Inspiration = () => {
   const { toast } = useToast();
