@@ -55,8 +55,8 @@ const Home = () => {
       "Mini-maison": "Concepts d'habitations compactes et optimisées",
       "Extensions verrières solarium": "Inspirations d'agrandissements lumineux",
       "Autres dessins (ébénisterie)": "Idées d'aménagements et mobilier personnalisé",
-      "Dessins techniques": "Exemples de plans fabrication avec détails constructifs",
-      "Dessins architecturaux": "Exemples de plans présentation et conception esthétique"
+      "Dessins techniques": "Plans de fabrication/construction avec dimensions précises, matériaux, détails constructifs pour entrepreneurs",
+      "Dessins architecturaux": "Plans de conception esthétique avec disposition des pièces, style, présentation visuelle pour clients et permis"
     };
     return descriptions[category] || "Inspirations pour vos projets";
   };
