@@ -62,6 +62,11 @@ const Home = () => {
     return descriptions[category] || "Inspirations pour vos projets";
   };
 
+  // Navigation vers catégorie spécifique
+  const handleCategoryClick = (category) => {
+    navigate(`/inspiration?category=${encodeURIComponent(category)}`);
+  };
+
   const getIcon = (iconName) => {
     const IconComponent = Icons[iconName] || Icons.Circle;
     return <IconComponent className="w-8 h-8 text-teal-800" />;
