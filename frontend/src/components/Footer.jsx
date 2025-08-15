@@ -128,12 +128,18 @@ const Footer = () => {
               <p>&copy; 2025 Abrisia Plan. Tous droits réservés.</p>
             </div>
             <div className="flex space-x-6 text-sm text-slate-400">
-              <Link to="/mentions-legales" onClick={scrollToTop} className="hover:text-green-400 transition-colors">
+              <button 
+                onClick={() => handleNavigation('/mentions-legales')} 
+                className="hover:text-green-400 transition-colors"
+              >
                 Mentions légales
-              </Link>
-              <Link to="/politique-confidentialite" onClick={scrollToTop} className="hover:text-green-400 transition-colors">
+              </button>
+              <button 
+                onClick={() => handleNavigation('/politique-confidentialite')} 
+                className="hover:text-green-400 transition-colors"
+              >
                 Politique de confidentialité
-              </Link>
+              </button>
             </div>
           </div>
           
