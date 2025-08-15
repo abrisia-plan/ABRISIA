@@ -23,7 +23,7 @@ const Inspiration = () => {
   }, []);
 
   useEffect(() => {
-    loadProjects();
+    loadProjectsLocal();
   }, [selectedCategory]);
 
   const loadData = async () => {
