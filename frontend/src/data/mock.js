@@ -426,89 +426,89 @@ export const inspirationProjects = [
   // 📁 6. DESSINS TECHNIQUES (PLOMBERIE, ÉLECTRICITÉ, VENTILATION)
   {
     id: 21,
-    title: "Plan technique plomberie",
+    title: "Plan technique plomberie détaillé",
     category: "Dessins techniques",
     image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800", 
-    description: "Plans techniques installation plomberie complète",
+    description: "Plans techniques construction avec dimensions précises, matériaux, normes",
     details: [
-      "Évacuation eaux usées optimisée",
-      "Alimentation eau froide/chaude",
-      "Positionnement appareils sanitaires",
-      "Normes québécoises respectées"
+      "Dimensions exactes au millimètre",
+      "Spécifications matériaux et fixations", 
+      "Détails constructifs jonctions/ancrages",
+      "Conformité normes CSA/ISO pour entrepreneurs"
     ],
-    dimensions: "Plans techniques détaillés"
+    dimensions: "Plans fabrication/construction précis"
   },
   {
     id: 22,
-    title: "Schéma électrique résidentiel",
+    title: "Schéma électrique résidentiel technique",
     category: "Dessins techniques",
     image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800",
-    description: "Installation électrique complète résidence",
+    description: "Installation électrique avec toutes spécifications pour réalisation",
     details: [
-      "Panneau électrique dimensionné",
-      "Circuits spécialisés cuisine/SDB", 
-      "Éclairage et prises optimisés",
-      "Conformité Code électrique"
+      "Schémas filaires détaillés et cotés",
+      "Références précises composants électriques", 
+      "Sections câbles et protection normalisées",
+      "Instructions montage pour électriciens"
     ],
-    dimensions: "Schémas électriques complets"
+    dimensions: "Plans techniques électriques complets"
   },
   {
     id: 23,
-    title: "Système ventilation mécanique", 
+    title: "Système ventilation - plans techniques", 
     category: "Dessins techniques",
     image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800",
-    description: "Plans ventilation mécanique contrôlée",
+    description: "Plans ventilation mécanique avec détails construction",
     details: [
-      "VMC double flux efficace",
-      "Récupération chaleur optimisée",
-      "Distribution air zones habitables", 
-      "Filtration air entrant"
+      "Dimensionnement conduits et débits précis",
+      "Spécifications techniques équipements", 
+      "Détails assemblage et supports",
+      "Instructions installation pour techniciens"
     ],
-    dimensions: "Plans ventilation détaillés"
+    dimensions: "Plans techniques ventilation détaillés"
   },
 
-  // 📁 7. DESSINS ARCHITECTURAUX (PLANS MAISONS/BÂTISSES)
+  // 📁 7. DESSINS ARCHITECTURAUX (PLANS CONCEPTION/ESTHÉTIQUE)
   {
     id: 24,
-    title: "Plans architecturaux maison 2 niveaux",
+    title: "Plans architecturaux maison familiale",
     category: "Dessins architecturaux", 
     image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800",
-    description: "Plans complets maison résidentielle",
+    description: "Plans de conception esthétique pour présentation client et permis",
     details: [
-      "Plans étages et fondations",
-      "Élévations quatre façades",
-      "Coupes transversales détaillées",
-      "Conformité réglementaire assurée"
+      "Plans étages avec disposition pièces étiquetées",
+      "Élévations montrant style et esthétique",
+      "Coupes avec hauteurs sous plafond",
+      "Présentation visuelle claire pour non-techniciens"
     ],
-    dimensions: "Jeu plans complet"
+    dimensions: "Plans conception architecturale"
   },
   {
     id: 25,
-    title: "Plans chalet bois rond",
+    title: "Plans architecturaux chalet bois",
     category: "Dessins architecturaux",
     image: "https://images.unsplash.com/photo-1503594384566-461fe158e797?w=800",
-    description: "Plans spécialisés construction bois rond", 
+    description: "Conception esthétique chalet avec ambiance et style", 
     details: [
-      "Assemblages bois traditionnels",
-      "Détails techniques spécialisés",
-      "Fondations adaptées charge",
-      "Charpente bois massif"
+      "Plans montrant forme et volumes",
+      "Élévations avec matériaux et textures", 
+      "Aménagement paysager intégré",
+      "Vision globale du projet pour approbation"
     ],
-    dimensions: "Plans spécialisés bois rond"
+    dimensions: "Plans présentation architecturale"
   },
   {
     id: 26,
-    title: "Plans mini-maison détaillés",
+    title: "Plans architecturaux mini-maison design",
     category: "Dessins architecturaux",
     image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
-    description: "Architecture mini-maison optimisée",
+    description: "Conception visuelle mini-maison pour communication client",
     details: [
-      "Optimisation espace restreint",
-      "Solutions rangement intégrées", 
-      "Conformité zonage municipal",
-      "Efficacité énergétique maximisée"
+      "Disposition optimisée des espaces de vie",
+      "Présentation esthétique et ambiance", 
+      "Coupes montrant aménagement vertical",
+      "Plans 'parlants' pour validation concept"
     ],
-    dimensions: "Plans architecturaux optimisés"
+    dimensions: "Plans conception architecturale mini-maison"
   }
 ];
 
