@@ -7,6 +7,7 @@ import { services, approaches, processSteps, inspirationProjects, testimonials }
 import * as Icons from 'lucide-react';
 
 const Home = () => {
+  const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState({});
 
   // Rotation automatique des images par catégorie toutes les 5 secondes
