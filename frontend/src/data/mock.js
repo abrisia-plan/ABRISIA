@@ -130,55 +130,159 @@ export const processSteps = [
   }
 ];
 
+// 📁 CATÉGORIES D'INSPIRATION ORGANISÉES
 export const inspirationProjects = [
-  // Mini-maisons et chalets
+  
+  // 📁 1. MAISON UNIFAMILIALE
   {
     id: 1,
-    title: "Mini-maison contemporaine grise",
+    title: "Maison unifamiliale moderne",
+    category: "Maison unifamiliale",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/s3k90xjy_images%20%283%29.jpg",
+    description: "Design contemporain pour famille",
+    details: [
+      "Architecture moderne épurée",
+      "Fenestration optimisée", 
+      "Matériaux contemporains de qualité",
+      "Conception familiale fonctionnelle"
+    ],
+    dimensions: "Maison familiale complète"
+  },
+  {
+    id: 2,
+    title: "Résidence contemporaine avec garage",
+    category: "Maison unifamiliale",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/i5mytm4b_images%20%285%29.jpg",
+    description: "Maison familiale avec garage intégré",
+    details: [
+      "Garage intégré à la structure",
+      "Volumes géométriques modernes", 
+      "Aménagement paysager intégré",
+      "Fonctionnalité et esthétique"
+    ],
+    dimensions: "Résidence avec garage"
+  },
+  {
+    id: 3,
+    title: "Maison traditionnelle moderne",
+    category: "Maison unifamiliale", 
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/krbvxgwr_images%20%286%29.jpg",
+    description: "Synthèse entre tradition et modernité",
+    details: [
+      "Style traditionnel revisité",
+      "Matériaux nobles et durables",
+      "Proportions harmonieuses", 
+      "Confort moderne intégré"
+    ],
+    dimensions: "Maison familiale équilibrée"
+  },
+  {
+    id: 4,
+    title: "Villa contemporaine premium",
+    category: "Maison unifamiliale",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/sjzw3hx6_images%20%287%29.jpg", 
+    description: "Résidence haut de gamme design",
+    details: [
+      "Architecture signature unique",
+      "Finitions haut de gamme",
+      "Espaces de vie généreux",
+      "Intégration site et paysage"
+    ],
+    dimensions: "Villa premium sur mesure"
+  },
+
+  // 📁 2. CHALET
+  {
+    id: 5,
+    title: "Chalet rustique en bois rouge",
+    category: "Chalet",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/kvkh2laf_chalet_bois_rouge_petit_porch.jpg",
+    description: "Style traditionnel avec porche couvert",
+    details: [
+      "Bois naturel rouge traditionnel",
+      "Porche couvert protection intempéries",
+      "Architecture québécoise authentique", 
+      "Intégration harmonieuse environnement"
+    ],
+    dimensions: "Chalet avec porche intégré"
+  },
+  {
+    id: 6, 
+    title: "Cabane forestière moderne",
+    category: "Chalet",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/jsnf18ez_cabane_forestiere_bois_gris.jpg",
+    description: "Design contemporain en harmonie avec la forêt",
+    details: [
+      "Revêtement bois gris naturel",
+      "Architecture épurée et moderne",
+      "Grandes ouvertures vers la nature",
+      "Intégration parfaite site forestier"
+    ],
+    dimensions: "Refuge moderne milieu naturel"
+  },
+  {
+    id: 7,
+    title: "Cabane au bord du lac", 
+    category: "Chalet",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/i6qabgr6_cabane_bois_lac_grandes_fenetres.jpg",
+    description: "Vue panoramique avec grandes fenêtres",
+    details: [
+      "Emplacement privilégié bord de lac",
+      "Fenestration maximale pour la vue", 
+      "Connexion directe avec la nature",
+      "Terrasse intégrée face au lac"
+    ],
+    dimensions: "Positionnement optimal vue lac"
+  },
+
+  // 📁 3. MINI-MAISON
+  {
+    id: 8,
+    title: "Mini-maison contemporaine grise", 
     category: "Mini-maison",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/q82tmegd_maison_chalet_noir_toit_pente.jpg",
-    description: "Design moderne avec toit en pente et finition bi-couleur",
+    description: "Design moderne avec finition bi-couleur",
     details: [
       "Revêtement moderne gris et beige",
-      "Grandes fenêtres pour luminosité maximale",
-      "Toit en pente pour évacuation optimale",
+      "Grandes fenêtres luminosité maximale",
+      "Toit en pente évacuation optimale",
       "Fondations permanentes intégrées"
     ],
     dimensions: "Compact et fonctionnel sur fondations"
   },
   {
-    id: 2,
+    id: 9,
     title: "Tiny house avec mezzanine optimisée",
     category: "Mini-maison",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/s7trs96c_tiny_house_escalier_rangement_chambre_mezzanine.png",
-    description: "Aménagement intérieur intelligent avec mezzanine",
+    description: "Aménagement intérieur intelligent",
     details: [
       "Escalier avec rangements intégrés",
-      "Chambre mezzanine optimisée",
+      "Chambre mezzanine optimisée", 
       "Design intérieur bois et blanc",
-      "Maximisation de l'espace de vie"
+      "Maximisation espace de vie"
     ],
     dimensions: "Aménagement vertical optimisé"
   },
   {
-    id: 3,
+    id: 10,
     title: "Tiny house nomade sur roues",
-    category: "Mini-maison",
+    category: "Mini-maison", 
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/2cvgnces_images%20%281%29.jpg",
-    description: "Mini-maison mobile avec bardage bois naturel",
+    description: "Mini-maison mobile bardage bois naturel",
     details: [
       "Bardage bois naturel résistant",
       "Toit métallique vert écologique",
       "Conception mobile sur châssis",
-      "Fenestration optimisée pour la lumière"
+      "Fenestration optimisée lumière"
     ],
     dimensions: "Format mobile compact"
   },
   {
-    id: 4,
+    id: 11,
     title: "Mini-maison surélevée moderne",
     category: "Mini-maison",
-    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/01mafhae_images%20%282%29.jpg",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/01mafhae_images%20%282%29.jpg", 
     description: "Design contemporain surélevé avec terrasse",
     details: [
       "Structure surélevée pour ventilation",
@@ -189,21 +293,21 @@ export const inspirationProjects = [
     dimensions: "Mini-maison avec terrasse surélevée"
   },
   {
-    id: 5,
+    id: 12,
     title: "Cabane forestière rustique",
     category: "Mini-maison",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/v8qgvnt5_images.jpg",
-    description: "Refuge naturel en harmonie avec l'environnement",
+    description: "Refuge naturel en harmonie environnement", 
     details: [
       "Bardage bois vieilli naturellement",
-      "Intégration parfaite au site forestier",
-      "Terrasse en bois brut",
+      "Intégration parfaite site forestier",
+      "Terrasse en bois brut", 
       "Design minimaliste et authentique"
     ],
     dimensions: "Cabane forestière sur mesure"
   },
   {
-    id: 6,
+    id: 13,
     title: "Studio moderne sur fondations",
     category: "Mini-maison",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/cqnbl3xf_mini_maison-scaled-e159621708054.webp",
@@ -216,68 +320,26 @@ export const inspirationProjects = [
     ],
     dimensions: "Studio moderne sur fondations"
   },
+
+  // 📁 4. EXTENSIONS VERRIÈRES SOLARIUM  
   {
-    id: 7,
-    title: "Chalet rustique en bois rouge",
-    category: "Chalet",
-    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/kvkh2laf_chalet_bois_rouge_petit_porch.jpg",
-    description: "Style traditionnel avec porche d'entrée couvert",
-    details: [
-      "Bois naturel rouge traditionnel",
-      "Porche couvert pour protection intempéries",
-      "Architecture québécoise authentique",
-      "Intégration harmonieuse avec l'environnement"
-    ],
-    dimensions: "Style chalet avec porche intégré"
-  },
-  {
-    id: 8,
-    title: "Cabane forestière moderne",
-    category: "Chalet",
-    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/jsnf18ez_cabane_forestiere_bois_gris.jpg",
-    description: "Design contemporain en harmonie avec la forêt",
-    details: [
-      "Revêtement bois gris naturel",
-      "Architecture épurée et moderne",
-      "Grandes ouvertures vers la nature",
-      "Intégration parfaite au site forestier"
-    ],
-    dimensions: "Refuge moderne en milieu naturel"
-  },
-  {
-    id: 9,
-    title: "Cabane au bord du lac",
-    category: "Chalet",
-    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/i6qabgr6_cabane_bois_lac_grandes_fenetres.jpg",
-    description: "Vue panoramique avec grandes fenêtres",
-    details: [
-      "Emplacement privilégié bord de lac",
-      "Fenestration maximale pour la vue",
-      "Connexion directe avec la nature",
-      "Terrasse intégrée face au lac"
-    ],
-    dimensions: "Positionnement optimal vue lac"
-  },
-  
-  // Extensions et verrières
-  {
-    id: 10,
+    id: 14,
     title: "Extension verrière moderne",
-    category: "Extension/Verrière",
+    category: "Extensions verrières solarium",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/4ar5mplx_images%20%2813%29.jpg",
-    description: "Verrière contemporaine pour agrandissement lumineux",
+    description: "Verrière contemporaine agrandissement lumineux",
     details: [
       "Structure métallique et verre",
       "Luminosité naturelle optimale",
-      "Transition harmonieuse intérieur/extérieur",
+      "Transition harmonieuse intérieur/extérieur", 
       "Agrandissement sans modification majeure"
     ],
     dimensions: "Extension sur mesure"
   },
   {
-    id: 11,
+    id: 15,
     title: "Solarium quatre saisons",
-    category: "Extension/Verrière",
+    category: "Extensions verrières solarium",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/h2cqamx3_images%20%2816%29.jpg",
     description: "Espace de vie supplémentaire vitré",
     details: [
@@ -285,41 +347,41 @@ export const inspirationProjects = [
       "Isolation thermique performante",
       "Connexion avec le jardin",
       "Espace détente et convivialité"
-    ],
+    ], 
     dimensions: "Solarium isolé quatre saisons"
   },
   {
-    id: 12,
-    title: "Verrière d'angle contemporaine",
-    category: "Extension/Verrière",
+    id: 16,
+    title: "Verrière d'angle contemporaine", 
+    category: "Extensions verrières solarium",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/cc2w6v0m_images%20%2810%29.jpg",
     description: "Design architectural avec verrière d'angle",
     details: [
-      "Verrière d'angle maximisant la vue",
-      "Architecture contemporaine épurée",
+      "Verrière d'angle maximisant vue",
+      "Architecture contemporaine épurée", 
       "Intégration structurelle parfaite",
       "Luminosité sur deux orientations"
     ],
     dimensions: "Extension d'angle sur mesure"
   },
   {
-    id: 13,
+    id: 17,
     title: "Extension avec terrasse couverte",
-    category: "Extension/Verrière",
+    category: "Extensions verrières solarium",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/28d3l99i_images%20%2811%29.jpg",
     description: "Agrandissement avec espace extérieur protégé",
     details: [
       "Terrasse couverte intégrée",
-      "Extension de l'espace de vie",
-      "Protection contre les intempéries",
-      "Transition douce vers l'extérieur"
+      "Extension espace de vie",
+      "Protection contre intempéries",
+      "Transition douce vers extérieur"
     ],
     dimensions: "Extension avec terrasse"
   },
   {
-    id: 14,
+    id: 18,
     title: "Verrière style conservatoire",
-    category: "Extension/Verrière",
+    category: "Extensions verrières solarium", 
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/jep4m8pl_images%20%2812%29.jpg",
     description: "Verrière élégante style conservatoire classique",
     details: [
@@ -331,62 +393,122 @@ export const inspirationProjects = [
     dimensions: "Conservatoire sur mesure"
   },
 
-  // Maisons unifamiliales
+  // 📁 5. AUTRES DESSINS (ÉBÉNISTERIE, ETC.)
   {
-    id: 15,
-    title: "Maison unifamiliale moderne",
-    category: "Maison",
-    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/s3k90xjy_images%20%283%29.jpg",
-    description: "Design contemporain pour famille",
+    id: 19,
+    title: "Cuisine sur mesure intégrée",
+    category: "Autres dessins (ébénisterie)",
+    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
+    description: "Conception ébénisterie cuisine personnalisée",
     details: [
-      "Architecture moderne épurée",
-      "Fenestration optimisée",
-      "Matériaux contemporains de qualité",
-      "Conception familiale fonctionnelle"
+      "Mobilier sur mesure intégré",
+      "Bois massif québécois",
+      "Optimisation espace rangement", 
+      "Finitions artisanales"
     ],
-    dimensions: "Maison familiale complète"
+    dimensions: "Ébénisterie sur mesure"
   },
   {
-    id: 16,
-    title: "Résidence contemporaine",
-    category: "Maison",
-    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/i5mytm4b_images%20%285%29.jpg",
-    description: "Maison familiale avec garage intégré",
+    id: 20,
+    title: "Bibliothèque murale design",
+    category: "Autres dessins (ébénisterie)",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800",
+    description: "Aménagement bibliothèque intégrée",
     details: [
-      "Garage intégré à la structure",
-      "Volumes géométriques modernes",
-      "Aménagement paysager intégré",
-      "Fonctionnalité et esthétique"
+      "Structure murale complète",
+      "Étagères ajustables", 
+      "Éclairage LED intégré",
+      "Design contemporain épuré"
     ],
-    dimensions: "Résidence avec garage"
+    dimensions: "Aménagement mural complet"
+  },
+
+  // 📁 6. DESSINS TECHNIQUES (PLOMBERIE, ÉLECTRICITÉ, VENTILATION)
+  {
+    id: 21,
+    title: "Plan technique plomberie",
+    category: "Dessins techniques",
+    image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=800", 
+    description: "Plans techniques installation plomberie complète",
+    details: [
+      "Évacuation eaux usées optimisée",
+      "Alimentation eau froide/chaude",
+      "Positionnement appareils sanitaires",
+      "Normes québécoises respectées"
+    ],
+    dimensions: "Plans techniques détaillés"
   },
   {
-    id: 17,
-    title: "Maison familiale traditionnelle moderne",
-    category: "Maison",
-    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/krbvxgwr_images%20%286%29.jpg",
-    description: "Synthèse entre tradition et modernité",
+    id: 22,
+    title: "Schéma électrique résidentiel",
+    category: "Dessins techniques",
+    image: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800",
+    description: "Installation électrique complète résidence",
     details: [
-      "Style traditionnel revisité",
-      "Matériaux nobles et durables",
-      "Proportions harmonieuses",
-      "Confort moderne intégré"
+      "Panneau électrique dimensionné",
+      "Circuits spécialisés cuisine/SDB", 
+      "Éclairage et prises optimisés",
+      "Conformité Code électrique"
     ],
-    dimensions: "Maison familiale équilibrée"
+    dimensions: "Schémas électriques complets"
   },
   {
-    id: 18,
-    title: "Villa contemporaine premium",
-    category: "Maison",
-    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/sjzw3hx6_images%20%287%29.jpg",
-    description: "Résidence haut de gamme design",
+    id: 23,
+    title: "Système ventilation mécanique", 
+    category: "Dessins techniques",
+    image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800",
+    description: "Plans ventilation mécanique contrôlée",
     details: [
-      "Architecture signature unique",
-      "Finitions haut de gamme",
-      "Espaces de vie généreux",
-      "Intégration site et paysage"
+      "VMC double flux efficace",
+      "Récupération chaleur optimisée",
+      "Distribution air zones habitables", 
+      "Filtration air entrant"
     ],
-    dimensions: "Villa premium sur mesure"
+    dimensions: "Plans ventilation détaillés"
+  },
+
+  // 📁 7. DESSINS ARCHITECTURAUX (PLANS MAISONS/BÂTISSES)
+  {
+    id: 24,
+    title: "Plans architecturaux maison 2 niveaux",
+    category: "Dessins architecturaux", 
+    image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800",
+    description: "Plans complets maison résidentielle",
+    details: [
+      "Plans étages et fondations",
+      "Élévations quatre façades",
+      "Coupes transversales détaillées",
+      "Conformité réglementaire assurée"
+    ],
+    dimensions: "Jeu plans complet"
+  },
+  {
+    id: 25,
+    title: "Plans chalet bois rond",
+    category: "Dessins architecturaux",
+    image: "https://images.unsplash.com/photo-1503594384566-461fe158e797?w=800",
+    description: "Plans spécialisés construction bois rond", 
+    details: [
+      "Assemblages bois traditionnels",
+      "Détails techniques spécialisés",
+      "Fondations adaptées charge",
+      "Charpente bois massif"
+    ],
+    dimensions: "Plans spécialisés bois rond"
+  },
+  {
+    id: 26,
+    title: "Plans mini-maison détaillés",
+    category: "Dessins architecturaux",
+    image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800",
+    description: "Architecture mini-maison optimisée",
+    details: [
+      "Optimisation espace restreint",
+      "Solutions rangement intégrées", 
+      "Conformité zonage municipal",
+      "Efficacité énergétique maximisée"
+    ],
+    dimensions: "Plans architecturaux optimisés"
   }
 ];
 
