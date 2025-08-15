@@ -234,7 +234,7 @@ const Home = () => {
           <div className="text-center">
             <Link to="/inspiration">
               <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full">
-                Voir toute la galerie par catégorie
+                Voir toutes les inspirations par catégorie
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
