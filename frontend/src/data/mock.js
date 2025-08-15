@@ -396,31 +396,31 @@ export const inspirationProjects = [
   // 📁 5. AUTRES DESSINS (ÉBÉNISTERIE, ETC.)
   {
     id: 19,
-    title: "Cuisine sur mesure intégrée",
+    title: "Plans cuisine sur mesure - Élévations A et C",
     category: "Autres dessins (ébénisterie)",
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800",
-    description: "Conception ébénisterie cuisine personnalisée",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/snnyglwu_Capture%20d%E2%80%99%C3%A9cran%202025-08-15%20185734.png",
+    description: "Conception technique ébénisterie cuisine avec élévations détaillées",
     details: [
-      "Mobilier sur mesure intégré",
-      "Bois massif québécois",
-      "Optimisation espace rangement", 
-      "Finitions artisanales"
+      "Élévations techniques A et C cotées",
+      "Positionnement exact armoires et équipements", 
+      "Plans fabrication pour ébéniste",
+      "Dimensions précises et détails assemblage"
     ],
-    dimensions: "Ébénisterie sur mesure"
+    dimensions: "Plans techniques ébénisterie"
   },
   {
     id: 20,
-    title: "Bibliothèque murale design",
+    title: "Plans cuisine sur mesure - Élévation B détaillée",
     category: "Autres dessins (ébénisterie)",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800",
-    description: "Aménagement bibliothèque intégrée",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/69hpxar9_Capture%20d%E2%80%99%C3%A9cran%202025-08-15%20185709.png",
+    description: "Plans techniques fabrication cuisine avec tous détails constructifs",
     details: [
-      "Structure murale complète",
-      "Étagères ajustables", 
-      "Éclairage LED intégré",
-      "Design contemporain épuré"
+      "Élévation B avec cotes complètes",
+      "Détails tiroirs, portes et quincaillerie", 
+      "Spécifications matériaux et finitions",
+      "Instructions montage pour fabrication"
     ],
-    dimensions: "Aménagement mural complet"
+    dimensions: "Plans fabrication ébénisterie détaillés"
   },
 
   // 📁 6. DESSINS TECHNIQUES (PLOMBERIE, ÉLECTRICITÉ, VENTILATION)
