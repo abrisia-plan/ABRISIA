@@ -30,14 +30,12 @@ const Inspiration = () => {
     try {
       setLoading(true);
       
-      // Charger les catégories
-      const categoriesResponse = await projectService.getCategories();
-      if (categoriesResponse.success) {
-        setCategories(categoriesResponse.categories);
-      }
+      // Utilisation des données mock pour les nouvelles images
+      const localCategories = ['Tous', ...new Set(inspirationProjects.map(p => p.category))];
+      setCategories(localCategories);
       
       // Charger les projets initiaux
-      await loadProjects();
+      loadProjectsLocal();
       
     } catch (error) {
       const errorMessage = handleApiError(error);
@@ -51,19 +49,17 @@ const Inspiration = () => {
     }
   };
 
-  const loadProjects = async () => {
+  const loadProjectsLocal = () => {
     try {
-      const response = await projectService.getPublic(selectedCategory);
-      if (response.success) {
-        setProjects(response.data || []);
+      let filteredProjects = inspirationProjects;
+      
+      if (selectedCategory !== 'Tous') {
+        filteredProjects = inspirationProjects.filter(p => p.category === selectedCategory);
       }
+      
+      setProjects(filteredProjects);
     } catch (error) {
-      const errorMessage = handleApiError(error);
-      toast({
-        title: "Erreur",
-        description: errorMessage,
-        variant: "destructive"
-      });
+      console.error('Erreur chargement projets:', error);
     }
   };
 
