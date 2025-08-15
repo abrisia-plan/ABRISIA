@@ -218,6 +218,24 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Section CTA intermédiaire */}
+      <section className="py-16 bg-gradient-to-r from-amber-600 to-orange-500">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Prêt à concrétiser votre projet ?
+          </h2>
+          <p className="text-lg text-amber-100 mb-8 leading-relaxed">
+            Obtenez votre devis personnalisé gratuitement et sans engagement
+          </p>
+          <Link to="/devis">
+            <Button size="lg" className="bg-white text-orange-600 hover:bg-orange-50 px-10 py-4 text-lg font-semibold rounded-full transform hover:scale-105 transition-all duration-300 shadow-lg">
+              Demander un devis gratuit
+              <ArrowRight className="ml-3 h-5 w-5" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section className="py-20 bg-slate-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
