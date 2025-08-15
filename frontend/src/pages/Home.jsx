@@ -51,12 +51,12 @@ const Home = () => {
   const getCategoryDescription = (category) => {
     const descriptions = {
       "Maison unifamiliale": "Résidences familiales complètes avec toutes commodités",
-      "Chalet": "Refuges quatre saisons en harmonie avec la nature",
+      "Chalet": "Refuges quatre saisons en harmonie avec la nature", 
       "Mini-maison": "Habitations compactes optimisées et fonctionnelles",
       "Extensions verrières solarium": "Agrandissements lumineux et espaces de vie vitrés",
       "Autres dessins (ébénisterie)": "Mobilier sur mesure et aménagements personnalisés",
-      "Dessins techniques": "Plans techniques spécialisés (plomberie, électricité, ventilation)",
-      "Dessins architecturaux": "Plans complets et détaillés pour construction"
+      "Dessins techniques": "Plans de fabrication/construction avec dimensions précises, matériaux, détails constructifs pour entrepreneurs",
+      "Dessins architecturaux": "Plans de conception esthétique avec disposition des pièces, style, présentation visuelle pour clients et permis"
     };
     return descriptions[category] || "Réalisations professionnelles sur mesure";
   };
