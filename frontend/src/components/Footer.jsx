@@ -3,6 +3,14 @@ import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Home as HomeIcon } from 'lucide-react';
 
 const Footer = () => {
+  // Fonction pour remonter en haut de la page
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <footer className="bg-slate-800 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
