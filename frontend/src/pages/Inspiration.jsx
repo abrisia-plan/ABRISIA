@@ -12,6 +12,7 @@ import { faqItems, inspirationProjects } from '../data/mock';
 
 const Inspiration = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState('Tous');
   const [selectedProject, setSelectedProject] = useState(null);
   const [expandedFaq, setExpandedFaq] = useState(null);
