@@ -40,11 +40,46 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold text-green-400">Navigation</h3>
             <ul className="space-y-2 text-slate-300">
-              <li><Link to="/" onClick={scrollToTop} className="hover:text-green-400 transition-colors">Accueil</Link></li>
-              <li><Link to="/inspiration" onClick={scrollToTop} className="hover:text-green-400 transition-colors">Inspiration</Link></li>
-              <li><Link to="/devis" onClick={scrollToTop} className="hover:text-green-400 transition-colors">Demander un devis</Link></li>
-              <li><Link to="/about" onClick={scrollToTop} className="hover:text-green-400 transition-colors">À propos</Link></li>
-              <li><Link to="/contact" onClick={scrollToTop} className="hover:text-green-400 transition-colors">Contact</Link></li>
+              <li>
+                <button 
+                  onClick={() => handleNavigation('/')} 
+                  className="hover:text-green-400 transition-colors text-left"
+                >
+                  Accueil
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleNavigation('/inspiration')} 
+                  className="hover:text-green-400 transition-colors text-left"
+                >
+                  Inspiration
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleNavigation('/devis')} 
+                  className="hover:text-green-400 transition-colors text-left"
+                >
+                  Demander un devis
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleNavigation('/about')} 
+                  className="hover:text-green-400 transition-colors text-left"
+                >
+                  À propos
+                </button>
+              </li>
+              <li>
+                <button 
+                  onClick={() => handleNavigation('/contact')} 
+                  className="hover:text-green-400 transition-colors text-left"
+                >
+                  Contact
+                </button>
+              </li>
             </ul>
           </div>
 
