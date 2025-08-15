@@ -132,21 +132,22 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Section Inspiration (teaser) */}
+      {/* Section Inspiration (teaser avec rotation par catégorie) */}
       <section id="inspiration" className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-              Inspiration
+              Notre expertise par catégorie
             </h2>
             <p className="text-xl text-slate-600 mb-8">
-              Nos réalisations et idées pour vos constructions permanentes
+              Découvrez nos réalisations dans chaque domaine de spécialisation
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {inspirationProjects.slice(0, 6).map((project) => (
-              <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer bg-white">
+          {/* Grille des catégories avec une image rotative par catégorie */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            {getOneProjectPerCategory().map((project) => (
+              <Card key={project.category} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer bg-white">
                 <div className="relative overflow-hidden h-48">
                   <img
                     src={project.image}
@@ -158,13 +159,18 @@ const Home = () => {
                       {project.category}
                     </span>
                   </div>
+                  <div className="absolute bottom-4 right-4">
+                    <span className="bg-black/70 text-white px-2 py-1 rounded text-xs">
+                      {getProjectCountByCategory(project.category)} projets
+                    </span>
+                  </div>
                 </div>
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold text-slate-800 mb-2 group-hover:text-teal-800 transition-colors">
-                    {project.title}
+                    {project.category}
                   </h3>
                   <p className="text-slate-600 text-sm leading-relaxed">
-                    {project.description}
+                    {getCategoryDescription(project.category)}
                   </p>
                 </CardContent>
               </Card>
@@ -174,7 +180,7 @@ const Home = () => {
           <div className="text-center">
             <Link to="/inspiration">
               <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full">
-                Voir toute la galerie
+                Voir toute la galerie par catégorie
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
