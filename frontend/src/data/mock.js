@@ -148,6 +148,76 @@ export const inspirationProjects = [
   },
   {
     id: 2,
+    title: "Tiny house avec mezzanine optimisée",
+    category: "Mini-maison",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/s7trs96c_tiny_house_escalier_rangement_chambre_mezzanine.png",
+    description: "Aménagement intérieur intelligent avec mezzanine",
+    details: [
+      "Escalier avec rangements intégrés",
+      "Chambre mezzanine optimisée",
+      "Design intérieur bois et blanc",
+      "Maximisation de l'espace de vie"
+    ],
+    dimensions: "Aménagement vertical optimisé"
+  },
+  {
+    id: 3,
+    title: "Tiny house nomade sur roues",
+    category: "Mini-maison",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/2cvgnces_images%20%281%29.jpg",
+    description: "Mini-maison mobile avec bardage bois naturel",
+    details: [
+      "Bardage bois naturel résistant",
+      "Toit métallique vert écologique",
+      "Conception mobile sur châssis",
+      "Fenestration optimisée pour la lumière"
+    ],
+    dimensions: "Format mobile compact"
+  },
+  {
+    id: 4,
+    title: "Mini-maison surélevée moderne",
+    category: "Mini-maison",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/01mafhae_images%20%282%29.jpg",
+    description: "Design contemporain surélevé avec terrasse",
+    details: [
+      "Structure surélevée pour ventilation",
+      "Terrasse intégrée en bois",
+      "Éclairage chaleureux intérieur/extérieur",
+      "Matériaux mixtes bois et composite"
+    ],
+    dimensions: "Mini-maison avec terrasse surélevée"
+  },
+  {
+    id: 5,
+    title: "Cabane forestière rustique",
+    category: "Mini-maison",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/v8qgvnt5_images.jpg",
+    description: "Refuge naturel en harmonie avec l'environnement",
+    details: [
+      "Bardage bois vieilli naturellement",
+      "Intégration parfaite au site forestier",
+      "Terrasse en bois brut",
+      "Design minimaliste et authentique"
+    ],
+    dimensions: "Cabane forestière sur mesure"
+  },
+  {
+    id: 6,
+    title: "Studio moderne sur fondations",
+    category: "Mini-maison",
+    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/cqnbl3xf_mini_maison-scaled-e159621708054.webp",
+    description: "Architecture contemporaine avec toit plat",
+    details: [
+      "Bardage bois vertical moderne",
+      "Toit plat design contemporain",
+      "Grandes baies vitrées",
+      "Fondations béton permanentes"
+    ],
+    dimensions: "Studio moderne sur fondations"
+  },
+  {
+    id: 7,
     title: "Chalet rustique en bois rouge",
     category: "Chalet",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/kvkh2laf_chalet_bois_rouge_petit_porch.jpg",
@@ -161,7 +231,7 @@ export const inspirationProjects = [
     dimensions: "Style chalet avec porche intégré"
   },
   {
-    id: 3,
+    id: 8,
     title: "Cabane forestière moderne",
     category: "Chalet",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/jsnf18ez_cabane_forestiere_bois_gris.jpg",
@@ -175,21 +245,7 @@ export const inspirationProjects = [
     dimensions: "Refuge moderne en milieu naturel"
   },
   {
-    id: 4,
-    title: "Tiny house avec mezzanine",
-    category: "Mini-maison",
-    image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/s7trs96c_tiny_house_escalier_rangement_chambre_mezzanine.png",
-    description: "Optimisation d'espace avec chambre en mezzanine",
-    details: [
-      "Escalier avec rangements intégrés",
-      "Chambre mezzanine optimisée",
-      "Design intérieur intelligent",
-      "Maximisation de l'espace de vie"
-    ],
-    dimensions: "Aménagement vertical optimisé"
-  },
-  {
-    id: 5,
+    id: 9,
     title: "Cabane au bord du lac",
     category: "Chalet",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/i6qabgr6_cabane_bois_lac_grandes_fenetres.jpg",
@@ -205,7 +261,7 @@ export const inspirationProjects = [
   
   // Extensions et verrières
   {
-    id: 6,
+    id: 10,
     title: "Extension verrière moderne",
     category: "Extension/Verrière",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/4ar5mplx_images%20%2813%29.jpg",
@@ -219,7 +275,7 @@ export const inspirationProjects = [
     dimensions: "Extension sur mesure"
   },
   {
-    id: 7,
+    id: 11,
     title: "Solarium quatre saisons",
     category: "Extension/Verrière",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/h2cqamx3_images%20%2816%29.jpg",
@@ -233,7 +289,7 @@ export const inspirationProjects = [
     dimensions: "Solarium isolé quatre saisons"
   },
   {
-    id: 8,
+    id: 12,
     title: "Verrière d'angle contemporaine",
     category: "Extension/Verrière",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/cc2w6v0m_images%20%2810%29.jpg",
@@ -247,7 +303,7 @@ export const inspirationProjects = [
     dimensions: "Extension d'angle sur mesure"
   },
   {
-    id: 9,
+    id: 13,
     title: "Extension avec terrasse couverte",
     category: "Extension/Verrière",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/28d3l99i_images%20%2811%29.jpg",
@@ -261,7 +317,7 @@ export const inspirationProjects = [
     dimensions: "Extension avec terrasse"
   },
   {
-    id: 10,
+    id: 14,
     title: "Verrière style conservatoire",
     category: "Extension/Verrière",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/jep4m8pl_images%20%2812%29.jpg",
@@ -277,7 +333,7 @@ export const inspirationProjects = [
 
   // Maisons unifamiliales
   {
-    id: 11,
+    id: 15,
     title: "Maison unifamiliale moderne",
     category: "Maison",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/s3k90xjy_images%20%283%29.jpg",
@@ -291,7 +347,7 @@ export const inspirationProjects = [
     dimensions: "Maison familiale complète"
   },
   {
-    id: 12,
+    id: 16,
     title: "Résidence contemporaine",
     category: "Maison",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/i5mytm4b_images%20%285%29.jpg",
@@ -305,7 +361,7 @@ export const inspirationProjects = [
     dimensions: "Résidence avec garage"
   },
   {
-    id: 13,
+    id: 17,
     title: "Maison familiale traditionnelle moderne",
     category: "Maison",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/krbvxgwr_images%20%286%29.jpg",
@@ -319,7 +375,7 @@ export const inspirationProjects = [
     dimensions: "Maison familiale équilibrée"
   },
   {
-    id: 14,
+    id: 18,
     title: "Villa contemporaine premium",
     category: "Maison",
     image: "https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/sjzw3hx6_images%20%287%29.jpg",
