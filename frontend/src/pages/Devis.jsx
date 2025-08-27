@@ -412,7 +412,7 @@ const Devis = () => {
                 conforme au Code du bâtiment du Québec.
               </p>
               <p className="text-sm text-slate-500">
-                <strong>Spécialité :</strong> Constructions permanentes sur fondations jusqu'à 6000m² de plancher total
+                <strong>Spécialité :</strong> Constructions permanentes sur fondations jusqu'à 600m² de plancher total (6000 pi²)
               </p>
             </div>
           </div>
