@@ -20,7 +20,7 @@ export const services = [
   {
     id: 3,
     name: "Maisons résidentielles",
-    description: "Maisons familiales sur fondations jusqu'à 6000m² de plancher total.",
+    description: "Maisons familiales sur fondations jusqu'à 600m² de plancher total (6000 pi²).",
     price: "Plans à partir de 1500$",
     icon: "Building",
     category: "construction"
