@@ -121,7 +121,7 @@ const Home = () => {
             </h2>
             <p className="text-xl text-slate-700 max-w-4xl mx-auto leading-relaxed">
               Dessins techniques professionnels pour constructions permanentes sur fondations. 
-              <strong className="text-teal-800"> Jusqu'à 6000m² de plancher</strong> conformes au Code du bâtiment du Québec.
+              <strong className="text-teal-800"> Jusqu'à 600m² de plancher (6000 pi²)</strong> conformes au Code du bâtiment du Québec.
             </p>
           </div>
 
