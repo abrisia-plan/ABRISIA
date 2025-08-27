@@ -32,7 +32,7 @@ const Footer = () => {
             <p className="text-slate-300 leading-relaxed">
               Des espaces sur mesure, une vie à votre rythme. 
               Spécialistes en dessins de plans pour tous vos projets de construction. 
-              <strong className="text-green-400">Maisons jusqu'à 6000m² de plancher</strong> - accompagnement personnalisé du concept à la réalisation.
+              <strong className="text-green-400">Maisons jusqu'à 600m² de plancher (6000 pi²)</strong> - accompagnement personnalisé du concept à la réalisation.
             </p>
           </div>
 
