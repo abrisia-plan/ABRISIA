@@ -145,7 +145,7 @@ const Footer = () => {
           
           <div className="mt-4 text-center text-sm text-slate-500">
             <p>Fonctionnement flexible — on s'adapte à vos disponibilités • Zone desservie : Province de Québec</p>
-            <p className="mt-1"><strong>Limite légale :</strong> Dessins de maisons jusqu'à 6000m² de plancher (incluant sous-sol et étages)</p>
+            <p className="mt-1"><strong>Limite légale :</strong> Dessins de maisons jusqu'à 600m² de plancher (6000 pi²) incluant sous-sol et étages</p>
           </div>
         </div>
       </div>
