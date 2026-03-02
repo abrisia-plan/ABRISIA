@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Inspiration from "./pages/Inspiration";
+import Kit from "./pages/Kit";
 import Devis from "./pages/Devis";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
@@ -14,6 +15,7 @@ import PolitiqueConfidentialite from "./pages/Legal/PolitiqueConfidentialite";
 import Login from "./pages/Admin/Login";
 import Dashboard from "./pages/Admin/Dashboard";
 import CMS from "./pages/Admin/CMS";
+import AdminPanel from "./pages/Admin/AdminPanel";
 
 function App() {
   return (
@@ -27,6 +29,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/inspiration" element={<Inspiration />} />
+                <Route path="/kit" element={<Kit />} />
                 <Route path="/devis" element={<Devis />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/about" element={<About />} />
@@ -41,6 +44,7 @@ function App() {
           <Route path="/admin" element={<Login />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/cms" element={<CMS />} />
+          <Route path="/admin/panel" element={<AdminPanel />} />
         </Routes>
         <Toaster />
       </BrowserRouter>
