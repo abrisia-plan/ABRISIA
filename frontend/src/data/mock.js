@@ -107,26 +107,26 @@ export const processSteps = [
   {
     id: 1,
     title: "Parlez-nous de votre idée",
-    description: "Consultation gratuite pour comprendre votre vision et vos besoins.",
+    description: "Envoyez-nous votre demande de devis avec vos besoins et vos idées.",
     icon: "MessageCircle"
   },
   {
     id: 2,
     title: "Croquis & devis",
-    description: "Premiers dessins et estimation détaillée de votre projet.",
+    description: "Premier contact, premiers dessins et estimation détaillée. Soumission et dépôt.",
     icon: "PenTool"
   },
   {
     id: 3,
     title: "Plans détaillés",  
-    description: "Réalisation des plans techniques complets et professionnels.",
+    description: "Réalisation des plans complets et professionnels selon vos besoins.",
     icon: "FileText"
   },
   {
     id: 4,
-    title: "Construction & accompagnement",
-    description: "Suivi de chantier et conseils pour la réalisation de votre projet.",
-    icon: "Build"
+    title: "Accompagnement & retours",
+    description: "Conseils et références si besoin. Partagez-nous vos commentaires ! ⭐",
+    icon: "Star"
   }
 ];
 
