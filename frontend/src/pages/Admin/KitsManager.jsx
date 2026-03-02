@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -31,6 +31,12 @@ const KitsManager = () => {
   const [saving, setSaving] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingKit, setEditingKit] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  
+  // Refs pour les inputs file
+  const mainImageRef = useRef(null);
+  const galleryImageRef = useRef(null);
+  
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -154,31 +160,60 @@ const KitsManager = () => {
   };
 
   const handleImageUpload = async (e, isGallery = false) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files?.[0];
+    if (!file) {
+      console.log('No file selected');
+      return;
+    }
+
+    console.log('Uploading file:', file.name);
+    setUploading(true);
 
     try {
-      const response = await projectService.uploadImage(file);
-      if (response.success) {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+      
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`${BACKEND_URL}/api/admin/upload-image`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formDataUpload
+      });
+      
+      const data = await response.json();
+      console.log('Upload response:', data);
+      
+      if (data.success && data.imageUrl) {
         if (isGallery) {
           setFormData(prev => ({
             ...prev,
-            gallery_images: [...prev.gallery_images, response.imageUrl]
+            gallery_images: [...prev.gallery_images, data.imageUrl]
           }));
         } else {
-          handleInputChange('main_image', response.imageUrl);
+          handleInputChange('main_image', data.imageUrl);
         }
         toast({
           title: "✅ Image uploadée",
           description: "L'image a été uploadée avec succès"
         });
+      } else {
+        throw new Error(data.detail || 'Erreur upload');
       }
     } catch (error) {
+      console.error('Upload error:', error);
       toast({
         title: "Erreur",
-        description: handleApiError(error),
+        description: "Impossible d'uploader l'image: " + error.message,
         variant: "destructive"
       });
+    } finally {
+      setUploading(false);
+      // Reset input
+      if (e.target) {
+        e.target.value = '';
+      }
     }
   };
 
@@ -582,17 +617,27 @@ const KitsManager = () => {
                     </Button>
                   </div>
                 ) : (
-                  <div 
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-teal-500 transition-colors"
-                    onClick={() => document.getElementById('main-image-upload').click()}
+                  <label 
+                    htmlFor="main-image-upload-input"
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-teal-500 transition-colors block"
                   >
-                    <Upload className="w-10 h-10 text-gray-400 mx-auto mb-2" />
-                    <p className="text-gray-500">Cliquez pour uploader une image</p>
-                    <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP (max 5MB)</p>
-                  </div>
+                    {uploading ? (
+                      <>
+                        <Loader2 className="w-10 h-10 text-teal-500 mx-auto mb-2 animate-spin" />
+                        <p className="text-teal-600">Upload en cours...</p>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-10 h-10 text-gray-400 mx-auto mb-2" />
+                        <p className="text-gray-500">Cliquez pour uploader une image</p>
+                        <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP (max 5MB)</p>
+                      </>
+                    )}
+                  </label>
                 )}
                 <input
-                  id="main-image-upload"
+                  id="main-image-upload-input"
+                  ref={mainImageRef}
                   type="file"
                   accept="image/*"
                   className="hidden"
@@ -631,15 +676,16 @@ const KitsManager = () => {
                     </Button>
                   </div>
                 ))}
-                <div 
+                <label 
+                  htmlFor="gallery-upload-input"
                   className="border-2 border-dashed border-gray-300 rounded-lg h-20 flex items-center justify-center cursor-pointer hover:border-teal-500"
-                  onClick={() => document.getElementById('gallery-upload').click()}
                 >
                   <Plus className="w-6 h-6 text-gray-400" />
-                </div>
+                </label>
               </div>
               <input
-                id="gallery-upload"
+                id="gallery-upload-input"
+                ref={galleryImageRef}
                 type="file"
                 accept="image/*"
                 className="hidden"
