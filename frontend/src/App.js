@@ -5,6 +5,7 @@ import { Toaster } from "./components/ui/toaster";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import CookieBanner from "./components/CookieBanner";
+import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Inspiration from "./pages/Inspiration";
 import Kit from "./pages/Kit";
@@ -23,6 +24,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Routes publiques avec Header et Footer */}
           <Route path="/*" element={
