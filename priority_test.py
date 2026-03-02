@@ -13,7 +13,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://tiny-house-hub.preview.emergentagent.com"
+BASE_URL = "https://content-control-17.preview.emergentagent.com"
 API_BASE = f"{BASE_URL}/api"
 
 # Données de test
