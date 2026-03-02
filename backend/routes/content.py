@@ -344,3 +344,75 @@ async def update_form_options(
     except Exception as e:
         logger.error(f"❌ Erreur mise à jour options: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============ CATÉGORIES D'INSPIRATION ============
+
+DEFAULT_CATEGORIES = [
+    {"id": "1", "name": "Maison unifamiliale", "description": "Inspirations pour résidences familiales complètes", "icon": "🏠", "is_visible": True, "order": 1},
+    {"id": "2", "name": "Chalet", "description": "Inspirations pour chalets et maisons de campagne", "icon": "🏔️", "is_visible": True, "order": 2},
+    {"id": "3", "name": "Mini-maison", "description": "Inspirations pour petits espaces optimisés", "icon": "🏡", "is_visible": True, "order": 3},
+    {"id": "4", "name": "Extensions verrières solarium", "description": "Inspirations d'agrandissements lumineux", "icon": "🪟", "is_visible": True, "order": 4},
+    {"id": "5", "name": "Autres dessins (ébénisterie)", "description": "Inspirations pour projets d'ébénisterie", "icon": "🪑", "is_visible": False, "order": 5},
+    {"id": "6", "name": "Dessins techniques", "description": "Inspirations pour dessins techniques détaillés", "icon": "📐", "is_visible": False, "order": 6},
+    {"id": "7", "name": "Dessins architecturaux", "description": "Inspirations architecturales", "icon": "🏛️", "is_visible": False, "order": 7},
+]
+
+@router.get("/content/categories")
+async def get_visible_categories():
+    """Obtenir les catégories visibles pour le site"""
+    try:
+        db = get_database()
+        categories = await db.inspiration_categories.find({"is_visible": True}).sort("order", 1).to_list(length=50)
+        
+        if not categories:
+            # Retourner seulement les catégories visibles par défaut
+            return {"success": True, "data": [c for c in DEFAULT_CATEGORIES if c["is_visible"]]}
+        
+        return {"success": True, "data": categories}
+    except Exception as e:
+        logger.error(f"❌ Erreur récupération catégories: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/content/categories")
+async def get_all_categories_admin(current_user: dict = Depends(require_admin)):
+    """Obtenir toutes les catégories pour l'admin"""
+    try:
+        db = get_database()
+        categories = await db.inspiration_categories.find().sort("order", 1).to_list(length=50)
+        
+        if not categories:
+            return {"success": True, "data": DEFAULT_CATEGORIES}
+        
+        return {"success": True, "data": categories}
+    except Exception as e:
+        logger.error(f"❌ Erreur récupération catégories admin: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/admin/content/categories")
+async def update_categories(categories: List[dict], current_user: dict = Depends(require_admin)):
+    """Mettre à jour les catégories d'inspiration"""
+    try:
+        db = get_database()
+        
+        # Supprimer les anciennes
+        await db.inspiration_categories.delete_many({})
+        
+        # Insérer les nouvelles
+        for i, cat in enumerate(categories):
+            cat_data = {
+                "id": cat.get("id") or str(uuid.uuid4()),
+                "name": cat.get("name", ""),
+                "description": cat.get("description", ""),
+                "icon": cat.get("icon", "📁"),
+                "is_visible": cat.get("is_visible", True),
+                "order": i + 1,
+                "updated_at": datetime.utcnow()
+            }
+            await db.inspiration_categories.insert_one(cat_data)
+        
+        logger.info(f"✅ Catégories mises à jour par {current_user['name']}")
+        return {"success": True, "message": "Catégories mises à jour"}
+    except Exception as e:
+        logger.error(f"❌ Erreur mise à jour catégories: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

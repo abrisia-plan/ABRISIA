@@ -27,6 +27,7 @@ import ProjectsManager from './ProjectsManager';
 import KitsManager from './KitsManager';
 import CMSSettings from './CMSSettings';
 import ContentManager from './ContentManager';
+import CategoriesManager from './CategoriesManager';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -147,6 +148,14 @@ const AdminPanel = () => {
               Projets (Inspiration)
             </Button>
             <Button 
+              variant={activeTab === 'categories' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'categories' ? 'bg-teal-600' : ''}`}
+              onClick={() => setActiveTab('categories')}
+            >
+              <ImageIcon className="w-4 h-4 mr-2" />
+              Catégories accueil
+            </Button>
+            <Button 
               variant={activeTab === 'kits' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'kits' ? 'bg-teal-600' : ''}`}
               onClick={() => setActiveTab('kits')}
@@ -203,6 +212,10 @@ const AdminPanel = () => {
               
               {activeTab === 'projects' && (
                 <ProjectsManager />
+              )}
+              
+              {activeTab === 'categories' && (
+                <CategoriesManager />
               )}
               
               {activeTab === 'kits' && (
