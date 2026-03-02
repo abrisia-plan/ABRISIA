@@ -416,3 +416,267 @@ async def update_categories(categories: List[dict], current_user: dict = Depends
     except Exception as e:
         logger.error(f"❌ Erreur mise à jour catégories: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============ TÉMOIGNAGES ============
+
+DEFAULT_TESTIMONIALS = [
+    {
+        "id": "1",
+        "client_name": "Marie Tremblay",
+        "client_location": "Saguenay, QC",
+        "project_type": "Mini-maison",
+        "rating": 5,
+        "comment": "Service exceptionnel ! Les plans étaient exactement ce que nous voulions. Très professionnel et à l'écoute.",
+        "is_visible": True
+    },
+    {
+        "id": "2", 
+        "client_name": "Jean-Pierre Gagnon",
+        "client_location": "Chicoutimi, QC",
+        "project_type": "Chalet",
+        "rating": 5,
+        "comment": "Travail impeccable, les délais ont été respectés et le résultat est magnifique !",
+        "is_visible": True
+    },
+    {
+        "id": "3",
+        "client_name": "Sophie Lavoie",
+        "client_location": "Alma, QC", 
+        "project_type": "Extension",
+        "rating": 4,
+        "comment": "Très satisfaite des plans pour notre solarium. Communication claire tout au long du projet.",
+        "is_visible": True
+    }
+]
+
+@router.get("/content/testimonials")
+async def get_visible_testimonials():
+    """Obtenir les témoignages visibles pour le site"""
+    try:
+        db = get_database()
+        testimonials = await db.testimonials.find({"is_visible": True}).to_list(length=20)
+        
+        if not testimonials:
+            return {"success": True, "data": DEFAULT_TESTIMONIALS}
+        
+        return {"success": True, "data": testimonials}
+    except Exception as e:
+        logger.error(f"❌ Erreur récupération témoignages: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/testimonials")
+async def get_all_testimonials_admin(current_user: dict = Depends(require_admin)):
+    """Obtenir tous les témoignages pour l'admin"""
+    try:
+        db = get_database()
+        testimonials = await db.testimonials.find().to_list(length=100)
+        
+        if not testimonials:
+            return {"success": True, "data": DEFAULT_TESTIMONIALS}
+        
+        return {"success": True, "data": testimonials}
+    except Exception as e:
+        logger.error(f"❌ Erreur récupération témoignages admin: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/admin/testimonials")
+async def create_testimonial(testimonial: dict, current_user: dict = Depends(require_admin)):
+    """Créer un nouveau témoignage"""
+    try:
+        db = get_database()
+        
+        testimonial_data = {
+            "id": str(uuid.uuid4()),
+            "client_name": testimonial.get("client_name", ""),
+            "client_location": testimonial.get("client_location", ""),
+            "project_type": testimonial.get("project_type", ""),
+            "rating": testimonial.get("rating", 5),
+            "comment": testimonial.get("comment", ""),
+            "is_visible": testimonial.get("is_visible", True),
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        
+        await db.testimonials.insert_one(testimonial_data)
+        logger.info(f"✅ Témoignage créé par {current_user['name']}")
+        
+        return {"success": True, "data": testimonial_data, "message": "Témoignage créé"}
+    except Exception as e:
+        logger.error(f"❌ Erreur création témoignage: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/admin/testimonials/{testimonial_id}")
+async def update_testimonial(testimonial_id: str, testimonial: dict, current_user: dict = Depends(require_admin)):
+    """Modifier un témoignage"""
+    try:
+        db = get_database()
+        
+        update_data = {
+            "client_name": testimonial.get("client_name"),
+            "client_location": testimonial.get("client_location"),
+            "project_type": testimonial.get("project_type"),
+            "rating": testimonial.get("rating"),
+            "comment": testimonial.get("comment"),
+            "is_visible": testimonial.get("is_visible"),
+            "updated_at": datetime.utcnow()
+        }
+        
+        result = await db.testimonials.update_one(
+            {"id": testimonial_id},
+            {"$set": update_data}
+        )
+        
+        if result.modified_count == 0:
+            # Essayer de mettre à jour un témoignage par défaut
+            update_data["id"] = testimonial_id
+            update_data["created_at"] = datetime.utcnow()
+            await db.testimonials.insert_one(update_data)
+        
+        logger.info(f"✅ Témoignage modifié: {testimonial_id}")
+        return {"success": True, "message": "Témoignage modifié"}
+    except Exception as e:
+        logger.error(f"❌ Erreur modification témoignage: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/admin/testimonials/{testimonial_id}")
+async def delete_testimonial(testimonial_id: str, current_user: dict = Depends(require_admin)):
+    """Supprimer un témoignage"""
+    try:
+        db = get_database()
+        await db.testimonials.delete_one({"id": testimonial_id})
+        
+        logger.info(f"✅ Témoignage supprimé: {testimonial_id}")
+        return {"success": True, "message": "Témoignage supprimé"}
+    except Exception as e:
+        logger.error(f"❌ Erreur suppression témoignage: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ============ PAGES LÉGALES ============
+
+DEFAULT_LEGAL_PAGES = {
+    "mentions-legales": {
+        "title": "Mentions légales",
+        "content": """
+# Mentions légales
+
+## Éditeur du site
+**Abrisia Plan**
+Service de dessin de plans architecturaux
+Saguenay, Québec, Canada
+
+## Contact
+Pour toute question, veuillez nous contacter via le formulaire de contact du site.
+
+## Hébergement
+Ce site est hébergé par Emergent.
+
+## Propriété intellectuelle
+L'ensemble du contenu de ce site (textes, images, vidéos, logos) est protégé par le droit d'auteur. Toute reproduction, même partielle, est interdite sans autorisation préalable.
+
+## Responsabilité
+Les informations fournies sur ce site le sont à titre indicatif. Abrisia Plan ne saurait être tenu responsable des erreurs ou omissions.
+"""
+    },
+    "politique-confidentialite": {
+        "title": "Politique de confidentialité",
+        "content": """
+# Politique de confidentialité
+
+## Collecte des données
+Nous collectons les informations que vous nous fournissez volontairement via nos formulaires :
+- Nom et prénom
+- Adresse email
+- Numéro de téléphone
+- Informations sur votre projet
+
+## Utilisation des données
+Vos données sont utilisées uniquement pour :
+- Répondre à vos demandes de devis
+- Vous contacter concernant votre projet
+- Améliorer nos services
+
+## Protection des données
+Nous ne vendons ni ne partageons vos informations personnelles avec des tiers, sauf si requis par la loi.
+
+## Cookies
+Ce site utilise des cookies pour améliorer votre expérience de navigation. Vous pouvez les désactiver dans les paramètres de votre navigateur.
+
+## Vos droits
+Vous avez le droit d'accéder, de rectifier ou de supprimer vos données personnelles. Contactez-nous pour exercer ces droits.
+
+## Contact
+Pour toute question concernant cette politique, contactez-nous via notre formulaire.
+"""
+    }
+}
+
+@router.get("/content/legal/{page_id}")
+async def get_legal_page(page_id: str):
+    """Obtenir le contenu d'une page légale"""
+    try:
+        db = get_database()
+        page = await db.legal_pages.find_one({"page_id": page_id})
+        
+        if not page and page_id in DEFAULT_LEGAL_PAGES:
+            return {"success": True, "data": DEFAULT_LEGAL_PAGES[page_id]}
+        
+        if not page:
+            raise HTTPException(status_code=404, detail="Page non trouvée")
+        
+        return {"success": True, "data": {"title": page["title"], "content": page["content"]}}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Erreur récupération page légale: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/legal-pages")
+async def get_all_legal_pages_admin(current_user: dict = Depends(require_admin)):
+    """Obtenir toutes les pages légales pour l'admin"""
+    try:
+        db = get_database()
+        pages = await db.legal_pages.find().to_list(length=10)
+        
+        # Fusionner avec les défauts
+        result = {}
+        for page_id, default_content in DEFAULT_LEGAL_PAGES.items():
+            db_page = next((p for p in pages if p.get("page_id") == page_id), None)
+            if db_page:
+                result[page_id] = {"title": db_page["title"], "content": db_page["content"]}
+            else:
+                result[page_id] = default_content
+        
+        return {"success": True, "data": result}
+    except Exception as e:
+        logger.error(f"❌ Erreur récupération pages légales admin: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/admin/legal-pages/{page_id}")
+async def update_legal_page(page_id: str, content: dict, current_user: dict = Depends(require_admin)):
+    """Mettre à jour une page légale"""
+    try:
+        db = get_database()
+        
+        await db.legal_pages.update_one(
+            {"page_id": page_id},
+            {
+                "$set": {
+                    "title": content.get("title", ""),
+                    "content": content.get("content", ""),
+                    "updated_at": datetime.utcnow(),
+                    "updated_by": current_user["name"]
+                },
+                "$setOnInsert": {
+                    "page_id": page_id,
+                    "created_at": datetime.utcnow()
+                }
+            },
+            upsert=True
+        )
+        
+        logger.info(f"✅ Page légale {page_id} mise à jour par {current_user['name']}")
+        return {"success": True, "message": "Page mise à jour"}
+    except Exception as e:
+        logger.error(f"❌ Erreur mise à jour page légale: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

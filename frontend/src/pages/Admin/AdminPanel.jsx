@@ -28,6 +28,8 @@ import KitsManager from './KitsManager';
 import CMSSettings from './CMSSettings';
 import ContentManager from './ContentManager';
 import CategoriesManager from './CategoriesManager';
+import TestimonialsManager from './TestimonialsManager';
+import LegalPagesManager from './LegalPagesManager';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -180,20 +182,20 @@ const AdminPanel = () => {
               Design & Images
             </Button>
             <Button 
-              variant={activeTab === 'employees' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'employees' ? 'bg-teal-600' : ''}`}
-              onClick={() => setActiveTab('employees')}
-            >
-              <Users className="w-4 h-4 mr-2" />
-              Employés
-            </Button>
-            <Button 
-              variant={activeTab === 'messages' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'messages' ? 'bg-teal-600' : ''}`}
-              onClick={() => setActiveTab('messages')}
+              variant={activeTab === 'testimonials' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'testimonials' ? 'bg-teal-600' : ''}`}
+              onClick={() => setActiveTab('testimonials')}
             >
               <MessageSquare className="w-4 h-4 mr-2" />
-              Messages
+              Témoignages
+            </Button>
+            <Button 
+              variant={activeTab === 'legal' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'legal' ? 'bg-teal-600' : ''}`}
+              onClick={() => setActiveTab('legal')}
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Pages légales
             </Button>
           </nav>
         </aside>
@@ -230,12 +232,12 @@ const AdminPanel = () => {
                 <CMSSettings />
               )}
               
-              {activeTab === 'employees' && (
-                <EmployeesTab />
+              {activeTab === 'testimonials' && (
+                <TestimonialsManager />
               )}
               
-              {activeTab === 'messages' && (
-                <MessagesTab />
+              {activeTab === 'legal' && (
+                <LegalPagesManager />
               )}
             </>
           )}
