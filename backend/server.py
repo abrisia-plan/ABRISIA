@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 # Imports des modules
 from database import connect_to_mongo, close_mongo_connection
-from routes import auth, devis, designers, projects, cms, ecommerce, employees
+from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews
 
 # Lifespan manager pour la DB
 @asynccontextmanager
@@ -68,6 +68,9 @@ api_router.include_router(ecommerce.router)
 
 # Routes employés
 api_router.include_router(employees.router)
+
+# Routes avis/reviews
+api_router.include_router(reviews.router)
 
 # Inclure le router principal dans l'app
 app.include_router(api_router)

@@ -4,10 +4,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "./components/ui/toaster";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import CookieBanner from "./components/CookieBanner";
 import Home from "./pages/Home";
 import Inspiration from "./pages/Inspiration";
 import Kit from "./pages/Kit";
 import Devis from "./pages/Devis";
+import Feedback from "./pages/Feedback";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import MentionsLegales from "./pages/Legal/MentionsLegales";
@@ -31,12 +33,14 @@ function App() {
                 <Route path="/inspiration" element={<Inspiration />} />
                 <Route path="/kit" element={<Kit />} />
                 <Route path="/devis" element={<Devis />} />
+                <Route path="/feedback" element={<Feedback />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/mentions-legales" element={<MentionsLegales />} />
                 <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
               </Routes>
               <Footer />
+              <CookieBanner />
             </>
           } />
           
