@@ -20,6 +20,13 @@ class ServicePrice(BaseModel):
     is_active: bool = True
     order: int = 0
 
+class FormOption(BaseModel):
+    id: Optional[str] = None
+    label: str
+    description: Optional[str] = None
+    is_active: bool = True
+    order: int = 0
+
 class PageContent(BaseModel):
     page_id: str  # "home", "about", "devis", etc.
     section_id: str  # "hero", "services", "process", etc.
@@ -239,4 +246,101 @@ async def update_process_steps(steps: List[dict], current_user: dict = Depends(r
         return {"success": True, "message": "Étapes mises à jour"}
     except Exception as e:
         logger.error(f"❌ Erreur mise à jour étapes: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============ OPTIONS DU FORMULAIRE DE DEVIS ============
+
+# Valeurs par défaut
+DEFAULT_FORM_OPTIONS = {
+    "plan_types": [
+        {"id": "1", "label": "Plans techniques détaillés", "description": "Dimensions précises, détails construction, matériaux spécifiés", "is_active": True, "order": 1},
+        {"id": "2", "label": "Représentation visuelle/esthétique", "description": "Images 3D, croquis, visualisation de votre maison de rêve", "is_active": True, "order": 2},
+        {"id": "3", "label": "Les deux (technique + visuel)", "description": "Plans de construction ET visualisations", "is_active": True, "order": 3},
+    ],
+    "contact_methods": [
+        {"id": "1", "label": "Appel téléphonique", "description": "Discussion directe pour répondre à vos questions", "is_active": True, "order": 1},
+        {"id": "2", "label": "Par courriel écrit", "description": "Devis détaillé par écrit avec documents joints", "is_active": True, "order": 2},
+        {"id": "3", "label": "Vidéoconférence", "description": "Présentation visuelle avec partage d'écran (Zoom, Teams, etc.)", "is_active": True, "order": 3},
+        {"id": "4", "label": "À votre convenance", "description": "Nous vous contacterons selon vos disponibilités", "is_active": True, "order": 4},
+    ],
+    "architectural_styles": [
+        {"id": "1", "label": "Moderne/Contemporain", "description": "", "is_active": True, "order": 1},
+        {"id": "2", "label": "Traditionnel québécois", "description": "", "is_active": True, "order": 2},
+        {"id": "3", "label": "Rustique/Chalet", "description": "", "is_active": True, "order": 3},
+        {"id": "4", "label": "Minimaliste", "description": "", "is_active": True, "order": 4},
+        {"id": "5", "label": "Industriel", "description": "", "is_active": True, "order": 5},
+        {"id": "6", "label": "Scandinave", "description": "", "is_active": True, "order": 6},
+        {"id": "7", "label": "Autre (à préciser)", "description": "", "is_active": True, "order": 7},
+    ]
+}
+
+@router.get("/content/form-options")
+async def get_form_options():
+    """Obtenir les options du formulaire de devis"""
+    try:
+        db = get_database()
+        
+        result = {}
+        for option_type in ["plan_types", "contact_methods", "architectural_styles"]:
+            options = await db.form_options.find({
+                "option_type": option_type, 
+                "is_active": True
+            }).sort("order", 1).to_list(length=50)
+            
+            if not options:
+                result[option_type] = DEFAULT_FORM_OPTIONS[option_type]
+            else:
+                result[option_type] = options
+        
+        return {"success": True, "data": result}
+    except Exception as e:
+        logger.error(f"❌ Erreur récupération options formulaire: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/admin/content/form-options/{option_type}")
+async def get_form_options_admin(option_type: str, current_user: dict = Depends(require_admin)):
+    """Obtenir les options d'un type pour l'admin"""
+    try:
+        db = get_database()
+        options = await db.form_options.find({"option_type": option_type}).sort("order", 1).to_list(length=50)
+        
+        if not options and option_type in DEFAULT_FORM_OPTIONS:
+            return {"success": True, "data": DEFAULT_FORM_OPTIONS[option_type]}
+        
+        return {"success": True, "data": options}
+    except Exception as e:
+        logger.error(f"❌ Erreur récupération options admin: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.put("/admin/content/form-options/{option_type}")
+async def update_form_options(
+    option_type: str, 
+    options: List[dict],
+    current_user: dict = Depends(require_admin)
+):
+    """Mettre à jour les options d'un type de formulaire"""
+    try:
+        db = get_database()
+        
+        # Supprimer les anciennes options de ce type
+        await db.form_options.delete_many({"option_type": option_type})
+        
+        # Insérer les nouvelles
+        for i, opt in enumerate(options):
+            option_data = {
+                "id": opt.get("id") or str(uuid.uuid4()),
+                "option_type": option_type,
+                "label": opt.get("label", ""),
+                "description": opt.get("description", ""),
+                "is_active": opt.get("is_active", True),
+                "order": i + 1,
+                "updated_at": datetime.utcnow()
+            }
+            await db.form_options.insert_one(option_data)
+        
+        logger.info(f"✅ Options {option_type} mises à jour par {current_user['name']}")
+        return {"success": True, "message": f"Options {option_type} mises à jour"}
+    except Exception as e:
+        logger.error(f"❌ Erreur mise à jour options: {e}")
         raise HTTPException(status_code=500, detail=str(e))

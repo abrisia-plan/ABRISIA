@@ -15,10 +15,12 @@ import {
   RefreshCw,
   Plus,
   Trash2,
-  Edit
+  Edit,
+  ClipboardList
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import ServicesManager from './ServicesManager';
+import FormOptionsManager from './FormOptionsManager';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -172,10 +174,14 @@ const ContentManager = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="services" className="flex items-center gap-2">
             <FileText className="w-4 h-4" />
             Services & Prix
+          </TabsTrigger>
+          <TabsTrigger value="form" className="flex items-center gap-2">
+            <ClipboardList className="w-4 h-4" />
+            Formulaire devis
           </TabsTrigger>
           <TabsTrigger value="process" className="flex items-center gap-2">
             <RefreshCw className="w-4 h-4" />
@@ -194,6 +200,11 @@ const ContentManager = () => {
         {/* Onglet Services & Prix */}
         <TabsContent value="services">
           <ServicesManager />
+        </TabsContent>
+
+        {/* Onglet Options du formulaire */}
+        <TabsContent value="form">
+          <FormOptionsManager />
         </TabsContent>
 
         {/* Onglet Étapes du processus */}
