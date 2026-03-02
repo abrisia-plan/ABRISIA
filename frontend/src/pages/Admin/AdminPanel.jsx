@@ -16,7 +16,8 @@ import {
   MessageSquare,
   Palette,
   Loader2,
-  LayoutDashboard
+  LayoutDashboard,
+  DollarSign
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import { devisService, designerService, authService, handleApiError } from '../../services/api';
@@ -25,6 +26,7 @@ import { devisService, designerService, authService, handleApiError } from '../.
 import ProjectsManager from './ProjectsManager';
 import KitsManager from './KitsManager';
 import CMSSettings from './CMSSettings';
+import ContentManager from './ContentManager';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -153,12 +155,20 @@ const AdminPanel = () => {
               Kits de plans
             </Button>
             <Button 
+              variant={activeTab === 'content' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'content' ? 'bg-teal-600' : ''}`}
+              onClick={() => setActiveTab('content')}
+            >
+              <DollarSign className="w-4 h-4 mr-2" />
+              Services & Prix
+            </Button>
+            <Button 
               variant={activeTab === 'cms' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'cms' ? 'bg-teal-600' : ''}`}
               onClick={() => setActiveTab('cms')}
             >
               <Palette className="w-4 h-4 mr-2" />
-              Design & Contenu
+              Design & Images
             </Button>
             <Button 
               variant={activeTab === 'employees' ? 'default' : 'ghost'}
@@ -197,6 +207,10 @@ const AdminPanel = () => {
               
               {activeTab === 'kits' && (
                 <KitsManager />
+              )}
+              
+              {activeTab === 'content' && (
+                <ContentManager />
               )}
               
               {activeTab === 'cms' && (
