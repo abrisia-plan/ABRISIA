@@ -27,6 +27,15 @@ const Kit = () => {
   const [categories, setCategories] = useState(['Tous']);
   const [loading, setLoading] = useState(true);
 
+  // Conversion pi² → m²
+  const sqftToSqm = (surfaceStr) => {
+    if (!surfaceStr) return null;
+    const match = surfaceStr.match(/[\d.]+/);
+    if (!match) return null;
+    const sqft = parseFloat(match[0]);
+    return (sqft * 0.092903).toFixed(1);
+  };
+
   useEffect(() => {
     loadKits();
   }, [selectedCategory]);
@@ -279,6 +288,9 @@ const Kit = () => {
                         <Ruler className="w-6 h-6 text-teal-600 mx-auto mb-2" />
                         <p className="text-sm text-slate-500">Surface</p>
                         <p className="font-semibold text-slate-800">{selectedKit.surfaceArea}</p>
+                        {sqftToSqm(selectedKit.surfaceArea) && (
+                          <p className="text-xs text-gray-400 mt-1">≈ {sqftToSqm(selectedKit.surfaceArea)} m²</p>
+                        )}
                       </div>
                     )}
                     {selectedKit.dimensions && (

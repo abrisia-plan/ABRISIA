@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardContent } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Badge } from '../../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
-import { Switch } from '../../components/ui/switch';
 import { 
   Plus, 
   Edit, 
@@ -18,9 +17,7 @@ import {
   X,
   Upload,
   Loader2,
-  Star,
-  ShoppingCart,
-  DollarSign
+  ShoppingCart
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import { projectService, handleApiError } from '../../services/api';
@@ -37,37 +34,14 @@ const KitsManager = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    long_description: '',
-    category: '',
-    price: '',
-    original_price: '',
-    main_image: '',
-    gallery_images: [],
-    surface_area: '',
     dimensions: '',
+    surface_sqft: '',
     rooms: '',
     includes: [''],
-    file_formats: ['PDF'],
-    slug: '',
-    is_active: true,
-    is_featured: false,
-    difficulty_level: 'intermediate'
+    price: '',
+    main_image: '',
+    gallery_images: []
   });
-
-  const categories = [
-    'Mini-maison',
-    'Chalet',
-    'Maison unifamiliale',
-    'Extension',
-    'Garage/Abri',
-    'Ébénisterie'
-  ];
-
-  const difficultyLevels = [
-    { value: 'beginner', label: 'Débutant' },
-    { value: 'intermediate', label: 'Intermédiaire' },
-    { value: 'advanced', label: 'Avancé' }
-  ];
 
   useEffect(() => {
     loadKits();
@@ -107,33 +81,32 @@ const KitsManager = () => {
       .replace(/(^-|-$)/g, '');
   };
 
+  // Conversion pi² → m²
+  const sqftToSqm = (sqft) => {
+    if (!sqft) return '';
+    const num = parseFloat(sqft);
+    if (isNaN(num)) return '';
+    return (num * 0.092903).toFixed(1);
+  };
+
   const openAddModal = () => {
     setEditingKit(null);
     setFormData({
       name: '',
       description: '',
-      long_description: '',
-      category: categories[0],
-      price: '',
-      original_price: '',
-      main_image: '',
-      gallery_images: [],
-      surface_area: '',
       dimensions: '',
+      surface_sqft: '',
       rooms: '',
       includes: [''],
-      file_formats: ['PDF'],
-      slug: '',
-      is_active: true,
-      is_featured: false,
-      difficulty_level: 'intermediate'
+      price: '',
+      main_image: '',
+      gallery_images: []
     });
     setIsModalOpen(true);
   };
 
   const openEditModal = async (kit) => {
     try {
-      // Récupérer les détails complets du kit
       const response = await fetch(`${BACKEND_URL}/api/products/${kit.id}`);
       const data = await response.json();
       
@@ -143,21 +116,13 @@ const KitsManager = () => {
       setFormData({
         name: kitData.name || '',
         description: kitData.description || '',
-        long_description: kitData.longDescription || '',
-        category: kitData.category || categories[0],
-        price: kitData.price?.toString() || '',
-        original_price: kitData.originalPrice?.toString() || '',
-        main_image: kitData.mainImage || '',
-        gallery_images: kitData.galleryImages || [],
-        surface_area: kitData.surfaceArea || '',
         dimensions: kitData.dimensions || '',
+        surface_sqft: kitData.surfaceArea?.replace(/[^\d.]/g, '') || '',
         rooms: kitData.rooms || '',
         includes: kitData.includes?.length ? kitData.includes : [''],
-        file_formats: kitData.fileFormats || ['PDF'],
-        slug: kitData.slug || '',
-        is_active: kitData.isActive !== false,
-        is_featured: kitData.isFeatured || false,
-        difficulty_level: kitData.difficultyLevel || 'intermediate'
+        price: kitData.price?.toString() || '',
+        main_image: kitData.mainImage || '',
+        gallery_images: kitData.galleryImages || []
       });
       setIsModalOpen(true);
     } catch (error) {
@@ -170,14 +135,7 @@ const KitsManager = () => {
   };
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => {
-      const newData = { ...prev, [field]: value };
-      // Auto-générer le slug si on modifie le nom
-      if (field === 'name' && !editingKit) {
-        newData.slug = generateSlug(value);
-      }
-      return newData;
-    });
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleIncludeChange = (index, value) => {
@@ -195,14 +153,21 @@ const KitsManager = () => {
     setFormData(prev => ({ ...prev, includes: newIncludes.length ? newIncludes : [''] }));
   };
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async (e, isGallery = false) => {
     const file = e.target.files[0];
     if (!file) return;
 
     try {
       const response = await projectService.uploadImage(file);
       if (response.success) {
-        handleInputChange('main_image', response.imageUrl);
+        if (isGallery) {
+          setFormData(prev => ({
+            ...prev,
+            gallery_images: [...prev.gallery_images, response.imageUrl]
+          }));
+        } else {
+          handleInputChange('main_image', response.imageUrl);
+        }
         toast({
           title: "✅ Image uploadée",
           description: "L'image a été uploadée avec succès"
@@ -217,11 +182,18 @@ const KitsManager = () => {
     }
   };
 
+  const removeGalleryImage = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      gallery_images: prev.gallery_images.filter((_, i) => i !== index)
+    }));
+  };
+
   const handleSubmit = async () => {
-    if (!formData.name || !formData.category || !formData.price || !formData.main_image) {
+    if (!formData.name || !formData.price || !formData.main_image) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires (nom, catégorie, prix, image)",
+        description: "Veuillez remplir le nom, le prix et l'image principale",
         variant: "destructive"
       });
       return;
@@ -231,24 +203,27 @@ const KitsManager = () => {
       setSaving(true);
       const token = localStorage.getItem('authToken');
       
+      // Construire surface_area avec conversion
+      const surfaceDisplay = formData.surface_sqft 
+        ? `${formData.surface_sqft} pi²`
+        : '';
+      
       const kitData = {
         name: formData.name,
         description: formData.description,
-        long_description: formData.long_description,
-        category: formData.category,
+        category: 'Kit',
         price: parseFloat(formData.price),
-        original_price: formData.original_price ? parseFloat(formData.original_price) : null,
         main_image: formData.main_image,
         gallery_images: formData.gallery_images.filter(g => g),
-        surface_area: formData.surface_area,
+        surface_area: surfaceDisplay,
         dimensions: formData.dimensions,
         rooms: formData.rooms,
         includes: formData.includes.filter(i => i.trim() !== ''),
-        file_formats: formData.file_formats,
-        slug: formData.slug || generateSlug(formData.name),
-        is_active: formData.is_active,
-        is_featured: formData.is_featured,
-        difficulty_level: formData.difficulty_level
+        file_formats: ['PDF'],
+        slug: generateSlug(formData.name),
+        is_active: true,
+        is_featured: false,
+        difficulty_level: 'intermediate'
       };
 
       const url = editingKit 
@@ -393,19 +368,8 @@ const KitsManager = () => {
                   <ImageIcon className="w-16 h-16 text-gray-300" />
                 </div>
               )}
-              <div className="absolute top-2 left-2">
-                <Badge className="bg-teal-600">{kit.category}</Badge>
-              </div>
-              {kit.isFeatured && (
-                <div className="absolute top-2 right-2">
-                  <Badge className="bg-amber-500">
-                    <Star className="w-3 h-3 mr-1" />
-                    Vedette
-                  </Badge>
-                </div>
-              )}
               {!kit.isActive && (
-                <div className="absolute bottom-2 right-2">
+                <div className="absolute top-2 right-2">
                   <Badge variant="secondary" className="bg-gray-800 text-white">
                     <EyeOff className="w-3 h-3 mr-1" />
                     Inactif
@@ -469,218 +433,222 @@ const KitsManager = () => {
         </div>
       )}
 
-      {/* Modal Ajouter/Modifier */}
+      {/* Modal Ajouter/Modifier - SIMPLIFIÉ */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle className="text-xl">
               {editingKit ? 'Modifier le kit' : 'Ajouter un kit'}
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4">
+          <div className="space-y-5 pt-4">
+            {/* Nom du kit */}
+            <div>
+              <Label htmlFor="name" className="text-base font-semibold">Nom du kit *</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                placeholder="Ex: Mini-maison 400 pi²"
+                className="mt-1"
+              />
+            </div>
+
+            {/* Description courte */}
+            <div>
+              <Label htmlFor="description" className="text-base font-semibold">Description courte</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                placeholder="Brève description du kit..."
+                rows={2}
+                className="mt-1"
+              />
+            </div>
+
+            {/* Dimensions et Surface */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <Label htmlFor="name">Nom du kit *</Label>
+              <div>
+                <Label htmlFor="dimensions" className="text-base font-semibold">Dimensions (pieds)</Label>
                 <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="Ex: Mini-maison 25m²"
+                  id="dimensions"
+                  value={formData.dimensions}
+                  onChange={(e) => handleInputChange('dimensions', e.target.value)}
+                  placeholder="Ex: 20' x 20'"
+                  className="mt-1"
                 />
               </div>
-
               <div>
-                <Label htmlFor="category">Catégorie *</Label>
-                <select
-                  id="category"
-                  value={formData.category}
-                  onChange={(e) => handleInputChange('category', e.target.value)}
-                  className="w-full h-10 px-3 border border-gray-300 rounded-md"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="difficulty">Niveau de difficulté</Label>
-                <select
-                  id="difficulty"
-                  value={formData.difficulty_level}
-                  onChange={(e) => handleInputChange('difficulty_level', e.target.value)}
-                  className="w-full h-10 px-3 border border-gray-300 rounded-md"
-                >
-                  {difficultyLevels.map((level) => (
-                    <option key={level.value} value={level.value}>{level.label}</option>
-                  ))}
-                </select>
+                <Label htmlFor="surface" className="text-base font-semibold">Surface (pi²)</Label>
+                <Input
+                  id="surface"
+                  type="number"
+                  value={formData.surface_sqft}
+                  onChange={(e) => handleInputChange('surface_sqft', e.target.value)}
+                  placeholder="Ex: 400"
+                  className="mt-1"
+                />
+                {formData.surface_sqft && (
+                  <p className="text-sm text-gray-400 mt-1">
+                    ≈ {sqftToSqm(formData.surface_sqft)} m²
+                  </p>
+                )}
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="price">Prix (CAD) *</Label>
+            {/* Pièces */}
+            <div>
+              <Label htmlFor="rooms" className="text-base font-semibold">Pièces</Label>
+              <Input
+                id="rooms"
+                value={formData.rooms}
+                onChange={(e) => handleInputChange('rooms', e.target.value)}
+                placeholder="Ex: 2 chambres, 1 salle de bain, cuisine ouverte"
+                className="mt-1"
+              />
+            </div>
+
+            {/* Ce que le kit comprend */}
+            <div>
+              <Label className="text-base font-semibold">Ce que le kit comprend</Label>
+              <div className="space-y-2 mt-2">
+                {formData.includes.map((item, index) => (
+                  <div key={index} className="flex gap-2">
+                    <Input
+                      value={item}
+                      onChange={(e) => handleIncludeChange(index, e.target.value)}
+                      placeholder={`Élément ${index + 1} (ex: Plans architecturaux complets)`}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => removeInclude(index)}
+                      disabled={formData.includes.length === 1}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addInclude}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Ajouter un élément
+                </Button>
+              </div>
+            </div>
+
+            {/* Prix de base */}
+            <div>
+              <Label htmlFor="price" className="text-base font-semibold">Prix de base (CAD) *</Label>
+              <div className="relative mt-1">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
                 <Input
                   id="price"
                   type="number"
                   value={formData.price}
                   onChange={(e) => handleInputChange('price', e.target.value)}
                   placeholder="800"
-                />
-              </div>
-              <div>
-                <Label htmlFor="original_price">Prix original (barré)</Label>
-                <Input
-                  id="original_price"
-                  type="number"
-                  value={formData.original_price}
-                  onChange={(e) => handleInputChange('original_price', e.target.value)}
-                  placeholder="1000"
+                  className="pl-8"
                 />
               </div>
             </div>
 
+            {/* Image principale */}
             <div>
-              <Label htmlFor="main_image">Image principale *</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="main_image"
-                  value={formData.main_image}
-                  onChange={(e) => handleInputChange('main_image', e.target.value)}
-                  placeholder="URL de l'image"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => document.getElementById('kit-image-upload').click()}
-                >
-                  <Upload className="w-4 h-4" />
-                </Button>
+              <Label className="text-base font-semibold">Image principale *</Label>
+              <div className="mt-2">
+                {formData.main_image ? (
+                  <div className="relative">
+                    <img
+                      src={formData.main_image}
+                      alt="Aperçu"
+                      className="w-full h-48 object-cover rounded-lg"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={() => handleInputChange('main_image', '')}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div 
+                    className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-teal-500 transition-colors"
+                    onClick={() => document.getElementById('main-image-upload').click()}
+                  >
+                    <Upload className="w-10 h-10 text-gray-400 mx-auto mb-2" />
+                    <p className="text-gray-500">Cliquez pour uploader une image</p>
+                    <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP (max 5MB)</p>
+                  </div>
+                )}
                 <input
-                  id="kit-image-upload"
+                  id="main-image-upload"
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={handleImageUpload}
+                  onChange={(e) => handleImageUpload(e, false)}
                 />
-              </div>
-              {formData.main_image && (
-                <img
-                  src={formData.main_image}
-                  alt="Aperçu"
-                  className="mt-2 h-32 w-full object-cover rounded-lg"
-                  onError={(e) => e.target.style.display = 'none'}
-                />
-              )}
-            </div>
-
-            <div>
-              <Label htmlFor="description">Description courte</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                placeholder="Description brève du kit"
-                rows={2}
-              />
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="surface_area">Surface</Label>
-                <Input
-                  id="surface_area"
-                  value={formData.surface_area}
-                  onChange={(e) => handleInputChange('surface_area', e.target.value)}
-                  placeholder="25m²"
-                />
-              </div>
-              <div>
-                <Label htmlFor="dimensions">Dimensions</Label>
-                <Input
-                  id="dimensions"
-                  value={formData.dimensions}
-                  onChange={(e) => handleInputChange('dimensions', e.target.value)}
-                  placeholder="6m x 4m"
-                />
-              </div>
-              <div>
-                <Label htmlFor="rooms">Pièces</Label>
-                <Input
-                  id="rooms"
-                  value={formData.rooms}
-                  onChange={(e) => handleInputChange('rooms', e.target.value)}
-                  placeholder="2 ch, 1 sdb"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label>Ce kit comprend</Label>
-              {formData.includes.map((item, index) => (
-                <div key={index} className="flex gap-2 mt-2">
+                <div className="flex gap-2 mt-2">
                   <Input
-                    value={item}
-                    onChange={(e) => handleIncludeChange(index, e.target.value)}
-                    placeholder={`Élément inclus ${index + 1}`}
+                    value={formData.main_image}
+                    onChange={(e) => handleInputChange('main_image', e.target.value)}
+                    placeholder="Ou collez une URL d'image..."
+                    className="flex-1"
                   />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={() => removeInclude(index)}
-                    disabled={formData.includes.length === 1}
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={addInclude}
-                className="mt-2"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Ajouter un élément
-              </Button>
-            </div>
-
-            <div>
-              <Label htmlFor="slug">Slug URL</Label>
-              <Input
-                id="slug"
-                value={formData.slug}
-                onChange={(e) => handleInputChange('slug', e.target.value)}
-                placeholder="mini-maison-25m2"
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="active"
-                    checked={formData.is_active}
-                    onCheckedChange={(checked) => handleInputChange('is_active', checked)}
-                  />
-                  <Label htmlFor="active">Actif</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="featured"
-                    checked={formData.is_featured}
-                    onCheckedChange={(checked) => handleInputChange('is_featured', checked)}
-                  />
-                  <Label htmlFor="featured">En vedette</Label>
                 </div>
               </div>
             </div>
 
-            <div className="flex gap-2 pt-4">
+            {/* Images supplémentaires */}
+            <div>
+              <Label className="text-base font-semibold">Images supplémentaires (optionnel)</Label>
+              <div className="mt-2 grid grid-cols-4 gap-2">
+                {formData.gallery_images.map((img, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={img}
+                      alt={`Galerie ${index + 1}`}
+                      className="w-full h-20 object-cover rounded-lg"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute -top-2 -right-2 w-6 h-6"
+                      onClick={() => removeGalleryImage(index)}
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </div>
+                ))}
+                <div 
+                  className="border-2 border-dashed border-gray-300 rounded-lg h-20 flex items-center justify-center cursor-pointer hover:border-teal-500"
+                  onClick={() => document.getElementById('gallery-upload').click()}
+                >
+                  <Plus className="w-6 h-6 text-gray-400" />
+                </div>
+              </div>
+              <input
+                id="gallery-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleImageUpload(e, true)}
+              />
+            </div>
+
+            {/* Boutons d'action */}
+            <div className="flex gap-3 pt-4 border-t">
               <Button
                 onClick={handleSubmit}
                 disabled={saving}
@@ -689,7 +657,7 @@ const KitsManager = () => {
                 {saving ? (
                   <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Enregistrement...</>
                 ) : (
-                  <><Save className="w-4 h-4 mr-2" /> Enregistrer</>
+                  <><Save className="w-4 h-4 mr-2" /> Enregistrer le kit</>
                 )}
               </Button>
               <Button
