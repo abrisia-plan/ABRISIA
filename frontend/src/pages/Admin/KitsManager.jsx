@@ -186,13 +186,21 @@ const KitsManager = () => {
       console.log('Upload response:', data);
       
       if (data.success && data.imageUrl) {
+        // Convertir l'URL relative en URL absolue si nécessaire
+        let finalImageUrl = data.imageUrl;
+        if (finalImageUrl.startsWith('/uploads/') || finalImageUrl.includes('localhost')) {
+          // Extraire juste le nom du fichier
+          const filename = finalImageUrl.split('/uploads/').pop();
+          finalImageUrl = `${BACKEND_URL}/uploads/${filename}`;
+        }
+        
         if (isGallery) {
           setFormData(prev => ({
             ...prev,
-            gallery_images: [...prev.gallery_images, data.imageUrl]
+            gallery_images: [...prev.gallery_images, finalImageUrl]
           }));
         } else {
-          handleInputChange('main_image', data.imageUrl);
+          handleInputChange('main_image', finalImageUrl);
         }
         toast({
           title: "✅ Image uploadée",

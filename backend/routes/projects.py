@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File
+from fastapi import APIRouter, HTTPException, Depends, status, UploadFile, File, Request
 from typing import List, Optional
 from datetime import datetime
 import os
@@ -19,6 +19,9 @@ UPLOAD_DIR = Path("/app/uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+
+# URL de base pour les uploads (utiliser l'env si disponible)
+BACKEND_URL = os.environ.get("BACKEND_PUBLIC_URL", "")
 
 @router.get("/projects", response_model=ListResponse)
 async def get_public_projects(
@@ -244,6 +247,7 @@ async def delete_project(
 
 @router.post("/admin/upload-image")
 async def upload_image(
+    request: Request,
     file: UploadFile = File(...),
     current_user: dict = Depends(require_admin)
 ):
@@ -273,7 +277,10 @@ async def upload_image(
         with open(file_path, "wb") as buffer:
             buffer.write(content)
         
-        image_url = f"/uploads/{unique_filename}"
+        # Construire l'URL complète
+        # Utiliser l'URL de la requête pour déterminer le host
+        base_url = str(request.base_url).rstrip('/')
+        image_url = f"{base_url}/uploads/{unique_filename}"
         
         logger.info(f"✅ Image uploadée: {unique_filename} par {current_user['name']}")
         
