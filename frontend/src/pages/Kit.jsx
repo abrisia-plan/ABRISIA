@@ -175,6 +175,9 @@ const Kit = () => {
     return { base, materials, subtotal, tax, total };
   };
 
+  // État pour l'URL de paiement Stripe
+  const [stripeUrl, setStripeUrl] = useState(null);
+
   // Paiement par carte (Stripe)
   const handleStripePayment = async () => {
     if (!orderForm.name || !orderForm.email) {
@@ -187,8 +190,10 @@ const Kit = () => {
     }
 
     setOrderSubmitting(true);
+    setStripeUrl(null);
 
     try {
+      console.log("🔄 Création session Stripe...");
       const response = await fetch(`${BACKEND_URL}/api/payments/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -205,14 +210,24 @@ const Kit = () => {
       });
 
       const data = await response.json();
+      console.log("📦 Réponse Stripe:", data);
 
       if (data.success && data.url) {
-        // Rediriger vers Stripe Checkout
-        window.location.href = data.url;
+        // Stocker l'URL et essayer la redirection
+        setStripeUrl(data.url);
+        setOrderSubmitting(false);
+        
+        // Tenter la redirection automatique
+        try {
+          window.location.assign(data.url);
+        } catch (e) {
+          console.log("Redirection manuelle nécessaire");
+        }
       } else {
         throw new Error(data.detail || 'Erreur lors de la création du paiement');
       }
     } catch (error) {
+      console.error("❌ Erreur Stripe:", error);
       toast({
         title: "Erreur",
         description: error.message,
@@ -781,6 +796,24 @@ const Kit = () => {
                     </div>
                   </div>
 
+                  {/* Lien Stripe si la redirection échoue */}
+                  {stripeUrl && paymentMethod === 'card' && (
+                    <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-4">
+                      <p className="text-sm text-blue-800 mb-2">
+                        Si vous n'êtes pas redirigé automatiquement, cliquez sur le bouton ci-dessous :
+                      </p>
+                      <a 
+                        href={stripeUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold"
+                      >
+                        <CreditCard className="w-5 h-5 mr-2" />
+                        Aller à la page de paiement Stripe
+                      </a>
+                    </div>
+                  )}
+
                   <div className="flex gap-3 pt-4 border-t">
                     <Button
                       type="submit"
@@ -790,7 +823,7 @@ const Kit = () => {
                       {orderSubmitting ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          {paymentMethod === 'card' ? 'Redirection...' : 'Envoi...'}
+                          {paymentMethod === 'card' ? 'Création du paiement...' : 'Envoi...'}
                         </>
                       ) : (
                         <>
@@ -805,7 +838,7 @@ const Kit = () => {
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => setShowOrderForm(false)}
+                      onClick={() => { setShowOrderForm(false); setStripeUrl(null); }}
                     >
                       Retour
                     </Button>
