@@ -24,6 +24,7 @@ import {
   Phone
 } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
+import { resolveImageUrl } from '../services/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -248,7 +249,7 @@ const Kit = () => {
                     <Card key={kit.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer">
                       <div className="relative overflow-hidden">
                         <img
-                          src={kit.mainImage}
+                          src={resolveImageUrl(kit.mainImage)}
                           alt={kit.name}
                           className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
@@ -383,7 +384,7 @@ const Kit = () => {
                 // Vue détails du kit
                 <div className="space-y-6">
                   <img
-                    src={selectedKit.mainImage}
+                    src={resolveImageUrl(selectedKit.mainImage)}
                     alt={selectedKit.name}
                     className="w-full h-64 md:h-96 object-cover rounded-lg"
                     onError={(e) => {

@@ -3,6 +3,25 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API_BASE = `${BACKEND_URL}/api`;
 
+// Fonction utilitaire pour résoudre les URLs d'images
+export const resolveImageUrl = (url) => {
+  if (!url) return null;
+  // Si c'est déjà une URL absolue externe (https://), la garder telle quelle
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    // Si c'est une ancienne URL avec un domaine différent, extraire le fichier
+    if (url.includes('/uploads/') && !url.includes(BACKEND_URL)) {
+      const filename = url.split('/uploads/').pop();
+      return `${BACKEND_URL}/uploads/${filename}`;
+    }
+    return url;
+  }
+  // Si c'est une URL relative (/uploads/...), la résoudre avec BACKEND_URL
+  if (url.startsWith('/uploads/')) {
+    return `${BACKEND_URL}${url}`;
+  }
+  return url;
+};
+
 // Configuration axios
 const api = axios.create({
   baseURL: API_BASE,

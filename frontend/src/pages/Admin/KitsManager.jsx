@@ -25,6 +25,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
+import { resolveImageUrl } from '../../services/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -213,7 +214,7 @@ const KitsManager = () => {
         let finalImageUrl = data.imageUrl;
         if (finalImageUrl.startsWith('/uploads/') || finalImageUrl.includes('localhost')) {
           const filename = finalImageUrl.split('/uploads/').pop();
-          finalImageUrl = `${BACKEND_URL}/uploads/${filename}`;
+          finalImageUrl = `/uploads/${filename}`;  // Store relative URL
         }
         
         if (isGallery) {
@@ -271,7 +272,7 @@ const KitsManager = () => {
         let finalUrl = data.imageUrl;
         if (finalUrl.startsWith('/uploads/') || finalUrl.includes('localhost')) {
           const filename = finalUrl.split('/uploads/').pop();
-          finalUrl = `${BACKEND_URL}/uploads/${filename}`;
+          finalUrl = `/uploads/${filename}`;  // Store relative URL
         }
         
         handleInputChange(fieldName, finalUrl);
@@ -477,7 +478,7 @@ const KitsManager = () => {
             <div className="relative h-48 bg-gray-100">
               {kit.mainImage ? (
                 <img
-                  src={kit.mainImage}
+                  src={resolveImageUrl(kit.mainImage)}
                   alt={kit.name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
