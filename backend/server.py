@@ -5,6 +5,10 @@ from contextlib import asynccontextmanager
 import os
 import logging
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Charger les variables d'environnement
+load_dotenv()
 
 # Configuration du logging
 logging.basicConfig(

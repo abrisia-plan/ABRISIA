@@ -9,10 +9,219 @@ logger = logging.getLogger(__name__)
 
 class EmailService:
     def __init__(self):
-        self.smtp_server = "smtp.gmail.com"
-        self.smtp_port = 587
+        self.smtp_server = os.getenv('SMTP_HOST', 'smtp.gmail.com')
+        self.smtp_port = int(os.getenv('SMTP_PORT', 587))
         self.sender_email = os.getenv('SENDER_EMAIL', 'abrisia0plan@gmail.com')
         self.sender_password = os.getenv('SENDER_PASSWORD')
+    
+    def _send_email(self, to_email, subject, html_content):
+        """Méthode interne pour envoyer un email"""
+        try:
+            message = MIMEMultipart("alternative")
+            message["Subject"] = subject
+            message["From"] = f"Abrisia Plan <{self.sender_email}>"
+            message["To"] = to_email
+            
+            html_part = MIMEText(html_content, "html")
+            message.attach(html_part)
+            
+            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+                server.starttls()
+                server.login(self.sender_email, self.sender_password)
+                server.send_message(message)
+            
+            logger.info(f"✅ Email envoyé à {to_email}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Erreur envoi email à {to_email}: {str(e)}")
+            return False
+
+    def send_kit_order_confirmation_to_client(self, order_data):
+        """Envoie confirmation de commande au client"""
+        try:
+            subject = f"🏠 Confirmation commande #{order_data['order_number']} - Abrisia Plan"
+            
+            materials_row = ""
+            if order_data.get('include_materials'):
+                materials_row = f"""
+                <tr>
+                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">+ Liste des matériaux</td>
+                    <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right; color: #d97706;">{order_data['materials_price']:.2f} $</td>
+                </tr>
+                """
+            
+            html_content = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; background: #f5f5f5; padding: 20px;">
+                <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    
+                    <div style="background: linear-gradient(135deg, #0f766e 0%, #115e59 100%); color: white; padding: 30px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 28px;">✅ Commande confirmée !</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 16px;">Merci pour votre commande</p>
+                    </div>
+                    
+                    <div style="padding: 30px;">
+                        <p style="font-size: 16px;">Bonjour <strong>{order_data['customer_name']}</strong>,</p>
+                        
+                        <p>Votre commande a bien été enregistrée. Voici les détails :</p>
+                        
+                        <div style="background: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
+                            <p style="margin: 0 0 10px 0; color: #64748b; font-size: 14px;">Numéro de commande</p>
+                            <p style="margin: 0; font-size: 24px; font-weight: bold; color: #0f766e; font-family: monospace;">{order_data['order_number']}</p>
+                        </div>
+                        
+                        <h3 style="color: #0f766e; margin-top: 30px;">📦 Votre commande</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr style="background: #f8fafc;">
+                                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">Kit : {order_data['kit_name']}</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">{order_data['base_price']:.2f} $</td>
+                            </tr>
+                            {materials_row}
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">Sous-total</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">{order_data['subtotal']:.2f} $</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">Taxes (TPS + TVQ)</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">{order_data['tax_amount']:.2f} $</td>
+                            </tr>
+                            <tr style="background: #0f766e; color: white;">
+                                <td style="padding: 15px; font-weight: bold; font-size: 18px;">TOTAL À PAYER</td>
+                                <td style="padding: 15px; text-align: right; font-weight: bold; font-size: 18px;">{order_data['total_amount']:.2f} $</td>
+                            </tr>
+                        </table>
+                        
+                        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 30px 0;">
+                            <h3 style="margin: 0 0 15px 0; color: #92400e;">💳 Instructions de paiement</h3>
+                            <p style="margin: 0; color: #78350f;">
+                                Pour finaliser votre commande, veuillez effectuer le paiement par <strong>Interac</strong> ou <strong>virement bancaire</strong> à l'adresse suivante :
+                            </p>
+                            <p style="margin: 15px 0 0 0; text-align: center; font-size: 18px; color: #0f766e; font-weight: bold;">
+                                📧 abrisia0plan@gmail.com
+                            </p>
+                            <p style="margin: 15px 0 0 0; color: #78350f; font-size: 14px; text-align: center;">
+                                Mentionnez votre numéro de commande : <strong>{order_data['order_number']}</strong>
+                            </p>
+                        </div>
+                        
+                        <p style="color: #64748b; font-size: 14px;">
+                            Une fois le paiement reçu, vos fichiers vous seront envoyés par email dans les 24 heures.
+                        </p>
+                        
+                        <p style="margin-top: 30px;">
+                            Des questions ? Répondez directement à cet email ou appelez-nous.
+                        </p>
+                        
+                        <p style="margin-top: 20px;">
+                            Cordialement,<br>
+                            <strong>L'équipe Abrisia Plan</strong>
+                        </p>
+                    </div>
+                    
+                    <div style="background: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b;">
+                        <p style="margin: 0;">Abrisia Plan - Plans sur mesure au Saguenay</p>
+                        <p style="margin: 5px 0 0 0;">📧 abrisia0plan@gmail.com</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            return self._send_email(order_data['customer_email'], subject, html_content)
+            
+        except Exception as e:
+            logger.error(f"❌ Erreur envoi confirmation client: {str(e)}")
+            return False
+
+    def send_kit_order_notification_to_admin(self, order_data):
+        """Envoie notification de nouvelle commande à l'admin"""
+        try:
+            subject = f"🛒 Nouvelle commande kit #{order_data['order_number']} - {order_data['customer_name']}"
+            
+            materials_info = "❌ Non incluse" if not order_data.get('include_materials') else f"✅ Incluse (+{order_data['materials_price']:.2f} $)"
+            
+            html_content = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; background: #f5f5f5; padding: 20px;">
+                <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    
+                    <div style="background: linear-gradient(135deg, #0f766e 0%, #115e59 100%); color: white; padding: 30px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 28px;">🛒 Nouvelle commande !</h1>
+                        <p style="margin: 10px 0 0 0; font-size: 20px; font-family: monospace;">{order_data['order_number']}</p>
+                    </div>
+                    
+                    <div style="padding: 30px;">
+                        
+                        <div style="background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                            <h3 style="margin: 0 0 10px 0; color: #065f46;">💰 Montant total</h3>
+                            <p style="margin: 0; font-size: 32px; font-weight: bold; color: #0f766e;">{order_data['total_amount']:.2f} $</p>
+                        </div>
+                        
+                        <h3 style="color: #0f766e;">👤 Client</h3>
+                        <table style="width: 100%; margin-bottom: 20px;">
+                            <tr>
+                                <td style="padding: 5px 0;"><strong>Nom :</strong></td>
+                                <td>{order_data['customer_name']}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 0;"><strong>Email :</strong></td>
+                                <td><a href="mailto:{order_data['customer_email']}" style="color: #0f766e;">{order_data['customer_email']}</a></td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 0;"><strong>Téléphone :</strong></td>
+                                <td>{order_data.get('customer_phone') or 'Non fourni'}</td>
+                            </tr>
+                        </table>
+                        
+                        <h3 style="color: #0f766e;">📦 Commande</h3>
+                        <table style="width: 100%; margin-bottom: 20px;">
+                            <tr>
+                                <td style="padding: 5px 0;"><strong>Kit :</strong></td>
+                                <td>{order_data['kit_name']}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 0;"><strong>Prix kit :</strong></td>
+                                <td>{order_data['base_price']:.2f} $</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 0;"><strong>Liste matériaux :</strong></td>
+                                <td>{materials_info}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 0;"><strong>Taxes :</strong></td>
+                                <td>{order_data['tax_amount']:.2f} $</td>
+                            </tr>
+                        </table>
+                        
+                        {f'''
+                        <div style="background: #f8fafc; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                            <h4 style="margin: 0 0 10px 0; color: #64748b;">📝 Notes du client</h4>
+                            <p style="margin: 0;">{order_data.get("notes")}</p>
+                        </div>
+                        ''' if order_data.get('notes') else ''}
+                        
+                        <div style="background: #fef3c7; border-radius: 8px; padding: 15px; text-align: center;">
+                            <p style="margin: 0; color: #92400e;">
+                                ⏳ <strong>En attente de paiement</strong><br>
+                                <span style="font-size: 14px;">Surveillez votre boîte Interac !</span>
+                            </p>
+                        </div>
+                        
+                    </div>
+                    
+                    <div style="background: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b;">
+                        <p style="margin: 0;">Commande reçue le {datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            
+            return self._send_email(self.sender_email, subject, html_content)
+            
+        except Exception as e:
+            logger.error(f"❌ Erreur envoi notification admin: {str(e)}")
+            return False
         
     def send_devis_notification(self, devis_data):
         """

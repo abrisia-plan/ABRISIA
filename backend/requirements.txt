@@ -19,4 +19,4 @@ black>=24.1.1
 isort>=5.13.2
 flake8>=7.0.0
 mypy>=1.8.0
-aiofiles>=23.2.1
+aiofiles>=23.2.1python-dotenv

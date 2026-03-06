@@ -11,6 +11,7 @@ from models import (
 from database import get_database
 from auth import require_admin, get_current_user
 from bson import ObjectId
+from email_service import email_service
 import logging
 
 logger = logging.getLogger(__name__)
@@ -551,6 +552,15 @@ async def create_kit_order(order_data: KitOrderCreate):
         result = await db.kit_orders.insert_one(order_doc)
         
         logger.info(f"✅ Nouvelle commande kit: {order_number} - {kit['name']} par {order_data.customer_email}")
+        
+        # Envoyer les emails de confirmation
+        try:
+            # Email au client
+            email_service.send_kit_order_confirmation_to_client(order_doc)
+            # Email notification à l'admin
+            email_service.send_kit_order_notification_to_admin(order_doc)
+        except Exception as email_error:
+            logger.warning(f"⚠️ Erreur envoi email pour commande {order_number}: {email_error}")
         
         return {
             "success": True,
