@@ -49,7 +49,7 @@ const Kit = () => {
   const [includeMaterials, setIncludeMaterials] = useState(false);
   const [orderSubmitting, setOrderSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' ou 'interac'
+  const [paymentMethod, setPaymentMethod] = useState('interac'); // 'interac' par défaut (carte désactivée temporairement)
   const [orderForm, setOrderForm] = useState({
     name: '',
     email: '',
@@ -752,28 +752,27 @@ const Kit = () => {
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Option Carte de crédit */}
+                      {/* Option Carte de crédit - TEMPORAIREMENT DÉSACTIVÉE */}
                       <div
-                        onClick={() => setPaymentMethod('card')}
-                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                          paymentMethod === 'card'
-                            ? 'border-teal-500 bg-teal-50'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
+                        className="p-4 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed relative"
                       >
-                        <div className="flex items-center mb-2">
-                          <CreditCard className={`w-6 h-6 mr-2 ${paymentMethod === 'card' ? 'text-teal-600' : 'text-gray-400'}`} />
-                          <span className="font-semibold">Carte de crédit/débit</span>
+                        <div className="absolute top-2 right-2 bg-gray-500 text-white text-xs px-2 py-1 rounded">
+                          Bientôt disponible
                         </div>
-                        <p className="text-sm text-gray-500">
+                        <div className="flex items-center mb-2">
+                          <CreditCard className="w-6 h-6 mr-2 text-gray-400" />
+                          <span className="font-semibold text-gray-500">Carte de crédit/débit</span>
+                        </div>
+                        <p className="text-sm text-gray-400">
                           Paiement sécurisé par Stripe
                         </p>
-                        <div className="flex gap-2 mt-2">
+                        <div className="flex gap-2 mt-2 opacity-50">
                           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/100px-Visa_Inc._logo.svg.png" alt="Visa" className="h-6" />
                           <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/100px-Mastercard-logo.svg.png" alt="Mastercard" className="h-6" />
                         </div>
                       </div>
 
-                      {/* Option Interac */}
+                      {/* Option Interac - ACTIVE */}
                       <div
                         onClick={() => setPaymentMethod('interac')}
                         className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
@@ -782,9 +781,13 @@ const Kit = () => {
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
+                        <div className="absolute top-2 right-2 bg-green-500 text-white text-xs px-2 py-1 rounded hidden">
+                          Recommandé
+                        </div>
                         <div className="flex items-center mb-2">
                           <Banknote className={`w-6 h-6 mr-2 ${paymentMethod === 'interac' ? 'text-amber-600' : 'text-gray-400'}`} />
                           <span className="font-semibold">Virement Interac</span>
+                          <span className="ml-2 bg-green-100 text-green-700 text-xs px-2 py-1 rounded">Recommandé</span>
                         </div>
                         <p className="text-sm text-gray-500">
                           Instructions envoyées par email

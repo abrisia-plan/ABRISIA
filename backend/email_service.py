@@ -92,21 +92,32 @@ class EmailService:
                         </table>
                         
                         <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 30px 0;">
-                            <h3 style="margin: 0 0 15px 0; color: #92400e;">💳 Instructions de paiement</h3>
+                            <h3 style="margin: 0 0 15px 0; color: #92400e;">💳 Instructions de paiement Interac</h3>
                             <p style="margin: 0; color: #78350f;">
-                                Pour finaliser votre commande, veuillez effectuer le paiement par <strong>Interac</strong> ou <strong>virement bancaire</strong> à l'adresse suivante :
+                                Pour finaliser votre commande, envoyez le paiement par <strong>Virement Interac</strong> :
                             </p>
-                            <p style="margin: 15px 0 0 0; text-align: center; font-size: 18px; color: #0f766e; font-weight: bold;">
-                                📧 abrisia0plan@gmail.com
-                            </p>
-                            <p style="margin: 15px 0 0 0; color: #78350f; font-size: 14px; text-align: center;">
-                                Mentionnez votre numéro de commande : <strong>{order_data['order_number']}</strong>
+                            <div style="background: white; border-radius: 8px; padding: 15px; margin: 15px 0; text-align: center;">
+                                <p style="margin: 0; font-size: 18px; color: #0f766e; font-weight: bold;">
+                                    📧 abrisia0plan@gmail.com
+                                </p>
+                                <p style="margin: 10px 0 0 0; font-size: 14px; color: #64748b;">
+                                    Question secrète : <strong>Abrisia</strong> | Réponse : <strong>Plan</strong>
+                                </p>
+                            </div>
+                            <p style="margin: 0; color: #78350f; font-size: 14px; text-align: center;">
+                                ⚠️ Mentionnez votre numéro de commande : <strong>{order_data['order_number']}</strong>
                             </p>
                         </div>
                         
                         <p style="color: #64748b; font-size: 14px;">
                             Une fois le paiement reçu, vos fichiers vous seront envoyés par email dans les 24 heures.
                         </p>
+                        
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="https://abrisia-plan.ca" style="display: inline-block; background: #0f766e; color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                                🏠 Retourner sur Abrisia Plan
+                            </a>
+                        </div>
                         
                         <p style="margin-top: 30px;">
                             Des questions ? Répondez directement à cet email ou appelez-nous.
