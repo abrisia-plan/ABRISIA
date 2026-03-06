@@ -19,6 +19,7 @@ import Login from "./pages/Admin/Login";
 import Dashboard from "./pages/Admin/Dashboard";
 import CMS from "./pages/Admin/CMS";
 import AdminPanel from "./pages/Admin/AdminPanel";
+import { EmployeeLogin, EmployeePortal } from "./pages/EmployeePortal";
 
 function App() {
   return (
@@ -51,6 +52,10 @@ function App() {
           <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="/admin/cms" element={<CMS />} />
           <Route path="/admin/panel" element={<AdminPanel />} />
+          
+          {/* Routes espace employé */}
+          <Route path="/connexion-employe" element={<EmployeeLogin />} />
+          <Route path="/espace-employe" element={<EmployeePortal />} />
         </Routes>
         <Toaster />
       </BrowserRouter>

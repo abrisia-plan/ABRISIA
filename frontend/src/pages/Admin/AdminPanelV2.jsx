@@ -38,6 +38,8 @@ import ContentManager from './ContentManager';
 import CategoriesManager from './CategoriesManager';
 import TestimonialsManager from './TestimonialsManager';
 import LegalPagesManager from './LegalPagesManager';
+import DevisManager from './DevisManager';
+import EmployeesManager from './EmployeesManager';
 
 // Import des composants de gestion - ERP/CRM
 import CRMManager from './CRMManager';
@@ -119,13 +121,13 @@ const AdminPanelV2 = () => {
       ]
     },
     management: {
-      label: '💼 Gestion (ERP)',
+      label: '💼 Gestion',
       items: [
-        { id: 'crm', label: 'CRM - Clients', icon: Users },
+        { id: 'devis', label: 'Devis clients', icon: FileText },
+        { id: 'employees', label: 'Employés', icon: Users },
+        { id: 'crm', label: 'CRM - Clients', icon: Briefcase },
         { id: 'invoices', label: 'Facturation', icon: Receipt },
-        { id: 'project-tracker', label: 'Suivi de projets', icon: Briefcase },
-        { id: 'emails', label: 'Emails', icon: Mail, badge: 'Bientôt' },
-        { id: 'marketing', label: 'Marketing', icon: Share2, badge: 'Bientôt' },
+        { id: 'project-tracker', label: 'Suivi de projets', icon: BarChart3 },
       ]
     }
   };
@@ -268,12 +270,12 @@ const AdminPanelV2 = () => {
               {activeTab === 'testimonials' && <TestimonialsManager />}
               {activeTab === 'legal' && <LegalPagesManager />}
               
-              {/* Gestion ERP */}
+              {/* Gestion */}
+              {activeTab === 'devis' && <DevisManager />}
+              {activeTab === 'employees' && <EmployeesManager />}
               {activeTab === 'crm' && <CRMManager />}
               {activeTab === 'invoices' && <InvoicesManager />}
               {activeTab === 'project-tracker' && <ProjectTracker />}
-              {activeTab === 'emails' && <ComingSoon title="Emails professionnels" />}
-              {activeTab === 'marketing' && <ComingSoon title="Marketing & Réseaux sociaux" />}
             </>
           )}
         </main>
