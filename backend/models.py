@@ -280,6 +280,18 @@ class Product(BaseDocument):
     # Prix dynamique
     discount_percentage: Optional[float] = None
     promotion_end_date: Optional[datetime] = None
+    
+    # ========== NOUVEAUX CHAMPS SYSTÈME KITS ==========
+    # Dessinatrice/Designer
+    designer_name: Optional[str] = None  # Nom de la dessinatrice
+    
+    # Fichiers téléchargeables
+    plan_file_url: Optional[str] = None  # Fichier PDF/AutoCAD du plan
+    
+    # Option liste matériaux
+    materials_list_enabled: bool = False  # Activer l'option liste matériaux
+    materials_list_price: Optional[float] = None  # Prix additionnel pour la liste
+    materials_list_file_url: Optional[str] = None  # Fichier PDF de la liste matériaux
 
 class ProductCreate(BaseModel):
     name: str
@@ -307,6 +319,12 @@ class ProductCreate(BaseModel):
     is_featured: bool = False
     difficulty_level: str = "intermediate"
     discount_percentage: Optional[float] = None
+    # Nouveaux champs Kits
+    designer_name: Optional[str] = None
+    plan_file_url: Optional[str] = None
+    materials_list_enabled: bool = False
+    materials_list_price: Optional[float] = None
+    materials_list_file_url: Optional[str] = None
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
@@ -330,6 +348,12 @@ class ProductUpdate(BaseModel):
     is_featured: Optional[bool] = None
     difficulty_level: Optional[str] = None
     discount_percentage: Optional[float] = None
+    # Nouveaux champs Kits
+    designer_name: Optional[str] = None
+    plan_file_url: Optional[str] = None
+    materials_list_enabled: Optional[bool] = None
+    materials_list_price: Optional[float] = None
+    materials_list_file_url: Optional[str] = None
 
 # ========== MODÈLES COMMANDES ==========
 class OrderItem(BaseModel):
@@ -337,6 +361,8 @@ class OrderItem(BaseModel):
     product_name: str
     price: float
     quantity: int = 1
+    include_materials: bool = False  # Option liste matériaux
+    materials_price: float = 0.0  # Prix de la liste matériaux
 
 class Order(BaseDocument):
     order_number: str  # Numéro de commande unique

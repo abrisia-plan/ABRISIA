@@ -32,6 +32,7 @@ import { devisService, authService } from '../../services/api';
 // Import des composants de gestion - APPARENCE
 import ProjectsManager from './ProjectsManager';
 import KitsManager from './KitsManager';
+import KitOrdersManager from './KitOrdersManager';
 import CMSSettings from './CMSSettings';
 import ContentManager from './ContentManager';
 import CategoriesManager from './CategoriesManager';
@@ -112,6 +113,7 @@ const AdminPanelV2 = () => {
         { id: 'categories', label: 'Catégories accueil', icon: FolderOpen },
         { id: 'projects', label: 'Projets (Portfolio)', icon: ImageIcon },
         { id: 'kits', label: 'Kits de plans', icon: ShoppingCart },
+        { id: 'kit-orders', label: 'Commandes kits', icon: Receipt },
         { id: 'testimonials', label: 'Témoignages', icon: Star },
         { id: 'legal', label: 'Pages légales', icon: Settings },
       ]
@@ -262,6 +264,7 @@ const AdminPanelV2 = () => {
               {activeTab === 'categories' && <CategoriesManager />}
               {activeTab === 'projects' && <ProjectsManager />}
               {activeTab === 'kits' && <KitsManager />}
+              {activeTab === 'kit-orders' && <KitOrdersManager />}
               {activeTab === 'testimonials' && <TestimonialsManager />}
               {activeTab === 'legal' && <LegalPagesManager />}
               

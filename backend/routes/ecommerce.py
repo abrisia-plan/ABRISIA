@@ -104,7 +104,11 @@ async def get_products(
                 "salesCount": product.get("sales_count", 0),
                 "includes": product.get("includes", []),
                 "fileFormats": product.get("file_formats", ["PDF"]),
-                "tags": product.get("tags", [])
+                "tags": product.get("tags", []),
+                # Nouveaux champs Kits
+                "designerName": product.get("designer_name"),
+                "materialsListEnabled": product.get("materials_list_enabled", False),
+                "materialsListPrice": product.get("materials_list_price"),
             })
         
         return PaginatedResponse(
@@ -199,7 +203,13 @@ async def get_product_by_slug(product_slug: str):
             "tags": product.get("tags", []),
             "metaTitle": product.get("meta_title", ""),
             "metaDescription": product.get("meta_description", ""),
-            "reviews": formatted_reviews
+            "reviews": formatted_reviews,
+            # Nouveaux champs Kits
+            "designerName": product.get("designer_name"),
+            "materialsListEnabled": product.get("materials_list_enabled", False),
+            "materialsListPrice": product.get("materials_list_price"),
+            "planFileUrl": product.get("plan_file_url"),
+            "materialsListFileUrl": product.get("materials_list_file_url"),
         }
         
         return {
@@ -306,7 +316,12 @@ async def get_admin_products(
                 "rating": product.get("rating", 0.0),
                 "reviewsCount": product.get("reviews_count", 0),
                 "createdAt": product["created_at"].isoformat(),
-                "updatedAt": product["updated_at"].isoformat()
+                "updatedAt": product["updated_at"].isoformat(),
+                # Nouveaux champs admin
+                "mainImage": product.get("main_image"),
+                "designerName": product.get("designer_name"),
+                "materialsListEnabled": product.get("materials_list_enabled", False),
+                "materialsListPrice": product.get("materials_list_price"),
             })
         
         return PaginatedResponse(
@@ -457,6 +472,237 @@ async def delete_product(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erreur lors de la suppression du produit"
+        )
+
+# ========== COMMANDES DE KITS (PAIEMENT MANUEL) ==========
+
+from pydantic import BaseModel as PydanticBaseModel
+
+class KitOrderCreate(PydanticBaseModel):
+    """Modèle pour créer une commande de kit"""
+    kit_id: str
+    customer_name: str
+    customer_email: str
+    customer_phone: Optional[str] = None
+    include_materials: bool = False
+    notes: Optional[str] = None
+
+@router.post("/kits/order")
+async def create_kit_order(order_data: KitOrderCreate):
+    """Créer une commande de kit (paiement manuel/Interac)"""
+    try:
+        db = get_database()
+        
+        # Vérifier que le kit existe
+        if not ObjectId.is_valid(order_data.kit_id):
+            raise HTTPException(status_code=400, detail="ID kit invalide")
+        
+        kit = await db.products.find_one({
+            "_id": ObjectId(order_data.kit_id),
+            "is_active": True
+        })
+        
+        if not kit:
+            raise HTTPException(status_code=404, detail="Kit non trouvé")
+        
+        # Calculer le prix total
+        base_price = kit["price"]
+        materials_price = 0.0
+        
+        if order_data.include_materials and kit.get("materials_list_enabled"):
+            materials_price = kit.get("materials_list_price", 0) or 0
+        
+        subtotal = base_price + materials_price
+        tax_rate = 14.975  # TPS+TVQ Québec
+        tax_amount = round(subtotal * tax_rate / 100, 2)
+        total_amount = round(subtotal + tax_amount, 2)
+        
+        # Générer numéro de commande
+        order_count = await db.kit_orders.count_documents({})
+        order_number = f"KIT-{datetime.utcnow().strftime('%Y%m')}-{(order_count + 1):04d}"
+        
+        # Créer la commande
+        order_doc = {
+            "order_number": order_number,
+            "kit_id": str(kit["_id"]),
+            "kit_name": kit["name"],
+            "designer_name": kit.get("designer_name"),
+            "customer_name": order_data.customer_name,
+            "customer_email": order_data.customer_email,
+            "customer_phone": order_data.customer_phone,
+            "include_materials": order_data.include_materials,
+            "base_price": base_price,
+            "materials_price": materials_price,
+            "subtotal": subtotal,
+            "tax_amount": tax_amount,
+            "total_amount": total_amount,
+            "currency": "CAD",
+            "status": "pending",  # pending, paid, cancelled
+            "payment_method": None,  # interac, stripe, paypal
+            "payment_confirmed_at": None,
+            "files_sent": False,
+            "files_sent_at": None,
+            "notes": order_data.notes,
+            "admin_notes": None,
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        
+        result = await db.kit_orders.insert_one(order_doc)
+        
+        logger.info(f"✅ Nouvelle commande kit: {order_number} - {kit['name']} par {order_data.customer_email}")
+        
+        return {
+            "success": True,
+            "message": "Commande créée avec succès",
+            "order": {
+                "id": str(result.inserted_id),
+                "orderNumber": order_number,
+                "kitName": kit["name"],
+                "includeMaterials": order_data.include_materials,
+                "basePrice": base_price,
+                "materialsPrice": materials_price,
+                "subtotal": subtotal,
+                "taxAmount": tax_amount,
+                "totalAmount": total_amount,
+                "status": "pending"
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Erreur création commande kit: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la création de la commande"
+        )
+
+@router.get("/admin/kit-orders")
+async def get_kit_orders(
+    page: int = Query(1, ge=1),
+    per_page: int = Query(20, ge=1, le=100),
+    status: Optional[str] = None,
+    current_user: dict = Depends(require_admin)
+):
+    """Obtenir toutes les commandes de kits (admin)"""
+    try:
+        db = get_database()
+        
+        filter_query = {}
+        if status:
+            filter_query["status"] = status
+        
+        skip = (page - 1) * per_page
+        
+        cursor = db.kit_orders.find(filter_query).sort("created_at", -1).skip(skip).limit(per_page)
+        orders = await cursor.to_list(length=per_page)
+        
+        total = await db.kit_orders.count_documents(filter_query)
+        total_pages = (total + per_page - 1) // per_page
+        
+        formatted_orders = []
+        for order in orders:
+            formatted_orders.append({
+                "id": str(order["_id"]),
+                "orderNumber": order["order_number"],
+                "kitId": order["kit_id"],
+                "kitName": order["kit_name"],
+                "designerName": order.get("designer_name"),
+                "customerName": order["customer_name"],
+                "customerEmail": order["customer_email"],
+                "customerPhone": order.get("customer_phone"),
+                "includeMaterials": order["include_materials"],
+                "basePrice": order["base_price"],
+                "materialsPrice": order["materials_price"],
+                "subtotal": order["subtotal"],
+                "taxAmount": order["tax_amount"],
+                "totalAmount": order["total_amount"],
+                "status": order["status"],
+                "paymentMethod": order.get("payment_method"),
+                "paymentConfirmedAt": order.get("payment_confirmed_at").isoformat() if order.get("payment_confirmed_at") else None,
+                "filesSent": order.get("files_sent", False),
+                "filesSentAt": order.get("files_sent_at").isoformat() if order.get("files_sent_at") else None,
+                "notes": order.get("notes"),
+                "adminNotes": order.get("admin_notes"),
+                "createdAt": order["created_at"].isoformat(),
+            })
+        
+        return {
+            "success": True,
+            "data": formatted_orders,
+            "total": total,
+            "page": page,
+            "perPage": per_page,
+            "totalPages": total_pages
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ Erreur récupération commandes kit: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la récupération des commandes"
+        )
+
+class KitOrderUpdate(PydanticBaseModel):
+    status: Optional[str] = None
+    payment_method: Optional[str] = None
+    files_sent: Optional[bool] = None
+    admin_notes: Optional[str] = None
+
+@router.put("/admin/kit-orders/{order_id}")
+async def update_kit_order(
+    order_id: str,
+    update_data: KitOrderUpdate,
+    current_user: dict = Depends(require_admin)
+):
+    """Mettre à jour une commande de kit (admin)"""
+    try:
+        db = get_database()
+        
+        if not ObjectId.is_valid(order_id):
+            raise HTTPException(status_code=400, detail="ID commande invalide")
+        
+        update_fields = {"updated_at": datetime.utcnow()}
+        
+        if update_data.status:
+            update_fields["status"] = update_data.status
+            if update_data.status == "paid":
+                update_fields["payment_confirmed_at"] = datetime.utcnow()
+        
+        if update_data.payment_method:
+            update_fields["payment_method"] = update_data.payment_method
+        
+        if update_data.files_sent is not None:
+            update_fields["files_sent"] = update_data.files_sent
+            if update_data.files_sent:
+                update_fields["files_sent_at"] = datetime.utcnow()
+        
+        if update_data.admin_notes:
+            update_fields["admin_notes"] = update_data.admin_notes
+        
+        result = await db.kit_orders.update_one(
+            {"_id": ObjectId(order_id)},
+            {"$set": update_fields}
+        )
+        
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Commande non trouvée")
+        
+        logger.info(f"✅ Commande kit {order_id} mise à jour par {current_user['name']}")
+        
+        return {
+            "success": True,
+            "message": "Commande mise à jour avec succès"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Erreur mise à jour commande kit: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la mise à jour de la commande"
         )
 
 # ========== COMMENTAIRES ET AVIS ==========
