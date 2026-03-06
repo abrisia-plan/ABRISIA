@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
@@ -21,15 +21,23 @@ import {
   Package,
   CreditCard,
   Mail,
-  Phone
+  Phone,
+  Banknote,
+  CheckCircle
 } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import { resolveImageUrl } from '../services/api';
+import { loadStripe } from '@stripe/stripe-js';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const STRIPE_KEY = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
+
+// Initialiser Stripe
+const stripePromise = STRIPE_KEY ? loadStripe(STRIPE_KEY) : null;
 
 const Kit = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState('Tous');
   const [selectedKit, setSelectedKit] = useState(null);
   const [kits, setKits] = useState([]);
@@ -41,12 +49,48 @@ const Kit = () => {
   const [includeMaterials, setIncludeMaterials] = useState(false);
   const [orderSubmitting, setOrderSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState('card'); // 'card' ou 'interac'
   const [orderForm, setOrderForm] = useState({
     name: '',
     email: '',
     phone: '',
     notes: ''
   });
+
+  // Vérifier si on revient d'un paiement Stripe
+  useEffect(() => {
+    const orderId = searchParams.get('order_id');
+    const sessionId = searchParams.get('session_id');
+    
+    if (orderId && sessionId) {
+      verifyPayment(orderId, sessionId);
+    }
+  }, [searchParams]);
+
+  const verifyPayment = async (orderId, sessionId) => {
+    try {
+      const response = await fetch(
+        `${BACKEND_URL}/api/payments/verify-payment/${orderId}?session_id=${sessionId}`
+      );
+      const data = await response.json();
+      
+      if (data.success && data.status === 'paid') {
+        setOrderSuccess({
+          orderNumber: data.order.orderNumber,
+          kitName: data.order.kitName,
+          totalAmount: data.order.totalAmount,
+          customerEmail: data.order.customerEmail,
+          isPaid: true
+        });
+        toast({
+          title: "✅ Paiement confirmé !",
+          description: `Commande ${data.order.orderNumber} payée avec succès`
+        });
+      }
+    } catch (error) {
+      console.error('Erreur vérification paiement:', error);
+    }
+  };
 
   // Conversion pi² → m²
   const sqftToSqm = (surfaceStr) => {
@@ -76,7 +120,6 @@ const Kit = () => {
       if (data.success) {
         setKits(data.data || []);
         
-        // Extraire les catégories
         const uniqueCategories = [...new Set(data.data.map(k => k.category))];
         setCategories(['Tous', ...uniqueCategories]);
       }
@@ -97,6 +140,7 @@ const Kit = () => {
     setIncludeMaterials(false);
     setShowOrderForm(false);
     setOrderSuccess(null);
+    setPaymentMethod('card');
     setOrderForm({ name: '', email: '', phone: '', notes: '' });
   };
 
@@ -104,6 +148,8 @@ const Kit = () => {
     setSelectedKit(null);
     setShowOrderForm(false);
     setOrderSuccess(null);
+    // Nettoyer les params URL
+    window.history.replaceState({}, '', window.location.pathname);
   };
 
   const formatPrice = (price) => {
@@ -122,16 +168,62 @@ const Kit = () => {
       ? (selectedKit.materialsListPrice || 0) 
       : 0;
     const subtotal = base + materials;
-    const taxRate = 14.975; // TPS + TVQ Québec
+    const taxRate = 14.975;
     const tax = subtotal * taxRate / 100;
     const total = subtotal + tax;
     
     return { base, materials, subtotal, tax, total };
   };
 
-  const handleOrderSubmit = async (e) => {
-    e.preventDefault();
-    
+  // Paiement par carte (Stripe)
+  const handleStripePayment = async () => {
+    if (!orderForm.name || !orderForm.email) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir votre nom et email",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setOrderSubmitting(true);
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/payments/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kit_id: selectedKit.id,
+          customer_name: orderForm.name,
+          customer_email: orderForm.email,
+          customer_phone: orderForm.phone,
+          include_materials: includeMaterials,
+          notes: orderForm.notes,
+          success_url: window.location.origin + '/kit',
+          cancel_url: window.location.origin + '/kit'
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.url) {
+        // Rediriger vers Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.detail || 'Erreur lors de la création du paiement');
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: error.message,
+        variant: "destructive"
+      });
+      setOrderSubmitting(false);
+    }
+  };
+
+  // Commande Interac (paiement manuel)
+  const handleInteracOrder = async () => {
     if (!orderForm.name || !orderForm.email) {
       toast({
         title: "Erreur",
@@ -146,9 +238,7 @@ const Kit = () => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/kits/order`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           kit_id: selectedKit.id,
           customer_name: orderForm.name,
@@ -162,10 +252,13 @@ const Kit = () => {
       const data = await response.json();
 
       if (data.success) {
-        setOrderSuccess(data.order);
+        setOrderSuccess({
+          ...data.order,
+          isPaid: false
+        });
         toast({
           title: "✅ Commande créée !",
-          description: `Numéro de commande: ${data.order.orderNumber}`
+          description: `Numéro: ${data.order.orderNumber}`
         });
       } else {
         throw new Error(data.detail || 'Erreur lors de la commande');
@@ -178,6 +271,15 @@ const Kit = () => {
       });
     } finally {
       setOrderSubmitting(false);
+    }
+  };
+
+  const handleOrderSubmit = (e) => {
+    e.preventDefault();
+    if (paymentMethod === 'card') {
+      handleStripePayment();
+    } else {
+      handleInteracOrder();
     }
   };
 
@@ -233,9 +335,6 @@ const Kit = () => {
                   <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
                   <p className="text-xl text-slate-500 mb-4">
                     Aucun kit disponible pour le moment.
-                  </p>
-                  <p className="text-slate-400">
-                    Les plans pré-dessinés seront bientôt disponibles.
                   </p>
                   <Link to="/devis">
                     <Button className="mt-6 bg-teal-800 hover:bg-teal-900">
@@ -307,23 +406,10 @@ const Kit = () => {
                                 {kit.surfaceArea}
                               </Badge>
                             )}
-                            {kit.rating > 0 && (
-                              <Badge variant="outline" className="text-xs">
-                                <Star className="w-3 h-3 mr-1 fill-amber-400 text-amber-400" />
-                                {kit.rating}
-                              </Badge>
-                            )}
                           </div>
-                          <div className="text-right">
-                            {kit.originalPrice && kit.originalPrice > kit.price && (
-                              <p className="text-sm text-slate-400 line-through">
-                                {formatPrice(kit.originalPrice)}
-                              </p>
-                            )}
-                            <p className="text-2xl font-bold text-teal-700">
-                              {formatPrice(kit.finalPrice || kit.price)}
-                            </p>
-                          </div>
+                          <p className="text-2xl font-bold text-teal-700">
+                            {formatPrice(kit.finalPrice || kit.price)}
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
@@ -345,7 +431,7 @@ const Kit = () => {
             Nos kits ne correspondent pas exactement à vos besoins ? Demandez un devis sur mesure !
           </p>
           <Link to="/devis">
-            <Button size="lg" variant="secondary" className="bg-white text-teal-800 hover:bg-teal-50 px-8 py-4 text-lg font-semibold rounded-full transform hover:scale-105 transition-all duration-300">
+            <Button size="lg" variant="secondary" className="bg-white text-teal-800 hover:bg-teal-50 px-8 py-4 text-lg font-semibold rounded-full">
               Demander un devis personnalisé
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -353,10 +439,75 @@ const Kit = () => {
         </div>
       </section>
 
-      {/* Kit Modal avec formulaire de commande */}
-      <Dialog open={!!selectedKit} onOpenChange={closeKitModal}>
+      {/* Kit Modal */}
+      <Dialog open={!!selectedKit || !!orderSuccess} onOpenChange={closeKitModal}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          {selectedKit && (
+          {orderSuccess ? (
+            // Confirmation de commande
+            <div className="space-y-6 text-center py-8">
+              <div className={`w-20 h-20 ${orderSuccess.isPaid ? 'bg-green-100' : 'bg-amber-100'} rounded-full flex items-center justify-center mx-auto`}>
+                {orderSuccess.isPaid ? (
+                  <CheckCircle className="w-10 h-10 text-green-600" />
+                ) : (
+                  <Banknote className="w-10 h-10 text-amber-600" />
+                )}
+              </div>
+              
+              <div>
+                <h3 className="text-2xl font-bold text-slate-800 mb-2">
+                  {orderSuccess.isPaid ? 'Paiement confirmé !' : 'Commande confirmée !'}
+                </h3>
+                <p className="text-slate-600">
+                  {orderSuccess.isPaid 
+                    ? 'Merci ! Vos fichiers vous seront envoyés par email sous peu.'
+                    : 'Merci ! Suivez les instructions ci-dessous pour finaliser votre commande.'}
+                </p>
+              </div>
+
+              <div className="bg-slate-50 p-6 rounded-lg text-left max-w-md mx-auto">
+                <h4 className="font-semibold text-slate-800 mb-4">Détails de la commande</h4>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Numéro</span>
+                    <span className="font-mono font-bold">{orderSuccess.orderNumber}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-500">Kit</span>
+                    <span>{orderSuccess.kitName}</span>
+                  </div>
+                  <div className="border-t pt-2 mt-2">
+                    <div className="flex justify-between font-bold text-lg">
+                      <span>Total {orderSuccess.isPaid ? 'payé' : 'à payer'}</span>
+                      <span className="text-teal-700">{formatPrice(orderSuccess.totalAmount)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {!orderSuccess.isPaid && (
+                <div className="bg-amber-50 p-4 rounded-lg text-left max-w-md mx-auto">
+                  <h4 className="font-semibold text-amber-800 mb-2 flex items-center">
+                    <Banknote className="w-4 h-4 mr-2" />
+                    Instructions de paiement Interac
+                  </h4>
+                  <p className="text-sm text-amber-700 mb-3">
+                    Envoyez le montant par <strong>Virement Interac</strong> à :
+                  </p>
+                  <p className="text-center font-bold text-lg text-teal-700 bg-white p-3 rounded">
+                    📧 abrisia0plan@gmail.com
+                  </p>
+                  <p className="text-xs text-amber-600 mt-3 text-center">
+                    Question secrète : <strong>Abrisia</strong> | Réponse : <strong>Plan</strong><br/>
+                    Mentionnez : <strong>{orderSuccess.orderNumber}</strong>
+                  </p>
+                </div>
+              )}
+
+              <Button onClick={closeKitModal} variant="outline">
+                Fermer
+              </Button>
+            </div>
+          ) : selectedKit && (
             <>
               <DialogHeader>
                 <DialogTitle className="text-2xl font-bold text-slate-800 mb-2">
@@ -372,15 +523,10 @@ const Kit = () => {
                       {selectedKit.designerName}
                     </Badge>
                   )}
-                  {selectedKit.difficultyLevel && (
-                    <Badge variant="outline" className="w-fit">
-                      Niveau: {selectedKit.difficultyLevel}
-                    </Badge>
-                  )}
                 </div>
               </DialogHeader>
               
-              {!showOrderForm && !orderSuccess ? (
+              {!showOrderForm ? (
                 // Vue détails du kit
                 <div className="space-y-6">
                   <img
@@ -461,7 +607,7 @@ const Kit = () => {
                             </span>
                           </label>
                           <p className="text-sm text-slate-600 mt-1">
-                            Recevez un PDF détaillé avec tous les matériaux nécessaires et leurs quantités
+                            Recevez un PDF détaillé avec tous les matériaux nécessaires
                           </p>
                         </div>
                       </div>
@@ -473,30 +619,17 @@ const Kit = () => {
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-sm text-slate-500">Prix du kit</p>
-                        <div className="flex items-center gap-2">
-                          {selectedKit.originalPrice && selectedKit.originalPrice > selectedKit.price && (
-                            <span className="text-lg text-slate-400 line-through">
-                              {formatPrice(selectedKit.originalPrice)}
-                            </span>
-                          )}
-                          <span className="text-3xl font-bold text-teal-700">
-                            {formatPrice(prices.base)}
-                          </span>
-                        </div>
+                        <span className="text-3xl font-bold text-teal-700">
+                          {formatPrice(prices.base)}
+                        </span>
                         {includeMaterials && (
                           <p className="text-amber-600 font-semibold mt-1">
                             + {formatPrice(prices.materials)} (matériaux)
                           </p>
                         )}
                       </div>
-                      {selectedKit.discountPercentage && (
-                        <Badge className="bg-red-500 text-white">
-                          -{selectedKit.discountPercentage}%
-                        </Badge>
-                      )}
                     </div>
 
-                    {/* Résumé du prix */}
                     <div className="border-t border-amber-200 pt-4 mb-4">
                       <div className="flex justify-between text-sm text-slate-600 mb-1">
                         <span>Sous-total</span>
@@ -519,70 +652,10 @@ const Kit = () => {
                       <ShoppingCart className="w-5 h-5 mr-2" />
                       Commander ce kit
                     </Button>
-                    <p className="text-center text-sm text-slate-500 mt-3">
-                      Paiement par Interac ou virement bancaire
-                    </p>
                   </div>
-                </div>
-              ) : orderSuccess ? (
-                // Confirmation de commande
-                <div className="space-y-6 text-center py-8">
-                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                    <Check className="w-10 h-10 text-green-600" />
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                      Commande confirmée !
-                    </h3>
-                    <p className="text-slate-600">
-                      Merci pour votre commande. Vous recevrez un email avec les instructions de paiement.
-                    </p>
-                  </div>
-
-                  <div className="bg-slate-50 p-6 rounded-lg text-left max-w-md mx-auto">
-                    <h4 className="font-semibold text-slate-800 mb-4">Détails de la commande</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Numéro</span>
-                        <span className="font-mono font-bold">{orderSuccess.orderNumber}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Kit</span>
-                        <span>{orderSuccess.kitName}</span>
-                      </div>
-                      {orderSuccess.includeMaterials && (
-                        <div className="flex justify-between text-amber-600">
-                          <span>Liste matériaux</span>
-                          <span>+{formatPrice(orderSuccess.materialsPrice)}</span>
-                        </div>
-                      )}
-                      <div className="border-t pt-2 mt-2">
-                        <div className="flex justify-between font-bold text-lg">
-                          <span>Total à payer</span>
-                          <span className="text-teal-700">{formatPrice(orderSuccess.totalAmount)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-amber-50 p-4 rounded-lg text-left max-w-md mx-auto">
-                    <h4 className="font-semibold text-amber-800 mb-2 flex items-center">
-                      <CreditCard className="w-4 h-4 mr-2" />
-                      Instructions de paiement
-                    </h4>
-                    <p className="text-sm text-amber-700">
-                      Vous recevrez un email avec les détails pour effectuer votre paiement par Interac ou virement bancaire.
-                      Une fois le paiement confirmé, vos fichiers vous seront envoyés par email.
-                    </p>
-                  </div>
-
-                  <Button onClick={closeKitModal} variant="outline">
-                    Fermer
-                  </Button>
                 </div>
               ) : (
-                // Formulaire de commande
+                // Formulaire de commande avec choix de paiement
                 <form onSubmit={handleOrderSubmit} className="space-y-6">
                   <div className="bg-teal-50 p-4 rounded-lg">
                     <h3 className="font-semibold text-teal-800 mb-2">Récapitulatif</h3>
@@ -640,9 +713,6 @@ const Kit = () => {
                         required
                         className="mt-1"
                       />
-                      <p className="text-xs text-slate-500 mt-1">
-                        Les fichiers seront envoyés à cette adresse après paiement
-                      </p>
                     </div>
 
                     <div>
@@ -659,16 +729,55 @@ const Kit = () => {
                         className="mt-1"
                       />
                     </div>
+                  </div>
 
-                    <div>
-                      <Label htmlFor="notes">Notes (optionnel)</Label>
-                      <Input
-                        id="notes"
-                        value={orderForm.notes}
-                        onChange={(e) => setOrderForm(prev => ({ ...prev, notes: e.target.value }))}
-                        placeholder="Questions ou commentaires..."
-                        className="mt-1"
-                      />
+                  {/* Choix du mode de paiement */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-slate-800">Mode de paiement</h3>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* Option Carte de crédit */}
+                      <div
+                        onClick={() => setPaymentMethod('card')}
+                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                          paymentMethod === 'card'
+                            ? 'border-teal-500 bg-teal-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="flex items-center mb-2">
+                          <CreditCard className={`w-6 h-6 mr-2 ${paymentMethod === 'card' ? 'text-teal-600' : 'text-gray-400'}`} />
+                          <span className="font-semibold">Carte de crédit/débit</span>
+                        </div>
+                        <p className="text-sm text-gray-500">
+                          Paiement sécurisé par Stripe
+                        </p>
+                        <div className="flex gap-2 mt-2">
+                          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/100px-Visa_Inc._logo.svg.png" alt="Visa" className="h-6" />
+                          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/100px-Mastercard-logo.svg.png" alt="Mastercard" className="h-6" />
+                        </div>
+                      </div>
+
+                      {/* Option Interac */}
+                      <div
+                        onClick={() => setPaymentMethod('interac')}
+                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                          paymentMethod === 'interac'
+                            ? 'border-amber-500 bg-amber-50'
+                            : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="flex items-center mb-2">
+                          <Banknote className={`w-6 h-6 mr-2 ${paymentMethod === 'interac' ? 'text-amber-600' : 'text-gray-400'}`} />
+                          <span className="font-semibold">Virement Interac</span>
+                        </div>
+                        <p className="text-sm text-gray-500">
+                          Instructions envoyées par email
+                        </p>
+                        <div className="mt-2">
+                          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Interac_logo.svg/100px-Interac_logo.svg.png" alt="Interac" className="h-6" />
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -676,17 +785,20 @@ const Kit = () => {
                     <Button
                       type="submit"
                       disabled={orderSubmitting}
-                      className="flex-1 bg-teal-800 hover:bg-teal-900"
+                      className={`flex-1 ${paymentMethod === 'card' ? 'bg-teal-800 hover:bg-teal-900' : 'bg-amber-600 hover:bg-amber-700'}`}
                     >
                       {orderSubmitting ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Envoi en cours...
+                          {paymentMethod === 'card' ? 'Redirection...' : 'Envoi...'}
                         </>
                       ) : (
                         <>
-                          <ShoppingCart className="w-4 h-4 mr-2" />
-                          Confirmer la commande
+                          {paymentMethod === 'card' ? (
+                            <><CreditCard className="w-4 h-4 mr-2" /> Payer {formatPrice(prices.total)}</>
+                          ) : (
+                            <><Banknote className="w-4 h-4 mr-2" /> Commander (Interac)</>
+                          )}
                         </>
                       )}
                     </Button>
