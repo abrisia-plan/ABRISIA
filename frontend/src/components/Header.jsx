@@ -44,7 +44,7 @@ const Header = () => {
               />
             </div>
             <span className="text-2xl font-bold text-slate-800 group-hover:text-teal-700 transition-colors">
-              ABRISIA PLAN
+              ABRISIA
             </span>
           </Link>
 
