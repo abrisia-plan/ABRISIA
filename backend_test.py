@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://ok-check-8.preview.emergentagent.com"  # Use external URL from frontend/.env
+BASE_URL = "https://site-showcase-62.preview.emergentagent.com"  # Use external URL from frontend/.env
 API_BASE = f"{BASE_URL}/api"
 
 # Données de test

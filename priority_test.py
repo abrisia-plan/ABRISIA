@@ -13,7 +13,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://ok-check-8.preview.emergentagent.com"
+BASE_URL = "https://site-showcase-62.preview.emergentagent.com"
 API_BASE = f"{BASE_URL}/api"
 
 # Données de test
