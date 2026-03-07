@@ -143,7 +143,7 @@ export const EmployeePortal = () => {
     const employeeData = localStorage.getItem('employeeData');
     
     if (!token || !employeeData) {
-      navigate('/connexion-employe');
+      navigate('/admin');
       return;
     }
     
@@ -152,7 +152,7 @@ export const EmployeePortal = () => {
       setEmployee(emp);
       loadAssignedDevis(emp.name);
     } catch (e) {
-      navigate('/connexion-employe');
+      navigate('/admin');
     }
   }, [navigate]);
 

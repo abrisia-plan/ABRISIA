@@ -30,6 +30,9 @@ import ContentManager from './ContentManager';
 import CategoriesManager from './CategoriesManager';
 import TestimonialsManager from './TestimonialsManager';
 import LegalPagesManager from './LegalPagesManager';
+import EmployeesManager from './EmployeesManager';
+import KitOrdersManager from './KitOrdersManager';
+import DevisManager from './DevisManager';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -136,10 +139,10 @@ const AdminPanel = () => {
             <Button 
               variant={activeTab === 'devis' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'devis' ? 'bg-teal-600' : ''}`}
-              onClick={() => navigate('/admin/dashboard')}
+              onClick={() => setActiveTab('devis-manager')}
             >
               <FileText className="w-4 h-4 mr-2" />
-              Gestion des devis
+              Devis (vue rapide)
             </Button>
             <Button 
               variant={activeTab === 'projects' ? 'default' : 'ghost'}
@@ -197,6 +200,33 @@ const AdminPanel = () => {
               <Settings className="w-4 h-4 mr-2" />
               Pages légales
             </Button>
+
+            <div className="border-t border-gray-200 my-3"></div>
+            
+            <Button 
+              variant={activeTab === 'employees' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'employees' ? 'bg-teal-600' : ''}`}
+              onClick={() => setActiveTab('employees')}
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Employés
+            </Button>
+            <Button 
+              variant={activeTab === 'kit-orders' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'kit-orders' ? 'bg-teal-600' : ''}`}
+              onClick={() => setActiveTab('kit-orders')}
+            >
+              <ShoppingCart className="w-4 h-4 mr-2" />
+              Commandes kits
+            </Button>
+            <Button 
+              variant={activeTab === 'devis-manager' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'devis-manager' ? 'bg-teal-600' : ''}`}
+              onClick={() => setActiveTab('devis-manager')}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Gestion des devis
+            </Button>
           </nav>
         </aside>
 
@@ -238,6 +268,18 @@ const AdminPanel = () => {
               
               {activeTab === 'legal' && (
                 <LegalPagesManager />
+              )}
+              
+              {activeTab === 'employees' && (
+                <EmployeesManager />
+              )}
+              
+              {activeTab === 'kit-orders' && (
+                <KitOrdersManager />
+              )}
+              
+              {activeTab === 'devis-manager' && (
+                <DevisManager />
               )}
             </>
           )}
@@ -337,70 +379,10 @@ const DashboardTab = ({ stats }) => {
             <p>• <strong>Projets</strong> : Ajoutez des réalisations dans la page Inspiration</p>
             <p>• <strong>Kits</strong> : Créez des plans pré-dessinés à vendre</p>
             <p>• <strong>Design</strong> : Modifiez le logo, les couleurs et images du site</p>
-            <p>• <strong>Employés</strong> : Gérez votre équipe (bientôt disponible)</p>
+            <p>• <strong>Employés</strong> : Gérez votre équipe via l'onglet Employés</p>
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
-};
-
-// Composant Employés (à développer)
-const EmployeesTab = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Gestion des employés</h2>
-        <p className="text-gray-600 mt-1">Gérez votre équipe et leurs accès</p>
-      </div>
-
-      <Card>
-        <CardContent className="p-12 text-center">
-          <Users className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">Bientôt disponible</h3>
-          <p className="text-gray-500 max-w-md mx-auto">
-            Cette fonctionnalité permettra de :
-          </p>
-          <ul className="text-gray-500 mt-4 space-y-2 text-left max-w-sm mx-auto">
-            <li>• Créer des comptes employés/dessinateurs</li>
-            <li>• Assigner des devis automatiquement</li>
-            <li>• Envoyer des messages de groupe</li>
-            <li>• Gérer les permissions d'accès</li>
-            <li>• Suivre l'activité de l'équipe</li>
-          </ul>
-          <Badge className="mt-6 bg-amber-100 text-amber-800">En développement</Badge>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
-
-// Composant Messages (à développer)
-const MessagesTab = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Messages</h2>
-        <p className="text-gray-600 mt-1">Communiquez avec vos clients et employés</p>
-      </div>
-
-      <Card>
-        <CardContent className="p-12 text-center">
-          <MessageSquare className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">Bientôt disponible</h3>
-          <p className="text-gray-500 max-w-md mx-auto">
-            Cette fonctionnalité permettra de :
-          </p>
-          <ul className="text-gray-500 mt-4 space-y-2 text-left max-w-sm mx-auto">
-            <li>• Envoyer des messages aux clients</li>
-            <li>• Créer des discussions de groupe</li>
-            <li>• Envoyer des notifications par email</li>
-            <li>• Gérer les commentaires clients</li>
-            <li>• Historique des conversations</li>
-          </ul>
-          <Badge className="mt-6 bg-amber-100 text-amber-800">En développement</Badge>
-        </CardContent>
-      </Card>
     </div>
   );
 };

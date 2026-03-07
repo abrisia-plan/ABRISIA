@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "./components/ui/toaster";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -19,7 +19,7 @@ import Login from "./pages/Admin/Login";
 import Dashboard from "./pages/Admin/Dashboard";
 import CMS from "./pages/Admin/CMS";
 import AdminPanel from "./pages/Admin/AdminPanel";
-import { EmployeeLogin, EmployeePortal } from "./pages/EmployeePortal";
+import { EmployeePortal } from "./pages/EmployeePortal";
 
 function App() {
   return (
@@ -54,7 +54,7 @@ function App() {
           <Route path="/admin/panel" element={<AdminPanel />} />
           
           {/* Routes espace employé */}
-          <Route path="/connexion-employe" element={<EmployeeLogin />} />
+          <Route path="/connexion-employe" element={<Navigate to="/admin" replace />} />
           <Route path="/espace-employe" element={<EmployeePortal />} />
         </Routes>
         <Toaster />

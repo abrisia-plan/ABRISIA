@@ -33,16 +33,22 @@ const Login = () => {
       const response = await authService.login(credentials);
       
       if (response.success) {
-        // Stocker le token et les infos utilisateur
+        const user = response.user;
         localStorage.setItem('authToken', response.token);
-        localStorage.setItem('adminUser', JSON.stringify(response.user));
+        localStorage.setItem('adminUser', JSON.stringify(user));
         
         toast({
           title: "Connexion réussie !",
-          description: `Bienvenue ${response.user.name}`,
+          description: `Bienvenue ${user.name}`,
         });
         
-        navigate('/admin/dashboard');
+        if (user.role === 'admin') {
+          navigate('/admin/dashboard');
+        } else {
+          localStorage.setItem('employeeToken', response.token);
+          localStorage.setItem('employeeData', JSON.stringify(user));
+          navigate('/espace-employe');
+        }
       } else {
         throw new Error(response.message || 'Erreur de connexion');
       }
@@ -62,7 +68,6 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-stone-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        {/* Logo et titre */}
         <div className="text-center">
           <div className="flex items-center justify-center mb-6">
             <div className="w-16 h-16 bg-teal-800 rounded-full flex items-center justify-center">
@@ -70,11 +75,10 @@ const Login = () => {
             </div>
           </div>
           <h2 className="text-3xl font-bold text-slate-800">ABRISIA PLAN</h2>
-          <p className="mt-2 text-slate-600">Espace Administrateur</p>
+          <p className="mt-2 text-slate-600">Espace Équipe</p>
         </div>
 
-        {/* Formulaire de connexion */}
-        <Card className="shadow-2xl border-stone-200">
+        <Card className="shadow-2xl border-stone-200" data-testid="login-card">
           <CardHeader className="bg-gradient-to-r from-amber-50 to-stone-50 border-b border-stone-200">
             <CardTitle className="text-xl text-slate-800 text-center flex items-center justify-center">
               <Lock className="w-5 h-5 mr-2" />
@@ -85,7 +89,7 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-slate-700 font-medium">
-                  Adresse email
+                  Adresse courriel
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
@@ -93,6 +97,7 @@ const Login = () => {
                     id="email"
                     name="email"
                     type="email"
+                    data-testid="login-email-input"
                     value={credentials.email}
                     onChange={handleInputChange}
                     required
@@ -112,17 +117,19 @@ const Login = () => {
                     id="password"
                     name="password"
                     type="password"
+                    data-testid="login-password-input"
                     value={credentials.password}
                     onChange={handleInputChange}
                     required
                     className="pl-10 border-stone-300 focus:border-teal-500"
-                    placeholder="••••••••"
+                    placeholder="Votre mot de passe"
                   />
                 </div>
               </div>
 
               <Button 
                 type="submit" 
+                data-testid="login-submit-button"
                 className="w-full bg-teal-800 hover:bg-teal-900 text-white py-3 text-lg font-semibold rounded-lg transition-all duration-300"
                 disabled={isLoading}
               >
@@ -137,15 +144,18 @@ const Login = () => {
               </Button>
             </form>
 
+            <p className="text-center text-sm text-slate-500 mt-4">
+              Administrateurs et employés
+            </p>
           </CardContent>
         </Card>
 
-        {/* Lien de retour */}
         <div className="text-center">
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
             className="text-slate-600 hover:text-teal-700"
+            data-testid="back-to-site-button"
           >
             ← Retour au site
           </Button>
