@@ -22,7 +22,8 @@ const Footer = () => {
                 <img 
                   src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
                   alt="Logo Abrisia" 
-                  className="w-[200%] h-[200%] object-cover -ml-[50%] -mt-[25%] invert"
+                  className="w-full h-full object-cover scale-150 invert"
+                  style={{ objectPosition: 'center 40%' }}
                 />
               </div>
               <span className="text-2xl font-bold">ABRISIA PLAN</span>
