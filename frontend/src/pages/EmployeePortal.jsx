@@ -248,10 +248,21 @@ export const EmployeePortal = () => {
               <p className="text-sm text-gray-500">{employee.name} - {employee.role === 'designer' ? 'Dessinateur' : employee.role}</p>
             </div>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Déconnexion
-          </Button>
+          <div className="flex items-center space-x-3">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/')}
+              className="border-teal-300 text-teal-700 hover:bg-teal-50"
+              data-testid="employee-back-to-site"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              Voir le site
+            </Button>
+            <Button variant="outline" onClick={handleLogout}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Déconnexion
+            </Button>
+          </div>
         </div>
       </header>
 

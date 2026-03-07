@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Checkbox } from '../components/ui/checkbox';
-import { planOptions, projectTypes } from '../data/mock';
-import { Send, CheckCircle } from 'lucide-react';
+import { projectTypes } from '../data/mock';
+import { Send, CheckCircle, Loader2 } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import { devisService, handleApiError } from '../services/api';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const Devis = () => {
   const { toast } = useToast();
+  const [planOptions, setPlanOptions] = useState([]);
+  const [loadingOptions, setLoadingOptions] = useState(true);
   const [formData, setFormData] = useState({
     nom: '',
     email: '',
@@ -22,6 +26,23 @@ const Devis = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const loadPlanOptions = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/plan-options`);
+        const data = await res.json();
+        if (data.success && data.data?.length > 0) {
+          setPlanOptions(data.data);
+        }
+      } catch (err) {
+        console.error('Erreur chargement options:', err);
+      } finally {
+        setLoadingOptions(false);
+      }
+    };
+    loadPlanOptions();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

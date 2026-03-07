@@ -1,9 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, Mail } from 'lucide-react';
+import { MapPin, Mail, Users } from 'lucide-react';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+const defaultFooterNav = [
+  { name: 'Accueil', href: '/' },
+  { name: 'Kits de plans', href: '/kit' },
+  { name: 'Demander un devis', href: '/devis' },
+  { name: 'Contact', href: '/contact' }
+];
 
 const Footer = () => {
   const navigate = useNavigate();
+  const [navigation, setNavigation] = useState(defaultFooterNav);
+
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/api/navigation/menu`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.pages?.length > 0) {
+          setNavigation(data.pages.map(p => ({ name: p.name, href: p.href })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -35,12 +56,17 @@ const Footer = () => {
 
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-teal-400">Navigation</h3>
-            <ul className="space-y-2 text-slate-300">
-              <li><button onClick={() => handleNavigation('/')} className="hover:text-teal-400 transition-colors">Accueil</button></li>
-              <li><button onClick={() => handleNavigation('/inspiration')} className="hover:text-teal-400 transition-colors">Inspiration</button></li>
-              <li><button onClick={() => handleNavigation('/kit')} className="hover:text-teal-400 transition-colors">Kits de plans</button></li>
-              <li><button onClick={() => handleNavigation('/devis')} className="hover:text-teal-400 transition-colors">Demander un devis</button></li>
-              <li><button onClick={() => handleNavigation('/contact')} className="hover:text-teal-400 transition-colors">Contact</button></li>
+            <ul className="space-y-2 text-slate-300" data-testid="footer-navigation">
+              {navigation.map((item) => (
+                <li key={item.href}>
+                  <button 
+                    onClick={() => handleNavigation(item.href)} 
+                    className="hover:text-teal-400 transition-colors"
+                  >
+                    {item.name}
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -71,7 +97,12 @@ const Footer = () => {
               <button onClick={() => handleNavigation('/politique-confidentialite')} className="hover:text-teal-400 transition-colors">
                 Politique de confidentialité
               </button>
-              <button onClick={() => handleNavigation('/admin')} className="hover:text-teal-400 transition-colors font-medium">
+              <button 
+                onClick={() => handleNavigation('/admin')} 
+                className="hover:text-teal-400 transition-colors font-medium flex items-center gap-1"
+                data-testid="footer-team-link"
+              >
+                <Users className="w-3.5 h-3.5" />
                 Espace équipe
               </button>
             </div>

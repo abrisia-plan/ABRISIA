@@ -49,7 +49,7 @@ function App() {
           
           {/* Routes admin sans Header/Footer */}
           <Route path="/admin" element={<Login />} />
-          <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/admin/dashboard" element={<Navigate to="/admin/panel" replace />} />
           <Route path="/admin/cms" element={<CMS />} />
           <Route path="/admin/panel" element={<AdminPanel />} />
           

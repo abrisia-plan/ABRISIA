@@ -680,3 +680,116 @@ async def update_legal_page(page_id: str, content: dict, current_user: dict = De
     except Exception as e:
         logger.error(f"❌ Erreur mise à jour page légale: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+# ============ PLAN OPTIONS (Prix du Devis) ============
+
+DEFAULT_PLAN_OPTIONS = [
+    {"id": "fondation", "name": "Plan de fondation", "price": "300$", "description": "", "category": "plans", "is_active": True, "order": 0},
+    {"id": "architecture", "name": "Plan architectural complet", "price": "800$", "description": "", "category": "plans", "is_active": True, "order": 1},
+    {"id": "extension", "name": "Plan d'extension/verrière", "price": "600$", "description": "", "category": "plans", "is_active": True, "order": 2},
+    {"id": "plomberie", "name": "Plan de plomberie (inclut évacuation)", "price": "400$", "description": "", "category": "plans", "is_active": True, "order": 3},
+    {"id": "electricite", "name": "Plan électrique", "price": "450$", "description": "", "category": "plans", "is_active": True, "order": 4},
+    {"id": "ventilation", "name": "Plan de ventilation", "price": "350$", "description": "", "category": "plans", "is_active": True, "order": 5},
+    {"id": "mini-maison-complete", "name": "Mini-maison complète (plans + détails)", "price": "800$", "description": "Plans architecturaux et techniques pour mini-maison", "category": "projets", "is_active": True, "order": 6},
+    {"id": "chalet-complet", "name": "Chalet complet (plans + détails)", "price": "1200$", "description": "Plans architecturaux et techniques pour chalet quatre saisons", "category": "projets", "is_active": True, "order": 7},
+    {"id": "maison-complete", "name": "Maison résidentielle complète", "price": "1500$", "description": "Plans architecturaux et techniques pour maison familiale", "category": "projets", "is_active": True, "order": 8},
+    {"id": "abri-garage", "name": "Abris/garage/gazebo/galerie/coin cuisine extérieur", "price": "400$", "description": "Plans pour structures extérieures et espaces de vie outdoor", "category": "projets", "is_active": True, "order": 9},
+    {"id": "accompagnement", "name": "Calculs de matériaux", "price": "Sur devis", "description": "Liste de matériaux et estimation des quantités pour votre projet", "category": "services", "is_active": True, "order": 10},
+    {"id": "ebenisterie", "name": "Ébénisterie sur mesure", "price": "Sur devis", "description": "Conception et plans pour meubles et aménagements personnalisés", "category": "services", "is_active": True, "order": 11},
+    {"id": "autre", "name": "Autre (à préciser dans les notes)", "price": "Sur devis", "description": "Projet spécialisé ou besoins particuliers - décrivez vos besoins", "category": "services", "is_active": True, "order": 12},
+]
+
+
+@router.get("/plan-options")
+async def get_plan_options_public():
+    """Obtenir les options de plans (public - pour le formulaire de devis)"""
+    try:
+        db = get_database()
+        options = await db.plan_options.find({"is_active": True}, {"_id": 0}).sort("order", 1).to_list(length=None)
+        if not options:
+            # Seed defaults
+            await db.plan_options.insert_many([dict(o) for o in DEFAULT_PLAN_OPTIONS])
+            options = DEFAULT_PLAN_OPTIONS
+        return {"success": True, "data": options}
+    except Exception as e:
+        logger.error(f"Erreur plan options: {e}")
+        return {"success": True, "data": DEFAULT_PLAN_OPTIONS}
+
+
+@router.get("/admin/plan-options")
+async def get_plan_options_admin(current_user: dict = Depends(require_admin)):
+    """Obtenir toutes les options de plans (admin)"""
+    try:
+        db = get_database()
+        options = await db.plan_options.find({}, {"_id": 0}).sort("order", 1).to_list(length=None)
+        if not options:
+            await db.plan_options.insert_many([dict(o) for o in DEFAULT_PLAN_OPTIONS])
+            options = DEFAULT_PLAN_OPTIONS
+        return {"success": True, "data": options}
+    except Exception as e:
+        logger.error(f"Erreur admin plan options: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/admin/plan-options/{option_id}")
+async def update_plan_option(option_id: str, data: dict, current_user: dict = Depends(require_admin)):
+    """Modifier une option de plan (admin)"""
+    try:
+        db = get_database()
+        update_fields = {}
+        for key in ["name", "price", "description", "category", "is_active", "order"]:
+            if key in data:
+                update_fields[key] = data[key]
+        
+        result = await db.plan_options.update_one(
+            {"id": option_id},
+            {"$set": update_fields}
+        )
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Option non trouvée")
+        return {"success": True, "message": "Option mise à jour"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur update plan option: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/admin/plan-options")
+async def create_plan_option(data: dict, current_user: dict = Depends(require_admin)):
+    """Créer une nouvelle option de plan (admin)"""
+    try:
+        db = get_database()
+        option_id = data.get("id") or str(uuid.uuid4())[:8]
+        new_option = {
+            "id": option_id,
+            "name": data.get("name", ""),
+            "price": data.get("price", "Sur devis"),
+            "description": data.get("description", ""),
+            "category": data.get("category", "plans"),
+            "is_active": data.get("is_active", True),
+            "order": data.get("order", 99),
+        }
+        await db.plan_options.insert_one(new_option)
+        return {"success": True, "message": "Option créée", "id": option_id}
+    except Exception as e:
+        logger.error(f"Erreur create plan option: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/admin/plan-options/{option_id}")
+async def delete_plan_option(option_id: str, current_user: dict = Depends(require_admin)):
+    """Supprimer une option de plan (admin)"""
+    try:
+        db = get_database()
+        result = await db.plan_options.delete_one({"id": option_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Option non trouvée")
+        return {"success": True, "message": "Option supprimée"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur delete plan option: {e}")
+        raise HTTPException(status_code=500, detail=str(e))

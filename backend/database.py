@@ -48,7 +48,6 @@ async def init_collections():
         await db.database.devis.create_index("created_at")
         
         await db.database.users.create_index("email", unique=True)
-        await db.database.designers.create_index("email", unique=True)
         await db.database.projects.create_index("category")
         await db.database.projects.create_index("is_visible")
         
@@ -67,30 +66,6 @@ async def init_collections():
             }
             await db.database.users.insert_one(admin_user)
             logger.info("✅ Utilisateur admin créé")
-        
-        # Créer dessinateurs par défaut
-        existing_designers = await db.database.designers.count_documents({})
-        if existing_designers == 0:
-            designers = [
-                {
-                    "name": "Marc Dessinateur",
-                    "email": "marc@abrisia-plan.ca",
-                    "specialties": ["Mini-maisons", "Chalets", "Plans fondations"],
-                    "active_projects": 0,
-                    "created_at": datetime.utcnow(),
-                    "updated_at": datetime.utcnow()
-                },
-                {
-                    "name": "Sophie Architecte", 
-                    "email": "sophie@abrisia-plan.ca",
-                    "specialties": ["Extensions", "Maisons résidentielles", "Structures permanentes"],
-                    "active_projects": 0,
-                    "created_at": datetime.utcnow(),
-                    "updated_at": datetime.utcnow()
-                }
-            ]
-            await db.database.designers.insert_many(designers)
-            logger.info("✅ Dessinateurs par défaut créés")
         
         # Créer projets d'inspiration par défaut
         existing_projects = await db.database.projects.count_documents({})

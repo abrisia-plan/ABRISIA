@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Users } from 'lucide-react';
 import { Button } from './ui/button';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -62,6 +62,14 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
+            <Link
+              to="/admin"
+              className="flex items-center gap-1.5 text-sm font-medium text-slate-500 hover:text-teal-700 transition-colors border border-slate-300 hover:border-teal-400 rounded-full px-3 py-1.5"
+              data-testid="team-space-link"
+            >
+              <Users className="w-3.5 h-3.5" />
+              Espace équipe
+            </Link>
           </nav>
 
           <div className="lg:hidden">
@@ -92,6 +100,14 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
+              <Link
+                to="/admin"
+                className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-teal-700 py-2 border-t border-slate-200 pt-3 mt-1"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Users className="w-4 h-4" />
+                Espace équipe
+              </Link>
             </nav>
           </div>
         )}
