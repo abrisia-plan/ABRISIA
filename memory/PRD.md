@@ -1,99 +1,78 @@
 # Abrisia Plan - PRD (Product Requirements Document)
 
-## Problème original
-Site web pour Abrisia Plan, entreprise de plans architecturaux au Québec. Fonctionnalités: système de kits automatisé, système de devis avancé, gestion des employés, paiements.
+## Problème Original
+Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini-maisons, chalets, maisons, extensions. Plans conformes au Code du bâtiment du Québec.
 
 ## Architecture
-- **Frontend**: React (port 3000)
-- **Backend**: FastAPI (port 8001)
-- **Database**: MongoDB
-- **Deployment**: Emergent Platform → abrisia-plan.ca
+- **Frontend:** React + TailwindCSS + Shadcn UI
+- **Backend:** FastAPI (Python)
+- **Base de données:** MongoDB
+- **Déploiement:** Emergent Platform → abrisia-plan.ca
 
-## Ce qui est implémenté
+## Fonctionnalités Implémentées
 
-### Système de kits (Complet)
-- Page publique /kit pour commander des kits de plans
-- Options plan seul ou plan + matériaux
-- 1 kit actif: Mini-maison 400 pi²
-- 9 commandes enregistrées
+### Site Public
+- Page d'accueil avec hero, services, inspiration, processus, témoignages
+- Page Inspiration (galerie par catégories)
+- Page Kits de plans (vente de kits)
+- Page Devis (formulaire dynamique avec prix gérables)
+- Page Contact (avec formulaire "Envoyer mon CV")
+- Pages légales (mentions légales, politique de confidentialité)
+- SEO: sitemap.xml, robots.txt, métadonnées
 
-### Paiements (Partiel)
-- Interac: Fonctionnel (instructions par courriel)
-- Stripe: Codé mais désactivé (en attente configuration compte)
-
-### Courriels (Complet)
-- Gmail SMTP configuré (mot de passe d'application dans backend/.env)
-- Notifications de commande fonctionnelles
-
-### Authentification (Complet)
-- JWT pour admin et employés
-- Login unifié à /admin (admin + employés)
-- Admin redirigé vers /admin/dashboard
-- Employés redirigés vers /espace-employe
-
-### Système d'employés (Complet - 2026-03-07)
-- Inscription employé via API /api/employees/register
-- Approbation par admin
-- Login via page unifiée /admin
-- Portail employé /espace-employe avec projets assignés
-- Gestion employés dans admin panel
-- Employé test: marc@abrisia-plan.ca / marc123
-
-### SEO (Corrigé - 2026-03-07)
-- Title: "Abrisia Plan | Plans architecturaux, mini-maisons et chalets au Québec"
-- Meta description, Open Graph, structured data JSON-LD
-- robots.txt et sitemap.xml
-- lang="fr" dans le HTML
-
-### Admin Panel (Complet - 2026-03-07)
-- Tableau de bord avec stats
-- Gestion devis
-- Gestion projets/inspiration
-- Gestion kits de plans
-- Gestion employés (ajout, approbation, suppression)
+### Panneau Administration (/admin/panel)
+- Tableau de bord (statistiques devis)
+- Gestion des devis (CRUD + assignation)
+- Projets d'inspiration (CRUD)
+- Catégories d'accueil
+- Kits de plans (CRUD + upload PDF/DWG/SKP)
+- Services & Prix (page d'accueil)
+- **Prix du devis** (gestion dynamique des prix du formulaire de devis)
+- Design & Images (CMS)
+- Témoignages (CRUD)
+- Pages légales (édition)
+- Menu du site (masquer/afficher pages — affecte Header ET Footer)
+- Gestion des employés (approuver, désactiver, supprimer)
 - Commandes kits
-- Services & Prix
-- Design & Images
-- Témoignages
-- Pages légales
+- Gestion des devis avancée
 
-### Sécurité (Corrigé - 2026-03-07)
-- Page /admin ne montre plus les identifiants
-- Formulaire vide avec placeholders génériques
+### Portail Employé (/espace-employe)
+- Connexion employé
+- Projets assignés avec statuts
+- Notes et progression
+- Bouton "Voir le site"
 
-## Backlog P1 (prochaine session)
-- CV dans la page Contact (onglet "Envoyer un CV") — backend prêt, frontend à brancher
-- Enlever le jaune de la page Contact — remplacer par beige clair
-- Lien "Espace équipe" dans le footer
-- Finaliser configuration Stripe
+### Sécurité
+- Authentification JWT
+- Rôles: admin, designer, constructor, employee
+- Identifiants non codés en dur
 
-## Backlog P2
-- Mini-espace projet pour clients
+## Corrections Effectuées (2026-03-07)
+1. ✅ Bouton "Espace équipe" déplacé du footer vers le header (plus visible)
+2. ✅ Page de connexion redessinée (professionnelle, avec logo + "Retour au site")
+3. ✅ Faux dessinateurs supprimés (BD + code de seed)
+4. ✅ Gestion des prix du devis (nouveau gestionnaire admin + API)
+5. ✅ Page Devis charge les prix dynamiquement depuis l'API
+6. ✅ Bouton "Voir le site" ajouté au portail employé
+7. ✅ Footer utilise la navigation dynamique (pages masquées disparaissent partout)
+8. ✅ Redirection /admin/dashboard → /admin/panel
+
+## Tâches Restantes
+
+### P1 - À venir
+- Finaliser "Envoyer mon CV" (interface admin pour voir candidatures)
+- Finaliser Stripe (paiement carte de crédit)
+
+### P2 - Futur
+- Mini-espace projet client
 - Messagerie client-dessinateur
-- Upload fichiers dans espace projet
-- Paiement dépôt/solde final pour devis
+- Upload fichiers clients
+- Paiement dépôt/solde final
 
-## Credentials
+## Identifiants
 - Admin: admin@abrisia-plan.ca / admin123
-- Employee: marc@abrisia-plan.ca / marc123
+- Employé: marc@abrisia-plan.ca (designer)
 
-## Domaine
-- Production: abrisia-plan.ca
-- Preview: kit-system-preview.preview.emergentagent.com
-
-## Changelog 2026-03-07
-- Corrigé: SEO metadata (titre, description, OG, JSON-LD, sitemap, robots.txt)
-- Corrigé: Login unifié admin+employés à /admin
-- Corrigé: Système employés fonctionnel (register, approve, login, my-projects)
-- Ajouté: Gestionnaire de menu dans admin (visible/masqué par page)
-- Ajouté: Image héro personnalisée (photo montagne utilisateur)
-- Retiré: Page "À propos" du menu
-- Retiré: Bouton "Connexion Admin" du header public
-- Ajouté: Onglets Employés, Commandes kits, Gestion des devis dans admin panel
-- Corrigé: Logo proprement affiché (mix-blend-mode multiply, plus de fond blanc visible)
-- Corrigé: Couleurs moins agressives - fond stone/beige au lieu de blanc pur
-- Retiré: "Naturel & durable", "matériaux locaux", "accompagnement autoconstruction"
-- Ajouté: Approches correctes: "Plans sur mesure", "Flexibilité des horaires", "Prix accessible"
-- Réécrit: Pages légales (mentions légales + politique confidentialité) avec vrai texte standard
-- Corrigé: Footer simplifié, sans "À propos"
-- Ajouté: API navigation publique /api/navigation/menu
+## Intégrations
+- Gmail SMTP (notifications)
+- Stripe (prêt mais inactif)
