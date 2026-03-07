@@ -137,12 +137,6 @@ const Login = () => {
               </Button>
             </form>
 
-            {/* Informations de test */}
-            <div className="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-              <p className="text-sm text-slate-600 font-medium mb-2">Connexion de test :</p>
-              <p className="text-xs text-slate-500">Email: admin@abrisia-plan.ca</p>
-              <p className="text-xs text-slate-500">Mot de passe: admin123</p>
-            </div>
           </CardContent>
         </Card>
 
