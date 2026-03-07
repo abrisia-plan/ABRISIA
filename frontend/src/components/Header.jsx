@@ -39,7 +39,7 @@ const Header = () => {
               <img 
                 src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
                 alt="Logo Abrisia" 
-                className="w-full h-full object-cover scale-150 invert brightness-200"
+                className="w-full h-full object-cover scale-150 invert"
               />
             </div>
             <span className="text-2xl font-bold text-white group-hover:text-beige transition-colors">
