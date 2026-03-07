@@ -131,9 +131,25 @@ async def get_all_reviews_admin(
         reviews = await db.reviews.find(query).sort("created_at", -1).skip(skip).limit(limit).to_list(length=limit)
         total = await db.reviews.count_documents(query)
         
+        # Format reviews to exclude MongoDB _id and ensure JSON serializable
+        formatted_reviews = []
+        for r in reviews:
+            formatted_reviews.append({
+                "id": r.get("id", str(r.get("_id", ""))),
+                "client_name": r.get("client_name", ""),
+                "client_email": r.get("client_email", ""),
+                "rating": r.get("rating", 0),
+                "comment": r.get("comment", ""),
+                "project_type": r.get("project_type"),
+                "would_recommend": r.get("would_recommend", True),
+                "is_visible": r.get("is_visible", False),
+                "is_approved": r.get("is_approved", False),
+                "created_at": r.get("created_at").isoformat() if r.get("created_at") else None
+            })
+        
         return {
             "success": True,
-            "data": reviews,
+            "data": formatted_reviews,
             "total": total
         }
         

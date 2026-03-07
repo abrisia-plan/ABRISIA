@@ -20,6 +20,7 @@ import Dashboard from "./pages/Admin/Dashboard";
 import CMS from "./pages/Admin/CMS";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import { EmployeePortal } from "./pages/EmployeePortal";
+import Temoignage from "./pages/Temoignage";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
           <Route path="/admin/dashboard" element={<Navigate to="/admin/panel" replace />} />
           <Route path="/admin/cms" element={<CMS />} />
           <Route path="/admin/panel" element={<AdminPanel />} />
+          <Route path="/temoignage" element={<Temoignage />} />
           
           {/* Routes espace employé */}
           <Route path="/connexion-employe" element={<Navigate to="/admin" replace />} />

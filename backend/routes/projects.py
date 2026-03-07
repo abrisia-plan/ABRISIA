@@ -27,7 +27,8 @@ BACKEND_URL = os.environ.get("BACKEND_PUBLIC_URL", "")
 async def get_public_projects(
     category: Optional[str] = None,
     limit: int = 20,
-    skip: int = 0
+    skip: int = 0,
+    home_only: bool = False
 ):
     """Obtenir les projets publics pour la galerie d'inspiration"""
     try:
@@ -35,6 +36,8 @@ async def get_public_projects(
         
         # Construire le filtre
         filter_query = {"is_visible": True}
+        if home_only:
+            filter_query["show_on_home"] = True
         if category and category != "Tous":
             filter_query["category"] = category
         
@@ -94,6 +97,7 @@ async def get_all_projects(
                 "details": project["details"],
                 "dimensions": project["dimensions"],
                 "isVisible": project["is_visible"],
+                "showOnHome": project.get("show_on_home", False),
                 "createdAt": project["created_at"].isoformat(),
                 "updatedAt": project["updated_at"].isoformat()
             })
@@ -128,6 +132,7 @@ async def create_project(
             "details": project_data.details,
             "dimensions": project_data.dimensions,
             "is_visible": project_data.is_visible,
+            "show_on_home": project_data.show_on_home,
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
         }
@@ -178,6 +183,8 @@ async def update_project(
             update_fields["dimensions"] = update_data.dimensions
         if update_data.is_visible is not None:
             update_fields["is_visible"] = update_data.is_visible
+        if update_data.show_on_home is not None:
+            update_fields["show_on_home"] = update_data.show_on_home
         
         result = await db.projects.update_one(
             {"_id": ObjectId(project_id)},

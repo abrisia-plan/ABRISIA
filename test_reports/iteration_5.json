@@ -1,0 +1,88 @@
+{
+  "summary": "Iteration 5 testing complete - All 3 new features working: 1) Public /temoignage page with review form, 2) Admin Devis month/year filters, 3) Projects dual visibility (show_on_home field). Fixed 2 backend bugs during testing.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "bugs_fixed_during_testing": [
+    {
+      "file": "/app/backend/routes/reviews.py",
+      "issue": "GET /api/admin/reviews returned 500 error - MongoDB _id ObjectId not JSON serializable",
+      "fix": "Added proper formatting to exclude _id and convert dates to ISO strings"
+    },
+    {
+      "file": "/app/backend/routes/devis.py",
+      "issue": "Frontend uses 'status' param but backend expected 'status_filter' - filter not working",
+      "fix": "Updated backend to accept both 'status' and 'status_filter' params, also added 'per_page' param support"
+    }
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_iteration5_new_features.py",
+    "/app/test_reports/pytest/pytest_results_iter5.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/routes/reviews.py",
+    "/app/backend/routes/devis.py",
+    "/app/backend/tests/test_iteration5_new_features.py"
+  ],
+  "success_rate": {
+    "backend": "100% (13/13 tests passed)",
+    "frontend": "100% (all 6 UI tests passed)"
+  },
+  "seed_data_creation": "No new seed data - Test reviews submitted during UI testing (TEST_Marie Tremblay, Test User Integration)",
+  "test_credentials": {
+    "admin": "admin@abrisia-plan.ca / admin123"
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All 3 new features fully functional: 1) /temoignage public page submits reviews to POST /api/reviews, shows success message, admin can see pending reviews in Témoignages tab with approve/reject buttons, 2) Admin Devis has year and month filters (data-testid='devis-filter-year' and 'devis-filter-month'), status filters, and count indicator, 3) Projects have dual visibility - Eye button for Inspiration, Home button for Accueil, GET /api/projects?home_only=true returns 7 projects. Previous iteration tests should still pass.",
+  "features_tested": {
+    "public_temoignage_page": {
+      "status": "PASS",
+      "detail": "/temoignage page loads with form (name, email, project_type, star rating, comment), submit sends POST /api/reviews, shows success message 'Merci pour votre avis!'"
+    },
+    "admin_copy_review_link": {
+      "status": "PASS",
+      "detail": "Admin Témoignages tab has 'Copier le lien témoignage' button (data-testid='copy-review-link-btn') and shows /temoignage URL in card"
+    },
+    "admin_pending_reviews": {
+      "status": "PASS",
+      "detail": "Admin Témoignages shows 'Avis en attente' section with approve/reject buttons for pending reviews"
+    },
+    "projects_dual_visibility_api": {
+      "status": "PASS",
+      "detail": "GET /api/projects?home_only=true returns only projects with show_on_home=true (7 projects), PUT /api/admin/projects/{id} with show_on_home works"
+    },
+    "projects_dual_visibility_ui": {
+      "status": "PASS",
+      "detail": "Admin Projets has Eye button (toggle-visible) for Inspiration and Home button (toggle-home) for Accueil, legend explains both, 'Accueil' badge shown on home projects"
+    },
+    "home_inspiration_section": {
+      "status": "PASS",
+      "detail": "Home page #inspiration section shows 7 category cards (one per category) with projects from home_only=true API call"
+    },
+    "admin_devis_filters": {
+      "status": "PASS",
+      "detail": "Admin Devis has year filter (data-testid='devis-filter-year'), month filter (data-testid='devis-filter-month'), status buttons, and count indicator 'X devis affiché(s)'"
+    },
+    "api_reviews_post": {
+      "status": "PASS",
+      "detail": "POST /api/reviews accepts client_name, client_email, rating (1-5), comment, project_type, returns success with review_id"
+    },
+    "api_admin_reviews": {
+      "status": "PASS",
+      "detail": "GET /api/admin/reviews returns formatted reviews with proper JSON serialization (fixed _id issue)"
+    },
+    "api_admin_devis_filters": {
+      "status": "PASS",
+      "detail": "GET /api/admin/devis accepts status param for filtering, returns createdAt for date filtering in frontend"
+    }
+  }
+}

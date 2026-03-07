@@ -37,6 +37,8 @@ const DevisManager = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterMonth, setFilterMonth] = useState('all');
+  const [filterYear, setFilterYear] = useState('all');
   const [employees, setEmployees] = useState([]);
   const [updating, setUpdating] = useState(false);
   
@@ -197,14 +199,27 @@ const DevisManager = () => {
   };
 
   const filteredDevis = devis.filter(d => {
-    if (!searchTerm) return true;
-    const search = searchTerm.toLowerCase();
-    return (
-      d.nom?.toLowerCase().includes(search) ||
-      d.email?.toLowerCase().includes(search) ||
-      d.projectType?.toLowerCase().includes(search)
-    );
+    // Filtre recherche
+    if (searchTerm) {
+      const search = searchTerm.toLowerCase();
+      if (!(d.nom?.toLowerCase().includes(search) || d.email?.toLowerCase().includes(search) || d.projectType?.toLowerCase().includes(search))) {
+        return false;
+      }
+    }
+    // Filtre mois/année
+    if (filterMonth !== 'all' || filterYear !== 'all') {
+      const date = d.createdAt ? new Date(d.createdAt) : null;
+      if (!date) return false;
+      if (filterYear !== 'all' && date.getFullYear() !== parseInt(filterYear)) return false;
+      if (filterMonth !== 'all' && date.getMonth() !== parseInt(filterMonth)) return false;
+    }
+    return true;
   });
+
+  // Extraire les années disponibles
+  const availableYears = [...new Set(devis.map(d => d.createdAt ? new Date(d.createdAt).getFullYear() : null).filter(Boolean))].sort((a, b) => b - a);
+
+  const monthNames = ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'];
 
   // Stats
   const stats = {
@@ -288,9 +303,21 @@ const DevisManager = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
+            data-testid="devis-search"
           />
         </div>
-        <div className="flex gap-2">
+        <select value={filterYear} onChange={(e) => setFilterYear(e.target.value)}
+          className="h-10 px-3 border border-gray-300 rounded-md text-sm" data-testid="devis-filter-year">
+          <option value="all">Toutes les annees</option>
+          {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
+        </select>
+        <select value={filterMonth} onChange={(e) => setFilterMonth(e.target.value)}
+          className="h-10 px-3 border border-gray-300 rounded-md text-sm" data-testid="devis-filter-month">
+          <option value="all">Tous les mois</option>
+          {monthNames.map((m, i) => <option key={i} value={i}>{m}</option>)}
+        </select>
+      </div>
+      <div className="flex gap-2 flex-wrap" data-testid="devis-status-filters">
           <Button
             variant={filterStatus === 'all' ? 'default' : 'outline'}
             onClick={() => setFilterStatus('all')}
@@ -320,10 +347,10 @@ const DevisManager = () => {
             size="sm"
             className={filterStatus === 'Terminé' ? 'bg-green-500' : ''}
           >
-            Terminés
+            Termines
           </Button>
+          <span className="text-sm text-slate-500 ml-2 self-center">{filteredDevis.length} devis affiche(s)</span>
         </div>
-      </div>
 
       {/* Liste des devis */}
       {filteredDevis.length === 0 ? (

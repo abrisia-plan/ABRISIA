@@ -18,7 +18,7 @@ const Home = () => {
   useEffect(() => {
     const loadProjects = async () => {
       try {
-        const res = await fetch(`${BACKEND_URL}/api/projects`);
+        const res = await fetch(`${BACKEND_URL}/api/projects?home_only=true&limit=100`);
         const data = await res.json();
         if (data.success) {
           setInspirationProjects(data.data || []);

@@ -64,23 +64,31 @@ async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTask
 
 @router.get("/admin/devis", response_model=ListResponse)
 async def get_all_devis(
+    status: str = None,
     status_filter: str = None,
     limit: int = 50,
     skip: int = 0,
+    per_page: int = None,
     current_user: dict = Depends(require_admin)
 ):
     """Obtenir tous les devis (admin seulement)"""
     try:
         db = get_database()
         
+        # Support both 'status' and 'status_filter' params
+        effective_status = status or status_filter
+        
+        # Use per_page if provided, otherwise use limit
+        effective_limit = per_page if per_page is not None else limit
+        
         # Construire le filtre
         filter_query = {}
-        if status_filter:
-            filter_query["status"] = status_filter
+        if effective_status:
+            filter_query["status"] = effective_status
         
         # Récupérer les devis avec pagination
-        cursor = db.devis.find(filter_query).sort("created_at", -1).skip(skip).limit(limit)
-        devis_list = await cursor.to_list(length=limit)
+        cursor = db.devis.find(filter_query).sort("created_at", -1).skip(skip).limit(effective_limit)
+        devis_list = await cursor.to_list(length=effective_limit)
         
         # Compter le total
         total = await db.devis.count_documents(filter_query)

@@ -16,7 +16,9 @@ import {
   Eye,
   EyeOff,
   MessageSquare,
-  Edit
+  Edit,
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
@@ -274,14 +276,44 @@ const TestimonialsManager = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Témoignages clients</h2>
-          <p className="text-gray-600 mt-1">Gérez les avis affichés sur le site</p>
+          <h2 className="text-2xl font-bold text-gray-900">Temoignages clients</h2>
+          <p className="text-gray-600 mt-1">Gerez les avis affiches sur le site</p>
         </div>
-        <Button onClick={openAddModal} className="bg-teal-600 hover:bg-teal-700">
-          <Plus className="w-4 h-4 mr-2" />
-          Ajouter un témoignage
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => {
+            const link = `${window.location.origin}/temoignage`;
+            navigator.clipboard.writeText(link);
+            toast({ title: "Lien copie !", description: "Envoyez ce lien a vos clients pour recueillir un avis" });
+          }} data-testid="copy-review-link-btn">
+            <Copy className="w-4 h-4 mr-2" /> Copier le lien temoignage
+          </Button>
+          <Button onClick={openAddModal} className="bg-teal-600 hover:bg-teal-700">
+            <Plus className="w-4 h-4 mr-2" />
+            Ajouter un temoignage
+          </Button>
+        </div>
       </div>
+
+      {/* Lien de partage */}
+      <Card className="border-teal-200 bg-teal-50" data-testid="review-link-card">
+        <CardContent className="p-4 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-teal-800">Lien pour recueillir un avis client :</p>
+            <p className="text-sm text-teal-600 font-mono mt-1">{window.location.origin}/temoignage</p>
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" className="border-teal-300" onClick={() => {
+              navigator.clipboard.writeText(`${window.location.origin}/temoignage`);
+              toast({ title: "Lien copie !" });
+            }}>
+              <Copy className="w-4 h-4 mr-1" /> Copier
+            </Button>
+            <Button size="sm" variant="outline" className="border-teal-300" onClick={() => window.open('/temoignage', '_blank')}>
+              <ExternalLink className="w-4 h-4 mr-1" /> Voir
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Avis en attente d'approbation */}
       {pendingReviews.length > 0 && (

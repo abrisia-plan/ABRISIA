@@ -622,6 +622,7 @@ class Project(BaseDocument):
     details: List[str]
     dimensions: str
     is_visible: bool = True
+    show_on_home: bool = False
 
 class ProjectCreate(BaseModel):
     title: str
@@ -631,6 +632,7 @@ class ProjectCreate(BaseModel):
     details: List[str]
     dimensions: str
     is_visible: bool = True
+    show_on_home: bool = False
 
 class ProjectUpdate(BaseModel):
     title: Optional[str] = None
@@ -640,3 +642,4 @@ class ProjectUpdate(BaseModel):
     details: Optional[List[str]] = None
     dimensions: Optional[str] = None
     is_visible: Optional[bool] = None
+    show_on_home: Optional[bool] = None
