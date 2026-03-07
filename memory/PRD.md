@@ -88,3 +88,10 @@ Site web pour Abrisia Plan, entreprise de plans architecturaux au Québec. Fonct
 - Retiré: Page "À propos" du menu
 - Retiré: Bouton "Connexion Admin" du header public
 - Ajouté: Onglets Employés, Commandes kits, Gestion des devis dans admin panel
+- Corrigé: Logo proprement affiché (mix-blend-mode multiply, plus de fond blanc visible)
+- Corrigé: Couleurs moins agressives - fond stone/beige au lieu de blanc pur
+- Retiré: "Naturel & durable", "matériaux locaux", "accompagnement autoconstruction"
+- Ajouté: Approches correctes: "Plans sur mesure", "Flexibilité des horaires", "Prix accessible"
+- Réécrit: Pages légales (mentions légales + politique confidentialité) avec vrai texte standard
+- Corrigé: Footer simplifié, sans "À propos"
+- Ajouté: API navigation publique /api/navigation/menu
