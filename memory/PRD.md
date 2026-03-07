@@ -61,9 +61,11 @@ Site web pour Abrisia Plan, entreprise de plans architecturaux au Québec. Fonct
 - Page /admin ne montre plus les identifiants
 - Formulaire vide avec placeholders génériques
 
-## Backlog P1
-- Finaliser configuration Stripe (réactiver paiement par carte)
-- Page À propos éditable depuis l'admin (CMS)
+## Backlog P1 (prochaine session)
+- CV dans la page Contact (onglet "Envoyer un CV") — backend prêt, frontend à brancher
+- Enlever le jaune de la page Contact — remplacer par beige clair
+- Lien "Espace équipe" dans le footer
+- Finaliser configuration Stripe
 
 ## Backlog P2
 - Mini-espace projet pour clients
