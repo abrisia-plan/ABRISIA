@@ -39,7 +39,7 @@ const Header = () => {
               <img 
                 src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
                 alt="Logo Abrisia" 
-                className="w-full h-full object-cover scale-150"
+                className="w-full h-full object-cover scale-125"
                 style={{ mixBlendMode: 'multiply' }}
               />
             </div>
