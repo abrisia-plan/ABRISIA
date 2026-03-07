@@ -187,6 +187,9 @@ const Home = () => {
           </div>
 
           <div className="text-center mt-12">
+            <p className="text-slate-600 italic mb-6 max-w-3xl mx-auto">
+              Des plans professionnels facilitent les soumissions et les demandes de financement auprès des institutions financières.
+            </p>
             <Link to="/devis">
               <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full">
                 Voir nos tarifs détaillés
