@@ -270,7 +270,7 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-slate-800 text-white">
+      <section className="py-20 bg-[#192A32] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -283,19 +283,19 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial) => (
-              <Card key={testimonial.id} className="bg-slate-700 border-slate-600 text-white hover:shadow-lg transition-shadow">
+              <Card key={testimonial.id} className="bg-[#1e3640] border-[#2a4550] text-white hover:shadow-lg transition-shadow">
                 <CardContent className="p-8">
                   <div className="flex items-center mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <p className="text-slate-200 mb-6 italic leading-relaxed">
+                  <p className="text-beige/70 mb-6 italic leading-relaxed">
                     "{testimonial.text}"
                   </p>
                   <div>
                     <p className="font-semibold text-white">{testimonial.name}</p>
-                    <p className="text-sm text-pierre">{testimonial.project}</p>
+                    <p className="text-sm text-pierre-light">{testimonial.project}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -305,7 +305,7 @@ const Home = () => {
       </section>
 
       {/* Bandeau CTA */}
-      <section className="py-20 bg-gradient-to-r from-foret to-foret-dark">
+      <section className="py-20 bg-gradient-to-b from-[#1A7A74] to-[#165A57]">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Un projet en tête ?

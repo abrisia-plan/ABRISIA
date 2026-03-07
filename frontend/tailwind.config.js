@@ -36,9 +36,9 @@ module.exports = {
   				light: '#8a8a8a',
   			},
   			beige: {
-  				DEFAULT: '#F0ECE6',
-  				dark: '#E3DDD4',
-  				light: '#F5F2ED',
+  				DEFAULT: '#F5F3F0',
+  				dark: '#EBE8E3',
+  				light: '#F9F8F6',
   			},
   			card: {
   				DEFAULT: 'hsl(var(--card))',

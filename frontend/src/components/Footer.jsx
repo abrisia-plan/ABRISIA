@@ -11,7 +11,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="bg-foret-dark text-beige">
+    <footer className="bg-[#192A32] text-beige">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-4">
@@ -57,7 +57,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-foret-light mt-8 pt-8">
+        <div className="border-t border-white/10 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-beige/50 text-sm">&copy; 2025 Abrisia Plan. Tous droits réservés.</p>
             <div className="flex space-x-6 text-sm text-beige/50">
