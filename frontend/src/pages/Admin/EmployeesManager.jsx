@@ -276,7 +276,7 @@ const EmployeesManager = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-foret" />
       </div>
     );
   }
@@ -288,7 +288,7 @@ const EmployeesManager = () => {
           <h2 className="text-2xl font-bold text-gray-900">Gestion des Employés</h2>
           <p className="text-gray-600 mt-1">Gérez votre équipe de dessinateurs et employés</p>
         </div>
-        <Button onClick={() => setIsAddModalOpen(true)} className="bg-teal-600 hover:bg-teal-700">
+        <Button onClick={() => setIsAddModalOpen(true)} className="bg-foret hover:bg-bois">
           <UserPlus className="w-4 h-4 mr-2" />
           Ajouter un employé
         </Button>
@@ -323,9 +323,9 @@ const EmployeesManager = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">En attente</p>
-                <p className="text-2xl font-bold text-amber-600">{stats.pending}</p>
+                <p className="text-2xl font-bold text-bois">{stats.pending}</p>
               </div>
-              <Shield className="w-8 h-8 text-amber-500" />
+              <Shield className="w-8 h-8 text-bois" />
             </div>
           </CardContent>
         </Card>
@@ -388,7 +388,7 @@ const EmployeesManager = () => {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
-                      <User className="w-6 h-6 text-teal-600" />
+                      <User className="w-6 h-6 text-foret" />
                     </div>
                     <div>
                       <h3 className="font-semibold">{employee.name}</h3>
@@ -568,7 +568,7 @@ const EmployeesManager = () => {
               <Button
                 onClick={handleAddEmployee}
                 disabled={saving}
-                className="flex-1 bg-teal-600 hover:bg-teal-700"
+                className="flex-1 bg-foret hover:bg-bois"
               >
                 {saving ? (
                   <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Création...</>

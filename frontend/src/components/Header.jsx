@@ -35,14 +35,14 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-3">
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-beige/20">
+            <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
               <img 
                 src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
                 alt="Logo Abrisia" 
                 className="w-full h-full object-cover scale-150 invert brightness-200"
               />
             </div>
-            <span className="text-2xl font-bold text-beige group-hover:text-white transition-colors">
+            <span className="text-2xl font-bold text-white group-hover:text-beige transition-colors">
               ABRISIA
             </span>
           </Link>
@@ -54,8 +54,8 @@ const Header = () => {
                 to={item.href}
                 className={`text-base font-medium transition-colors ${
                   isActive(item.href) 
-                    ? 'text-white border-b-2 border-beige pb-1' 
-                    : 'text-beige/80 hover:text-white'
+                    ? 'text-white border-b-2 border-bois pb-1' 
+                    : 'text-white/80 hover:text-white'
                 }`}
               >
                 {item.name}
@@ -68,7 +68,7 @@ const Header = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-beige hover:text-white hover:bg-foret-light"
+              className="text-white hover:text-beige hover:bg-foret-light"
               data-testid="mobile-menu-button"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -84,7 +84,7 @@ const Header = () => {
                   key={item.name}
                   to={item.href}
                   className={`text-base font-medium transition-colors py-2 ${
-                    isActive(item.href) ? 'text-white' : 'text-beige/80 hover:text-white'
+                    isActive(item.href) ? 'text-white' : 'text-white/80 hover:text-white'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >

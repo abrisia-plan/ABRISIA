@@ -17,8 +17,8 @@ router = APIRouter(tags=["projects"])
 # Configuration upload
 UPLOAD_DIR = Path("/app/uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".pdf", ".dwg", ".dxf", ".skp", ".doc", ".docx"}
+MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
 
 # URL de base pour les uploads (utiliser l'env si disponible)
 BACKEND_URL = os.environ.get("BACKEND_PUBLIC_URL", "")
@@ -277,10 +277,8 @@ async def upload_image(
         with open(file_path, "wb") as buffer:
             buffer.write(content)
         
-        # Construire l'URL complète
-        # Utiliser l'URL de la requête pour déterminer le host
-        base_url = str(request.base_url).rstrip('/')
-        image_url = f"{base_url}/uploads/{unique_filename}"
+        # Retourner l'URL relative
+        image_url = f"/uploads/{unique_filename}"
         
         logger.info(f"✅ Image uploadée: {unique_filename} par {current_user['name']}")
         

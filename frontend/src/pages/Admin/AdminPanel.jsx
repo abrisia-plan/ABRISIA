@@ -87,7 +87,7 @@ const AdminPanel = () => {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-foret" />
       </div>
     );
   }
@@ -131,7 +131,7 @@ const AdminPanel = () => {
           <nav className="space-y-2">
             <Button 
               variant={activeTab === 'dashboard' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'dashboard' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'dashboard' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('dashboard')}
             >
               <LayoutDashboard className="w-4 h-4 mr-2" />
@@ -139,7 +139,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'devis' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'devis' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'devis' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('devis-manager')}
             >
               <FileText className="w-4 h-4 mr-2" />
@@ -147,7 +147,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'projects' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'projects' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'projects' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('projects')}
             >
               <ImageIcon className="w-4 h-4 mr-2" />
@@ -155,7 +155,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'categories' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'categories' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'categories' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('categories')}
             >
               <ImageIcon className="w-4 h-4 mr-2" />
@@ -163,7 +163,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'kits' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'kits' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'kits' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('kits')}
             >
               <ShoppingCart className="w-4 h-4 mr-2" />
@@ -171,7 +171,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'content' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'content' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'content' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('content')}
             >
               <DollarSign className="w-4 h-4 mr-2" />
@@ -179,7 +179,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'cms' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'cms' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'cms' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('cms')}
             >
               <Palette className="w-4 h-4 mr-2" />
@@ -187,7 +187,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'testimonials' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'testimonials' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'testimonials' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('testimonials')}
             >
               <MessageSquare className="w-4 h-4 mr-2" />
@@ -195,7 +195,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'legal' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'legal' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'legal' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('legal')}
             >
               <Settings className="w-4 h-4 mr-2" />
@@ -203,7 +203,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'navigation' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'navigation' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'navigation' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('navigation')}
             >
               <Navigation className="w-4 h-4 mr-2" />
@@ -214,7 +214,7 @@ const AdminPanel = () => {
             
             <Button 
               variant={activeTab === 'employees' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'employees' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'employees' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('employees')}
             >
               <Users className="w-4 h-4 mr-2" />
@@ -222,7 +222,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'kit-orders' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'kit-orders' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'kit-orders' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('kit-orders')}
             >
               <ShoppingCart className="w-4 h-4 mr-2" />
@@ -230,7 +230,7 @@ const AdminPanel = () => {
             </Button>
             <Button 
               variant={activeTab === 'devis-manager' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'devis-manager' ? 'bg-teal-600' : ''}`}
+              className={`w-full justify-start ${activeTab === 'devis-manager' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('devis-manager')}
             >
               <FileText className="w-4 h-4 mr-2" />
@@ -243,7 +243,7 @@ const AdminPanel = () => {
         <main className="flex-1 p-6">
           {loading && activeTab === 'dashboard' ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+              <Loader2 className="w-8 h-8 animate-spin text-foret" />
             </div>
           ) : (
             <>
@@ -320,7 +320,7 @@ const DashboardTab = ({ stats }) => {
                   <p className="text-sm font-medium text-slate-600">Total des devis</p>
                   <p className="text-3xl font-bold text-slate-900">{stats.total_devis}</p>
                 </div>
-                <FileText className="w-8 h-8 text-teal-600" />
+                <FileText className="w-8 h-8 text-foret" />
               </div>
             </CardContent>
           </Card>
@@ -369,7 +369,7 @@ const DashboardTab = ({ stats }) => {
             <CardTitle>Actions rapides</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button className="w-full justify-start bg-teal-600 hover:bg-teal-700">
+            <Button className="w-full justify-start bg-foret hover:bg-bois">
               <FileText className="w-4 h-4 mr-2" />
               Voir les devis en attente
             </Button>
@@ -490,7 +490,7 @@ const NavigationManager = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 animate-spin text-teal-600" /></div>;
+    return <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 animate-spin text-foret" /></div>;
   }
 
   return (
@@ -522,7 +522,7 @@ const NavigationManager = () => {
                     variant={page.visible ? "default" : "outline"}
                     size="sm"
                     onClick={() => togglePage(page.href)}
-                    className={page.visible ? "bg-teal-600 hover:bg-teal-700" : "text-gray-500"}
+                    className={page.visible ? "bg-foret hover:bg-bois" : "text-gray-500"}
                     data-testid={`toggle-${page.href.replace('/', '')}`}
                   >
                     {page.visible ? 'Visible' : 'Masqué'}
@@ -537,7 +537,7 @@ const NavigationManager = () => {
       <Button 
         onClick={saveNavigation}
         disabled={saving}
-        className="bg-teal-600 hover:bg-teal-700"
+        className="bg-foret hover:bg-bois"
         data-testid="save-navigation-button"
       >
         {saving ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Sauvegarde...</> : 'Sauvegarder le menu'}

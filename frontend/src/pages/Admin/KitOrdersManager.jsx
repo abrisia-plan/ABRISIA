@@ -166,7 +166,7 @@ const KitOrdersManager = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-foret" />
       </div>
     );
   }
@@ -189,7 +189,7 @@ const KitOrdersManager = () => {
                 <p className="text-sm text-gray-500">Total commandes</p>
                 <p className="text-2xl font-bold">{orders.length}</p>
               </div>
-              <ShoppingCart className="w-8 h-8 text-teal-600" />
+              <ShoppingCart className="w-8 h-8 text-foret" />
             </div>
           </CardContent>
         </Card>
@@ -198,9 +198,9 @@ const KitOrdersManager = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">En attente</p>
-                <p className="text-2xl font-bold text-amber-600">{pendingCount}</p>
+                <p className="text-2xl font-bold text-bois">{pendingCount}</p>
               </div>
-              <Clock className="w-8 h-8 text-amber-600" />
+              <Clock className="w-8 h-8 text-bois" />
             </div>
           </CardContent>
         </Card>
@@ -220,9 +220,9 @@ const KitOrdersManager = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">Revenus (payés)</p>
-                <p className="text-2xl font-bold text-teal-600">{formatPrice(totalRevenue)}</p>
+                <p className="text-2xl font-bold text-foret">{formatPrice(totalRevenue)}</p>
               </div>
-              <DollarSign className="w-8 h-8 text-teal-600" />
+              <DollarSign className="w-8 h-8 text-foret" />
             </div>
           </CardContent>
         </Card>
@@ -241,7 +241,7 @@ const KitOrdersManager = () => {
           variant={filterStatus === 'pending' ? 'default' : 'outline'}
           onClick={() => setFilterStatus('pending')}
           size="sm"
-          className={filterStatus === 'pending' ? 'bg-amber-500' : ''}
+          className={filterStatus === 'pending' ? 'bg-beige0' : ''}
         >
           <Clock className="w-4 h-4 mr-1" />
           En attente ({pendingCount})
@@ -316,7 +316,7 @@ const KitOrdersManager = () => {
                     <div className="text-sm text-gray-500">
                       <span>Base: {formatPrice(order.basePrice)}</span>
                       {order.includeMaterials && (
-                        <span className="text-amber-600"> + {formatPrice(order.materialsPrice)}</span>
+                        <span className="text-bois"> + {formatPrice(order.materialsPrice)}</span>
                       )}
                     </div>
                     <Button
@@ -484,7 +484,7 @@ const KitOrdersManager = () => {
                   <Button
                     onClick={handleUpdateOrder}
                     disabled={updating}
-                    className="flex-1 bg-teal-600 hover:bg-teal-700"
+                    className="flex-1 bg-foret hover:bg-bois"
                   >
                     {updating ? (
                       <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Enregistrement...</>

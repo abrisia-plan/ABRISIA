@@ -217,7 +217,7 @@ const DevisManager = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-foret" />
       </div>
     );
   }
@@ -249,9 +249,9 @@ const DevisManager = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-500">En attente</p>
-                <p className="text-2xl font-bold text-amber-600">{stats.enAttente}</p>
+                <p className="text-2xl font-bold text-bois">{stats.enAttente}</p>
               </div>
-              <Clock className="w-8 h-8 text-amber-500" />
+              <Clock className="w-8 h-8 text-bois" />
             </div>
           </CardContent>
         </Card>
@@ -302,7 +302,7 @@ const DevisManager = () => {
             variant={filterStatus === 'En attente' ? 'default' : 'outline'}
             onClick={() => setFilterStatus('En attente')}
             size="sm"
-            className={filterStatus === 'En attente' ? 'bg-amber-500' : ''}
+            className={filterStatus === 'En attente' ? 'bg-beige0' : ''}
           >
             En attente
           </Button>
@@ -350,7 +350,7 @@ const DevisManager = () => {
                     </div>
                     
                     <h3 className="font-semibold text-lg flex items-center gap-2">
-                      <Home className="w-5 h-5 text-teal-600" />
+                      <Home className="w-5 h-5 text-foret" />
                       {devisItem.projectType}
                     </h3>
                     
@@ -422,7 +422,7 @@ const DevisManager = () => {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Home className="w-5 h-5 text-teal-600" />
+                  <Home className="w-5 h-5 text-foret" />
                   {selectedDevis.projectType}
                 </DialogTitle>
               </DialogHeader>
@@ -573,7 +573,7 @@ const DevisManager = () => {
                   <Button
                     onClick={handleUpdateDevis}
                     disabled={updating}
-                    className="flex-1 bg-teal-600 hover:bg-teal-700"
+                    className="flex-1 bg-foret hover:bg-bois"
                   >
                     {updating ? (
                       <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Enregistrement...</>

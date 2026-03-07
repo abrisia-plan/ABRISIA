@@ -34,7 +34,6 @@ const KitsManager = () => {
   const [kits, setKits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingKit, setEditingKit] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingPlan, setUploadingPlan] = useState(false);
@@ -51,18 +50,21 @@ const KitsManager = () => {
     description: '',
     dimensions: '',
     surface_sqft: '',
+    width_ft: '',
+    depth_ft: '',
+    floors: '1',
     rooms: '',
     includes: [''],
     price: '',
     main_image: '',
     gallery_images: [],
-    // Nouveaux champs
     designer_name: '',
     plan_file_url: '',
     materials_list_enabled: false,
     materials_list_price: '',
     materials_list_file_url: ''
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     loadKits();
@@ -117,6 +119,9 @@ const KitsManager = () => {
       description: '',
       dimensions: '',
       surface_sqft: '',
+      width_ft: '',
+      depth_ft: '',
+      floors: '1',
       rooms: '',
       includes: [''],
       price: '',
@@ -453,7 +458,7 @@ const KitsManager = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-foret" />
       </div>
     );
   }
@@ -465,7 +470,7 @@ const KitsManager = () => {
           <h2 className="text-2xl font-bold text-gray-900">Kits de plans</h2>
           <p className="text-gray-600 mt-1">Gérez vos plans pré-dessinés à vendre</p>
         </div>
-        <Button onClick={openAddModal} className="bg-teal-600 hover:bg-teal-700">
+        <Button onClick={openAddModal} className="bg-foret hover:bg-bois">
           <Plus className="w-4 h-4 mr-2" />
           Ajouter un kit
         </Button>
@@ -500,7 +505,7 @@ const KitsManager = () => {
               )}
               {kit.materialsListEnabled && (
                 <div className="absolute top-2 left-2">
-                  <Badge className="bg-amber-500 text-white">
+                  <Badge className="bg-beige0 text-white">
                     <Package className="w-3 h-3 mr-1" />
                     + Matériaux
                   </Badge>
@@ -520,7 +525,7 @@ const KitsManager = () => {
               <div className="flex items-center gap-2 mb-2">
                 <p className="text-2xl font-bold text-teal-700">{formatPrice(kit.price)}</p>
                 {kit.materialsListEnabled && kit.materialsListPrice && (
-                  <Badge variant="outline" className="text-amber-600 border-amber-300">
+                  <Badge variant="outline" className="text-bois border-bois-light">
                     +{formatPrice(kit.materialsListPrice)} matériaux
                   </Badge>
                 )}
@@ -640,9 +645,65 @@ const KitsManager = () => {
             <div className="bg-gray-50 p-4 rounded-lg space-y-4">
               <h3 className="font-semibold text-gray-900">Détails techniques</h3>
               
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="width_ft" className="font-semibold">Largeur (pieds)</Label>
+                  <Input
+                    id="width_ft"
+                    type="number"
+                    value={formData.width_ft || ''}
+                    onChange={(e) => {
+                      handleInputChange('width_ft', e.target.value);
+                      const w = parseFloat(e.target.value) || 0;
+                      const d = parseFloat(formData.depth_ft) || 0;
+                      const f = parseInt(formData.floors) || 1;
+                      if (w && d) handleInputChange('surface_sqft', String(Math.round(w * d * f)));
+                    }}
+                    placeholder="20"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="depth_ft" className="font-semibold">Profondeur (pieds)</Label>
+                  <Input
+                    id="depth_ft"
+                    type="number"
+                    value={formData.depth_ft || ''}
+                    onChange={(e) => {
+                      handleInputChange('depth_ft', e.target.value);
+                      const w = parseFloat(formData.width_ft) || 0;
+                      const d = parseFloat(e.target.value) || 0;
+                      const f = parseInt(formData.floors) || 1;
+                      if (w && d) handleInputChange('surface_sqft', String(Math.round(w * d * f)));
+                    }}
+                    placeholder="20"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="floors" className="font-semibold">Nombre d'étages</Label>
+                  <select
+                    id="floors"
+                    value={formData.floors || '1'}
+                    onChange={(e) => {
+                      handleInputChange('floors', e.target.value);
+                      const w = parseFloat(formData.width_ft) || 0;
+                      const d = parseFloat(formData.depth_ft) || 0;
+                      const f = parseInt(e.target.value) || 1;
+                      if (w && d) handleInputChange('surface_sqft', String(Math.round(w * d * f)));
+                    }}
+                    className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  >
+                    <option value="1">1 étage</option>
+                    <option value="2">2 étages</option>
+                    <option value="3">3 étages</option>
+                  </select>
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="dimensions" className="font-semibold">Dimensions (pieds)</Label>
+                  <Label htmlFor="dimensions" className="font-semibold">Dimensions (résumé)</Label>
                   <Input
                     id="dimensions"
                     value={formData.dimensions}
@@ -652,13 +713,13 @@ const KitsManager = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="surface" className="font-semibold">Surface (pi²)</Label>
+                  <Label htmlFor="surface" className="font-semibold">Surface totale (pi²)</Label>
                   <Input
                     id="surface"
                     type="number"
                     value={formData.surface_sqft}
                     onChange={(e) => handleInputChange('surface_sqft', e.target.value)}
-                    placeholder="Ex: 400"
+                    placeholder="Calculé automatiquement"
                     className="mt-1"
                   />
                   {formData.surface_sqft && (
@@ -716,7 +777,7 @@ const KitsManager = () => {
             </div>
 
             {/* Section: Prix */}
-            <div className="bg-amber-50 p-4 rounded-lg space-y-4">
+            <div className="bg-beige p-4 rounded-lg space-y-4">
               <h3 className="font-semibold text-gray-900 flex items-center">
                 <DollarSign className="w-4 h-4 mr-2" />
                 Prix
@@ -742,7 +803,7 @@ const KitsManager = () => {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <Label className="font-semibold flex items-center">
-                      <Package className="w-4 h-4 mr-2 text-amber-600" />
+                      <Package className="w-4 h-4 mr-2 text-bois" />
                       Option "Liste des matériaux"
                     </Label>
                     <p className="text-sm text-gray-500 mt-1">
@@ -756,7 +817,7 @@ const KitsManager = () => {
                 </div>
 
                 {formData.materials_list_enabled && (
-                  <div className="space-y-4 pl-4 border-l-2 border-amber-300">
+                  <div className="space-y-4 pl-4 border-l-2 border-bois-light">
                     <div>
                       <Label htmlFor="materials_price" className="font-semibold">Prix supplémentaire (CAD)</Label>
                       <div className="relative mt-1">
@@ -777,7 +838,7 @@ const KitsManager = () => {
                       <div className="mt-2">
                         {formData.materials_list_file_url ? (
                           <div className="flex items-center gap-2 p-3 bg-white rounded border">
-                            <FileText className="w-5 h-5 text-amber-600" />
+                            <FileText className="w-5 h-5 text-bois" />
                             <span className="text-sm flex-1 truncate">{formData.materials_list_file_url.split('/').pop()}</span>
                             <Button
                               type="button"
@@ -789,15 +850,15 @@ const KitsManager = () => {
                             </Button>
                           </div>
                         ) : (
-                          <label className="border-2 border-dashed border-amber-300 rounded-lg p-4 text-center cursor-pointer hover:border-amber-500 transition-colors block bg-white">
+                          <label className="border-2 border-dashed border-bois-light rounded-lg p-4 text-center cursor-pointer hover:border-bois transition-colors block bg-white">
                             {uploadingMaterials ? (
                               <>
-                                <Loader2 className="w-8 h-8 text-amber-500 mx-auto mb-2 animate-spin" />
-                                <p className="text-amber-600">Upload en cours...</p>
+                                <Loader2 className="w-8 h-8 text-bois mx-auto mb-2 animate-spin" />
+                                <p className="text-bois">Upload en cours...</p>
                               </>
                             ) : (
                               <>
-                                <Upload className="w-8 h-8 text-amber-400 mx-auto mb-2" />
+                                <Upload className="w-8 h-8 text-bois-light mx-auto mb-2" />
                                 <p className="text-gray-500">Uploader le PDF de la liste matériaux</p>
                               </>
                             )}
@@ -898,7 +959,7 @@ const KitsManager = () => {
                       {uploading ? (
                         <>
                           <Loader2 className="w-10 h-10 text-teal-500 mx-auto mb-2 animate-spin" />
-                          <p className="text-teal-600">Upload en cours...</p>
+                          <p className="text-foret">Upload en cours...</p>
                         </>
                       ) : (
                         <>
@@ -973,7 +1034,7 @@ const KitsManager = () => {
               <Button
                 onClick={handleSubmit}
                 disabled={saving}
-                className="flex-1 bg-teal-600 hover:bg-teal-700"
+                className="flex-1 bg-foret hover:bg-bois"
               >
                 {saving ? (
                   <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Enregistrement...</>
