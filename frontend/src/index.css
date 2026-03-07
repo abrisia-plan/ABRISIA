@@ -20,11 +20,11 @@ code {
 
 @layer base {
   :root {
-        --background: 0 0% 100%;
+        --background: 30 5% 97%;
         --foreground: 0 0% 3.9%;
-        --card: 0 0% 100%;
+        --card: 30 5% 98%;
         --card-foreground: 0 0% 3.9%;
-        --popover: 0 0% 100%;
+        --popover: 30 5% 98%;
         --popover-foreground: 0 0% 3.9%;
         --primary: 0 0% 9%;
         --primary-foreground: 0 0% 98%;
