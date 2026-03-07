@@ -26,11 +26,8 @@ const Inspiration = () => {
     if (categoryFromUrl) {
       setSelectedCategory(categoryFromUrl);
     }
-  }, [searchParams]);
-
-  useEffect(() => {
     loadCategories();
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     loadProjects();

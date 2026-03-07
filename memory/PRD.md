@@ -56,6 +56,8 @@ Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini
 6. ✅ Bouton "Voir le site" ajouté au portail employé
 7. ✅ Footer utilise la navigation dynamique (pages masquées disparaissent partout)
 8. ✅ Redirection /admin/dashboard → /admin/panel
+9. ✅ **Projets d'inspiration unifiés** — Les 29 projets sont maintenant dans la BD, gérés depuis l'admin. Page Accueil + Page Inspiration chargent depuis l'API (plus de mock data)
+10. ✅ Si on masque un projet dans l'admin, il disparaît de l'accueil ET de l'inspiration
 
 ## Tâches Restantes
 
