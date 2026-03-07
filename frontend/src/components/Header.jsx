@@ -38,11 +38,11 @@ const Header = () => {
             <img 
               src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
               alt="Logo Abrisia" 
-              className="w-12 h-12 object-contain"
+              className="w-14 h-14 object-contain rounded-full"
               style={{ mixBlendMode: 'multiply' }}
             />
             <span className="text-2xl font-bold text-slate-800 group-hover:text-teal-700 transition-colors">
-              ABRISIA
+              ABRISIA PLAN
             </span>
           </Link>
 
