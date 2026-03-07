@@ -190,11 +190,19 @@ const Home = () => {
             <p className="text-slate-600 italic mb-6 max-w-3xl mx-auto">
               Des plans professionnels facilitent les soumissions et les demandes de financement auprès des institutions financières.
             </p>
-            <Link to="/devis">
-              <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full">
-                Voir nos tarifs détaillés
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/devis">
+                <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full">
+                  Voir nos tarifs détaillés
+                </Button>
+              </Link>
+              <Link to="/kit">
+                <Button size="lg" variant="outline" className="border-2 border-teal-800 text-teal-800 hover:bg-teal-50 px-8 py-4 text-lg font-semibold rounded-full">
+                  Nos kits préconçus
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
