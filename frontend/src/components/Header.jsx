@@ -7,6 +7,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const defaultNav = [
   { name: 'Accueil', href: '/' },
+  { name: 'Inspiration', href: '/inspiration' },
   { name: 'Kits', href: '/kit' },
   { name: 'Demander un devis', href: '/devis' },
   { name: 'Contact', href: '/contact' }
@@ -31,18 +32,17 @@ const Header = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-foret shadow-md">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-beige-light/95 backdrop-blur-sm shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-3">
+        <div className="flex justify-between items-center py-4">
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
-                alt="Logo Abrisia" 
-                className="w-[200%] h-[200%] object-cover -ml-[50%] -mt-[25%] invert"
-              />
-            </div>
-            <span className="text-2xl font-bold text-white group-hover:text-beige transition-colors">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
+              alt="Logo Abrisia" 
+              className="h-16 w-16 object-contain"
+              style={{ mixBlendMode: 'multiply' }}
+            />
+            <span className="text-2xl font-bold text-gray-900 group-hover:text-foret transition-colors">
               ABRISIA
             </span>
           </Link>
@@ -52,10 +52,10 @@ const Header = () => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`text-base font-medium transition-colors ${
+                className={`text-lg font-medium transition-colors hover:text-foret ${
                   isActive(item.href) 
-                    ? 'text-white border-b-2 border-bois pb-1' 
-                    : 'text-white/80 hover:text-white'
+                    ? 'text-foret border-b-2 border-foret pb-1' 
+                    : 'text-gray-700'
                 }`}
               >
                 {item.name}
@@ -68,7 +68,7 @@ const Header = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white hover:text-beige hover:bg-foret-light"
+              className="text-gray-700"
               data-testid="mobile-menu-button"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -77,14 +77,14 @@ const Header = () => {
         </div>
 
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-foret-light">
+          <div className="lg:hidden py-4 border-t border-gray-200">
             <nav className="flex flex-col space-y-3" data-testid="mobile-nav">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`text-base font-medium transition-colors py-2 ${
-                    isActive(item.href) ? 'text-white' : 'text-white/80 hover:text-white'
+                  className={`text-lg font-medium transition-colors hover:text-foret py-2 ${
+                    isActive(item.href) ? 'text-foret' : 'text-gray-700'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
