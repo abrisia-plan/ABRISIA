@@ -13,6 +13,7 @@ import {
   Trash2, 
   Eye, 
   EyeOff,
+  Home,
   Image as ImageIcon,
   Save,
   X,
@@ -405,8 +406,8 @@ const KitsManager = () => {
 
       if (response.ok) {
         toast({
-          title: "✅ Statut modifié",
-          description: `Le kit est maintenant ${!kit.isActive ? 'visible' : 'masqué'}`
+          title: "Statut modifie",
+          description: `Le kit est maintenant ${!kit.isActive ? 'visible' : 'masque'}`
         });
         loadKits();
       }
@@ -414,6 +415,32 @@ const KitsManager = () => {
       toast({
         title: "Erreur",
         description: "Impossible de modifier le statut",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const toggleFeatured = async (kit) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`${BACKEND_URL}/api/admin/products/${kit.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ is_featured: !kit.isFeatured })
+      });
+
+      if (response.ok) {
+        toast({
+          title: `Kit ${!kit.isFeatured ? 'ajoute a' : 'retire de'} l'accueil`,
+        });
+        loadKits();
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
         variant: "destructive"
       });
     }
@@ -470,7 +497,7 @@ const KitsManager = () => {
           <h2 className="text-2xl font-bold text-gray-900">Kits de plans</h2>
           <p className="text-gray-600 mt-1">Gérez vos plans pré-dessinés à vendre</p>
         </div>
-        <Button onClick={openAddModal} className="bg-foret hover:bg-bois">
+        <Button onClick={openAddModal} className="bg-teal-700 hover:bg-teal-800">
           <Plus className="w-4 h-4 mr-2" />
           Ajouter un kit
         </Button>
@@ -500,6 +527,14 @@ const KitsManager = () => {
                   <Badge variant="secondary" className="bg-gray-800 text-white">
                     <EyeOff className="w-3 h-3 mr-1" />
                     Masqué
+                  </Badge>
+                </div>
+              )}
+              {kit.isFeatured && (
+                <div className={`absolute top-2 ${!kit.isActive ? 'right-24' : 'right-2'}`}>
+                  <Badge className="bg-blue-600 text-white">
+                    <Home className="w-3 h-3 mr-1" />
+                    Accueil
                   </Badge>
                 </div>
               )}
@@ -550,6 +585,15 @@ const KitsManager = () => {
                   title={kit.isActive ? 'Masquer' : 'Afficher'}
                 >
                   {kit.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => toggleFeatured(kit)}
+                  title={kit.isFeatured ? "Retirer de l'accueil" : "Mettre sur l'accueil"}
+                  className={kit.isFeatured ? 'border-blue-300 text-blue-700 bg-blue-50' : ''}
+                >
+                  <Home className="w-4 h-4" />
                 </Button>
                 <Button
                   size="sm"

@@ -12,20 +12,24 @@ const Home = () => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState({});
   const [inspirationProjects, setInspirationProjects] = useState([]);
+  const [featuredKits, setFeaturedKits] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [testimonials, setTestimonials] = useState([]);
 
-  // Charger les projets d'inspiration + témoignages depuis l'API
+  // Charger les projets d'inspiration + témoignages + kits depuis l'API
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [projRes, reviewsRes] = await Promise.all([
+        const [projRes, reviewsRes, kitsRes] = await Promise.all([
           fetch(`${BACKEND_URL}/api/projects?home_only=true&limit=100`),
-          fetch(`${BACKEND_URL}/api/reviews`)
+          fetch(`${BACKEND_URL}/api/reviews`),
+          fetch(`${BACKEND_URL}/api/products?featured=true`)
         ]);
         const projData = await projRes.json();
         const reviewsData = await reviewsRes.json();
+        const kitsData = await kitsRes.json();
         if (projData.success) setInspirationProjects(projData.data || []);
+        if (kitsData.success) setFeaturedKits(kitsData.data || []);
         if (reviewsData.success && reviewsData.data?.length > 0) {
           setTestimonials(reviewsData.data.map(r => ({
             name: r.client_name || r.name,
@@ -301,6 +305,43 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* Kits de plans en vedette */}
+      {featuredKits.length > 0 && (
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+              Kits de plans disponibles
+            </h2>
+            <p className="text-xl text-slate-600">
+              Plans pré-dessinés prêts à acheter
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredKits.map((kit) => (
+              <Card key={kit.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer group" onClick={() => navigate('/kit')}>
+                <div className="relative overflow-hidden h-56">
+                  <img src={kit.mainImage || kit.image} alt={kit.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                </div>
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold text-slate-800 mb-2 group-hover:text-teal-800 transition-colors">{kit.name}</h3>
+                  <p className="text-sm text-slate-600 mb-3 line-clamp-2">{kit.description}</p>
+                  <p className="text-2xl font-bold text-teal-700">{typeof kit.price === 'number' ? `${kit.price.toFixed(2)} $` : kit.price}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="text-center mt-10">
+            <Link to="/kit">
+              <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-3 rounded-full text-lg">
+                Voir tous les kits <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+      )}
 
       {/* Testimonials Section */}
       {testimonials.length > 0 && (
