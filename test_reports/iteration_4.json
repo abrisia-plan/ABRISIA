@@ -1,0 +1,83 @@
+{
+  "summary": "Iteration 4 testing complete - Projects/Inspiration API integration verified. All 29 projects load from MongoDB (not mock data), categories filter works, admin panel shows same projects as public site, visibility toggle hides projects from public API.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "URL category param",
+        "issue": "When navigating to /inspiration?category=Mini-maison, the filter may not apply immediately due to race condition between URL param parsing and initial loadProjects call. Clicking the category button works correctly.",
+        "affected_selectors": ["[data-testid='category-btn-Mini-maison']"],
+        "severity": "LOW"
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration4_projects.py",
+    "/app/test_reports/pytest/pytest_results_iter4.xml"
+  ],
+  "action_items": [
+    "OPTIONAL: Fix race condition in Inspiration.jsx - ensure loadProjects waits for URL category param to be set before initial fetch"
+  ],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_iteration4_projects.py"
+  ],
+  "success_rate": {
+    "backend": "100% (14/14 tests passed)",
+    "frontend": "95% (all core flows work, minor URL param timing issue)"
+  },
+  "seed_data_creation": "No new seed data - 29 projects already exist in MongoDB from previous migration",
+  "test_credentials": {
+    "admin": "admin@abrisia-plan.ca / admin123"
+  },
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Projects API integration complete: 1) GET /api/projects returns 29 projects from MongoDB, 2) GET /api/categories returns dynamic categories including 'Tous', 3) Category filter works via API ?category=X param, 4) Admin /api/admin/projects returns all projects with isVisible field, 5) Visibility toggle (is_visible=false) correctly hides projects from public API, 6) Inspiration page loads projects from API with category filters (data-testid='projects-grid', 'category-filters'), 7) Home page inspiration section shows one project per category with rotation, 8) Admin Projects (Inspiration) tab shows same 29 projects as public site. Previous iteration_3 tests all pass (13/13).",
+  "features_tested": {
+    "api_projects_public": {
+      "status": "PASS",
+      "detail": "GET /api/projects?limit=100 returns 29 projects from MongoDB with correct fields (id, title, category, image, description, createdAt)"
+    },
+    "api_categories": {
+      "status": "PASS",
+      "detail": "GET /api/categories returns ['Tous', 'Autres dessins (ébénisterie)', 'Chalet', 'Dessins architecturaux', 'Dessins techniques', 'Extensions verrières solarium', 'Maison unifamiliale', 'Mini-maison']"
+    },
+    "api_projects_category_filter": {
+      "status": "PASS",
+      "detail": "GET /api/projects?category=Mini-maison correctly returns only Mini-maison projects (6 projects)"
+    },
+    "api_admin_projects": {
+      "status": "PASS",
+      "detail": "GET /api/admin/projects returns all 29 projects including isVisible field"
+    },
+    "api_visibility_toggle": {
+      "status": "PASS",
+      "detail": "PUT /api/admin/projects/{id} with is_visible=false hides project from public API, is_visible=true restores it"
+    },
+    "inspiration_page_loads_api": {
+      "status": "PASS",
+      "detail": "/inspiration page shows 29 project cards (data-testid='projects-grid') and 8 category filter buttons (data-testid='category-filters')"
+    },
+    "inspiration_category_filter_ui": {
+      "status": "PASS",
+      "detail": "Clicking category button filters projects - 'Mini-maison' shows 6 projects"
+    },
+    "home_inspiration_section": {
+      "status": "PASS",
+      "detail": "Home page #inspiration section shows category cards with project counts, loaded from /api/projects"
+    },
+    "admin_projects_manager": {
+      "status": "PASS",
+      "detail": "Admin Panel > Projets (Inspiration) shows 29 projects with visibility toggle, edit, delete buttons"
+    },
+    "previous_iteration_tests": {
+      "status": "PASS",
+      "detail": "All 13 tests from iteration_3 still pass (login, plan options, navigation, employees)"
+    }
+  }
+}

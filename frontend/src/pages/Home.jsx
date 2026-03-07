@@ -1,14 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, CheckCircle, Star } from 'lucide-react';
+import { ArrowRight, CheckCircle, Star, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { services, approaches, processSteps, inspirationProjects, testimonials } from '../data/mock';
+import { services, approaches, processSteps, testimonials } from '../data/mock';
 import * as Icons from 'lucide-react';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Home = () => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState({});
+  const [inspirationProjects, setInspirationProjects] = useState([]);
+  const [loadingProjects, setLoadingProjects] = useState(true);
+
+  // Charger les projets d'inspiration depuis l'API
+  useEffect(() => {
+    const loadProjects = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/projects`);
+        const data = await res.json();
+        if (data.success) {
+          setInspirationProjects(data.data || []);
+        }
+      } catch (err) {
+        console.error('Erreur chargement projets:', err);
+      } finally {
+        setLoadingProjects(false);
+      }
+    };
+    loadProjects();
+  }, []);
 
   // Rotation automatique des images par catégorie toutes les 5 secondes
   useEffect(() => {
