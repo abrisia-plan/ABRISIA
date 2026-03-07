@@ -36,6 +36,7 @@ import KitOrdersManager from './KitOrdersManager';
 import DevisManager from './DevisManager';
 import PlanOptionsManager from './PlanOptionsManager';
 import CandidaturesManager from './CandidaturesManager';
+import HomepageServicesManager from './HomepageServicesManager';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -180,6 +181,14 @@ const AdminPanel = () => {
               Services & Prix
             </Button>
             <Button 
+              variant={activeTab === 'homepage-services' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'homepage-services' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('homepage-services')}
+            >
+              <DollarSign className="w-4 h-4 mr-2" />
+              Services accueil
+            </Button>
+            <Button 
               variant={activeTab === 'plan-options' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'plan-options' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('plan-options')}
@@ -319,6 +328,10 @@ const AdminPanel = () => {
               
               {activeTab === 'candidatures' && (
                 <CandidaturesManager />
+              )}
+              
+              {activeTab === 'homepage-services' && (
+                <HomepageServicesManager />
               )}
             </>
           )}

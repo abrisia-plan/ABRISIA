@@ -793,3 +793,101 @@ async def delete_plan_option(option_id: str, current_user: dict = Depends(requir
     except Exception as e:
         logger.error(f"Erreur delete plan option: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+# ============ SERVICES ACCUEIL (Homepage Service Cards) ============
+
+DEFAULT_HOMEPAGE_SERVICES = [
+    {"id": "mini-maisons", "name": "Mini-maisons", "description": "Habitations compactes sur fondations permanentes, optimisees pour le confort.", "price": "Plans a partir de 800$", "icon": "Home", "devis_category": "Mini-maison", "is_active": True, "order": 0},
+    {"id": "chalets", "name": "Chalets", "description": "Refuges quatre saisons, confortables ete comme hiver.", "price": "Plans a partir de 1200$", "icon": "Mountain", "devis_category": "Chalet", "is_active": True, "order": 1},
+    {"id": "maisons", "name": "Maisons residentielles", "description": "Maisons familiales sur fondations jusqu'a 600m2 de plancher total.", "price": "Plans a partir de 1500$", "icon": "Building", "devis_category": "Maison residentielle", "is_active": True, "order": 2},
+    {"id": "extensions", "name": "Extensions", "description": "Agrandissements harmonieux pour optimiser votre espace de vie.", "price": "Plans a partir de 600$", "icon": "PlusSquare", "devis_category": "Extension", "is_active": True, "order": 3},
+    {"id": "abris-garages", "name": "Abris et garages", "description": "Structures utilitaires sur fondations pour rangement et protection.", "price": "Plans a partir de 400$", "icon": "Shield", "devis_category": "Abris/garage", "is_active": True, "order": 4},
+    {"id": "ebenisterie", "name": "Ebenisterie sur mesure", "description": "Conception et plans pour meubles et amenagements personnalises.", "price": "Sur devis", "icon": "Ruler", "devis_category": "Ebenisterie", "is_active": True, "order": 5},
+]
+
+
+@router.get("/homepage-services")
+async def get_homepage_services_public():
+    """Services affiches sur la page d'accueil (public)"""
+    try:
+        db = get_database()
+        services = await db.homepage_services.find({"is_active": True}, {"_id": 0}).sort("order", 1).to_list(length=None)
+        if not services:
+            await db.homepage_services.insert_many([dict(s) for s in DEFAULT_HOMEPAGE_SERVICES])
+            services = DEFAULT_HOMEPAGE_SERVICES
+        return {"success": True, "data": services}
+    except Exception as e:
+        logger.error(f"Erreur homepage services: {e}")
+        return {"success": True, "data": DEFAULT_HOMEPAGE_SERVICES}
+
+
+@router.get("/admin/homepage-services")
+async def get_homepage_services_admin(current_user: dict = Depends(require_admin)):
+    """Tous les services de la page d'accueil (admin)"""
+    try:
+        db = get_database()
+        services = await db.homepage_services.find({}, {"_id": 0}).sort("order", 1).to_list(length=None)
+        if not services:
+            await db.homepage_services.insert_many([dict(s) for s in DEFAULT_HOMEPAGE_SERVICES])
+            services = DEFAULT_HOMEPAGE_SERVICES
+        return {"success": True, "data": services}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/admin/homepage-services/{service_id}")
+async def update_homepage_service(service_id: str, data: dict, current_user: dict = Depends(require_admin)):
+    """Modifier un service de l'accueil"""
+    try:
+        db = get_database()
+        update_fields = {}
+        for key in ["name", "description", "price", "icon", "devis_category", "is_active", "order"]:
+            if key in data:
+                update_fields[key] = data[key]
+        result = await db.homepage_services.update_one({"id": service_id}, {"$set": update_fields})
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Service non trouve")
+        return {"success": True, "message": "Service mis a jour"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/admin/homepage-services")
+async def create_homepage_service(data: dict, current_user: dict = Depends(require_admin)):
+    """Creer un service pour l'accueil"""
+    try:
+        db = get_database()
+        service_id = data.get("id") or str(uuid.uuid4())[:8]
+        new_service = {
+            "id": service_id,
+            "name": data.get("name", ""),
+            "description": data.get("description", ""),
+            "price": data.get("price", "Sur devis"),
+            "icon": data.get("icon", "FileText"),
+            "devis_category": data.get("devis_category", ""),
+            "is_active": data.get("is_active", True),
+            "order": data.get("order", 99),
+        }
+        await db.homepage_services.insert_one(new_service)
+        return {"success": True, "message": "Service cree", "id": service_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/admin/homepage-services/{service_id}")
+async def delete_homepage_service(service_id: str, current_user: dict = Depends(require_admin)):
+    """Supprimer un service de l'accueil"""
+    try:
+        db = get_database()
+        result = await db.homepage_services.delete_one({"id": service_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Service non trouve")
+        return {"success": True, "message": "Service supprime"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

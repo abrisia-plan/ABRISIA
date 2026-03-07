@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -14,6 +15,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Devis = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [planOptions, setPlanOptions] = useState([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [formData, setFormData] = useState({
@@ -26,6 +28,14 @@ const Devis = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    // Pré-sélectionner la catégorie depuis l'URL ?service=Mini-maison
+    const serviceFromUrl = searchParams.get('service');
+    if (serviceFromUrl) {
+      setFormData(prev => ({ ...prev, notes: `Service demandé: ${serviceFromUrl}` }));
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const loadPlanOptions = async () => {
