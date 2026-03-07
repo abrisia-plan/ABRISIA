@@ -12,7 +12,7 @@ export const services = [
   {
     id: 2,
     name: "Chalets",
-    description: "Refuges quatre saisons en harmonie avec la nature québécoise.",
+    description: "Refuges quatre saisons, confortables été comme hiver.",
     price: "Plans à partir de 1200$",
     icon: "Mountain",
     category: "construction"
@@ -67,7 +67,7 @@ export const planOptions = [
   { id: 'abri-garage', name: 'Abris/garage/gazebo/galerie/coin cuisine extérieur', price: '400$', description: 'Plans pour structures extérieures et espaces de vie outdoor' },
   
   // Services
-  { id: 'accompagnement', name: 'Accompagnement à l\'autoconstruction', price: 'Sur devis', description: 'Calculs de matériaux, conseils techniques et suivi de chantier' },
+  { id: 'accompagnement', name: 'Calculs de matériaux', price: 'Sur devis', description: 'Liste de matériaux et estimation des quantités pour votre projet' },
   { id: 'ebenisterie', name: 'Ébénisterie sur mesure', price: 'Sur devis', description: 'Conception et plans pour meubles et aménagements personnalisés' },
   { id: 'autre', name: 'Autre (à préciser dans les notes)', price: 'Sur devis', description: 'Projet spécialisé ou besoins particuliers - décrivez vos besoins' }
 ];
@@ -85,21 +85,21 @@ export const projectTypes = [
 export const approaches = [
   {
     id: 1,
-    title: "Naturel & durable",
-    description: "Matériaux locaux québécois et techniques respectueuses de l'environnement.",
-    icon: "Leaf"
+    title: "Plans sur mesure",
+    description: "Chaque projet est unique. Vos plans sont dessinés selon vos besoins, votre terrain et votre budget.",
+    icon: "PenTool"
   },
   {
     id: 2,
     title: "Flexibilité des horaires",
-    description: "Nous nous adaptons à vos disponibilités pour un service personnalisé.",
+    description: "On s'adapte à vos disponibilités pour un service personnalisé.",
     icon: "Clock"
   },
   {
     id: 3,
-    title: "Transmission entre générations",
-    description: "Savoir-faire traditionnel québécois allié aux innovations modernes.",
-    icon: "Users"
+    title: "Prix accessible",
+    description: "Des tarifs compétitifs pour des plans professionnels conformes au Code du bâtiment du Québec.",
+    icon: "DollarSign"
   }
 ];
 
@@ -641,6 +641,6 @@ export const faqItems = [
   {
     id: 4,
     question: "Travaillez-vous avec des matériaux québécois ?",
-    answer: "Oui, nous privilégions les matériaux locaux : bois du Québec, isolants régionaux, et fournisseurs de la province."
+    answer: "Nos plans sont conçus pour être réalisés avec des matériaux disponibles chez les fournisseurs locaux du Québec."
   }
 ];

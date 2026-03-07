@@ -67,6 +67,9 @@ api_router.include_router(projects.router)
 # Routes CMS (Content Management System)
 api_router.include_router(cms.router)
 
+# Routes navigation publique
+api_router.include_router(cms.public_router)
+
 # Routes e-commerce
 api_router.include_router(ecommerce.router)
 

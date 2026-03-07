@@ -483,3 +483,72 @@ async def get_all_media(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erreur lors de la récupération des médias"
         )
+
+
+# ========== GESTION DU MENU DE NAVIGATION ==========
+
+@router.get("/navigation")
+async def get_navigation(current_user: dict = Depends(require_admin)):
+    """Obtenir la configuration du menu de navigation"""
+    try:
+        db = get_database()
+        nav = await db.site_settings.find_one({"key": "navigation"}, {"_id": 0})
+        if not nav:
+            default_pages = [
+                {"name": "Accueil", "href": "/", "visible": True, "order": 0},
+                {"name": "Inspiration", "href": "/inspiration", "visible": True, "order": 1},
+                {"name": "Kits", "href": "/kit", "visible": True, "order": 2},
+                {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 3},
+                {"name": "Contact", "href": "/contact", "visible": True, "order": 5},
+            ]
+            await db.site_settings.insert_one({"key": "navigation", "pages": default_pages})
+            return {"success": True, "pages": default_pages}
+        return {"success": True, "pages": nav.get("pages", [])}
+    except Exception as e:
+        logger.error(f"Erreur navigation: {e}")
+        raise HTTPException(status_code=500, detail="Erreur")
+
+@router.put("/navigation")
+async def update_navigation(data: dict, current_user: dict = Depends(require_admin)):
+    """Mettre à jour la configuration du menu de navigation"""
+    try:
+        db = get_database()
+        pages = data.get("pages", [])
+        await db.site_settings.update_one(
+            {"key": "navigation"},
+            {"$set": {"pages": pages}},
+            upsert=True
+        )
+        return {"success": True, "message": "Navigation mise à jour", "pages": pages}
+    except Exception as e:
+        logger.error(f"Erreur update navigation: {e}")
+        raise HTTPException(status_code=500, detail="Erreur")
+
+
+# Route publique pour obtenir le menu (sans auth)
+public_router = APIRouter(prefix="/navigation", tags=["navigation"])
+
+@public_router.get("/menu")
+async def get_public_navigation():
+    """Obtenir les pages visibles du menu (public)"""
+    try:
+        db = get_database()
+        nav = await db.site_settings.find_one({"key": "navigation"}, {"_id": 0})
+        if not nav:
+            default_pages = [
+                {"name": "Accueil", "href": "/", "visible": True, "order": 0},
+                {"name": "Inspiration", "href": "/inspiration", "visible": True, "order": 1},
+                {"name": "Kits", "href": "/kit", "visible": True, "order": 2},
+                {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 3},
+                {"name": "Contact", "href": "/contact", "visible": True, "order": 5},
+            ]
+            return {"success": True, "pages": default_pages}
+        visible = [p for p in nav.get("pages", []) if p.get("visible", True)]
+        visible.sort(key=lambda x: x.get("order", 99))
+        return {"success": True, "pages": visible}
+    except Exception as e:
+        return {"success": True, "pages": [
+            {"name": "Accueil", "href": "/", "visible": True},
+            {"name": "Kits", "href": "/kit", "visible": True},
+            {"name": "Demander un devis", "href": "/devis", "visible": True},
+        ]}

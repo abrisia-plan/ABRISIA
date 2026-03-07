@@ -80,12 +80,10 @@ const Home = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1629740053362-220a869d7cc1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzd8MHwxfHNlYXJjaHwzfHxmam9yZCUyMGxhbmRzY2FwZXxlbnwwfHx8fDE3NTUwNjA0NTl8MA&ixlib=rb-4.1.0&q=85')`
+            backgroundImage: `url('https://customer-assets.emergentagent.com/job_c939612f-c018-47c9-949a-bf666b73ec90/artifacts/s0baspap_Copie%20de%20Copie%20de%20Abrisia.jpg')`
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50"></div>
-          {/* Texture beige chaud et doux */}
-          <div className="absolute inset-0 opacity-20 bg-gradient-to-br from-amber-800/30 via-stone-700/20 to-amber-900/25"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50"></div>
         </div>
 
         {/* Content */}
@@ -113,21 +111,21 @@ const Home = () => {
       </section>
 
       {/* Section "Ce qu'on fait" */}
-      <section className="py-20 bg-gradient-to-b from-stone-100 to-amber-50">
+      <section className="py-20 bg-stone-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-              Nos services de dessin sur mesure
+              Nos services de dessin
             </h2>
-            <p className="text-xl text-slate-700 max-w-4xl mx-auto leading-relaxed">
-              Dessins techniques professionnels pour constructions permanentes sur fondations. 
-              <strong className="text-teal-800"> Jusqu'à 600m² de plancher (6000 pi²)</strong> conformes au Code du bâtiment du Québec.
+            <p className="text-lg text-slate-600 max-w-4xl mx-auto leading-relaxed">
+              Plans professionnels conformes au Code du bâtiment du Québec.
+              <strong className="text-teal-800"> Jusqu'à 600m² de plancher (6000 pi²).</strong>
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service) => (
-              <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 border-stone-200 hover:border-teal-300 bg-white">
+              <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 border-stone-200 hover:border-teal-300 bg-stone-50">
                 <CardContent className="p-8 text-center">
                   <div className="w-16 h-16 bg-teal-50 group-hover:bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors">
                     {getIcon(service.icon)}
@@ -141,10 +139,6 @@ const Home = () => {
           </div>
 
           <div className="text-center mt-12">
-            <p className="text-lg text-slate-700 mb-8 max-w-4xl mx-auto leading-relaxed">
-              <strong>Spécialistes en constructions permanentes</strong> - Fondations solides, structures durables, 
-              respect des normes québécoises. Qualité et accessibilité pour tous vos projets.
-            </p>
             <Link to="/devis">
               <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full">
                 Voir nos tarifs détaillés
@@ -155,7 +149,7 @@ const Home = () => {
       </section>
 
       {/* Section "Notre approche" */}
-      <section className="py-20 bg-stone-50">
+      <section className="py-20 bg-stone-100/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
@@ -165,7 +159,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {approaches.map((approach) => (
-              <Card key={approach.id} className="text-center border-stone-200 hover:shadow-lg transition-shadow bg-white">
+              <Card key={approach.id} className="text-center border-stone-200 hover:shadow-lg transition-shadow bg-stone-50">
                 <CardContent className="p-8">
                   <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     {getIcon(approach.icon)}
@@ -176,24 +170,11 @@ const Home = () => {
               </Card>
             ))}
           </div>
-
-          {/* Bandeau accompagnement */}
-          <div className="bg-gradient-to-r from-teal-800 to-teal-900 rounded-2xl p-8 text-center text-white">
-            <h3 className="text-2xl font-bold mb-4">Accompagnement à l'autoconstruction</h3>
-            <p className="text-lg text-teal-100 mb-6">
-              Calculs de matériaux, conseils techniques et suivi de chantier pour réaliser votre projet en toute sérénité.
-            </p>
-            <Link to="/devis">
-              <Button size="lg" variant="secondary" className="bg-white text-teal-800 hover:bg-teal-50 px-8 py-3 rounded-full">
-                En savoir plus
-              </Button>
-            </Link>
-          </div>
         </div>
       </section>
 
       {/* Section Inspiration (teaser avec rotation par catégorie) */}
-      <section id="inspiration" className="py-20 bg-white">
+      <section id="inspiration" className="py-20 bg-stone-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
@@ -209,7 +190,7 @@ const Home = () => {
             {getOneProjectPerCategory().map((project) => (
               <Card 
                 key={project.category} 
-                className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer bg-white"
+                className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer bg-stone-50"
                 onClick={() => handleCategoryClick(project.category)}
               >
                 <div className="relative overflow-hidden h-48">
@@ -253,7 +234,7 @@ const Home = () => {
       </section>
 
       {/* Section "Comment ça marche ?" */}
-      <section className="py-20 bg-gradient-to-b from-amber-50 to-stone-50">
+      <section className="py-20 bg-stone-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
@@ -275,7 +256,7 @@ const Home = () => {
                 )}
                 
                 {/* Étape */}
-                <div className="bg-white p-8 rounded-2xl shadow-lg border border-stone-200 hover:shadow-xl transition-shadow">
+                <div className="bg-stone-50 p-8 rounded-2xl shadow-lg border border-stone-200 hover:shadow-xl transition-shadow">
                   <div className="w-16 h-16 bg-teal-800 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold">
                     {step.id}
                   </div>

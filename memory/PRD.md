@@ -78,3 +78,13 @@ Site web pour Abrisia Plan, entreprise de plans architecturaux au Québec. Fonct
 ## Domaine
 - Production: abrisia-plan.ca
 - Preview: kit-system-preview.preview.emergentagent.com
+
+## Changelog 2026-03-07
+- Corrigé: SEO metadata (titre, description, OG, JSON-LD, sitemap, robots.txt)
+- Corrigé: Login unifié admin+employés à /admin
+- Corrigé: Système employés fonctionnel (register, approve, login, my-projects)
+- Ajouté: Gestionnaire de menu dans admin (visible/masqué par page)
+- Ajouté: Image héro personnalisée (photo montagne utilisateur)
+- Retiré: Page "À propos" du menu
+- Retiré: Bouton "Connexion Admin" du header public
+- Ajouté: Onglets Employés, Commandes kits, Gestion des devis dans admin panel

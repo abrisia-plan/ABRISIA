@@ -17,7 +17,8 @@ import {
   Palette,
   Loader2,
   LayoutDashboard,
-  DollarSign
+  DollarSign,
+  Navigation
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import { devisService, designerService, authService, handleApiError } from '../../services/api';
@@ -200,6 +201,14 @@ const AdminPanel = () => {
               <Settings className="w-4 h-4 mr-2" />
               Pages légales
             </Button>
+            <Button 
+              variant={activeTab === 'navigation' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'navigation' ? 'bg-teal-600' : ''}`}
+              onClick={() => setActiveTab('navigation')}
+            >
+              <Navigation className="w-4 h-4 mr-2" />
+              Menu du site
+            </Button>
 
             <div className="border-t border-gray-200 my-3"></div>
             
@@ -280,6 +289,10 @@ const AdminPanel = () => {
               
               {activeTab === 'devis-manager' && (
                 <DevisManager />
+              )}
+              
+              {activeTab === 'navigation' && (
+                <NavigationManager />
               )}
             </>
           )}
@@ -388,3 +401,147 @@ const DashboardTab = ({ stats }) => {
 };
 
 export default AdminPanel;
+
+// Composant de gestion du menu de navigation
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+const NavigationManager = () => {
+  const { toast } = useToast();
+  const [pages, setPages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const allPages = [
+    { name: 'Accueil', href: '/', locked: true },
+    { name: 'Inspiration', href: '/inspiration' },
+    { name: 'Kits', href: '/kit' },
+    { name: 'Demander un devis', href: '/devis' },
+    { name: 'À propos', href: '/about' },
+    { name: 'Contact', href: '/contact' },
+    { name: 'Feedback', href: '/feedback' },
+  ];
+
+  useEffect(() => {
+    loadNavigation();
+  }, []);
+
+  const loadNavigation = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${BACKEND_URL}/api/admin/cms/navigation`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success && data.pages) {
+        setPages(data.pages);
+      } else {
+        setPages(allPages.map((p, i) => ({ ...p, visible: p.href !== '/about', order: i })));
+      }
+    } catch {
+      setPages(allPages.map((p, i) => ({ ...p, visible: p.href !== '/about', order: i })));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const togglePage = (href) => {
+    setPages(prev => prev.map(p => 
+      p.href === href && !p.locked ? { ...p, visible: !p.visible } : p
+    ));
+  };
+
+  const moveUp = (index) => {
+    if (index <= 0) return;
+    const newPages = [...pages];
+    [newPages[index - 1], newPages[index]] = [newPages[index], newPages[index - 1]];
+    newPages.forEach((p, i) => p.order = i);
+    setPages(newPages);
+  };
+
+  const moveDown = (index) => {
+    if (index >= pages.length - 1) return;
+    const newPages = [...pages];
+    [newPages[index], newPages[index + 1]] = [newPages[index + 1], newPages[index]];
+    newPages.forEach((p, i) => p.order = i);
+    setPages(newPages);
+  };
+
+  const saveNavigation = async () => {
+    try {
+      setSaving(true);
+      const token = localStorage.getItem('authToken');
+      const res = await fetch(`${BACKEND_URL}/api/admin/cms/navigation`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ pages })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast({ title: "Menu sauvegardé", description: "Les changements sont visibles sur le site" });
+      }
+    } catch {
+      toast({ title: "Erreur", description: "Impossible de sauvegarder", variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 animate-spin text-teal-600" /></div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900">Menu du site</h2>
+        <p className="text-gray-600 mt-1">Choisissez quelles pages apparaissent dans le menu de navigation</p>
+      </div>
+
+      <Card>
+        <CardContent className="p-6 space-y-3">
+          {pages.map((page, index) => (
+            <div key={page.href} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 bg-white">
+              <div className="flex items-center space-x-4">
+                <div className="flex flex-col space-y-1">
+                  <button onClick={() => moveUp(index)} className="text-gray-400 hover:text-gray-700 text-xs" disabled={index === 0}>▲</button>
+                  <button onClick={() => moveDown(index)} className="text-gray-400 hover:text-gray-700 text-xs" disabled={index === pages.length - 1}>▼</button>
+                </div>
+                <div>
+                  <span className="font-medium text-gray-900">{page.name}</span>
+                  <span className="text-sm text-gray-500 ml-2">{page.href}</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                {page.locked ? (
+                  <Badge className="bg-gray-100 text-gray-600">Toujours visible</Badge>
+                ) : (
+                  <Button
+                    variant={page.visible ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => togglePage(page.href)}
+                    className={page.visible ? "bg-teal-600 hover:bg-teal-700" : "text-gray-500"}
+                    data-testid={`toggle-${page.href.replace('/', '')}`}
+                  >
+                    {page.visible ? 'Visible' : 'Masqué'}
+                  </Button>
+                )}
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Button 
+        onClick={saveNavigation}
+        disabled={saving}
+        className="bg-teal-600 hover:bg-teal-700"
+        data-testid="save-navigation-button"
+      >
+        {saving ? <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Sauvegarde...</> : 'Sauvegarder le menu'}
+      </Button>
+    </div>
+  );
+};
