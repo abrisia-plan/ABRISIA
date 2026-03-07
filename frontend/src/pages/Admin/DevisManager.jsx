@@ -562,7 +562,7 @@ const DevisManager = () => {
                           <SelectValue placeholder="Sélectionner..." />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">Non assigné</SelectItem>
+                          <SelectItem value="non-assigne">Non assigné</SelectItem>
                           {employees.map((emp) => (
                             <SelectItem key={emp.id} value={emp.name}>
                               {emp.name}
