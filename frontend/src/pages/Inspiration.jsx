@@ -86,9 +86,9 @@ const Inspiration = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-20 bg-stone-100">
       {/* Hero Section */}
-      <section className="py-16 bg-gradient-to-b from-amber-50 to-white">
+      <section className="py-16 bg-stone-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-slate-800 mb-6">
             Inspiration
@@ -100,7 +100,7 @@ const Inspiration = () => {
       </section>
 
       {/* Filters */}
-      <section className="py-8 bg-white border-b border-stone-200">
+      <section className="py-8 bg-stone-50 border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (

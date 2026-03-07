@@ -83,9 +83,9 @@ const Feedback = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen pt-20 bg-gradient-to-b from-green-50 to-white">
+      <div className="min-h-screen pt-20 bg-stone-100">
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-          <div className="bg-white rounded-2xl shadow-xl p-12">
+          <div className="bg-stone-50 rounded-2xl shadow-xl p-12">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
@@ -104,7 +104,7 @@ const Feedback = () => {
                 />
               ))}
             </div>
-            <p className="text-amber-600 font-semibold mt-4">
+            <p className="text-teal-700 font-semibold mt-4">
               Vous avez donné {rating} étoile{rating > 1 ? 's' : ''}
             </p>
           </div>
@@ -114,7 +114,7 @@ const Feedback = () => {
   }
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-b from-amber-50 to-white">
+    <div className="min-h-screen pt-20 bg-stone-100">
       {/* Hero */}
       <section className="py-12 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto text-center px-4">
@@ -131,7 +131,7 @@ const Feedback = () => {
       <section className="py-12">
         <div className="max-w-2xl mx-auto px-4">
           <Card className="shadow-xl">
-            <CardHeader className="bg-gradient-to-r from-amber-50 to-stone-50 border-b">
+            <CardHeader className="bg-gradient-to-r from-stone-100 to-stone-50 border-b">
               <CardTitle className="text-center text-2xl text-slate-800">
                 Partagez votre expérience
               </CardTitle>

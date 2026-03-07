@@ -21,6 +21,8 @@ import CMS from "./pages/Admin/CMS";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import { EmployeePortal } from "./pages/EmployeePortal";
 
+import Carrieres from "./pages/Carrieres";
+
 function App() {
   return (
     <div className="App">
@@ -41,6 +43,7 @@ function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/mentions-legales" element={<MentionsLegales />} />
                 <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+                <Route path="/carrieres" element={<Carrieres />} />
               </Routes>
               <Footer />
               <CookieBanner />

@@ -93,7 +93,7 @@ const Devis = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 bg-gradient-to-b from-amber-50 to-stone-50">
+    <div className="min-h-screen pt-20 bg-stone-100">
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
@@ -109,8 +109,8 @@ const Devis = () => {
       {/* Form Section */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Card className="shadow-xl border-stone-200 bg-white">
-            <CardHeader className="bg-gradient-to-r from-amber-50 to-stone-50 border-b border-stone-200">
+          <Card className="shadow-xl border-stone-200 bg-stone-50">
+            <CardHeader className="bg-gradient-to-r from-stone-100 to-stone-50 border-b border-stone-200">
               <CardTitle className="text-2xl text-slate-800 text-center">
                 Tableau de demande de devis
               </CardTitle>
@@ -174,7 +174,7 @@ const Devis = () => {
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {planOptions.map((plan) => (
-                      <div key={plan.id} className="flex items-center justify-between p-4 border border-stone-300 rounded-lg hover:bg-amber-50 transition-colors">
+                      <div key={plan.id} className="flex items-center justify-between p-4 border border-stone-300 rounded-lg hover:bg-stone-100 transition-colors">
                         <div className="flex items-center space-x-3 flex-1">
                           <Checkbox
                             id={`plan-${plan.id}`}
@@ -352,7 +352,7 @@ const Devis = () => {
                   <Label htmlFor="notes" className="text-slate-700 font-medium">
                     Décrivez votre projet en détail
                   </Label>
-                  <div className="text-sm text-slate-600 mb-3 p-3 bg-amber-50 border border-amber-200 rounded">
+                  <div className="text-sm text-slate-600 mb-3 p-3 bg-stone-100 border border-stone-300 rounded">
                     <strong>💡 Conseil :</strong> Plus vous êtes précis, mieux nous pourrons vous aider ! 
                     Mentionnez : dimensions, budget, délais, contraintes du terrain, inspirations, etc.
                   </div>

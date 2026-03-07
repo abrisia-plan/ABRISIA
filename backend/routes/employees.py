@@ -615,3 +615,126 @@ async def approve_employee(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erreur lors de l'approbation de l'employé"
         )
+
+
+# ========== CANDIDATURES (CV) ==========
+
+from fastapi import UploadFile, File, Form
+import base64
+
+@router.post("/candidature")
+async def submit_candidature(
+    nom: str = Form(...),
+    email: str = Form(...),
+    telephone: str = Form(""),
+    message: str = Form(""),
+    cv: UploadFile = File(...)
+):
+    """Soumettre une candidature avec CV"""
+    try:
+        db = get_database()
+        
+        # Lire le fichier CV
+        cv_content = await cv.read()
+        cv_base64 = base64.b64encode(cv_content).decode('utf-8')
+        
+        candidature = {
+            "nom": nom,
+            "email": email,
+            "telephone": telephone,
+            "message": message,
+            "cv_filename": cv.filename,
+            "cv_content_type": cv.content_type,
+            "cv_base64": cv_base64,
+            "cv_size": len(cv_content),
+            "status": "nouvelle",
+            "created_at": datetime.utcnow().isoformat(),
+        }
+        
+        result = await db.candidatures.insert_one(candidature)
+        
+        # Envoyer notification par courriel
+        try:
+            from services.email_service import send_email_notification
+            await send_email_notification(
+                subject=f"Nouvelle candidature - {nom}",
+                body=f"""
+                <h2>Nouvelle candidature reçue</h2>
+                <p><strong>Nom:</strong> {nom}</p>
+                <p><strong>Courriel:</strong> {email}</p>
+                <p><strong>Téléphone:</strong> {telephone}</p>
+                <p><strong>Message:</strong> {message}</p>
+                <p><strong>CV:</strong> {cv.filename}</p>
+                <br>
+                <p>Consultez le panneau admin pour voir le CV complet.</p>
+                """,
+            )
+        except Exception as email_err:
+            logger.warning(f"Email notification failed: {email_err}")
+        
+        return {"success": True, "message": "Candidature envoyée avec succès"}
+    except Exception as e:
+        logger.error(f"Erreur candidature: {e}")
+        raise HTTPException(status_code=500, detail="Erreur lors de l'envoi de la candidature")
+
+
+@router.get("/admin/candidatures")
+async def get_candidatures(current_user: dict = Depends(require_admin)):
+    """Obtenir toutes les candidatures (admin)"""
+    try:
+        db = get_database()
+        candidatures = []
+        async for c in db.candidatures.find().sort("created_at", -1):
+            candidatures.append({
+                "id": str(c["_id"]),
+                "nom": c.get("nom"),
+                "email": c.get("email"),
+                "telephone": c.get("telephone"),
+                "message": c.get("message"),
+                "cv_filename": c.get("cv_filename"),
+                "cv_size": c.get("cv_size", 0),
+                "status": c.get("status", "nouvelle"),
+                "created_at": c.get("created_at"),
+            })
+        return {"success": True, "data": candidatures, "total": len(candidatures)}
+    except Exception as e:
+        logger.error(f"Erreur liste candidatures: {e}")
+        raise HTTPException(status_code=500, detail="Erreur")
+
+
+@router.get("/admin/candidatures/{candidature_id}/cv")
+async def download_cv(candidature_id: str, current_user: dict = Depends(require_admin)):
+    """Télécharger le CV d'une candidature"""
+    try:
+        from fastapi.responses import Response
+        db = get_database()
+        c = await db.candidatures.find_one({"_id": ObjectId(candidature_id)})
+        if not c:
+            raise HTTPException(status_code=404, detail="Candidature non trouvée")
+        
+        cv_bytes = base64.b64decode(c["cv_base64"])
+        return Response(
+            content=cv_bytes,
+            media_type=c.get("cv_content_type", "application/pdf"),
+            headers={"Content-Disposition": f'attachment; filename="{c.get("cv_filename", "cv.pdf")}"'}
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur download CV: {e}")
+        raise HTTPException(status_code=500, detail="Erreur")
+
+
+@router.put("/admin/candidatures/{candidature_id}/status")
+async def update_candidature_status(candidature_id: str, data: dict, current_user: dict = Depends(require_admin)):
+    """Mettre à jour le statut d'une candidature"""
+    try:
+        db = get_database()
+        await db.candidatures.update_one(
+            {"_id": ObjectId(candidature_id)},
+            {"$set": {"status": data.get("status", "nouvelle")}}
+        )
+        return {"success": True, "message": "Statut mis à jour"}
+    except Exception as e:
+        logger.error(f"Erreur update candidature: {e}")
+        raise HTTPException(status_code=500, detail="Erreur")

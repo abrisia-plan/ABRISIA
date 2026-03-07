@@ -301,9 +301,9 @@ const Kit = () => {
   const prices = calculateTotal();
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-20 bg-stone-100">
       {/* Hero Section */}
-      <section className="py-16 bg-gradient-to-b from-amber-50 to-white">
+      <section className="py-16 bg-stone-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-slate-800 mb-6">
             Kits de Plans
@@ -315,7 +315,7 @@ const Kit = () => {
       </section>
 
       {/* Filters */}
-      <section className="py-8 bg-white border-b border-stone-200">
+      <section className="py-8 bg-stone-50 border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (
@@ -390,7 +390,7 @@ const Kit = () => {
                         </div>
                         {kit.materialsListEnabled && (
                           <div className="absolute top-4 right-4">
-                            <span className="bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                            <span className="bg-stone-1000 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
                               <Package className="w-3 h-3 mr-1" />
                               +Matériaux
                             </span>
@@ -460,11 +460,11 @@ const Kit = () => {
           {orderSuccess ? (
             // Confirmation de commande
             <div className="space-y-6 text-center py-8">
-              <div className={`w-20 h-20 ${orderSuccess.isPaid ? 'bg-green-100' : 'bg-amber-100'} rounded-full flex items-center justify-center mx-auto`}>
+              <div className={`w-20 h-20 ${orderSuccess.isPaid ? 'bg-green-100' : 'bg-teal-100'} rounded-full flex items-center justify-center mx-auto`}>
                 {orderSuccess.isPaid ? (
                   <CheckCircle className="w-10 h-10 text-green-600" />
                 ) : (
-                  <Banknote className="w-10 h-10 text-amber-600" />
+                  <Banknote className="w-10 h-10 text-teal-700" />
                 )}
               </div>
               
@@ -500,8 +500,8 @@ const Kit = () => {
               </div>
 
               {!orderSuccess.isPaid && (
-                <div className="bg-amber-50 p-4 rounded-lg text-left max-w-md mx-auto">
-                  <h4 className="font-semibold text-amber-800 mb-2 flex items-center">
+                <div className="bg-stone-100 p-4 rounded-lg text-left max-w-md mx-auto">
+                  <h4 className="font-semibold text-teal-800 mb-2 flex items-center">
                     <Banknote className="w-4 h-4 mr-2" />
                     Instructions de paiement Interac
                   </h4>
@@ -511,7 +511,7 @@ const Kit = () => {
                   <p className="text-center font-bold text-lg text-teal-700 bg-white p-3 rounded">
                     📧 abrisia0plan@gmail.com
                   </p>
-                  <p className="text-xs text-amber-600 mt-3 text-center">
+                  <p className="text-xs text-teal-700 mt-3 text-center">
                     Question secrète : <strong>Abrisia</strong> | Réponse : <strong>Plan</strong><br/>
                     Mentionnez : <strong>{orderSuccess.orderNumber}</strong>
                   </p>
@@ -605,7 +605,7 @@ const Kit = () => {
 
                   {/* Option liste matériaux */}
                   {selectedKit.materialsListEnabled && (
-                    <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
+                    <div className="bg-stone-100 border border-stone-300 p-4 rounded-lg">
                       <div className="flex items-start space-x-3">
                         <Checkbox
                           id="materials"
@@ -615,9 +615,9 @@ const Kit = () => {
                         />
                         <div className="flex-1">
                           <label htmlFor="materials" className="font-semibold text-slate-800 cursor-pointer flex items-center">
-                            <Package className="w-5 h-5 text-amber-600 mr-2" />
+                            <Package className="w-5 h-5 text-teal-700 mr-2" />
                             Ajouter la liste complète des matériaux
-                            <span className="ml-2 text-amber-600 font-bold">
+                            <span className="ml-2 text-teal-700 font-bold">
                               +{formatPrice(selectedKit.materialsListPrice)}
                             </span>
                           </label>
@@ -630,7 +630,7 @@ const Kit = () => {
                   )}
 
                   {/* Prix et CTA */}
-                  <div className="bg-gradient-to-r from-amber-50 to-stone-50 p-6 rounded-lg">
+                  <div className="bg-gradient-to-r from-stone-100 to-stone-50 p-6 rounded-lg">
                     <div className="flex items-center justify-between mb-4">
                       <div>
                         <p className="text-sm text-slate-500">Prix du kit</p>
@@ -638,14 +638,14 @@ const Kit = () => {
                           {formatPrice(prices.base)}
                         </span>
                         {includeMaterials && (
-                          <p className="text-amber-600 font-semibold mt-1">
+                          <p className="text-teal-700 font-semibold mt-1">
                             + {formatPrice(prices.materials)} (matériaux)
                           </p>
                         )}
                       </div>
                     </div>
 
-                    <div className="border-t border-amber-200 pt-4 mb-4">
+                    <div className="border-t border-stone-300 pt-4 mb-4">
                       <div className="flex justify-between text-sm text-slate-600 mb-1">
                         <span>Sous-total</span>
                         <span>{formatPrice(prices.subtotal)}</span>
@@ -680,7 +680,7 @@ const Kit = () => {
                         <span>{formatPrice(prices.base)}</span>
                       </div>
                       {includeMaterials && (
-                        <div className="flex justify-between text-amber-600">
+                        <div className="flex justify-between text-teal-700">
                           <span>+ Liste matériaux</span>
                           <span>{formatPrice(prices.materials)}</span>
                         </div>
@@ -777,7 +777,7 @@ const Kit = () => {
                         onClick={() => setPaymentMethod('interac')}
                         className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                           paymentMethod === 'interac'
-                            ? 'border-amber-500 bg-amber-50'
+                            ? 'border-amber-500 bg-stone-100'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
@@ -785,7 +785,7 @@ const Kit = () => {
                           Recommandé
                         </div>
                         <div className="flex items-center mb-2">
-                          <Banknote className={`w-6 h-6 mr-2 ${paymentMethod === 'interac' ? 'text-amber-600' : 'text-gray-400'}`} />
+                          <Banknote className={`w-6 h-6 mr-2 ${paymentMethod === 'interac' ? 'text-teal-700' : 'text-gray-400'}`} />
                           <span className="font-semibold">Virement Interac</span>
                           <span className="ml-2 bg-green-100 text-green-700 text-xs px-2 py-1 rounded">Recommandé</span>
                         </div>
