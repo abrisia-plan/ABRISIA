@@ -56,10 +56,13 @@ Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini
 6. ✅ Bouton "Voir le site" ajouté au portail employé
 7. ✅ Footer utilise la navigation dynamique (pages masquées disparaissent partout)
 8. ✅ Redirection /admin/dashboard → /admin/panel
-9. ✅ **Projets d'inspiration unifiés** — Les 29 projets sont dans la BD, gérés depuis l'admin
-10. ✅ **Double visibilité projets** — Bouton Oeil (Inspiration) + Bouton Maison (Accueil) séparés
-11. ✅ **Page témoignage publique** — /temoignage : lien à envoyer aux clients pour recueillir des avis. Admin peut approuver/rejeter.
+9. ✅ **Projets d'inspiration unifiés** — 29 projets dans la BD, gérés depuis l'admin
+10. ✅ **Double visibilité projets** — Oeil (Inspiration) + Maison (Accueil) séparés
+11. ✅ **Page témoignage publique** — /temoignage : lien client pour recueillir des avis
 12. ✅ **Filtres devis améliorés** — Filtrage par statut + mois + année avec compteur
+13. ✅ **Notifications email** — Email envoyé pour chaque nouveau devis, CV et témoignage
+14. ✅ **Onglet Candidatures CV** — Interface admin pour voir/télécharger les CV reçus
+15. ✅ **Témoignages dynamiques** — Accueil affiche les avis approuvés depuis la BD (plus de mock data)
 
 ## Tâches Restantes
 
