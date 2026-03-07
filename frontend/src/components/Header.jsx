@@ -31,19 +31,18 @@ const Header = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-stone-50/95 backdrop-blur-sm border-b border-stone-200/50 shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-foret shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center py-3">
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0">
+            <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-beige/20">
               <img 
                 src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
                 alt="Logo Abrisia" 
-                className="w-full h-full object-cover scale-150"
-                style={{ mixBlendMode: 'multiply' }}
+                className="w-full h-full object-cover scale-150 invert brightness-200"
               />
             </div>
-            <span className="text-2xl font-bold text-slate-800 group-hover:text-teal-700 transition-colors">
+            <span className="text-2xl font-bold text-beige group-hover:text-white transition-colors">
               ABRISIA
             </span>
           </Link>
@@ -53,10 +52,10 @@ const Header = () => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`text-lg font-medium transition-colors hover:text-teal-700 ${
+                className={`text-base font-medium transition-colors ${
                   isActive(item.href) 
-                    ? 'text-teal-700 border-b-2 border-teal-700 pb-1' 
-                    : 'text-slate-700'
+                    ? 'text-white border-b-2 border-beige pb-1' 
+                    : 'text-beige/80 hover:text-white'
                 }`}
               >
                 {item.name}
@@ -69,7 +68,7 @@ const Header = () => {
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-slate-700"
+              className="text-beige hover:text-white hover:bg-foret-light"
               data-testid="mobile-menu-button"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -78,14 +77,14 @@ const Header = () => {
         </div>
 
         {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-teal-100/20">
+          <div className="lg:hidden py-4 border-t border-foret-light">
             <nav className="flex flex-col space-y-3" data-testid="mobile-nav">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={`text-lg font-medium transition-colors hover:text-teal-700 py-2 ${
-                    isActive(item.href) ? 'text-teal-700' : 'text-slate-700'
+                  className={`text-base font-medium transition-colors py-2 ${
+                    isActive(item.href) ? 'text-white' : 'text-beige/80 hover:text-white'
                   }`}
                   onClick={() => setIsMenuOpen(false)}
                 >

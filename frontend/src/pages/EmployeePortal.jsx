@@ -82,7 +82,7 @@ export const EmployeeLogin = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <User className="w-8 h-8 text-teal-600" />
+            <User className="w-8 h-8 text-foret" />
           </div>
           <CardTitle className="text-2xl">Espace Employé</CardTitle>
           <p className="text-gray-500 mt-2">Connectez-vous pour accéder à vos projets</p>
@@ -113,7 +113,7 @@ export const EmployeeLogin = () => {
                 className="mt-1"
               />
             </div>
-            <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700" disabled={loading}>
+            <Button type="submit" className="w-full bg-foret hover:bg-bois" disabled={loading}>
               {loading ? (
                 <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Connexion...</>
               ) : (
@@ -221,7 +221,7 @@ export const EmployeePortal = () => {
   if (!employee) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-foret" />
       </div>
     );
   }
@@ -240,7 +240,7 @@ export const EmployeePortal = () => {
       <header className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-40">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div className="flex items-center space-x-4">
-            <div className="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-foret rounded-full flex items-center justify-center">
               <User className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -321,7 +321,7 @@ export const EmployeePortal = () => {
           <CardContent>
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+                <Loader2 className="w-8 h-8 animate-spin text-foret" />
               </div>
             ) : assignedDevis.length === 0 ? (
               <div className="text-center py-12">
@@ -350,7 +350,7 @@ export const EmployeePortal = () => {
                         </div>
                         
                         <h3 className="font-semibold text-lg flex items-center gap-2">
-                          <Home className="w-5 h-5 text-teal-600" />
+                          <Home className="w-5 h-5 text-foret" />
                           {devis.projectType}
                         </h3>
                         
@@ -390,7 +390,7 @@ export const EmployeePortal = () => {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2">
-                  <Home className="w-5 h-5 text-teal-600" />
+                  <Home className="w-5 h-5 text-foret" />
                   {selectedDevis.projectType}
                 </DialogTitle>
               </DialogHeader>
@@ -440,7 +440,7 @@ export const EmployeePortal = () => {
                       <span className="text-gray-600 text-sm">Plans demandés:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {selectedDevis.plansChoisis.map((plan, idx) => (
-                          <Badge key={idx} className="bg-teal-100 text-teal-800">
+                          <Badge key={idx} className="bg-teal-100 text-foret">
                             {plan}
                           </Badge>
                         ))}
@@ -471,7 +471,7 @@ export const EmployeePortal = () => {
 
                 <div className="flex gap-3 pt-4 border-t">
                   <Button
-                    className="flex-1 bg-teal-600 hover:bg-teal-700"
+                    className="flex-1 bg-foret hover:bg-bois"
                     onClick={() => window.open(`mailto:${selectedDevis.email}`, '_blank')}
                   >
                     <Send className="w-4 h-4 mr-2" />

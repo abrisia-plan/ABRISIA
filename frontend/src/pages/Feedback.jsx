@@ -83,16 +83,16 @@ const Feedback = () => {
 
   if (submitted) {
     return (
-      <div className="min-h-screen pt-20 bg-stone-100">
+      <div className="min-h-screen pt-20 bg-beige">
         <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-          <div className="bg-stone-50 rounded-2xl shadow-xl p-12">
+          <div className="bg-beige-light rounded-2xl shadow-xl p-12">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-800 mb-4">
+            <h1 className="text-3xl font-bold text-foret-dark mb-4">
               Merci pour votre avis ! 🎉
             </h1>
-            <p className="text-lg text-slate-600 mb-8">
+            <p className="text-lg text-pierre mb-8">
               Votre retour est précieux et nous aide à améliorer nos services.
               Votre avis sera publié après validation.
             </p>
@@ -104,7 +104,7 @@ const Feedback = () => {
                 />
               ))}
             </div>
-            <p className="text-teal-700 font-semibold mt-4">
+            <p className="text-foret font-semibold mt-4">
               Vous avez donné {rating} étoile{rating > 1 ? 's' : ''}
             </p>
           </div>
@@ -114,14 +114,14 @@ const Feedback = () => {
   }
 
   return (
-    <div className="min-h-screen pt-20 bg-stone-100">
+    <div className="min-h-screen pt-20 bg-beige">
       {/* Hero */}
-      <section className="py-12 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
+      <section className="py-12 bg-gradient-to-r from-foret to-foret-dark text-white">
         <div className="max-w-4xl mx-auto text-center px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Votre avis compte ! ⭐
           </h1>
-          <p className="text-xl text-teal-100">
+          <p className="text-xl text-beige/80">
             Dites-nous comment s'est passé votre projet
           </p>
         </div>
@@ -132,7 +132,7 @@ const Feedback = () => {
         <div className="max-w-2xl mx-auto px-4">
           <Card className="shadow-xl">
             <CardHeader className="bg-gradient-to-r from-stone-100 to-stone-50 border-b">
-              <CardTitle className="text-center text-2xl text-slate-800">
+              <CardTitle className="text-center text-2xl text-foret-dark">
                 Partagez votre expérience
               </CardTitle>
             </CardHeader>
@@ -141,7 +141,7 @@ const Feedback = () => {
                 
                 {/* Note en étoiles */}
                 <div className="text-center">
-                  <Label className="text-lg font-semibold text-slate-800 mb-4 block">
+                  <Label className="text-lg font-semibold text-foret-dark mb-4 block">
                     Comment évaluez-vous nos services ? *
                   </Label>
                   <div className="flex justify-center gap-2 mb-2">
@@ -164,7 +164,7 @@ const Feedback = () => {
                       </button>
                     ))}
                   </div>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-pierre-light">
                     {rating === 0 && 'Cliquez sur les étoiles'}
                     {rating === 1 && '😞 Pas satisfait'}
                     {rating === 2 && '😐 Peut mieux faire'}
@@ -226,7 +226,7 @@ const Feedback = () => {
                   <Label htmlFor="comment">
                     Racontez-nous votre expérience *
                   </Label>
-                  <p className="text-sm text-slate-500 mb-2">
+                  <p className="text-sm text-pierre-light mb-2">
                     Les plans étaient-ils à la hauteur de vos attentes ? Des difficultés rencontrées ?
                   </p>
                   <Textarea
@@ -242,7 +242,7 @@ const Feedback = () => {
 
                 {/* Recommandation */}
                 <div className="bg-slate-50 rounded-lg p-4">
-                  <Label className="text-base font-semibold text-slate-800 mb-4 block">
+                  <Label className="text-base font-semibold text-foret-dark mb-4 block">
                     Recommanderiez-vous nos services ?
                   </Label>
                   <div className="flex gap-4">
@@ -271,7 +271,7 @@ const Feedback = () => {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-teal-700 hover:bg-teal-800 text-white py-3 text-lg"
+                  className="w-full bg-teal-700 hover:bg-foret text-white py-3 text-lg"
                 >
                   {isSubmitting ? (
                     'Envoi en cours...'

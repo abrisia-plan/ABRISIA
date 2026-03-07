@@ -66,21 +66,21 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-stone-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-beige via-white to-beige-light flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-16 h-16 bg-teal-800 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-foret rounded-full flex items-center justify-center">
               <HomeIcon className="w-8 h-8 text-white" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-slate-800">ABRISIA PLAN</h2>
-          <p className="mt-2 text-slate-600">Espace Équipe</p>
+          <h2 className="text-3xl font-bold text-foret-dark">ABRISIA PLAN</h2>
+          <p className="mt-2 text-pierre">Espace Équipe</p>
         </div>
 
-        <Card className="shadow-2xl border-stone-200" data-testid="login-card">
-          <CardHeader className="bg-gradient-to-r from-amber-50 to-stone-50 border-b border-stone-200">
-            <CardTitle className="text-xl text-slate-800 text-center flex items-center justify-center">
+        <Card className="shadow-2xl border-beige-dark" data-testid="login-card">
+          <CardHeader className="bg-gradient-to-r from-beige to-beige-light border-b border-beige-dark">
+            <CardTitle className="text-xl text-foret-dark text-center flex items-center justify-center">
               <Lock className="w-5 h-5 mr-2" />
               Connexion
             </CardTitle>
@@ -88,11 +88,11 @@ const Login = () => {
           <CardContent className="p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-700 font-medium">
+                <Label htmlFor="email" className="text-fjord-dark font-medium">
                   Adresse courriel
                 </Label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-pierre h-5 w-5" />
                   <Input
                     id="email"
                     name="email"
@@ -101,18 +101,18 @@ const Login = () => {
                     value={credentials.email}
                     onChange={handleInputChange}
                     required
-                    className="pl-10 border-stone-300 focus:border-teal-500"
+                    className="pl-10 border-beige-dark focus:border-foret"
                     placeholder="Votre adresse courriel"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-slate-700 font-medium">
+                <Label htmlFor="password" className="text-fjord-dark font-medium">
                   Mot de passe
                 </Label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-pierre h-5 w-5" />
                   <Input
                     id="password"
                     name="password"
@@ -121,7 +121,7 @@ const Login = () => {
                     value={credentials.password}
                     onChange={handleInputChange}
                     required
-                    className="pl-10 border-stone-300 focus:border-teal-500"
+                    className="pl-10 border-beige-dark focus:border-foret"
                     placeholder="Votre mot de passe"
                   />
                 </div>
@@ -130,7 +130,7 @@ const Login = () => {
               <Button 
                 type="submit" 
                 data-testid="login-submit-button"
-                className="w-full bg-teal-800 hover:bg-teal-900 text-white py-3 text-lg font-semibold rounded-lg transition-all duration-300"
+                className="w-full bg-foret hover:bg-bois text-white py-3 text-lg font-semibold rounded-lg transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -144,7 +144,7 @@ const Login = () => {
               </Button>
             </form>
 
-            <p className="text-center text-sm text-slate-500 mt-4">
+            <p className="text-center text-sm text-pierre mt-4">
               Administrateurs et employés
             </p>
           </CardContent>
@@ -154,7 +154,7 @@ const Login = () => {
           <Button
             variant="ghost"
             onClick={() => navigate('/')}
-            className="text-slate-600 hover:text-teal-700"
+            className="text-pierre hover:text-foret"
             data-testid="back-to-site-button"
           >
             ← Retour au site

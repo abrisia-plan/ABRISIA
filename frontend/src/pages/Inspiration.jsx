@@ -86,21 +86,21 @@ const Inspiration = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 bg-stone-100">
+    <div className="min-h-screen pt-20 bg-beige">
       {/* Hero Section */}
-      <section className="py-16 bg-stone-100">
+      <section className="py-16 bg-beige">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-slate-800 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-foret-dark mb-6">
             Inspiration
           </h1>
-          <p className="text-xl text-slate-600 leading-relaxed">
+          <p className="text-xl text-pierre leading-relaxed">
             Nos réalisations et idées pour vos constructions permanentes sur fondations.
           </p>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="py-8 bg-stone-50 border-b border-stone-200">
+      <section className="py-8 bg-beige-light border-b border-beige-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (
@@ -109,8 +109,8 @@ const Inspiration = () => {
                 variant={selectedCategory === category ? "default" : "outline"}
                 className={`rounded-full px-6 py-2 ${
                   selectedCategory === category 
-                    ? 'bg-teal-800 hover:bg-teal-900 text-white' 
-                    : 'border-stone-300 text-teal-700 hover:bg-stone-50'
+                    ? 'bg-foret hover:bg-foret-dark text-white' 
+                    : 'border-beige-dark text-foret hover:bg-beige-light'
                 }`}
                 onClick={() => setSelectedCategory(category)}
               >
@@ -126,13 +126,13 @@ const Inspiration = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+              <Loader2 className="w-8 h-8 animate-spin text-foret" />
             </div>
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {projects.map((project) => (
-                  <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer">
+                  <Card key={project.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-beige-dark cursor-pointer">
                     <div className="relative overflow-hidden">
                       <img
                         src={project.image}
@@ -156,16 +156,16 @@ const Inspiration = () => {
                         </div>
                       </div>
                       <div className="absolute top-4 left-4">
-                        <span className="bg-teal-800 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        <span className="bg-foret text-white px-3 py-1 rounded-full text-sm font-medium">
                           {project.category}
                         </span>
                       </div>
                     </div>
                     <CardContent className="p-6" onClick={() => openProjectModal(project)}>
-                      <h3 className="text-xl font-semibold text-slate-800 mb-2 group-hover:text-teal-800 transition-colors">
+                      <h3 className="text-xl font-semibold text-foret-dark mb-2 group-hover:text-foret transition-colors">
                         {project.title}
                       </h3>
-                      <p className="text-slate-600 text-sm leading-relaxed">
+                      <p className="text-pierre text-sm leading-relaxed">
                         {project.description}
                       </p>
                     </CardContent>
@@ -175,7 +175,7 @@ const Inspiration = () => {
 
               {projects.length === 0 && (
                 <div className="text-center py-16">
-                  <p className="text-xl text-slate-500">
+                  <p className="text-xl text-pierre-light">
                     Aucun projet trouvé dans cette catégorie.
                   </p>
                 </div>
@@ -186,16 +186,16 @@ const Inspiration = () => {
       </section>
 
       {/* Bandeau "Vous aimez ce style ?" */}
-      <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900">
+      <section className="py-16 bg-gradient-to-r from-foret to-foret-dark">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
             Vous aimez ce style ?
           </h2>
-          <p className="text-xl text-teal-100 mb-8 leading-relaxed">
+          <p className="text-xl text-beige/80 mb-8 leading-relaxed">
             Transformons votre inspiration en projet concret. Parlez-nous de vos idées !
           </p>
           <Link to="/devis">
-            <Button size="lg" variant="secondary" className="bg-white text-teal-800 hover:bg-teal-50 px-8 py-4 text-lg font-semibold rounded-full transform hover:scale-105 transition-all duration-300">
+            <Button size="lg" variant="secondary" className="bg-white text-foret hover:bg-beige px-8 py-4 text-lg font-semibold rounded-full transform hover:scale-105 transition-all duration-300">
               Demander un devis
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -204,29 +204,29 @@ const Inspiration = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16 bg-stone-50">
+      <section className="py-16 bg-beige-light">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-slate-800 text-center mb-12">
+          <h2 className="text-3xl font-bold text-foret-dark text-center mb-12">
             Questions fréquentes
           </h2>
           <div className="space-y-4">
             {faqItems.map((faq) => (
-              <Card key={faq.id} className="border-stone-200">
+              <Card key={faq.id} className="border-beige-dark">
                 <CardContent className="p-0">
                   <button
-                    className="w-full p-6 text-left flex items-center justify-between hover:bg-stone-50 transition-colors"
+                    className="w-full p-6 text-left flex items-center justify-between hover:bg-beige-light transition-colors"
                     onClick={() => toggleFaq(faq.id)}
                   >
-                    <h3 className="font-semibold text-slate-800 pr-4">{faq.question}</h3>
+                    <h3 className="font-semibold text-foret-dark pr-4">{faq.question}</h3>
                     {expandedFaq === faq.id ? (
-                      <ChevronUp className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                      <ChevronUp className="w-5 h-5 text-foret flex-shrink-0" />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                      <ChevronDown className="w-5 h-5 text-foret flex-shrink-0" />
                     )}
                   </button>
                   {expandedFaq === faq.id && (
                     <div className="px-6 pb-6">
-                      <p className="text-slate-600 leading-relaxed">{faq.answer}</p>
+                      <p className="text-pierre leading-relaxed">{faq.answer}</p>
                     </div>
                   )}
                 </CardContent>
@@ -242,10 +242,10 @@ const Inspiration = () => {
           {selectedProject && (
             <>
               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold text-slate-800 mb-2">
+                <DialogTitle className="text-2xl font-bold text-foret-dark mb-2">
                   {selectedProject.title}
                 </DialogTitle>
-                <Badge className="w-fit bg-teal-100 text-teal-800">
+                <Badge className="w-fit bg-fjord-pale text-foret">
                   {selectedProject.category}
                 </Badge>
               </DialogHeader>
@@ -261,19 +261,19 @@ const Inspiration = () => {
                 />
                 
                 <div>
-                  <p className="text-lg text-slate-700 mb-4">{selectedProject.description}</p>
-                  <p className="text-sm text-slate-500 mb-6">
+                  <p className="text-lg text-fjord-dark mb-4">{selectedProject.description}</p>
+                  <p className="text-sm text-pierre-light mb-6">
                     <strong>Dimensions :</strong> {selectedProject.dimensions}
                   </p>
                 </div>
 
                 <div>
-                  <h4 className="text-lg font-semibold text-slate-800 mb-4">Détails techniques :</h4>
+                  <h4 className="text-lg font-semibold text-foret-dark mb-4">Détails techniques :</h4>
                   <ul className="space-y-2">
                     {selectedProject.details.map((detail, index) => (
                       <li key={index} className="flex items-start">
-                        <span className="w-2 h-2 bg-teal-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                        <span className="text-slate-600">{detail}</span>
+                        <span className="w-2 h-2 bg-foret rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                        <span className="text-pierre">{detail}</span>
                       </li>
                     ))}
                   </ul>
@@ -281,7 +281,7 @@ const Inspiration = () => {
 
                 <div className="pt-6">
                   <Link to="/devis" onClick={closeProjectModal}>
-                    <Button className="w-full bg-teal-800 hover:bg-teal-900 text-white py-3 text-lg font-semibold rounded-full">
+                    <Button className="w-full bg-foret hover:bg-foret-dark text-white py-3 text-lg font-semibold rounded-full">
                       Demander un devis pour ce style
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>

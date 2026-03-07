@@ -301,21 +301,21 @@ const Kit = () => {
   const prices = calculateTotal();
 
   return (
-    <div className="min-h-screen pt-20 bg-stone-100">
+    <div className="min-h-screen pt-20 bg-beige">
       {/* Hero Section */}
-      <section className="py-16 bg-stone-100">
+      <section className="py-16 bg-beige">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-slate-800 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-foret-dark mb-6">
             Kits de Plans
           </h1>
-          <p className="text-xl text-slate-600 leading-relaxed">
+          <p className="text-xl text-pierre leading-relaxed">
             Plans pré-dessinés prêts à acheter. Commencez votre projet dès maintenant avec nos plans professionnels.
           </p>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="py-8 bg-stone-50 border-b border-stone-200">
+      <section className="py-8 bg-beige-light border-b border-beige-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-4">
             {categories.map((category) => (
@@ -324,8 +324,8 @@ const Kit = () => {
                 variant={selectedCategory === category ? "default" : "outline"}
                 className={`rounded-full px-6 py-2 ${
                   selectedCategory === category 
-                    ? 'bg-teal-800 hover:bg-teal-900 text-white' 
-                    : 'border-stone-300 text-teal-700 hover:bg-stone-50'
+                    ? 'bg-foret hover:bg-foret-dark text-white' 
+                    : 'border-beige-dark text-foret hover:bg-beige-light'
                 }`}
                 onClick={() => setSelectedCategory(category)}
               >
@@ -341,18 +341,18 @@ const Kit = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+              <Loader2 className="w-8 h-8 animate-spin text-foret" />
             </div>
           ) : (
             <>
               {kits.length === 0 ? (
                 <div className="text-center py-16">
-                  <FileText className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-                  <p className="text-xl text-slate-500 mb-4">
+                  <FileText className="w-16 h-16 text-beige/80 mx-auto mb-4" />
+                  <p className="text-xl text-pierre-light mb-4">
                     Aucun kit disponible pour le moment.
                   </p>
                   <Link to="/devis">
-                    <Button className="mt-6 bg-teal-800 hover:bg-teal-900">
+                    <Button className="mt-6 bg-foret hover:bg-foret-dark">
                       Demander un devis personnalisé
                     </Button>
                   </Link>
@@ -360,7 +360,7 @@ const Kit = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {kits.map((kit) => (
-                    <Card key={kit.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer">
+                    <Card key={kit.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-beige-dark cursor-pointer">
                       <div className="relative overflow-hidden">
                         <img
                           src={resolveImageUrl(kit.mainImage)}
@@ -384,13 +384,13 @@ const Kit = () => {
                           </div>
                         </div>
                         <div className="absolute top-4 left-4">
-                          <span className="bg-teal-800 text-white px-3 py-1 rounded-full text-sm font-medium">
+                          <span className="bg-foret text-white px-3 py-1 rounded-full text-sm font-medium">
                             {kit.category}
                           </span>
                         </div>
                         {kit.materialsListEnabled && (
                           <div className="absolute top-4 right-4">
-                            <span className="bg-stone-1000 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
+                            <span className="bg-beige0 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center">
                               <Package className="w-3 h-3 mr-1" />
                               +Matériaux
                             </span>
@@ -398,18 +398,18 @@ const Kit = () => {
                         )}
                       </div>
                       <CardContent className="p-6" onClick={() => openKitModal(kit)}>
-                        <h3 className="text-xl font-semibold text-slate-800 mb-1 group-hover:text-teal-800 transition-colors">
+                        <h3 className="text-xl font-semibold text-foret-dark mb-1 group-hover:text-foret transition-colors">
                           {kit.name}
                         </h3>
                         
                         {kit.designerName && (
-                          <p className="text-sm text-slate-500 mb-2 flex items-center">
+                          <p className="text-sm text-pierre-light mb-2 flex items-center">
                             <User className="w-3 h-3 mr-1" />
                             {kit.designerName}
                           </p>
                         )}
                         
-                        <p className="text-slate-600 text-sm leading-relaxed mb-4 line-clamp-2">
+                        <p className="text-pierre text-sm leading-relaxed mb-4 line-clamp-2">
                           {kit.description}
                         </p>
                         
@@ -422,7 +422,7 @@ const Kit = () => {
                               </Badge>
                             )}
                           </div>
-                          <p className="text-2xl font-bold text-teal-700">
+                          <p className="text-2xl font-bold text-foret">
                             {formatPrice(kit.finalPrice || kit.price)}
                           </p>
                         </div>
@@ -437,16 +437,16 @@ const Kit = () => {
       </section>
 
       {/* Bandeau CTA */}
-      <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900">
+      <section className="py-16 bg-gradient-to-r from-foret to-foret-dark">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
             Besoin d'un plan personnalisé ?
           </h2>
-          <p className="text-xl text-teal-100 mb-8 leading-relaxed">
+          <p className="text-xl text-beige/80 mb-8 leading-relaxed">
             Nos kits ne correspondent pas exactement à vos besoins ? Demandez un devis sur mesure !
           </p>
           <Link to="/devis">
-            <Button size="lg" variant="secondary" className="bg-white text-teal-800 hover:bg-teal-50 px-8 py-4 text-lg font-semibold rounded-full">
+            <Button size="lg" variant="secondary" className="bg-white text-foret hover:bg-beige px-8 py-4 text-lg font-semibold rounded-full">
               Demander un devis personnalisé
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -460,19 +460,19 @@ const Kit = () => {
           {orderSuccess ? (
             // Confirmation de commande
             <div className="space-y-6 text-center py-8">
-              <div className={`w-20 h-20 ${orderSuccess.isPaid ? 'bg-green-100' : 'bg-teal-100'} rounded-full flex items-center justify-center mx-auto`}>
+              <div className={`w-20 h-20 ${orderSuccess.isPaid ? 'bg-green-100' : 'bg-fjord-pale'} rounded-full flex items-center justify-center mx-auto`}>
                 {orderSuccess.isPaid ? (
                   <CheckCircle className="w-10 h-10 text-green-600" />
                 ) : (
-                  <Banknote className="w-10 h-10 text-teal-700" />
+                  <Banknote className="w-10 h-10 text-foret" />
                 )}
               </div>
               
               <div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-2">
+                <h3 className="text-2xl font-bold text-foret-dark mb-2">
                   {orderSuccess.isPaid ? 'Paiement confirmé !' : 'Commande confirmée !'}
                 </h3>
-                <p className="text-slate-600">
+                <p className="text-pierre">
                   {orderSuccess.isPaid 
                     ? 'Merci ! Vos fichiers vous seront envoyés par email sous peu.'
                     : 'Merci ! Suivez les instructions ci-dessous pour finaliser votre commande.'}
@@ -480,38 +480,38 @@ const Kit = () => {
               </div>
 
               <div className="bg-slate-50 p-6 rounded-lg text-left max-w-md mx-auto">
-                <h4 className="font-semibold text-slate-800 mb-4">Détails de la commande</h4>
+                <h4 className="font-semibold text-foret-dark mb-4">Détails de la commande</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Numéro</span>
+                    <span className="text-pierre-light">Numéro</span>
                     <span className="font-mono font-bold">{orderSuccess.orderNumber}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Kit</span>
+                    <span className="text-pierre-light">Kit</span>
                     <span>{orderSuccess.kitName}</span>
                   </div>
                   <div className="border-t pt-2 mt-2">
                     <div className="flex justify-between font-bold text-lg">
                       <span>Total {orderSuccess.isPaid ? 'payé' : 'à payer'}</span>
-                      <span className="text-teal-700">{formatPrice(orderSuccess.totalAmount)}</span>
+                      <span className="text-foret">{formatPrice(orderSuccess.totalAmount)}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               {!orderSuccess.isPaid && (
-                <div className="bg-stone-100 p-4 rounded-lg text-left max-w-md mx-auto">
-                  <h4 className="font-semibold text-teal-800 mb-2 flex items-center">
+                <div className="bg-beige p-4 rounded-lg text-left max-w-md mx-auto">
+                  <h4 className="font-semibold text-foret mb-2 flex items-center">
                     <Banknote className="w-4 h-4 mr-2" />
                     Instructions de paiement Interac
                   </h4>
                   <p className="text-sm text-amber-700 mb-3">
                     Envoyez le montant par <strong>Virement Interac</strong> à :
                   </p>
-                  <p className="text-center font-bold text-lg text-teal-700 bg-white p-3 rounded">
+                  <p className="text-center font-bold text-lg text-foret bg-white p-3 rounded">
                     📧 abrisia0plan@gmail.com
                   </p>
-                  <p className="text-xs text-teal-700 mt-3 text-center">
+                  <p className="text-xs text-foret mt-3 text-center">
                     Question secrète : <strong>Abrisia</strong> | Réponse : <strong>Plan</strong><br/>
                     Mentionnez : <strong>{orderSuccess.orderNumber}</strong>
                   </p>
@@ -525,11 +525,11 @@ const Kit = () => {
           ) : selectedKit && (
             <>
               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold text-slate-800 mb-2">
+                <DialogTitle className="text-2xl font-bold text-foret-dark mb-2">
                   {selectedKit.name}
                 </DialogTitle>
                 <div className="flex flex-wrap gap-2">
-                  <Badge className="w-fit bg-teal-100 text-teal-800">
+                  <Badge className="w-fit bg-fjord-pale text-foret">
                     {selectedKit.category}
                   </Badge>
                   {selectedKit.designerName && (
@@ -554,49 +554,49 @@ const Kit = () => {
                   />
                   
                   <div>
-                    <p className="text-lg text-slate-700 mb-4">{selectedKit.description}</p>
+                    <p className="text-lg text-fjord-dark mb-4">{selectedKit.description}</p>
                     
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                       {selectedKit.surfaceArea && (
-                        <div className="bg-stone-50 p-4 rounded-lg text-center">
-                          <Ruler className="w-6 h-6 text-teal-600 mx-auto mb-2" />
-                          <p className="text-sm text-slate-500">Surface</p>
-                          <p className="font-semibold text-slate-800">{selectedKit.surfaceArea}</p>
+                        <div className="bg-beige-light p-4 rounded-lg text-center">
+                          <Ruler className="w-6 h-6 text-foret mx-auto mb-2" />
+                          <p className="text-sm text-pierre-light">Surface</p>
+                          <p className="font-semibold text-foret-dark">{selectedKit.surfaceArea}</p>
                           {sqftToSqm(selectedKit.surfaceArea) && (
                             <p className="text-xs text-gray-400 mt-1">≈ {sqftToSqm(selectedKit.surfaceArea)} m²</p>
                           )}
                         </div>
                       )}
                       {selectedKit.dimensions && (
-                        <div className="bg-stone-50 p-4 rounded-lg text-center">
-                          <Home className="w-6 h-6 text-teal-600 mx-auto mb-2" />
-                          <p className="text-sm text-slate-500">Dimensions</p>
-                          <p className="font-semibold text-slate-800">{selectedKit.dimensions}</p>
+                        <div className="bg-beige-light p-4 rounded-lg text-center">
+                          <Home className="w-6 h-6 text-foret mx-auto mb-2" />
+                          <p className="text-sm text-pierre-light">Dimensions</p>
+                          <p className="font-semibold text-foret-dark">{selectedKit.dimensions}</p>
                         </div>
                       )}
                       {selectedKit.rooms && (
-                        <div className="bg-stone-50 p-4 rounded-lg text-center">
-                          <FileText className="w-6 h-6 text-teal-600 mx-auto mb-2" />
-                          <p className="text-sm text-slate-500">Pièces</p>
-                          <p className="font-semibold text-slate-800">{selectedKit.rooms}</p>
+                        <div className="bg-beige-light p-4 rounded-lg text-center">
+                          <FileText className="w-6 h-6 text-foret mx-auto mb-2" />
+                          <p className="text-sm text-pierre-light">Pièces</p>
+                          <p className="font-semibold text-foret-dark">{selectedKit.rooms}</p>
                         </div>
                       )}
-                      <div className="bg-stone-50 p-4 rounded-lg text-center">
-                        <FileText className="w-6 h-6 text-teal-600 mx-auto mb-2" />
-                        <p className="text-sm text-slate-500">Format</p>
-                        <p className="font-semibold text-slate-800">{(selectedKit.fileFormats || ['PDF']).join(', ')}</p>
+                      <div className="bg-beige-light p-4 rounded-lg text-center">
+                        <FileText className="w-6 h-6 text-foret mx-auto mb-2" />
+                        <p className="text-sm text-pierre-light">Format</p>
+                        <p className="font-semibold text-foret-dark">{(selectedKit.fileFormats || ['PDF']).join(', ')}</p>
                       </div>
                     </div>
                   </div>
 
                   {selectedKit.includes && selectedKit.includes.length > 0 && (
                     <div>
-                      <h4 className="text-lg font-semibold text-slate-800 mb-4">Ce kit comprend :</h4>
+                      <h4 className="text-lg font-semibold text-foret-dark mb-4">Ce kit comprend :</h4>
                       <ul className="space-y-2">
                         {selectedKit.includes.map((item, index) => (
                           <li key={index} className="flex items-start">
-                            <Check className="w-5 h-5 text-teal-600 mt-0.5 mr-3 flex-shrink-0" />
-                            <span className="text-slate-600">{item}</span>
+                            <Check className="w-5 h-5 text-foret mt-0.5 mr-3 flex-shrink-0" />
+                            <span className="text-pierre">{item}</span>
                           </li>
                         ))}
                       </ul>
@@ -605,7 +605,7 @@ const Kit = () => {
 
                   {/* Option liste matériaux */}
                   {selectedKit.materialsListEnabled && (
-                    <div className="bg-stone-100 border border-stone-300 p-4 rounded-lg">
+                    <div className="bg-beige border border-beige-dark p-4 rounded-lg">
                       <div className="flex items-start space-x-3">
                         <Checkbox
                           id="materials"
@@ -614,14 +614,14 @@ const Kit = () => {
                           className="mt-1"
                         />
                         <div className="flex-1">
-                          <label htmlFor="materials" className="font-semibold text-slate-800 cursor-pointer flex items-center">
-                            <Package className="w-5 h-5 text-teal-700 mr-2" />
+                          <label htmlFor="materials" className="font-semibold text-foret-dark cursor-pointer flex items-center">
+                            <Package className="w-5 h-5 text-foret mr-2" />
                             Ajouter la liste complète des matériaux
-                            <span className="ml-2 text-teal-700 font-bold">
+                            <span className="ml-2 text-foret font-bold">
                               +{formatPrice(selectedKit.materialsListPrice)}
                             </span>
                           </label>
-                          <p className="text-sm text-slate-600 mt-1">
+                          <p className="text-sm text-pierre mt-1">
                             Recevez un PDF détaillé avec tous les matériaux nécessaires
                           </p>
                         </div>
@@ -633,28 +633,28 @@ const Kit = () => {
                   <div className="bg-gradient-to-r from-stone-100 to-stone-50 p-6 rounded-lg">
                     <div className="flex items-center justify-between mb-4">
                       <div>
-                        <p className="text-sm text-slate-500">Prix du kit</p>
-                        <span className="text-3xl font-bold text-teal-700">
+                        <p className="text-sm text-pierre-light">Prix du kit</p>
+                        <span className="text-3xl font-bold text-foret">
                           {formatPrice(prices.base)}
                         </span>
                         {includeMaterials && (
-                          <p className="text-teal-700 font-semibold mt-1">
+                          <p className="text-foret font-semibold mt-1">
                             + {formatPrice(prices.materials)} (matériaux)
                           </p>
                         )}
                       </div>
                     </div>
 
-                    <div className="border-t border-stone-300 pt-4 mb-4">
-                      <div className="flex justify-between text-sm text-slate-600 mb-1">
+                    <div className="border-t border-beige-dark pt-4 mb-4">
+                      <div className="flex justify-between text-sm text-pierre mb-1">
                         <span>Sous-total</span>
                         <span>{formatPrice(prices.subtotal)}</span>
                       </div>
-                      <div className="flex justify-between text-sm text-slate-600 mb-2">
+                      <div className="flex justify-between text-sm text-pierre mb-2">
                         <span>Taxes (TPS+TVQ)</span>
                         <span>{formatPrice(prices.tax)}</span>
                       </div>
-                      <div className="flex justify-between text-lg font-bold text-teal-800">
+                      <div className="flex justify-between text-lg font-bold text-foret">
                         <span>Total</span>
                         <span>{formatPrice(prices.total)}</span>
                       </div>
@@ -662,7 +662,7 @@ const Kit = () => {
                     
                     <Button 
                       onClick={() => setShowOrderForm(true)}
-                      className="w-full bg-teal-800 hover:bg-teal-900 text-white py-3 text-lg font-semibold rounded-full"
+                      className="w-full bg-foret hover:bg-foret-dark text-white py-3 text-lg font-semibold rounded-full"
                     >
                       <ShoppingCart className="w-5 h-5 mr-2" />
                       Commander ce kit
@@ -672,32 +672,32 @@ const Kit = () => {
               ) : (
                 // Formulaire de commande avec choix de paiement
                 <form onSubmit={handleOrderSubmit} className="space-y-6">
-                  <div className="bg-teal-50 p-4 rounded-lg">
-                    <h3 className="font-semibold text-teal-800 mb-2">Récapitulatif</h3>
+                  <div className="bg-beige p-4 rounded-lg">
+                    <h3 className="font-semibold text-foret mb-2">Récapitulatif</h3>
                     <div className="text-sm space-y-1">
                       <div className="flex justify-between">
                         <span>{selectedKit.name}</span>
                         <span>{formatPrice(prices.base)}</span>
                       </div>
                       {includeMaterials && (
-                        <div className="flex justify-between text-teal-700">
+                        <div className="flex justify-between text-foret">
                           <span>+ Liste matériaux</span>
                           <span>{formatPrice(prices.materials)}</span>
                         </div>
                       )}
-                      <div className="flex justify-between text-slate-500">
+                      <div className="flex justify-between text-pierre-light">
                         <span>Taxes</span>
                         <span>{formatPrice(prices.tax)}</span>
                       </div>
                       <div className="flex justify-between font-bold text-lg pt-2 border-t border-teal-200">
                         <span>Total</span>
-                        <span className="text-teal-700">{formatPrice(prices.total)}</span>
+                        <span className="text-foret">{formatPrice(prices.total)}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-slate-800">Vos informations</h3>
+                    <h3 className="font-semibold text-foret-dark">Vos informations</h3>
                     
                     <div>
                       <Label htmlFor="name" className="flex items-center">
@@ -748,7 +748,7 @@ const Kit = () => {
 
                   {/* Choix du mode de paiement */}
                   <div className="space-y-4">
-                    <h3 className="font-semibold text-slate-800">Mode de paiement</h3>
+                    <h3 className="font-semibold text-foret-dark">Mode de paiement</h3>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Option Carte de crédit */}
@@ -777,7 +777,7 @@ const Kit = () => {
                         onClick={() => setPaymentMethod('interac')}
                         className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
                           paymentMethod === 'interac'
-                            ? 'border-amber-500 bg-stone-100'
+                            ? 'border-amber-500 bg-beige'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
@@ -785,7 +785,7 @@ const Kit = () => {
                           Recommandé
                         </div>
                         <div className="flex items-center mb-2">
-                          <Banknote className={`w-6 h-6 mr-2 ${paymentMethod === 'interac' ? 'text-teal-700' : 'text-gray-400'}`} />
+                          <Banknote className={`w-6 h-6 mr-2 ${paymentMethod === 'interac' ? 'text-foret' : 'text-gray-400'}`} />
                           <span className="font-semibold">Virement Interac</span>
                           <span className="ml-2 bg-green-100 text-green-700 text-xs px-2 py-1 rounded">Recommandé</span>
                         </div>
@@ -821,7 +821,7 @@ const Kit = () => {
                     <Button
                       type="submit"
                       disabled={orderSubmitting}
-                      className={`flex-1 ${paymentMethod === 'card' ? 'bg-teal-800 hover:bg-teal-900' : 'bg-amber-600 hover:bg-amber-700'}`}
+                      className={`flex-1 ${paymentMethod === 'card' ? 'bg-foret hover:bg-foret-dark' : 'bg-amber-600 hover:bg-amber-700'}`}
                     >
                       {orderSubmitting ? (
                         <>
