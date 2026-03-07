@@ -69,6 +69,9 @@ const Footer = () => {
               <button onClick={() => handleNavigation('/politique-confidentialite')} className="hover:text-teal-400 transition-colors">
                 Politique de confidentialité
               </button>
+              <button onClick={() => handleNavigation('/admin')} className="hover:text-teal-400 transition-colors">
+                Espace équipe
+              </button>
             </div>
           </div>
         </div>
