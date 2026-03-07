@@ -115,7 +115,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-foret-dark">Disponibilité</h3>
-                    <p className="text-pierre">Lun-Ven : 8h-18h | Sam : 9h-15h</p>
+                    <p className="text-pierre">Lun-Ven : 8h-16h | Fin de semaine : sur rendez-vous</p>
                   </div>
                 </div>
               </div>
