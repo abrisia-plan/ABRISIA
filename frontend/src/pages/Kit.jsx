@@ -301,14 +301,14 @@ const Kit = () => {
   const prices = calculateTotal();
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-20 bg-stone-50">
       {/* Hero Section */}
-      <section className="py-16 bg-gradient-to-b from-amber-50 to-white">
+      <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-slate-800 mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Kits de Plans
           </h1>
-          <p className="text-xl text-slate-600 leading-relaxed">
+          <p className="text-xl text-teal-100 leading-relaxed">
             Plans pré-dessinés prêts à acheter. Commencez votre projet dès maintenant avec nos plans professionnels.
           </p>
         </div>
