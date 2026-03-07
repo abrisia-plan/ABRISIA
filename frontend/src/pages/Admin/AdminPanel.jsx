@@ -35,6 +35,7 @@ import EmployeesManager from './EmployeesManager';
 import KitOrdersManager from './KitOrdersManager';
 import DevisManager from './DevisManager';
 import PlanOptionsManager from './PlanOptionsManager';
+import CandidaturesManager from './CandidaturesManager';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -245,6 +246,14 @@ const AdminPanel = () => {
               <FileText className="w-4 h-4 mr-2" />
               Gestion des devis
             </Button>
+            <Button 
+              variant={activeTab === 'candidatures' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'candidatures' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('candidatures')}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Candidatures CV
+            </Button>
           </nav>
         </aside>
 
@@ -306,6 +315,10 @@ const AdminPanel = () => {
               
               {activeTab === 'navigation' && (
                 <NavigationManager />
+              )}
+              
+              {activeTab === 'candidatures' && (
+                <CandidaturesManager />
               )}
             </>
           )}

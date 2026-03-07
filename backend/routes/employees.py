@@ -655,20 +655,14 @@ async def submit_candidature(
         
         # Envoyer notification par courriel
         try:
-            from services.email_service import send_email_notification
-            await send_email_notification(
-                subject=f"Nouvelle candidature - {nom}",
-                body=f"""
-                <h2>Nouvelle candidature reçue</h2>
-                <p><strong>Nom:</strong> {nom}</p>
-                <p><strong>Courriel:</strong> {email}</p>
-                <p><strong>Téléphone:</strong> {telephone}</p>
-                <p><strong>Message:</strong> {message}</p>
-                <p><strong>CV:</strong> {cv.filename}</p>
-                <br>
-                <p>Consultez le panneau admin pour voir le CV complet.</p>
-                """,
-            )
+            from email_service import email_service
+            email_service.send_candidature_notification({
+                "nom": nom,
+                "email": email,
+                "telephone": telephone,
+                "message": message,
+                "cv_filename": cv.filename
+            })
         except Exception as email_err:
             logger.warning(f"Email notification failed: {email_err}")
         
@@ -737,4 +731,20 @@ async def update_candidature_status(candidature_id: str, data: dict, current_use
         return {"success": True, "message": "Statut mis à jour"}
     except Exception as e:
         logger.error(f"Erreur update candidature: {e}")
+        raise HTTPException(status_code=500, detail="Erreur")
+
+
+@router.delete("/admin/candidatures/{candidature_id}")
+async def delete_candidature(candidature_id: str, current_user: dict = Depends(require_admin)):
+    """Supprimer une candidature"""
+    try:
+        db = get_database()
+        result = await db.candidatures.delete_one({"_id": ObjectId(candidature_id)})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Candidature non trouvée")
+        return {"success": True, "message": "Candidature supprimée"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Erreur delete candidature: {e}")
         raise HTTPException(status_code=500, detail="Erreur")

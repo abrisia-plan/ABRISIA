@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, CheckCircle, Star, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { services, approaches, processSteps, testimonials } from '../data/mock';
+import { approaches, processSteps, services } from '../data/mock';
 import * as Icons from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -13,23 +13,34 @@ const Home = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState({});
   const [inspirationProjects, setInspirationProjects] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
+  const [testimonials, setTestimonials] = useState([]);
 
-  // Charger les projets d'inspiration depuis l'API
+  // Charger les projets d'inspiration + témoignages depuis l'API
   useEffect(() => {
-    const loadProjects = async () => {
+    const loadData = async () => {
       try {
-        const res = await fetch(`${BACKEND_URL}/api/projects?home_only=true&limit=100`);
-        const data = await res.json();
-        if (data.success) {
-          setInspirationProjects(data.data || []);
+        const [projRes, reviewsRes] = await Promise.all([
+          fetch(`${BACKEND_URL}/api/projects?home_only=true&limit=100`),
+          fetch(`${BACKEND_URL}/api/reviews`)
+        ]);
+        const projData = await projRes.json();
+        const reviewsData = await reviewsRes.json();
+        if (projData.success) setInspirationProjects(projData.data || []);
+        if (reviewsData.success && reviewsData.data?.length > 0) {
+          setTestimonials(reviewsData.data.map(r => ({
+            name: r.client_name || r.name,
+            project: r.project_type || 'Projet',
+            text: r.comment || r.text,
+            rating: r.rating || 5
+          })));
         }
       } catch (err) {
-        console.error('Erreur chargement projets:', err);
+        console.error('Erreur chargement:', err);
       } finally {
         setLoadingProjects(false);
       }
     };
-    loadProjects();
+    loadData();
   }, []);
 
   // Rotation automatique des images par catégorie toutes les 5 secondes
@@ -292,6 +303,7 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
+      {testimonials.length > 0 && (
       <section className="py-20 bg-slate-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -304,8 +316,8 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial) => (
-              <Card key={testimonial.id} className="bg-slate-700 border-slate-600 text-white hover:shadow-lg transition-shadow">
+            {testimonials.map((testimonial, idx) => (
+              <Card key={idx} className="bg-slate-700 border-slate-600 text-white hover:shadow-lg transition-shadow">
                 <CardContent className="p-8">
                   <div className="flex items-center mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
@@ -325,6 +337,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* Bandeau CTA */}
       <section className="py-20 bg-gradient-to-r from-teal-800 to-teal-900">

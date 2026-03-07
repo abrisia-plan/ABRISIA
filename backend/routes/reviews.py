@@ -51,6 +51,19 @@ async def create_review(review: ReviewCreate):
         
         await db.reviews.insert_one(review_data)
         
+        # Envoyer notification par courriel
+        try:
+            from email_service import email_service
+            email_service.send_review_notification({
+                "client_name": review.client_name,
+                "client_email": review.client_email,
+                "rating": review.rating,
+                "comment": review.comment,
+                "project_type": review.project_type
+            })
+        except Exception as email_err:
+            logger.warning(f"Email review notification failed: {email_err}")
+        
         logger.info(f"✅ Nouvel avis créé par {review.client_name} - {review.rating} étoiles")
         
         return {

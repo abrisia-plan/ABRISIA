@@ -233,6 +233,79 @@ class EmailService:
         except Exception as e:
             logger.error(f"❌ Erreur envoi notification admin: {str(e)}")
             return False
+
+    def send_candidature_notification(self, candidature_data):
+        """Envoie notification de nouvelle candidature à l'admin"""
+        try:
+            subject = f"📄 Nouvelle candidature - {candidature_data.get('nom', 'Candidat')}"
+            html_content = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; background: #f5f5f5; padding: 20px;">
+                <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="background: linear-gradient(135deg, #0f766e 0%, #115e59 100%); color: white; padding: 30px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 24px;">📄 Nouvelle candidature</h1>
+                        <p style="margin: 10px 0 0 0; opacity: 0.9;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                    </div>
+                    <div style="padding: 30px;">
+                        <h3 style="color: #0f766e;">👤 Candidat</h3>
+                        <table style="width: 100%; margin-bottom: 20px;">
+                            <tr><td style="padding: 5px 0; font-weight: bold;">Nom :</td><td>{candidature_data.get('nom', '')}</td></tr>
+                            <tr><td style="padding: 5px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{candidature_data.get('email', '')}" style="color: #0f766e;">{candidature_data.get('email', '')}</a></td></tr>
+                            <tr><td style="padding: 5px 0; font-weight: bold;">Telephone :</td><td>{candidature_data.get('telephone', 'Non fourni')}</td></tr>
+                            <tr><td style="padding: 5px 0; font-weight: bold;">CV :</td><td>{candidature_data.get('cv_filename', 'Fichier joint')}</td></tr>
+                        </table>
+                        {f'<div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;"><p style="margin: 0;">{candidature_data.get("message")}</p></div>' if candidature_data.get('message') else ''}
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="https://abrisia-plan.ca/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Voir dans l'admin</a>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            return self._send_email(self.sender_email, subject, html_content)
+        except Exception as e:
+            logger.error(f"❌ Erreur envoi notification candidature: {str(e)}")
+            return False
+
+    def send_review_notification(self, review_data):
+        """Envoie notification de nouveau temoignage à l'admin"""
+        try:
+            stars = "⭐" * review_data.get('rating', 5)
+            subject = f"💬 Nouveau temoignage - {review_data.get('client_name', 'Client')} ({stars})"
+            html_content = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; background: #f5f5f5; padding: 20px;">
+                <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    <div style="background: linear-gradient(135deg, #0f766e 0%, #115e59 100%); color: white; padding: 30px; text-align: center;">
+                        <h1 style="margin: 0; font-size: 24px;">💬 Nouveau temoignage client</h1>
+                        <p style="margin: 10px 0 0 0; font-size: 28px;">{stars}</p>
+                    </div>
+                    <div style="padding: 30px;">
+                        <table style="width: 100%; margin-bottom: 20px;">
+                            <tr><td style="padding: 5px 0; font-weight: bold;">Client :</td><td>{review_data.get('client_name', '')}</td></tr>
+                            <tr><td style="padding: 5px 0; font-weight: bold;">Courriel :</td><td>{review_data.get('client_email', '')}</td></tr>
+                            <tr><td style="padding: 5px 0; font-weight: bold;">Note :</td><td>{review_data.get('rating', 5)}/5</td></tr>
+                            <tr><td style="padding: 5px 0; font-weight: bold;">Projet :</td><td>{review_data.get('project_type', 'Non specifie')}</td></tr>
+                        </table>
+                        <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; border-left: 4px solid #0f766e;">
+                            <p style="margin: 0; font-style: italic; font-size: 16px;">"{review_data.get('comment', '')}"</p>
+                        </div>
+                        <div style="background: #fef3c7; border-radius: 8px; padding: 15px; text-align: center; margin-top: 20px;">
+                            <p style="margin: 0; color: #92400e;">⏳ <strong>En attente d'approbation</strong><br>Connectez-vous à l'admin pour approuver ou rejeter cet avis.</p>
+                        </div>
+                        <div style="text-align: center; margin: 20px 0;">
+                            <a href="https://abrisia-plan.ca/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Gerer les temoignages</a>
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """
+            return self._send_email(self.sender_email, subject, html_content)
+        except Exception as e:
+            logger.error(f"❌ Erreur envoi notification temoignage: {str(e)}")
+            return False
         
     def send_devis_notification(self, devis_data):
         """
