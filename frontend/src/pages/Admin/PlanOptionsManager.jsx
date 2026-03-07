@@ -8,11 +8,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../componen
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import {
   DollarSign, Plus, Edit, Trash2, Save, X, Loader2,
-  Eye, EyeOff, GripVertical
+  Eye, EyeOff, GripVertical, Home as HomeIcon
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+const ICON_OPTIONS = ['Home', 'Mountain', 'Building', 'PlusSquare', 'Shield', 'Ruler', 'FileText', 'Hammer', 'Wrench', 'Paintbrush'];
 
 const PlanOptionsManager = () => {
   const { toast } = useToast();
@@ -196,6 +198,52 @@ const PlanOptionsManager = () => {
                           onChange={(e) => setEditingOption({ ...editingOption, description: e.target.value })}
                         />
                       </div>
+                      {/* Accueil toggle */}
+                      <div className="border-t border-stone-200 pt-3">
+                        <div className="flex items-center gap-3 mb-2">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={editingOption.show_on_home || false}
+                              onChange={(e) => setEditingOption({ ...editingOption, show_on_home: e.target.checked })}
+                              className="rounded"
+                            />
+                            <span className="text-sm font-medium text-slate-700 flex items-center gap-1">
+                              <HomeIcon className="w-3 h-3" /> Afficher sur l'accueil
+                            </span>
+                          </label>
+                        </div>
+                        {editingOption.show_on_home && (
+                          <div className="grid grid-cols-3 gap-3 mt-2">
+                            <div>
+                              <Label className="text-xs">Nom sur l'accueil</Label>
+                              <Input
+                                value={editingOption.home_name || ''}
+                                onChange={(e) => setEditingOption({ ...editingOption, home_name: e.target.value })}
+                                placeholder="ex: Mini-maisons"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs">Icône</Label>
+                              <select
+                                value={editingOption.home_icon || 'FileText'}
+                                onChange={(e) => setEditingOption({ ...editingOption, home_icon: e.target.value })}
+                                className="w-full h-10 px-3 border border-gray-300 rounded-md text-sm"
+                              >
+                                {ICON_OPTIONS.map(i => <option key={i} value={i}>{i}</option>)}
+                              </select>
+                            </div>
+                            <div>
+                              <Label className="text-xs">Description accueil</Label>
+                              <Input
+                                value={editingOption.home_description || ''}
+                                onChange={(e) => setEditingOption({ ...editingOption, home_description: e.target.value })}
+                                placeholder="Description courte pour l'accueil"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
                       <div className="flex gap-2">
                         <Button size="sm" onClick={() => handleSave(editingOption)} disabled={saving} className="bg-teal-700 hover:bg-teal-800" data-testid={`save-${option.id}`}>
                           {saving ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Save className="w-3 h-3 mr-1" />}
@@ -220,6 +268,9 @@ const PlanOptionsManager = () => {
                         <span className="font-bold text-teal-700 text-lg" data-testid={`price-display-${option.id}`}>
                           {option.price}
                         </span>
+                        {option.show_on_home && (
+                          <Badge className="bg-teal-50 text-teal-700 text-xs"><HomeIcon className="w-3 h-3 mr-1" />Accueil</Badge>
+                        )}
                         <Button size="sm" variant="ghost" onClick={() => handleToggleActive(option)} title={option.is_active ? 'Masquer' : 'Afficher'}>
                           {option.is_active ? <Eye className="w-4 h-4 text-green-600" /> : <EyeOff className="w-4 h-4 text-slate-400" />}
                         </Button>

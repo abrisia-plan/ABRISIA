@@ -686,36 +686,53 @@ async def update_legal_page(page_id: str, content: dict, current_user: dict = De
 # ============ PLAN OPTIONS (Prix du Devis) ============
 
 DEFAULT_PLAN_OPTIONS = [
-    {"id": "fondation", "name": "Plan de fondation", "price": "300$", "description": "", "category": "plans", "is_active": True, "order": 0},
-    {"id": "architecture", "name": "Plan architectural complet", "price": "800$", "description": "", "category": "plans", "is_active": True, "order": 1},
-    {"id": "extension", "name": "Plan d'extension/verrière", "price": "600$", "description": "", "category": "plans", "is_active": True, "order": 2},
-    {"id": "plomberie", "name": "Plan de plomberie (inclut évacuation)", "price": "400$", "description": "", "category": "plans", "is_active": True, "order": 3},
-    {"id": "electricite", "name": "Plan électrique", "price": "450$", "description": "", "category": "plans", "is_active": True, "order": 4},
-    {"id": "ventilation", "name": "Plan de ventilation", "price": "350$", "description": "", "category": "plans", "is_active": True, "order": 5},
-    {"id": "mini-maison-complete", "name": "Mini-maison complète (plans + détails)", "price": "800$", "description": "Plans architecturaux et techniques pour mini-maison", "category": "projets", "is_active": True, "order": 6},
-    {"id": "chalet-complet", "name": "Chalet complet (plans + détails)", "price": "1200$", "description": "Plans architecturaux et techniques pour chalet quatre saisons", "category": "projets", "is_active": True, "order": 7},
-    {"id": "maison-complete", "name": "Maison résidentielle complète", "price": "1500$", "description": "Plans architecturaux et techniques pour maison familiale", "category": "projets", "is_active": True, "order": 8},
-    {"id": "abri-garage", "name": "Abris/garage/gazebo/galerie/coin cuisine extérieur", "price": "400$", "description": "Plans pour structures extérieures et espaces de vie outdoor", "category": "projets", "is_active": True, "order": 9},
-    {"id": "accompagnement", "name": "Calculs de matériaux", "price": "Sur devis", "description": "Liste de matériaux et estimation des quantités pour votre projet", "category": "services", "is_active": True, "order": 10},
-    {"id": "ebenisterie", "name": "Ébénisterie sur mesure", "price": "Sur devis", "description": "Conception et plans pour meubles et aménagements personnalisés", "category": "services", "is_active": True, "order": 11},
-    {"id": "autre", "name": "Autre (à préciser dans les notes)", "price": "Sur devis", "description": "Projet spécialisé ou besoins particuliers - décrivez vos besoins", "category": "services", "is_active": True, "order": 12},
+    {"id": "fondation", "name": "Plan de fondation", "price": "300$", "description": "", "category": "plans", "is_active": True, "order": 0, "show_on_home": False, "home_icon": "", "home_description": "", "home_name": ""},
+    {"id": "architecture", "name": "Plan architectural complet", "price": "800$", "description": "", "category": "plans", "is_active": True, "order": 1, "show_on_home": False, "home_icon": "", "home_description": "", "home_name": ""},
+    {"id": "extension", "name": "Plan d'extension/verrière", "price": "600$", "description": "", "category": "plans", "is_active": True, "order": 2, "show_on_home": True, "home_icon": "PlusSquare", "home_description": "Agrandissements harmonieux pour optimiser votre espace de vie.", "home_name": "Extensions"},
+    {"id": "plomberie", "name": "Plan de plomberie (inclut évacuation)", "price": "400$", "description": "", "category": "plans", "is_active": True, "order": 3, "show_on_home": False, "home_icon": "", "home_description": "", "home_name": ""},
+    {"id": "electricite", "name": "Plan électrique", "price": "450$", "description": "", "category": "plans", "is_active": True, "order": 4, "show_on_home": False, "home_icon": "", "home_description": "", "home_name": ""},
+    {"id": "ventilation", "name": "Plan de ventilation", "price": "350$", "description": "", "category": "plans", "is_active": True, "order": 5, "show_on_home": False, "home_icon": "", "home_description": "", "home_name": ""},
+    {"id": "mini-maison-complete", "name": "Mini-maison complète (plans + détails)", "price": "800$", "description": "Plans architecturaux et techniques pour mini-maison", "category": "projets", "is_active": True, "order": 6, "show_on_home": True, "home_icon": "Home", "home_description": "Habitations compactes sur fondations permanentes, optimisées pour le confort.", "home_name": "Mini-maisons"},
+    {"id": "chalet-complet", "name": "Chalet complet (plans + détails)", "price": "1200$", "description": "Plans architecturaux et techniques pour chalet quatre saisons", "category": "projets", "is_active": True, "order": 7, "show_on_home": True, "home_icon": "Mountain", "home_description": "Refuges quatre saisons, confortables été comme hiver.", "home_name": "Chalets"},
+    {"id": "maison-complete", "name": "Maison résidentielle complète", "price": "1500$", "description": "Plans architecturaux et techniques pour maison familiale", "category": "projets", "is_active": True, "order": 8, "show_on_home": True, "home_icon": "Building", "home_description": "Maisons familiales sur fondations jusqu'à 600m² de plancher total (6000 pi²).", "home_name": "Maisons résidentielles"},
+    {"id": "abri-garage", "name": "Abris/garage/gazebo/galerie/coin cuisine extérieur", "price": "400$", "description": "Plans pour structures extérieures et espaces de vie outdoor", "category": "projets", "is_active": True, "order": 9, "show_on_home": True, "home_icon": "Shield", "home_description": "Structures utilitaires sur fondations pour rangement et protection.", "home_name": "Abris et garages"},
+    {"id": "accompagnement", "name": "Calculs de matériaux", "price": "Sur devis", "description": "Liste de matériaux et estimation des quantités pour votre projet", "category": "services", "is_active": True, "order": 10, "show_on_home": False, "home_icon": "", "home_description": "", "home_name": ""},
+    {"id": "ebenisterie", "name": "Ébénisterie sur mesure", "price": "Sur devis", "description": "Conception et plans pour meubles et aménagements personnalisés", "category": "services", "is_active": True, "order": 11, "show_on_home": True, "home_icon": "Ruler", "home_description": "Conception et plans pour meubles et aménagements personnalisés.", "home_name": "Ébénisterie sur mesure"},
+    {"id": "autre", "name": "Autre (à préciser dans les notes)", "price": "Sur devis", "description": "Projet spécialisé ou besoins particuliers - décrivez vos besoins", "category": "services", "is_active": True, "order": 12, "show_on_home": False, "home_icon": "", "home_description": "", "home_name": ""},
 ]
 
 
 @router.get("/plan-options")
-async def get_plan_options_public():
-    """Obtenir les options de plans (public - pour le formulaire de devis)"""
+async def get_plan_options_public(home_only: Optional[str] = None):
+    """Obtenir les options de plans (public - pour le formulaire de devis ou l'accueil)"""
     try:
         db = get_database()
-        options = await db.plan_options.find({"is_active": True}, {"_id": 0}).sort("order", 1).to_list(length=None)
-        if not options:
+        query = {"is_active": True}
+        if home_only == "true":
+            query["show_on_home"] = True
+        sort_field = "home_order" if home_only == "true" else "order"
+        options = await db.plan_options.find(query, {"_id": 0}).sort(sort_field, 1).to_list(length=None)
+        if not options and home_only != "true":
             # Seed defaults
             await db.plan_options.insert_many([dict(o) for o in DEFAULT_PLAN_OPTIONS])
             options = DEFAULT_PLAN_OPTIONS
+            if home_only == "true":
+                options = [o for o in options if o.get("show_on_home")]
+        elif not options and home_only == "true":
+            # Try seeding first
+            existing = await db.plan_options.find({}, {"_id": 0}).to_list(length=1)
+            if not existing:
+                await db.plan_options.insert_many([dict(o) for o in DEFAULT_PLAN_OPTIONS])
+            options = await db.plan_options.find(query, {"_id": 0}).sort("order", 1).to_list(length=None)
+            if not options:
+                options = [o for o in DEFAULT_PLAN_OPTIONS if o.get("show_on_home")]
         return {"success": True, "data": options}
     except Exception as e:
         logger.error(f"Erreur plan options: {e}")
-        return {"success": True, "data": DEFAULT_PLAN_OPTIONS}
+        fallback = DEFAULT_PLAN_OPTIONS
+        if home_only == "true":
+            fallback = [o for o in fallback if o.get("show_on_home")]
+        return {"success": True, "data": fallback}
 
 
 @router.get("/admin/plan-options")
@@ -739,7 +756,7 @@ async def update_plan_option(option_id: str, data: dict, current_user: dict = De
     try:
         db = get_database()
         update_fields = {}
-        for key in ["name", "price", "description", "category", "is_active", "order"]:
+        for key in ["name", "price", "description", "category", "is_active", "order", "show_on_home", "home_icon", "home_description", "home_name"]:
             if key in data:
                 update_fields[key] = data[key]
         
@@ -771,6 +788,10 @@ async def create_plan_option(data: dict, current_user: dict = Depends(require_ad
             "category": data.get("category", "plans"),
             "is_active": data.get("is_active", True),
             "order": data.get("order", 99),
+            "show_on_home": data.get("show_on_home", False),
+            "home_icon": data.get("home_icon", ""),
+            "home_description": data.get("home_description", ""),
+            "home_name": data.get("home_name", ""),
         }
         await db.plan_options.insert_one(new_option)
         return {"success": True, "message": "Option créée", "id": option_id}
@@ -792,4 +813,102 @@ async def delete_plan_option(option_id: str, current_user: dict = Depends(requir
         raise
     except Exception as e:
         logger.error(f"Erreur delete plan option: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+# ============ SERVICES ACCUEIL (Homepage Service Cards) ============
+
+DEFAULT_HOMEPAGE_SERVICES = [
+    {"id": "mini-maisons", "name": "Mini-maisons", "description": "Habitations compactes sur fondations permanentes, optimisees pour le confort.", "price": "Plans a partir de 800$", "icon": "Home", "devis_category": "Mini-maison", "is_active": True, "order": 0},
+    {"id": "chalets", "name": "Chalets", "description": "Refuges quatre saisons, confortables ete comme hiver.", "price": "Plans a partir de 1200$", "icon": "Mountain", "devis_category": "Chalet", "is_active": True, "order": 1},
+    {"id": "maisons", "name": "Maisons residentielles", "description": "Maisons familiales sur fondations jusqu'a 600m2 de plancher total.", "price": "Plans a partir de 1500$", "icon": "Building", "devis_category": "Maison residentielle", "is_active": True, "order": 2},
+    {"id": "extensions", "name": "Extensions", "description": "Agrandissements harmonieux pour optimiser votre espace de vie.", "price": "Plans a partir de 600$", "icon": "PlusSquare", "devis_category": "Extension", "is_active": True, "order": 3},
+    {"id": "abris-garages", "name": "Abris et garages", "description": "Structures utilitaires sur fondations pour rangement et protection.", "price": "Plans a partir de 400$", "icon": "Shield", "devis_category": "Abris/garage", "is_active": True, "order": 4},
+    {"id": "ebenisterie", "name": "Ebenisterie sur mesure", "description": "Conception et plans pour meubles et amenagements personnalises.", "price": "Sur devis", "icon": "Ruler", "devis_category": "Ebenisterie", "is_active": True, "order": 5},
+]
+
+
+@router.get("/homepage-services")
+async def get_homepage_services_public():
+    """Services affiches sur la page d'accueil (public)"""
+    try:
+        db = get_database()
+        services = await db.homepage_services.find({"is_active": True}, {"_id": 0}).sort("order", 1).to_list(length=None)
+        if not services:
+            await db.homepage_services.insert_many([dict(s) for s in DEFAULT_HOMEPAGE_SERVICES])
+            services = DEFAULT_HOMEPAGE_SERVICES
+        return {"success": True, "data": services}
+    except Exception as e:
+        logger.error(f"Erreur homepage services: {e}")
+        return {"success": True, "data": DEFAULT_HOMEPAGE_SERVICES}
+
+
+@router.get("/admin/homepage-services")
+async def get_homepage_services_admin(current_user: dict = Depends(require_admin)):
+    """Tous les services de la page d'accueil (admin)"""
+    try:
+        db = get_database()
+        services = await db.homepage_services.find({}, {"_id": 0}).sort("order", 1).to_list(length=None)
+        if not services:
+            await db.homepage_services.insert_many([dict(s) for s in DEFAULT_HOMEPAGE_SERVICES])
+            services = DEFAULT_HOMEPAGE_SERVICES
+        return {"success": True, "data": services}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/admin/homepage-services/{service_id}")
+async def update_homepage_service(service_id: str, data: dict, current_user: dict = Depends(require_admin)):
+    """Modifier un service de l'accueil"""
+    try:
+        db = get_database()
+        update_fields = {}
+        for key in ["name", "description", "price", "icon", "devis_category", "is_active", "order"]:
+            if key in data:
+                update_fields[key] = data[key]
+        result = await db.homepage_services.update_one({"id": service_id}, {"$set": update_fields})
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Service non trouve")
+        return {"success": True, "message": "Service mis a jour"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/admin/homepage-services")
+async def create_homepage_service(data: dict, current_user: dict = Depends(require_admin)):
+    """Creer un service pour l'accueil"""
+    try:
+        db = get_database()
+        service_id = data.get("id") or str(uuid.uuid4())[:8]
+        new_service = {
+            "id": service_id,
+            "name": data.get("name", ""),
+            "description": data.get("description", ""),
+            "price": data.get("price", "Sur devis"),
+            "icon": data.get("icon", "FileText"),
+            "devis_category": data.get("devis_category", ""),
+            "is_active": data.get("is_active", True),
+            "order": data.get("order", 99),
+        }
+        await db.homepage_services.insert_one(new_service)
+        return {"success": True, "message": "Service cree", "id": service_id}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/admin/homepage-services/{service_id}")
+async def delete_homepage_service(service_id: str, current_user: dict = Depends(require_admin)):
+    """Supprimer un service de l'accueil"""
+    try:
+        db = get_database()
+        result = await db.homepage_services.delete_one({"id": service_id})
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Service non trouve")
+        return {"success": True, "message": "Service supprime"}
+    except HTTPException:
+        raise
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

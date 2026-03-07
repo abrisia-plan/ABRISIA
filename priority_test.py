@@ -13,7 +13,7 @@ import json
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://abrisia-admin-test.preview.emergentagent.com"
+BASE_URL = "https://plan-builder-dev.preview.emergentagent.com"
 API_BASE = f"{BASE_URL}/api"
 
 # Données de test

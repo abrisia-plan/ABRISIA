@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -14,6 +15,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Devis = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [planOptions, setPlanOptions] = useState([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [formData, setFormData] = useState({
@@ -34,6 +36,14 @@ const Devis = () => {
         const data = await res.json();
         if (data.success && data.data?.length > 0) {
           setPlanOptions(data.data);
+          // Pré-sélectionner le plan depuis l'URL ?plan=<option_id>
+          const planFromUrl = searchParams.get('plan');
+          if (planFromUrl) {
+            const matchedPlan = data.data.find(p => p.id === planFromUrl);
+            if (matchedPlan) {
+              setFormData(prev => ({ ...prev, plansChoisis: [planFromUrl] }));
+            }
+          }
         }
       } catch (err) {
         console.error('Erreur chargement options:', err);
@@ -42,7 +52,7 @@ const Devis = () => {
       }
     };
     loadPlanOptions();
-  }, []);
+  }, [searchParams]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

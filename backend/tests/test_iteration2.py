@@ -9,7 +9,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://abrisia-admin-test.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://plan-builder-dev.preview.emergentagent.com').rstrip('/')
 
 class TestNavigationAPI:
     """Navigation API tests - verify 'À propos' is not in menu"""

@@ -10,7 +10,7 @@ import os
 from datetime import datetime
 
 # Configuration
-BASE_URL = "https://abrisia-admin-test.preview.emergentagent.com"  # Use external URL from frontend/.env
+BASE_URL = "https://plan-builder-dev.preview.emergentagent.com"  # Use external URL from frontend/.env
 API_BASE = f"{BASE_URL}/api"
 
 # Données de test

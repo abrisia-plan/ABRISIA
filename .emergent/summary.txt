@@ -2,201 +2,151 @@
 L'utilisateur souhaite développer un site web pour son entreprise de plans architecturaux, Abrisia Plan.
 
 **Exigences du produit :**
-1.  **Système de Kits Automatisé :** Vente de kits de plans préconçus avec options, paiement en ligne (Stripe/Interac) et envoi automatique de fichiers. Interface d'administration pour gérer les kits.
-2.  **Système de Devis & Gestion des Employés :** Interface d'administration pour gérer les devis, les assigner à des dessinateurs, et un portail pour que les employés voient leurs tâches.
-3.  **SEO & Visibilité :** Le site doit être correctement indexé par Google et ne pas être identifié comme un site d'assurance par des outils comme ChatGPT.
-4.  **Gestion de Contenu (CMS) :** L'administrateur doit pouvoir gérer les pages visibles dans le menu de navigation et modifier le contenu de la page À propos.
-5.  **Esthétique et Image de Marque :** Le site doit respecter une palette de couleurs spécifique (vert forêt, beige, etc.), utiliser le logo de l'entreprise correctement, et avoir une apparence professionnelle et apaisante, sans couleurs agressives.
-6.  **Recrutement :** Une option pour que les candidats puissent Envoyer un CV via le site.
-7.  **Déploiement :** Mettre le site en ligne et le connecter au nom de domaine de l'utilisateur : .
+1.  **Système de Kits Automatisé :** Vente de kits de plans préconçus, avec la possibilité de les mettre en avant sur la page d'accueil.
+2.  **Système de Devis & Gestion des Employés :** Interface d'administration pour gérer les devis (filtrage par statut/date), les assigner à des dessinateurs, et un portail pour que les employés voient leurs tâches.
+3.  **SEO & Visibilité :** Le site doit être correctement indexé par Google. L'utilisateur veut revoir ce point.
+4.  **Gestion de Contenu (CMS) :** L'administrateur doit pouvoir gérer :
+    -   Les pages visibles dans la navigation.
+    -   Le contenu de la page À propos.
+    -   Les projets d'inspiration (visibilité sur la page dédiée et sur l'accueil).
+    -   Les kits (visibilité sur la page dédiée et sur l'accueil).
+    -   Les services et leurs prix sur la page d'accueil, qui doivent rediriger vers le devis avec le bon service pré-sélectionné.
+    -   Les témoignages (approbation et affichage).
+5.  **Témoignages :** Un lien/une page que l'administrateur peut envoyer aux clients pour qu'ils soumettent un témoignage.
+6.  **Recrutement :** Une section pour Envoyer un CV avec une interface admin pour voir les candidatures.
+7.  **Notifications par Email :** L'admin doit recevoir un email pour les nouvelles candidatures, les nouveaux devis et les nouveaux témoignages.
+8.  **Déploiement :** Le site est en ligne sur .
 
 **User's preferred language**: Français. Le prochain agent DOIT répondre en français uniquement.
 
 **what currently exists?**
-L'application full-stack (React/FastAPI/MongoDB) est déployée sur .
--   **Sécurité :** La faille critique des identifiants admin codés en dur dans le frontend a été corrigée.
--   **Fonctionnalités Admin :**
-    -   Le portail employé est fonctionnel : les employés peuvent se connecter et voir les projets qui leur sont assignés.
-    -   Le login admin/employé a été unifié sur la page .
-    -   L'admin peut gérer la navigation du site (afficher/masquer des pages dans le menu principal) via un nouvel onglet Menu du site.
-    -   Le manager de kits a été amélioré avec un calcul de surface automatique (largeur x profondeur x étages) et l'upload de fichiers PDF, DWG, et SKP est maintenant supporté.
--   **UI/UX et Marque :**
-    -   Une refonte visuelle complète a été effectuée pour appliquer la palette de couleurs Abrisia (vert forêt, beige, brun bois) sur tout le site.
-    -   Le fond du site a été adouci pour être moins blanc et moins agressif.
-    -   Le logo a été corrigé et ajusté à de multiples reprises dans le header et le footer pour correspondre aux attentes de l'utilisateur.
-    -   L'image de fond de la section hero a été remplacée par celle fournie par l'utilisateur.
--   **SEO :**
-    -   Les métadonnées du site (titre, description) ont été corrigées.
-    -   Un  et un  ont été créés et sont accessibles.
-    -   Les fichiers de vérification pour Google Search Console ont été ajoutés.
--   **Contenu :**
-    -   Les textes marketing (matériaux locaux, accompagnement autoconstruction) ont été retirés à la demande de l'utilisateur.
-    -   Les heures d'ouverture ont été mises à jour.
-    -   Un lien discret Espace équipe a été ajouté dans le footer pour l'accès admin/employé.
-    -   Une section Envoyer mon CV a été ajoutée à la page Contact, avec le backend nécessaire pour gérer les soumissions.
+L'application full-stack (React/FastAPI/MongoDB) est déployée.
+-   **Système d'administration complet :** Un panneau d'administration unifié permet de gérer les employés, la navigation du site (header/footer), les projets d'inspiration, les kits de plans, les prix des devis, les témoignages et les candidatures reçues.
+-   **Contenu dynamique :** La quasi-totalité du site est gérée depuis l'admin. Les données fictives () ont été supprimées et remplacées par des appels API vers la base de données.
+-   **Fonctionnalités Utilisateur :**
+    -   Un portail employé permet de voir les projets assignés.
+    -   Un formulaire de contact permet d'envoyer un CV, ce qui déclenche une notification par e-mail à l'admin.
+    -   Une page publique () permet aux clients de soumettre des avis, qui sont ensuite gérés dans l'admin et notifiés par e-mail.
+-   **Améliorations UX Admin :**
+    -   Le gestionnaire de devis permet de filtrer par statut (en attente, terminé, etc.) et par date (mois/année).
+    -   Les gestionnaires de projets et de kits permettent une double visibilité (visible sur la page dédiée et/ou visible sur l'accueil).
+-   **Corrections de bugs critiques :** Des plantages sur la page de modification des devis ont été résolus et l'interface utilisateur a été harmonisée sur plusieurs pages.
 
 **Last working item**:
-L'agent a reçu une liste de plusieurs problèmes de la part de l'utilisateur après une longue session de modifications de l'interface utilisateur. L'agent a reconnu les problèmes et s'apprêtait à commencer les corrections.
+L'agent travaillait sur une demande de l'utilisateur pour rendre les services de la page d'accueil entièrement dynamiques.
 
--   **Last item agent was working**: L'agent s'apprêtait à corriger une liste de problèmes soulevés par l'utilisateur : des données fictives dans l'admin, une interface de connexion bizarre, le manque de gestion des prix des services, et d'autres améliorations de l'expérience utilisateur dans le panneau d'administration.
--   **Status**: NOT STARTED
+-   **Last item agent was working**: Implémenter un système pour que les services affichés sur la page d'accueil soient gérables depuis l'admin. Un clic sur un de ces services doit rediriger vers la page de devis en pré-sélectionnant automatiquement la bonne catégorie de service. La section des kits populaires a également été déplacée sur la page d'accueil.
+-   **Status**: IN PROGRESS
 -   **Agent Testing Done**: N
--   **Which testing method agent to use?**: both. L'agent devra utiliser  ou  pour tester les changements backend (suppression de données, nouvelles API pour les prix) et l'agent de test frontend ou l'outil de capture d'écran pour valider les nombreuses modifications de l'interface utilisateur.
+-   **Which testing method agent to use?**: both. Le backend (nouvelles routes API pour les services de l'accueil) doit être testé avec . Le frontend (nouvel onglet admin, affichage sur l'accueil, redirection et pré-sélection sur la page de devis) doit être testé de manière approfondie avec l'agent de test frontend ou l'outil de capture d'écran.
 -   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
 
--   **Issue 1: (P0 - CRITICAL)** Refonte du panneau d'administration et correction des données incohérentes.
-    -   **Description:** L'utilisateur a signalé plusieurs problèmes majeurs avec le panneau d'administration et l'expérience utilisateur qui nuisent à l'utilisabilité du site.
-    -   **Attempted fixes:** Aucun. L'agent précédent a seulement commencé à diagnostiquer.
+-   **Issue 1: (P0 - CRITICAL)** Finaliser la gestion dynamique des services de la page d'accueil.
+    -   **Description:** L'utilisateur souhaite que les cartes de service sur la page d'accueil soient gérables depuis l'admin et que cliquer dessus redirige vers la page de devis avec le service correspondant pré-sélectionné.
+    -   **Attempted fixes:** L'agent a créé le backend (modèle , routes CRUD dans ), le composant d'administration (), et a mis à jour  pour afficher les données dynamiques. La modification de  pour gérer la pré-sélection via les paramètres d'URL a été commencée mais n'est pas terminée.
     -   **Next debug checklist:**
-        1.  **Données fictives :** Supprimer les faux dessinateurs (Marc, Sophie) de la base de données et du code. La source est probablement des données de test () dans . Assurer que seul les employés réels de la BDD sont affichés.
-        2.  **Prix des services non modifiables :** Créer une nouvelle section dans l'admin pour permettre à l'utilisateur de gérer les prix des services affichés sur la page de devis. Cela nécessite un nouveau modèle de BDD, des routes API (CRUD) et un nouveau composant React dans l'admin.
-        3.  **Navigation admin/employé :** Ajouter un bouton Retourner au site dans les panneaux admin et employé (, ) pour une navigation fluide.
-        4.  **Accès connexion :** Déplacer le lien Espace équipe du footer vers un endroit plus visible/accessible, comme le header principal.
-        5.  **Interface de connexion bizarre :** Analyser et améliorer le design de la page  pour la rendre plus professionnelle.
-    -   **Why fix this issue and what will be achieved with the fix?**: Résoudre ces problèmes est crucial pour que l'utilisateur puisse gérer son site de manière autonome. Cela corrigera les incohérences de données, débloquera la gestion des prix et améliorera l'expérience utilisateur globale, ce qui est essentiel pour regagner la confiance de l'utilisateur.
-    -   **Status**: NOT STARTED
-    -   **Is recurring issue?**: N (Les problèmes de données sont nouveaux, résultant probablement d'un rollback partiel).
+        1.  Terminer et corriger la logique dans  pour lire le paramètre d'URL  et pré-cocher le bon  au chargement de la page.
+        2.  Vérifier que le nouvel onglet Services Accueil dans le panneau d'administration est fonctionnel (créer, lire, mettre à jour, supprimer des services).
+        3.  Valider que la page d'accueil affiche correctement les services gérés depuis l'admin.
+        4.  Tester le flux complet de bout en bout : cliquer sur un service sur l'accueil -> être redirigé vers  -> voir le bon service pré-sélectionné.
+        5.  Lancer un cycle de tests complet (agent de test) pour s'assurer que ces changements n'ont pas causé de régressions.
+    -   **Why fix this issue and what will be achieved with the fix?**: Cette fonctionnalité donnera à l'utilisateur un contrôle total sur le contenu de sa page d'accueil et améliorera l'expérience utilisateur en fluidifiant le parcours vers une demande de devis.
+    -   **Status**: IN PROGRESS
+    -   **Is recurring issue?**: N
     -   **Should Test frontend/backend/both after fix?**: Both
     -   **Blocked on other issue**: None.
 
 **In progress Task List**:
-Aucune.
+Aucune autre que l'Issue 1.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **(P1) Finaliser l'intégration de Envoyer mon CV :** Le formulaire et le backend existent. Il manque l'interface dans l'admin pour visualiser les candidatures reçues et confirmer que la notification par courriel fonctionne.
-    -   **(P2) Finaliser la configuration de Stripe :** Guider l'utilisateur pour activer son compte Stripe et réactiver l'option de paiement par carte de crédit dans le frontend.
-
+    -   **(P0) Attendre le feedback de l'utilisateur :** L'utilisateur a explicitement dit qu'il allait tester l'ensemble du site (demain je vais ajouter des projet des kit, moi en dessinatrice faire des fausse demande...). L'agent doit se préparer à recevoir une liste de bugs ou de demandes d'ajustement.
+    -   **(P1) Revoir le SEO avec l'utilisateur :** L'utilisateur souhaite reviser egalement les choses a voir avec google. Cela inclut probablement la vérification du statut du  dans la Google Search Console.
 -   **Future Tasks:**
-    -   **(P3) Développer le mini-espace projet client :** Après la soumission d'un devis, créer un espace où le client peut communiquer avec le dessinateur assigné.
+    -   **(P2) Finaliser la configuration de Stripe.**
+    -   **(P3) Développer le mini-espace projet client** pour la communication post-devis.
     -   **(P4) Implémenter la messagerie client-dessinateur.**
-    -   **(P5) Permettre aux clients d'uploader des fichiers** (croquis, etc.) dans leur espace projet.
+    -   **(P5) Permettre aux clients d'uploader des fichiers** dans leur espace projet.
 
 **Completed work in this session**
--   **Sécurité :** Correction de la vulnérabilité des identifiants admin visibles sur la page de connexion.
--   **Portail Employé :** Correction de bugs de connexion et d'affichage des projets, reliant le frontend aux données réelles.
--   **SEO :** Correction des métadonnées du site, création d'un  et , et ajout de la vérification Google.
--   **UI/UX & Branding :** Application de la palette de couleurs personnalisée Abrisia sur l'ensemble du site. Correction et ajustements multiples du logo, des fonds et des textes pour correspondre à la vision esthétique de l'utilisateur.
--   **Fonctionnalités Admin :** Implémentation d'un système de gestion du menu de navigation et amélioration du gestionnaire de kits (calcul de surface, support de nouveaux types de fichiers).
--   **Fonctionnalité de Recrutement :** Création du backend et du formulaire frontend pour l'envoi de CV.
--   **Rollbacks Multiples :** L'état visuel du site a été restauré à plusieurs reprises à un état antérieur préféré par l'utilisateur, tout en conservant les nouvelles fonctionnalités backend.
+-   **Refactorisation complète du panneau d'administration :** Nettoyage des données fictives, correction de l'interface, ajout de nombreux onglets de gestion (Employés, Navigation, Prix devis, Projets, Kits, Témoignages, Candidatures).
+-   **Système de témoignages de bout en bout :** Création d'une page publique pour la soumission, d'une interface d'approbation dans l'admin, et affichage dynamique des avis approuvés sur l'accueil.
+-   **Amélioration de la gestion des devis :** Ajout de filtres par statut et par date (mois/année) dans l'admin.
+-   **Double visibilité pour Projets et Kits :** Implémentation de boutons pour choisir d'afficher un élément sur sa page dédiée et/ou sur la page d'accueil.
+-   **Notifications par e-mail :** Les notifications pour les nouvelles candidatures et les nouveaux témoignages sont maintenant fonctionnelles.
+-   **Suppression des données fictives :** Remplacement de presque toutes les données codées en dur par des appels API, rendant le site entièrement gérable via l'admin.
+-   **Correction de bugs critiques :** Résolution d'un plantage lors de la modification d'un devis et correction de couleurs manquantes qui rendaient la page Contact illisible.
 
 **Earlier issues found/mentioned but not fixed**
--   **Problème de Sitemap Google :** L'utilisateur a signalé que Google Search Console ne pouvait pas lire le sitemap. L'agent a diagnostiqué un possible blocage par Cloudflare et a conseillé à l'utilisateur de réessayer après 24-48h. Le statut de ce problème est en attente de la part de l'utilisateur.
+-   **Problème de Sitemap Google :** L'utilisateur a signalé que Google Search Console ne pouvait pas lire le sitemap. L'agent a diagnostiqué un possible blocage par Cloudflare et a conseillé d'attendre. Le statut est en attente de vérification par l'utilisateur.
 
 **Known issue recurrence from previous fork**
--   **Insatisfaction de l'UI :** Le problème le plus récurrent de la session n'était pas un bug de code, mais une série de va-et-vient dus à l'insatisfaction de l'utilisateur concernant l'esthétique du site. L'agent a dû annuler et refaire de nombreuses modifications visuelles. Le prochain agent doit être très prudent avec les changements de design et obtenir une approbation claire avant de procéder.
+-   **Insatisfaction de l'UI :** Problème historique. L'agent actuel a bien géré cela en se concentrant sur les fonctionnalités et en validant les changements, mais le prochain agent doit rester prudent et éviter les modifications esthétiques non sollicitées.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- Backend: FastAPI
-- Frontend: React
-- Database: MongoDB
-- UI: TailwindCSS, Shadcn UI
-- Deployment: Emergent Platform
-- DNS Management: Namecheap (Proxy via Cloudflare/Emergent)
-- Payments: Stripe API (inactif), Interac (manuel)
-- Emailing: SMTP via Gmail
+-   Backend: FastAPI
+-   Frontend: React
+-   Database: MongoDB
+-   UI: TailwindCSS, Shadcn UI
+-   Notifications: SMTP via Gmail
 
 **key DB schema**
--   : { ... }
--   : { ... }
 -   : { email, hashed_password, role }
--   : { ... }
--   : { name, path, is_visible, order }  // Nouveau
--   : { name, email, phone, message, cv_path, submission_date } // Nouveau
+-    (Kits): { ..., is_visible, is_featured }
+-    (Inspirations): { ..., is_visible, show_on_home }
+-   : { ..., status, priority, assigned_to }
+-   : { ..., is_approved }
+-   : { name, email, cv_path }
+-   : { name, price, description } (Prix pour la page Devis)
+-   : { title, description, icon } (Services pour la page d'accueil)
 
 **All files of reference**
--   : Fichier principal pour le tableau de bord admin. Affiche actuellement des données fictives et doit être mis à jour avec les nouvelles fonctionnalités (gestion des prix des services).
--   : A besoin d'être mis à jour pour utiliser des prix de services dynamiques provenant de l'API.
--   : Le lien Espace équipe doit être rendu plus visible.
--   : Contient le formulaire Envoyer un CV.
--   : Contient la palette de couleurs personnalisée Abrisia.
+-   : Fichier principal de l'accueil. Modifié pour afficher les kits et les services dynamiquement.
+-   : Doit être finalisé pour gérer la pré-sélection d'un service via un paramètre d'URL.
+-   : Nouvelles routes pour gérer les services de l'accueil.
+-   : Nouveau composant admin pour gérer les services de l'accueil.
+-   : Fichier central du panneau d'administration, structure maintenant les composants de gestion dans des onglets.
 
 **Critical Info for New Agent**
--   **Confiance de l'utilisateur :** L'utilisateur est extrêmement frustré après de multiples sessions difficiles. La priorité absolue est de résoudre ses problèmes rapidement, efficacement et sans introduire de nouvelles régressions.
--   **Communication :** Communiquez exclusivement en **français**. Soyez direct, concis, et validez chaque étape.
--   **Changements UI :** NE modifiez PAS l'apparence visuelle du site (couleurs, disposition) sans une demande explicite. L'état actuel a été atteint après un processus très laborieux. Concentrez-vous sur les fonctionnalités et les corrections de bugs demandées.
--   **Rollbacks :** L'utilisateur a demandé d'annuler des changements à plusieurs reprises. Soyez prêt à utiliser usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]
-           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]
-           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--bare]
-           [--git-dir=<path>] [--work-tree=<path>] [--namespace=<name>]
-           [--super-prefix=<path>] [--config-env=<name>=<envvar>]
-           <command> [<args>]
-
-These are common Git commands used in various situations:
-
-start a working area (see also: git help tutorial)
-   clone     Clone a repository into a new directory
-   init      Create an empty Git repository or reinitialize an existing one
-
-work on the current change (see also: git help everyday)
-   add       Add file contents to the index
-   mv        Move or rename a file, a directory, or a symlink
-   restore   Restore working tree files
-   rm        Remove files from the working tree and from the index
-
-examine the history and state (see also: git help revisions)
-   bisect    Use binary search to find the commit that introduced a bug
-   diff      Show changes between commits, commit and working tree, etc
-   grep      Print lines matching a pattern
-   log       Show commit logs
-   show      Show various types of objects
-   status    Show the working tree status
-
-grow, mark and tweak your common history
-   branch    List, create, or delete branches
-   commit    Record changes to the repository
-   merge     Join two or more development histories together
-   rebase    Reapply commits on top of another base tip
-   reset     Reset current HEAD to the specified state
-   switch    Switch branches
-   tag       Create, list, delete or verify a tag object signed with GPG
-
-collaborate (see also: git help workflows)
-   fetch     Download objects and refs from another repository
-   pull      Fetch from and integrate with another repository or a local branch
-   push      Update remote refs along with associated objects
-
-'git help -a' and 'git help -g' list available subcommands and some
-concept guides. See 'git help <command>' or 'git help <concept>'
-to read about a specific subcommand or concept.
-See 'git help git' for an overview of the system. pour inspecter l'historique et revenir à des états précédents si nécessaire, mais essayez d'éviter cela en confirmant bien les exigences au préalable.
+-   **Priorité absolue :** L'utilisateur est sur le point d'effectuer une session de tests complète. La priorité est de finaliser la fonctionnalité en cours (Issue 1), puis de se tenir prêt à corriger rapidement les bugs qui seront remontés.
+-   **Communication :** Communiquer exclusivement en **français**.
+-   **Changements UI :** Ne pas faire de changements esthétiques sans une demande claire. Le focus est sur la fonctionnalité et la stabilité.
 
 **documents and test reports created in this job**
-- /app/test_reports/iteration_0.json
+-    (mis à jour)
+-    (et de nombreux autres rapports de test précédents)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Demande à changer les heures d'ouverture. (Accompli)
-2.  **User:** Demande où se trouve le lien de connexion admin/employé. (Accompli, mais l'emplacement est à revoir)
-3.  **User:** Signale que le logo dans le footer est mal découpé. (Multiples tentatives de correction)
-4.  **User:** N'est pas satisfait de la correction du logo.
-5.  **User:** N'est toujours pas satisfait de la correction du logo.
-6.  **User:** Donne des instructions précises sur la taille du logo. (Accompli)
-7.  **User:** Demande d'appliquer la même taille de logo en bas. (Accompli)
-8.  **User:** Approuve la correction du logo.
-9.  **User:** Change à nouveau les heures d'ouverture. (Accompli)
-10. **User:** Liste une nouvelle série de problèmes : bouton équipe caché, interface de connexion bizarre, faux dessinateurs dans l'admin, pas de gestion des prix des services, besoin d'un bouton retour au site. **(PENDING - C'est la tâche P0 actuelle)**.
+1.  **User:** Demande à ce que les kits fonctionnent comme les inspirations (visibilité sur l'accueil). (Accompli)
+2.  **User:** Signale que les prix/services sur l'accueil ne sont pas dynamiques. (En cours)
+3.  **User:** Demande que le clic sur un service de l'accueil redirige vers le devis avec le service pré-sélectionné. (En cours)
+4.  **User:** Demande de déplacer les kits préconçus plus haut sur la page d'accueil. (Accompli)
+5.  **User:** Annonce qu'il va tout tester le lendemain (projets, kits, devis, candidature, etc.). (PENDING - La prochaine interaction sera probablement son feedback)
+6.  **User:** S'interroge sur l'état des notifications par e-mail. (Vérifié et complété par l'agent)
+7.  **User:** Signale que la page Contact est bizarre (problème d'affichage). (Corrigé)
+8.  **User:** Signale un plantage en cliquant sur Voir/Modifier dans la gestion des devis. (Corrigé)
+9.  **User:** Signale que la page de kits n'a pas le même style que les autres. (Corrigé)
+10. **User:** Fait la demande actuelle concernant les services dynamiques sur l'accueil. (En cours - Last working item)
 
 **Project Health Check:**
 -   **Broken**:
-    -   Incohérence des données dans le panneau d'administration (affichage de données fictives qui ne peuvent être gérées).
-    -   Manque de fonctionnalités essentielles à l'administration du site (gestion des prix des services).
-    -   Problèmes d'utilisabilité dans le flux admin/employé (accès à la connexion, navigation).
+    -   La fonctionnalité de pré-sélection sur la page de devis est incomplète. Le flux de gestion des services de l'accueil n'est pas fonctionnel de bout en bout.
 
 **3rd Party Integrations**
--   **Gmail (SMTP)**: Utilisé pour l'envoi de courriels transactionnels.
--   **Stripe (Payments)**: Prêt à être utilisé mais inactif. Nécessite une configuration finale du compte par l'utilisateur.
+-   **Gmail (SMTP)**: Utilisé et fonctionnel pour les notifications de devis, candidatures et témoignages.
+-   **Stripe (Payments)**: Prêt à être intégré, mais actuellement inactif en attente de la configuration du compte par l'utilisateur.
 
 **Testing status**
--   **Testing agent used after significant changes**: YES, a été utilisé pour valider les refontes de l'interface.
+-   **Testing agent used after significant changes**: YES, utilisé avec succès à plusieurs reprises.
 -   **Troubleshoot agent used after agent stuck in loop**: NO
 -   **Test files created**: None.
--   **Known regressions**: Après un rollback partiel, le panneau d'administration est revenu à un état dégradé (UI blanche, affichage de données fictives).
+-   **Known regressions**: Aucune régression majeure connue, mais la dernière fonctionnalité n'a pas été testée.
 
 **Credentials to test flow:**
 -   **Admin Login:**
@@ -204,4 +154,4 @@ See 'git help git' for an overview of the system. pour inspecter l'historique et
     -   Password: 
 
 **What agent forgot to execute**
-Après avoir restauré les fichiers de l'interface utilisateur à un état antérieur (suite à la demande de l'utilisateur), l'agent n'a pas vérifié l'état complet du panneau d'administration. Cela a conduit à la réapparition d'une interface cassée (styles manquants) et de données de test (faux dessinateurs), ce qui a causé une nouvelle frustration pour l'utilisateur.</analysis>
+L'agent n'a pas terminé et testé la dernière fonctionnalité demandée. La logique de pré-sélection dans  est restée inachevée, ce qui rend le flux de gestion des services de l'accueil non fonctionnel. Aucun test (manuel ou automatisé) n'a été effectué sur cette dernière série de changements.</analysis>
