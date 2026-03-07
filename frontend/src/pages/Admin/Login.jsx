@@ -97,7 +97,7 @@ const Login = () => {
                     onChange={handleInputChange}
                     required
                     className="pl-10 border-stone-300 focus:border-teal-500"
-                    placeholder="admin@abrisia-plan.ca"
+                    placeholder="Votre adresse courriel"
                   />
                 </div>
               </div>
