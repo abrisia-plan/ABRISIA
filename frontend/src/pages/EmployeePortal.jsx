@@ -38,7 +38,7 @@ export const EmployeeLogin = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/employees/login`, {
+      const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -46,12 +46,21 @@ export const EmployeeLogin = () => {
 
       const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(data.detail || 'Identifiants incorrects');
+      }
+
       if (data.success && data.token) {
+        // Vérifier que c'est bien un employé (pas admin)
+        const user = data.user;
+        if (!['designer', 'constructor', 'employee'].includes(user.role)) {
+          throw new Error('Ce compte n\'est pas un compte employé');
+        }
         localStorage.setItem('employeeToken', data.token);
-        localStorage.setItem('employeeData', JSON.stringify(data.employee));
+        localStorage.setItem('employeeData', JSON.stringify(user));
         toast({
-          title: "✅ Connexion réussie",
-          description: `Bienvenue ${data.employee.name}`
+          title: "Connexion réussie",
+          description: `Bienvenue ${user.name}`
         });
         navigate('/espace-employe');
       } else {
@@ -152,7 +161,6 @@ export const EmployeePortal = () => {
       setLoading(true);
       const token = localStorage.getItem('employeeToken');
       
-      // Charger les devis via l'API admin (l'employé a accès limité)
       const response = await fetch(`${BACKEND_URL}/api/employees/my-projects`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -162,18 +170,7 @@ export const EmployeePortal = () => {
       const data = await response.json();
       
       if (data.success) {
-        setAssignedDevis(data.data || []);
-      } else {
-        // Fallback: essayer l'API admin devis avec filtre
-        const fallbackResponse = await fetch(`${BACKEND_URL}/api/admin/devis?assigned_designer=${encodeURIComponent(employeeName)}`, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('authToken') || token}`
-          }
-        });
-        const fallbackData = await fallbackResponse.json();
-        if (fallbackData.success) {
-          setAssignedDevis(fallbackData.data?.filter(d => d.assignedDesigner === employeeName) || []);
-        }
+        setAssignedDevis(data.projects || []);
       }
     } catch (error) {
       console.error('Erreur chargement devis:', error);

@@ -175,17 +175,7 @@ async def get_employee_projects(
         db = get_database()
         
         # Construire le filtre selon le rôle
-        filter_query = {}
-        if current_user["role"] == "designer":
-            filter_query["assigned_designer"] = current_user["name"]
-        elif current_user["role"] == "constructor":
-            filter_query["assigned_constructor"] = current_user["name"]
-        else:
-            # Pour les employés généraux, voir tous les projets où ils sont mentionnés
-            filter_query["$or"] = [
-                {"assigned_designer": current_user["name"]},
-                {"assigned_constructor": current_user["name"]}
-            ]
+        filter_query = {"assigned_to": current_user["name"]}
         
         # Filtre par statut si spécifié
         if status_filter:
@@ -206,8 +196,8 @@ async def get_employee_projects(
                 "description": project["notes"],
                 "status": project["status"],
                 "priority": project.get("priority", "normal"),
-                "assignedDesigner": project.get("assigned_designer"),
-                "assignedConstructor": project.get("assigned_constructor"),
+                "assignedDesigner": project.get("assigned_to"),
+                "assignedConstructor": project.get("assigned_to"),
                 "startDate": project.get("start_date"),
                 "estimatedBudget": project.get("estimated_budget"),
                 "actualBudget": project.get("actual_budget"),
@@ -251,9 +241,9 @@ async def update_project_status(
         
         # Vérifier les permissions
         has_access = False
-        if current_user["role"] == "designer" and project.get("assigned_designer") == current_user["name"]:
+        if current_user["role"] == "designer" and project.get("assigned_to") == current_user["name"]:
             has_access = True
-        elif current_user["role"] == "constructor" and project.get("assigned_constructor") == current_user["name"]:
+        elif current_user["role"] == "constructor" and project.get("assigned_to") == current_user["name"]:
             has_access = True
         elif current_user["role"] == "admin":
             has_access = True
@@ -341,9 +331,9 @@ async def add_project_note(
         
         # Vérifier les permissions (même logique que update_status)
         has_access = False
-        if current_user["role"] == "designer" and project.get("assigned_designer") == current_user["name"]:
+        if current_user["role"] == "designer" and project.get("assigned_to") == current_user["name"]:
             has_access = True
-        elif current_user["role"] == "constructor" and project.get("assigned_constructor") == current_user["name"]:
+        elif current_user["role"] == "constructor" and project.get("assigned_to") == current_user["name"]:
             has_access = True
         elif current_user["role"] == "admin":
             has_access = True
@@ -413,10 +403,7 @@ async def upload_construction_photo(
         
         # Vérifier les permissions
         has_access = False
-        if current_user["role"] in ["constructor", "designer"] and (
-            project.get("assigned_designer") == current_user["name"] or 
-            project.get("assigned_constructor") == current_user["name"]
-        ):
+        if current_user["role"] in ["constructor", "designer"] and project.get("assigned_to") == current_user["name"]:
             has_access = True
         elif current_user["role"] == "admin":
             has_access = True
@@ -472,16 +459,7 @@ async def get_employee_stats(current_user: dict = Depends(get_current_user)):
         db = get_database()
         
         # Construire le filtre selon le rôle
-        filter_query = {}
-        if current_user["role"] == "designer":
-            filter_query["assigned_designer"] = current_user["name"]
-        elif current_user["role"] == "constructor":
-            filter_query["assigned_constructor"] = current_user["name"]
-        else:
-            filter_query["$or"] = [
-                {"assigned_designer": current_user["name"]},
-                {"assigned_constructor": current_user["name"]}
-            ]
+        filter_query = {"assigned_to": current_user["name"]}
         
         # Compter les projets par statut
         total_projects = await db.devis.count_documents(filter_query)
@@ -554,10 +532,7 @@ async def get_all_employees(
         for employee in employees:
             # Compter les projets assignés
             projects_count = await db.devis.count_documents({
-                "$or": [
-                    {"assigned_designer": employee["name"]},
-                    {"assigned_constructor": employee["name"]}
-                ]
+                "assigned_to": employee["name"]
             })
             
             formatted_employees.append({
