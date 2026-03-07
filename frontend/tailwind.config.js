@@ -15,31 +15,6 @@ module.exports = {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
-  			foret: {
-  				DEFAULT: '#2F5D50',
-  				light: '#3a7466',
-  				dark: '#244a40',
-  			},
-  			bois: {
-  				DEFAULT: '#8B5E3C',
-  				light: '#a47350',
-  				dark: '#6e4a2f',
-  			},
-  			fjord: {
-  				DEFAULT: '#4F6D7A',
-  				light: '#6a8a98',
-  				pale: '#e8eff2',
-  				dark: '#3d5660',
-  			},
-  			pierre: {
-  				DEFAULT: '#6E6E6E',
-  				light: '#8a8a8a',
-  			},
-  			beige: {
-  				DEFAULT: '#F5F3F0',
-  				dark: '#EBE8E3',
-  				light: '#F9F8F6',
-  			},
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -81,12 +56,20 @@ module.exports = {
   		},
   		keyframes: {
   			'accordion-down': {
-  				from: { height: '0' },
-  				to: { height: 'var(--radix-accordion-content-height)' }
+  				from: {
+  					height: '0'
+  				},
+  				to: {
+  					height: 'var(--radix-accordion-content-height)'
+  				}
   			},
   			'accordion-up': {
-  				from: { height: 'var(--radix-accordion-content-height)' },
-  				to: { height: '0' }
+  				from: {
+  					height: 'var(--radix-accordion-content-height)'
+  				},
+  				to: {
+  					height: '0'
+  				}
   			}
   		},
   		animation: {

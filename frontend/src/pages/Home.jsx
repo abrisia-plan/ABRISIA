@@ -69,7 +69,7 @@ const Home = () => {
 
   const getIcon = (iconName) => {
     const IconComponent = Icons[iconName] || Icons.Circle;
-    return <IconComponent className="w-8 h-8 text-foret" />;
+    return <IconComponent className="w-8 h-8 text-teal-800" />;
   };
 
   return (
@@ -96,12 +96,12 @@ const Home = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link to="#inspiration">
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-foret-dark px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300">
+              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-slate-800 px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300">
                 Voir l'inspiration
               </Button>
             </Link>
             <Link to="/devis">
-              <Button size="lg" className="bg-foret hover:bg-foret-dark text-white px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105">
+              <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105">
                 Demander un devis
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -111,28 +111,28 @@ const Home = () => {
       </section>
 
       {/* Section "Ce qu'on fait" */}
-      <section className="py-20 bg-beige">
+      <section className="py-20 bg-stone-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-foret-dark mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
               Nos services de dessin
             </h2>
-            <p className="text-lg text-pierre max-w-4xl mx-auto leading-relaxed">
+            <p className="text-lg text-slate-600 max-w-4xl mx-auto leading-relaxed">
               Plans professionnels conformes au Code du bâtiment du Québec.
-              <strong className="text-foret"> Jusqu'à 600m² de plancher (6000 pi²).</strong>
+              <strong className="text-teal-800"> Jusqu'à 600m² de plancher (6000 pi²).</strong>
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service) => (
-              <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 border-beige-dark hover:border-foret-light bg-beige-light">
+              <Card key={service.id} className="group hover:shadow-xl transition-all duration-300 border-stone-200 hover:border-teal-300 bg-stone-50">
                 <CardContent className="p-8 text-center">
-                  <div className="w-16 h-16 bg-beige group-hover:bg-fjord-pale rounded-full flex items-center justify-center mx-auto mb-6 transition-colors">
+                  <div className="w-16 h-16 bg-teal-50 group-hover:bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors">
                     {getIcon(service.icon)}
                   </div>
-                  <h3 className="text-xl font-semibold text-foret-dark mb-3">{service.name}</h3>
-                  <p className="text-pierre leading-relaxed text-sm mb-4">{service.description}</p>
-                  <p className="text-lg font-semibold text-foret">{service.price}</p>
+                  <h3 className="text-xl font-semibold text-slate-800 mb-3">{service.name}</h3>
+                  <p className="text-slate-600 leading-relaxed text-sm mb-4">{service.description}</p>
+                  <p className="text-lg font-semibold text-teal-800">{service.price}</p>
                 </CardContent>
               </Card>
             ))}
@@ -140,7 +140,7 @@ const Home = () => {
 
           <div className="text-center mt-12">
             <Link to="/devis">
-              <Button size="lg" className="bg-foret hover:bg-foret-dark text-white px-8 py-4 text-lg font-semibold rounded-full">
+              <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full">
                 Voir nos tarifs détaillés
               </Button>
             </Link>
@@ -149,23 +149,23 @@ const Home = () => {
       </section>
 
       {/* Section "Notre approche" */}
-      <section className="py-20 bg-beige/80">
+      <section className="py-20 bg-stone-100/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-foret-dark mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
               Notre approche
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {approaches.map((approach) => (
-              <Card key={approach.id} className="text-center border-beige-dark hover:shadow-lg transition-shadow bg-beige-light">
+              <Card key={approach.id} className="text-center border-stone-200 hover:shadow-lg transition-shadow bg-stone-50">
                 <CardContent className="p-8">
-                  <div className="w-16 h-16 bg-fjord-pale rounded-full flex items-center justify-center mx-auto mb-6">
+                  <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
                     {getIcon(approach.icon)}
                   </div>
-                  <h3 className="text-xl font-semibold text-foret-dark mb-4">{approach.title}</h3>
-                  <p className="text-pierre leading-relaxed">{approach.description}</p>
+                  <h3 className="text-xl font-semibold text-slate-800 mb-4">{approach.title}</h3>
+                  <p className="text-slate-600 leading-relaxed">{approach.description}</p>
                 </CardContent>
               </Card>
             ))}
@@ -174,13 +174,13 @@ const Home = () => {
       </section>
 
       {/* Section Inspiration (teaser avec rotation par catégorie) */}
-      <section id="inspiration" className="py-20 bg-beige-light">
+      <section id="inspiration" className="py-20 bg-stone-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-foret-dark mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
               Inspirations par catégorie
             </h2>
-            <p className="text-xl text-pierre mb-8">
+            <p className="text-xl text-slate-600 mb-8">
               Découvrez des idées et inspirations classées par type de projet
             </p>
           </div>
@@ -190,7 +190,7 @@ const Home = () => {
             {getOneProjectPerCategory().map((project) => (
               <Card 
                 key={project.category} 
-                className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-beige-dark cursor-pointer bg-beige-light"
+                className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer bg-stone-50"
                 onClick={() => handleCategoryClick(project.category)}
               >
                 <div className="relative overflow-hidden h-48">
@@ -200,7 +200,7 @@ const Home = () => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="bg-foret text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <span className="bg-teal-800 text-white px-3 py-1 rounded-full text-sm font-medium">
                       {project.category}
                     </span>
                   </div>
@@ -211,10 +211,10 @@ const Home = () => {
                   </div>
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold text-foret-dark mb-2 group-hover:text-foret transition-colors">
+                  <h3 className="text-lg font-semibold text-slate-800 mb-2 group-hover:text-teal-800 transition-colors">
                     {project.category}
                   </h3>
-                  <p className="text-pierre text-sm leading-relaxed">
+                  <p className="text-slate-600 text-sm leading-relaxed">
                     {getCategoryDescription(project.category)}
                   </p>
                 </CardContent>
@@ -224,7 +224,7 @@ const Home = () => {
 
           <div className="text-center">
             <Link to="/inspiration">
-              <Button size="lg" className="bg-foret hover:bg-foret-dark text-white px-8 py-4 text-lg font-semibold rounded-full">
+              <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full">
                 Voir toutes les inspirations par catégorie
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -234,13 +234,13 @@ const Home = () => {
       </section>
 
       {/* Section "Comment ça marche ?" */}
-      <section className="py-20 bg-beige">
+      <section className="py-20 bg-stone-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-foret-dark mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
               Comment ça marche ?
             </h2>
-            <p className="text-xl text-pierre">
+            <p className="text-xl text-slate-600">
               Un processus simple et transparent pour concrétiser votre projet
             </p>
           </div>
@@ -250,18 +250,18 @@ const Home = () => {
               <div key={step.id} className="text-center relative">
                 {/* Connecteur */}
                 {index < processSteps.length - 1 && (
-                  <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-beige-dark -z-10">
+                  <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-stone-200 -z-10">
                     <div className="w-full h-full bg-gradient-to-r from-teal-300 to-transparent"></div>
                   </div>
                 )}
                 
                 {/* Étape */}
-                <div className="bg-beige-light p-8 rounded-2xl shadow-lg border border-beige-dark hover:shadow-xl transition-shadow">
-                  <div className="w-16 h-16 bg-foret text-white rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold">
+                <div className="bg-stone-50 p-8 rounded-2xl shadow-lg border border-stone-200 hover:shadow-xl transition-shadow">
+                  <div className="w-16 h-16 bg-teal-800 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold">
                     {step.id}
                   </div>
-                  <h3 className="text-lg font-semibold text-foret-dark mb-4">{step.title}</h3>
-                  <p className="text-pierre text-sm leading-relaxed">{step.description}</p>
+                  <h3 className="text-lg font-semibold text-slate-800 mb-4">{step.title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">{step.description}</p>
                 </div>
               </div>
             ))}
@@ -270,32 +270,32 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-[#192A32] text-white">
+      <section className="py-20 bg-slate-800 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
               Témoignages Clients
             </h2>
-            <p className="text-xl text-beige/80">
+            <p className="text-xl text-slate-300">
               Ce que disent nos clients satisfaits
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial) => (
-              <Card key={testimonial.id} className="bg-[#1e3640] border-[#2a4550] text-white hover:shadow-lg transition-shadow">
+              <Card key={testimonial.id} className="bg-slate-700 border-slate-600 text-white hover:shadow-lg transition-shadow">
                 <CardContent className="p-8">
                   <div className="flex items-center mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
                       <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <p className="text-beige/70 mb-6 italic leading-relaxed">
+                  <p className="text-slate-200 mb-6 italic leading-relaxed">
                     "{testimonial.text}"
                   </p>
                   <div>
                     <p className="font-semibold text-white">{testimonial.name}</p>
-                    <p className="text-sm text-pierre-light">{testimonial.project}</p>
+                    <p className="text-sm text-slate-400">{testimonial.project}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -305,16 +305,16 @@ const Home = () => {
       </section>
 
       {/* Bandeau CTA */}
-      <section className="py-20 bg-gradient-to-b from-[#1A7A74] to-[#165A57]">
+      <section className="py-20 bg-gradient-to-r from-teal-800 to-teal-900">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Un projet en tête ?
           </h2>
-          <p className="text-xl text-beige/80 mb-10 leading-relaxed">
+          <p className="text-xl text-teal-100 mb-10 leading-relaxed">
             Parlons-en ! Consultation gratuite pour donner vie à vos idées.
           </p>
           <Link to="/devis">
-            <Button size="lg" variant="secondary" className="bg-white text-foret hover:bg-beige px-12 py-4 text-xl font-semibold rounded-full transform hover:scale-105 transition-all duration-300">
+            <Button size="lg" variant="secondary" className="bg-white text-teal-800 hover:bg-teal-50 px-12 py-4 text-xl font-semibold rounded-full transform hover:scale-105 transition-all duration-300">
               Demander un devis
               <ArrowRight className="ml-3 h-6 w-6" />
             </Button>
