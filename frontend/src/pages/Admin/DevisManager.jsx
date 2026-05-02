@@ -500,6 +500,63 @@ const DevisManager = () => {
                       </div>
                     </div>
                   )}
+
+                  <div className="grid grid-cols-2 gap-3 mb-3 text-sm">
+                    {selectedDevis.representationType && (
+                      <div>
+                        <span className="text-gray-600">Representation:</span>
+                        <p className="font-medium">
+                          {selectedDevis.representationType === 'technique' && 'Plans techniques'}
+                          {selectedDevis.representationType === 'visuel' && 'Visuelle/esthétique'}
+                          {selectedDevis.representationType === 'both' && 'Technique + Visuel'}
+                        </p>
+                      </div>
+                    )}
+                    {selectedDevis.responsePreference && (
+                      <div>
+                        <span className="text-gray-600">Preference reponse:</span>
+                        <p className="font-medium">
+                          {selectedDevis.responsePreference === 'phone' && 'Telephone'}
+                          {selectedDevis.responsePreference === 'email' && 'Courriel'}
+                          {selectedDevis.responsePreference === 'video' && 'Videoconference'}
+                          {selectedDevis.responsePreference === 'flexible' && 'Flexible'}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {selectedDevis.architecturalStyles && selectedDevis.architecturalStyles.length > 0 && (
+                    <div className="mb-3">
+                      <span className="text-gray-600 text-sm">Styles architecturaux:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {selectedDevis.architecturalStyles.map((style, idx) => (
+                          <Badge key={idx} variant="outline" className="text-teal-700 border-teal-300">
+                            {style}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedDevis.files && selectedDevis.files.length > 0 && (
+                    <div className="mb-3">
+                      <span className="text-gray-600 text-sm">Fichiers joints:</span>
+                      <div className="space-y-1 mt-1">
+                        {selectedDevis.files.map((file, idx) => (
+                          <a 
+                            key={idx}
+                            href={`${BACKEND_URL}${file.storage_path?.startsWith('/api/') ? file.storage_path : `/api/files/${file.storage_path}`}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-sm text-teal-700 hover:text-teal-900"
+                          >
+                            <FileText className="w-3 h-3" />
+                            {file.original_filename}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   
                   {selectedDevis.notes && (
                     <div>

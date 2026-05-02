@@ -258,17 +258,20 @@ async def upload_image(
     file: UploadFile = File(...),
     current_user: dict = Depends(require_admin)
 ):
-    """Upload d'une image pour les projets"""
+    """Upload d'une image vers le stockage permanent"""
     try:
+        from storage_service import upload_file as storage_upload
+        
         # Vérifier l'extension du fichier
         file_extension = Path(file.filename).suffix.lower()
-        if file_extension not in ALLOWED_EXTENSIONS:
+        allowed = ALLOWED_EXTENSIONS | {'.pdf', '.dwg', '.dxf', '.doc', '.docx'}
+        if file_extension not in allowed:
             raise HTTPException(
                 status_code=400,
-                detail=f"Type de fichier non autorisé. Extensions autorisées: {', '.join(ALLOWED_EXTENSIONS)}"
+                detail=f"Type de fichier non autorise. Extensions autorisees: {', '.join(allowed)}"
             )
         
-        # Vérifier la taille du fichier
+        # Lire le contenu
         content = await file.read()
         if len(content) > MAX_FILE_SIZE:
             raise HTTPException(
@@ -276,32 +279,42 @@ async def upload_image(
                 detail=f"Fichier trop volumineux. Taille maximum: {MAX_FILE_SIZE // 1024 // 1024}MB"
             )
         
-        # Générer un nom de fichier unique
-        unique_filename = f"{uuid.uuid4()}{file_extension}"
-        file_path = UPLOAD_DIR / unique_filename
+        # Upload vers le stockage permanent
+        result = storage_upload(content, file.filename, folder="images")
         
-        # Sauvegarder le fichier
-        with open(file_path, "wb") as buffer:
-            buffer.write(content)
+        # Sauvegarder la reference en DB
+        db = get_database()
+        await db.files.insert_one({
+            "id": str(uuid.uuid4()),
+            "storage_path": result["storage_path"],
+            "original_filename": result["original_filename"],
+            "content_type": result["content_type"],
+            "size": result["size"],
+            "folder": "images",
+            "is_deleted": False,
+            "uploaded_by": current_user.get("name", "admin"),
+            "created_at": datetime.utcnow().isoformat()
+        })
         
-        # Retourner l'URL relative
-        image_url = f"/uploads/{unique_filename}"
+        # Retourner le chemin de stockage comme URL
+        image_url = f"/api/files/{result['storage_path']}"
         
-        logger.info(f"✅ Image uploadée: {unique_filename} par {current_user['name']}")
+        logger.info(f"Image uploadee vers stockage permanent: {result['storage_path']}")
         
         return {
             "success": True,
             "imageUrl": image_url,
-            "message": "Image uploadée avec succès"
+            "storagePath": result["storage_path"],
+            "message": "Image uploadee avec succes"
         }
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Erreur upload image: {e}")
+        logger.error(f"Erreur upload image: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erreur lors de l'upload de l'image"
+            detail=f"Erreur lors de l'upload: {str(e)}"
         )
 
 @router.get("/categories")

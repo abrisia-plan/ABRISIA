@@ -337,10 +337,14 @@ class ProductUpdate(BaseModel):
     surface_area: Optional[str] = None
     dimensions: Optional[str] = None
     rooms: Optional[str] = None
+    building_type: Optional[str] = None
     includes: Optional[List[str]] = None
+    file_formats: Optional[List[str]] = None
+    pages_count: Optional[int] = None
     main_image: Optional[str] = None
     gallery_images: Optional[List[str]] = None
     video_url: Optional[str] = None
+    slug: Optional[str] = None
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
     tags: Optional[List[str]] = None
@@ -348,7 +352,6 @@ class ProductUpdate(BaseModel):
     is_featured: Optional[bool] = None
     difficulty_level: Optional[str] = None
     discount_percentage: Optional[float] = None
-    # Nouveaux champs Kits
     designer_name: Optional[str] = None
     plan_file_url: Optional[str] = None
     materials_list_enabled: Optional[bool] = None
@@ -601,7 +604,11 @@ class DevisCreate(BaseModel):
     telephone: Optional[str] = ""
     projectType: str
     plansChoisis: List[str]
+    representationType: Optional[str] = ""
+    responsePreference: Optional[str] = ""
+    architecturalStyles: Optional[List[str]] = []
     notes: str
+    files: Optional[List[dict]] = []
 
 class DevisUpdate(BaseModel):
     status: Optional[str] = None

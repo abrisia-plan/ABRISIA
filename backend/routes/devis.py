@@ -20,14 +20,18 @@ async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTask
     try:
         db = get_database()
         
-        # Créer le document devis
+        # Créer le document devis avec TOUTES les données
         devis_doc = {
             "nom": devis_data.nom,
             "email": devis_data.email,
             "telephone": devis_data.telephone or "",
             "project_type": devis_data.projectType,
             "plans_choisis": devis_data.plansChoisis,
+            "representation_type": devis_data.representationType or "",
+            "response_preference": devis_data.responsePreference or "",
+            "architectural_styles": devis_data.architecturalStyles or [],
             "notes": devis_data.notes,
+            "files": devis_data.files or [],
             "status": "En attente",
             "assigned_to": None,
             "created_at": datetime.utcnow(),
@@ -36,27 +40,47 @@ async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTask
         
         # Insérer en base
         result = await db.devis.insert_one(devis_doc)
+        devis_id = str(result.inserted_id)
+        
+        # Lier les fichiers uploadés au devis
+        if devis_data.files:
+            for f in devis_data.files:
+                await db.files.update_one(
+                    {"storage_path": f.get("storage_path")},
+                    {"$set": {"linked_to": devis_id, "linked_type": "devis"}}
+                )
+        
+        # Préparer les données pour l'email (inclure tous les champs)
+        email_data = {
+            "nom": devis_data.nom,
+            "email": devis_data.email,
+            "telephone": devis_data.telephone or "",
+            "projectType": devis_data.projectType,
+            "plansChoisis": devis_data.plansChoisis,
+            "representationType": devis_data.representationType or "",
+            "responsePreference": devis_data.responsePreference or "",
+            "architecturalStyles": devis_data.architecturalStyles or [],
+            "notes": devis_data.notes,
+            "files_count": len(devis_data.files) if devis_data.files else 0
+        }
         
         # Envoyer la notification email en arrière-plan
-        background_tasks.add_task(
-            email_service.send_devis_notification, 
-            devis_doc
-        )
+        background_tasks.add_task(email_service.send_devis_notification, email_data)
         
-        logger.info(f"✅ Nouveau devis soumis par {devis_data.nom} ({devis_data.email}) - Email de notification programmé")
+        logger.info(f"Nouveau devis soumis par {devis_data.nom} ({devis_data.email})")
         
         return DevisResponse(
             success=True,
-            message="Devis soumis avec succès. Nous vous contacterons sous 24h.",
+            message="Devis soumis avec succes. Nous vous contacterons sous 24h.",
             devis={
-                "id": str(result.inserted_id),
+                "id": devis_id,
                 "status": "En attente",
                 "createdAt": devis_doc["created_at"].isoformat()
             }
         )
         
     except Exception as e:
-        logger.error(f"❌ Erreur soumission devis: {e}")
+        logger.error(f"Erreur soumission devis: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erreur lors de la soumission du devis"
@@ -101,9 +125,13 @@ async def get_all_devis(
                 "nom": devis["nom"],
                 "email": devis["email"],
                 "telephone": devis.get("telephone", ""),
-                "projectType": devis["project_type"],
-                "plansChoisis": devis["plans_choisis"],
-                "notes": devis["notes"],
+                "projectType": devis.get("project_type", ""),
+                "plansChoisis": devis.get("plans_choisis", []),
+                "representationType": devis.get("representation_type", ""),
+                "responsePreference": devis.get("response_preference", ""),
+                "architecturalStyles": devis.get("architectural_styles", []),
+                "notes": devis.get("notes", ""),
+                "files": devis.get("files", []),
                 "status": devis["status"],
                 "assignedTo": devis.get("assigned_to"),
                 "createdAt": devis["created_at"].isoformat(),

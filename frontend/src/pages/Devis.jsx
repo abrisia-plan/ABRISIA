@@ -7,9 +7,8 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Checkbox } from '../components/ui/checkbox';
 import { projectTypes } from '../data/mock';
-import { Send, CheckCircle, Loader2 } from 'lucide-react';
+import { Send, CheckCircle, Loader2, Upload, X, FileText } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
-import { devisService, handleApiError } from '../services/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -18,12 +17,16 @@ const Devis = () => {
   const [searchParams] = useSearchParams();
   const [planOptions, setPlanOptions] = useState([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
+  const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
     nom: '',
     email: '',
     telephone: '',
     projectType: '',
     plansChoisis: [],
+    representationType: '',
+    responsePreference: '',
+    architecturalStyles: [],
     notes: ''
   });
 
@@ -76,33 +79,79 @@ const Devis = () => {
     setIsSubmitting(true);
 
     try {
-      // Envoyer vers l'API réelle
-      const response = await devisService.submit(formData);
+      // Upload fichiers d'abord si présents
+      let uploadedFiles = [];
+      if (files.length > 0) {
+        const formDataUpload = new FormData();
+        files.forEach(f => formDataUpload.append('files', f));
+        formDataUpload.append('folder', 'devis');
+        formDataUpload.append('linked_type', 'devis');
+        
+        const uploadRes = await fetch(`${BACKEND_URL}/api/upload`, {
+          method: 'POST',
+          body: formDataUpload
+        });
+        const uploadData = await uploadRes.json();
+        if (uploadData.success) {
+          uploadedFiles = uploadData.files;
+        }
+      }
+
+      // Envoyer le devis avec les fichiers liés
+      const payload = {
+        ...formData,
+        files: uploadedFiles.map(f => ({ storage_path: f.storage_path, original_filename: f.original_filename, content_type: f.content_type }))
+      };
+
+      const response = await fetch(`${BACKEND_URL}/api/devis`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
       
-      if (response.success) {
+      if (data.success) {
         toast({
-          title: "Demande envoyée !",
-          description: response.message || "Nous vous contacterons sous 24h à abrisia0plan@gmail.com",
+          title: "Demande envoyee !",
+          description: data.message || "Nous vous contacterons sous 24h",
         });
         
-        // Reset form
         setFormData({
-          nom: '', email: '', telephone: '', projectType: '', plansChoisis: [], notes: ''
+          nom: '', email: '', telephone: '', projectType: '', plansChoisis: [], 
+          representationType: '', responsePreference: '', architecturalStyles: [], notes: ''
         });
+        setFiles([]);
       } else {
-        throw new Error(response.message || 'Erreur lors de l\'envoi');
+        throw new Error(data.message || 'Erreur lors de l\'envoi');
       }
       
     } catch (error) {
-      const errorMessage = handleApiError(error);
       toast({
         title: "Erreur",
-        description: errorMessage,
+        description: error.message || "Erreur lors de l'envoi du devis",
         variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleFileChange = (e) => {
+    const newFiles = Array.from(e.target.files);
+    setFiles(prev => [...prev, ...newFiles]);
+  };
+
+  const removeFile = (index) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleStyleChange = (style, checked) => {
+    setFormData(prev => ({
+      ...prev,
+      architecturalStyles: checked 
+        ? [...prev.architecturalStyles, style]
+        : prev.architecturalStyles.filter(s => s !== style)
+    }));
   };
 
   const calculateTotal = () => {
@@ -268,42 +317,26 @@ const Devis = () => {
                     <div className="space-y-3">
                       <h4 className="font-medium text-slate-700">Que recherchez-vous principalement ?</h4>
                       <div className="space-y-2">
-                        <label className="flex items-start space-x-3 cursor-pointer">
-                          <input 
-                            type="radio" 
-                            name="representationType" 
-                            value="technique"
-                            className="mt-1 text-teal-600 focus:ring-teal-500"
-                          />
-                          <div>
-                            <span className="text-sm font-medium text-slate-700">Plans techniques détaillés</span>
-                            <p className="text-xs text-slate-600">Dimensions précises, détails construction, matériaux spécifiés</p>
-                          </div>
-                        </label>
-                        <label className="flex items-start space-x-3 cursor-pointer">
-                          <input 
-                            type="radio" 
-                            name="representationType" 
-                            value="visuel"
-                            className="mt-1 text-teal-600 focus:ring-teal-500"
-                          />
-                          <div>
-                            <span className="text-sm font-medium text-slate-700">Représentation visuelle/esthétique</span>
-                            <p className="text-xs text-slate-600">Images 3D, croquis, visualisation de votre maison de rêve</p>
-                          </div>
-                        </label>
-                        <label className="flex items-start space-x-3 cursor-pointer">
-                          <input 
-                            type="radio" 
-                            name="representationType" 
-                            value="both"
-                            className="mt-1 text-teal-600 focus:ring-teal-500"
-                          />
-                          <div>
-                            <span className="text-sm font-medium text-slate-700">Les deux (technique + visuel)</span>
-                            <p className="text-xs text-slate-600">Plans de construction ET visualisations</p>
-                          </div>
-                        </label>
+                        {[
+                          { value: 'technique', label: 'Plans techniques détaillés', desc: 'Dimensions précises, détails construction, matériaux spécifiés' },
+                          { value: 'visuel', label: 'Représentation visuelle/esthétique', desc: 'Images 3D, croquis, visualisation de votre maison de rêve' },
+                          { value: 'both', label: 'Les deux (technique + visuel)', desc: 'Plans de construction ET visualisations' },
+                        ].map(opt => (
+                          <label key={opt.value} className="flex items-start space-x-3 cursor-pointer">
+                            <input 
+                              type="radio" 
+                              name="representationType" 
+                              value={opt.value}
+                              checked={formData.representationType === opt.value}
+                              onChange={(e) => setFormData(prev => ({ ...prev, representationType: e.target.value }))}
+                              className="mt-1 text-teal-600 focus:ring-teal-500"
+                            />
+                            <div>
+                              <span className="text-sm font-medium text-slate-700">{opt.label}</span>
+                              <p className="text-xs text-slate-600">{opt.desc}</p>
+                            </div>
+                          </label>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -311,54 +344,27 @@ const Devis = () => {
                   <div className="border-t border-blue-200 pt-4">
                     <h4 className="font-medium text-slate-700 mb-3">Comment préférez-vous recevoir la réponse à votre devis ?</h4>
                     <div className="space-y-2">
-                      <label className="flex items-start space-x-3 cursor-pointer">
-                        <input 
-                          type="radio" 
-                          name="responsePreference" 
-                          value="phone"
-                          className="mt-1 text-teal-600 focus:ring-teal-500"
-                        />
-                        <div>
-                          <span className="text-sm font-medium text-slate-700">Appel téléphonique</span>
-                          <p className="text-xs text-slate-600">Discussion directe pour répondre à vos questions</p>
-                        </div>
-                      </label>
-                      <label className="flex items-start space-x-3 cursor-pointer">
-                        <input 
-                          type="radio" 
-                          name="responsePreference" 
-                          value="email"
-                          className="mt-1 text-teal-600 focus:ring-teal-500"
-                        />
-                        <div>
-                          <span className="text-sm font-medium text-slate-700">Par courriel écrit</span>
-                          <p className="text-xs text-slate-600">Devis détaillé par écrit avec documents joints</p>
-                        </div>
-                      </label>
-                      <label className="flex items-start space-x-3 cursor-pointer">
-                        <input 
-                          type="radio" 
-                          name="responsePreference" 
-                          value="video"
-                          className="mt-1 text-teal-600 focus:ring-teal-500"
-                        />
-                        <div>
-                          <span className="text-sm font-medium text-slate-700">Vidéoconférence</span>
-                          <p className="text-xs text-slate-600">Présentation visuelle avec partage d'écran (Zoom, Teams, etc.)</p>
-                        </div>
-                      </label>
-                      <label className="flex items-start space-x-3 cursor-pointer">
-                        <input 
-                          type="radio" 
-                          name="responsePreference" 
-                          value="flexible"
-                          className="mt-1 text-teal-600 focus:ring-teal-500"
-                        />
-                        <div>
-                          <span className="text-sm font-medium text-slate-700">À votre convenance</span>
-                          <p className="text-xs text-slate-600">Nous vous contacterons selon vos disponibilités</p>
-                        </div>
-                      </label>
+                      {[
+                        { value: 'phone', label: 'Appel téléphonique', desc: 'Discussion directe pour répondre à vos questions' },
+                        { value: 'email', label: 'Par courriel écrit', desc: 'Devis détaillé par écrit avec documents joints' },
+                        { value: 'video', label: 'Vidéoconférence', desc: 'Présentation visuelle avec partage d\'écran (Zoom, Teams, etc.)' },
+                        { value: 'flexible', label: 'À votre convenance', desc: 'Nous vous contacterons selon vos disponibilités' },
+                      ].map(opt => (
+                        <label key={opt.value} className="flex items-start space-x-3 cursor-pointer">
+                          <input 
+                            type="radio" 
+                            name="responsePreference" 
+                            value={opt.value}
+                            checked={formData.responsePreference === opt.value}
+                            onChange={(e) => setFormData(prev => ({ ...prev, responsePreference: e.target.value }))}
+                            className="mt-1 text-teal-600 focus:ring-teal-500"
+                          />
+                          <div>
+                            <span className="text-sm font-medium text-slate-700">{opt.label}</span>
+                            <p className="text-xs text-slate-600">{opt.desc}</p>
+                          </div>
+                        </label>
+                      ))}
                     </div>
                   </div>
 
@@ -370,12 +376,59 @@ const Devis = () => {
                         'Minimaliste', 'Industriel', 'Scandinave', 'Autre (à préciser)'
                       ].map((style) => (
                         <label key={style} className="flex items-center space-x-2 cursor-pointer bg-white px-3 py-1 rounded border border-blue-200 hover:bg-blue-50">
-                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
+                          <input 
+                            type="checkbox" 
+                            checked={formData.architecturalStyles.includes(style)}
+                            onChange={(e) => handleStyleChange(style, e.target.checked)}
+                            className="text-teal-600 focus:ring-teal-500" 
+                          />
                           <span className="text-sm text-slate-700">{style}</span>
                         </label>
                       ))}
                     </div>
                   </div>
+                </div>
+
+                {/* Upload fichiers */}
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-slate-800 border-b border-stone-200 pb-2">
+                    Fichiers joints (optionnel)
+                  </h3>
+                  <p className="text-sm text-slate-600">
+                    Photos du terrain, croquis, plans existants, PDF, DWG...
+                  </p>
+                  <div className="border-2 border-dashed border-stone-300 rounded-lg p-6 text-center hover:border-teal-400 transition-colors">
+                    <input
+                      type="file"
+                      multiple
+                      accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.dwg,.dxf,.doc,.docx"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      id="devis-files"
+                      data-testid="devis-file-input"
+                    />
+                    <label htmlFor="devis-files" className="cursor-pointer">
+                      <Upload className="mx-auto h-10 w-10 text-slate-400 mb-3" />
+                      <p className="text-sm font-medium text-slate-700">Cliquez pour ajouter des fichiers</p>
+                      <p className="text-xs text-slate-500 mt-1">JPG, PNG, PDF, DWG, DOC (max 50 MB par fichier)</p>
+                    </label>
+                  </div>
+                  {files.length > 0 && (
+                    <div className="space-y-2">
+                      {files.map((file, idx) => (
+                        <div key={idx} className="flex items-center justify-between bg-stone-50 rounded-lg px-4 py-2">
+                          <div className="flex items-center gap-2">
+                            <FileText className="h-4 w-4 text-teal-600" />
+                            <span className="text-sm text-slate-700">{file.name}</span>
+                            <span className="text-xs text-slate-400">({(file.size / 1024).toFixed(0)} KB)</span>
+                          </div>
+                          <button type="button" onClick={() => removeFile(idx)} className="text-red-400 hover:text-red-600">
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Zone de notes */}

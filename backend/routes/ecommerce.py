@@ -402,9 +402,9 @@ async def update_product(
         
         update_fields = {"updated_at": datetime.utcnow()}
         
+        # Include ALL explicitly set fields, even if None (to allow clearing values)
         for field, value in update_data.dict(exclude_unset=True).items():
-            if value is not None:
-                update_fields[field] = value
+            update_fields[field] = value
         
         result = await db.products.update_one(
             {"_id": ObjectId(product_id)},
@@ -412,22 +412,22 @@ async def update_product(
         )
         
         if result.matched_count == 0:
-            raise HTTPException(status_code=404, detail="Produit non trouvé")
+            raise HTTPException(status_code=404, detail="Produit non trouve")
         
-        logger.info(f"✅ Produit {product_id} mis à jour par {current_user['name']}")
+        logger.info(f"Produit {product_id} mis a jour par {current_user['name']}")
         
         return SuccessResponse(
             success=True,
-            message="Produit mis à jour avec succès"
+            message="Produit mis a jour avec succes"
         )
         
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"❌ Erreur mise à jour produit: {e}")
+        logger.error(f"Erreur mise a jour produit: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erreur lors de la mise à jour du produit"
+            detail="Erreur lors de la mise a jour du produit"
         )
 
 @router.delete("/admin/products/{product_id}", response_model=SuccessResponse)

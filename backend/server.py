@@ -19,18 +19,24 @@ logger = logging.getLogger(__name__)
 
 # Imports des modules
 from database import connect_to_mongo, close_mongo_connection
-from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments
+from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, files
 
 # Lifespan manager pour la DB
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     await connect_to_mongo()
-    logger.info("🚀 Application démarrée")
+    # Init object storage
+    try:
+        from storage_service import init_storage
+        init_storage()
+    except Exception as e:
+        logger.warning(f"Object storage init: {e}")
+    logger.info("Application demarree")
     yield
     # Shutdown
     await close_mongo_connection()
-    logger.info("🛑 Application arrêtée")
+    logger.info("Application arretee")
 
 # Créer l'application FastAPI
 app = FastAPI(
@@ -84,6 +90,9 @@ api_router.include_router(content.router)
 
 # Routes paiements Stripe
 api_router.include_router(payments.router)
+
+# Routes fichiers/upload
+api_router.include_router(files.router)
 
 # Inclure le router principal dans l'app
 app.include_router(api_router)

@@ -196,52 +196,50 @@ const KitsManager = () => {
   };
 
   const handleImageUpload = async (e, isGallery = false) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const selectedFiles = Array.from(e.target.files || []);
+    if (!selectedFiles.length) return;
 
     setUploading(true);
 
     try {
-      const formDataUpload = new FormData();
-      formDataUpload.append('file', file);
-      
-      const token = localStorage.getItem('authToken');
-      const response = await fetch(`${BACKEND_URL}/api/admin/upload-image`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formDataUpload
-      });
-      
-      const data = await response.json();
-      
-      if (data.success && data.imageUrl) {
-        let finalImageUrl = data.imageUrl;
-        if (finalImageUrl.startsWith('/uploads/') || finalImageUrl.includes('localhost')) {
-          const filename = finalImageUrl.split('/uploads/').pop();
-          finalImageUrl = `/uploads/${filename}`;  // Store relative URL
-        }
+      for (const file of selectedFiles) {
+        const formDataUpload = new FormData();
+        formDataUpload.append('file', file);
         
-        if (isGallery) {
-          setFormData(prev => ({
-            ...prev,
-            gallery_images: [...prev.gallery_images, finalImageUrl]
-          }));
-        } else {
-          handleInputChange('main_image', finalImageUrl);
-        }
-        toast({
-          title: "✅ Image uploadée",
-          description: "L'image a été uploadée avec succès"
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`${BACKEND_URL}/api/admin/upload-image`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formDataUpload
         });
-      } else {
-        throw new Error(data.detail || 'Erreur upload');
+        
+        const data = await response.json();
+        
+        if (data.success && data.imageUrl) {
+          const finalImageUrl = data.imageUrl;
+          
+          if (isGallery) {
+            setFormData(prev => ({
+              ...prev,
+              gallery_images: [...prev.gallery_images, finalImageUrl]
+            }));
+          } else {
+            handleInputChange('main_image', finalImageUrl);
+          }
+        } else {
+          throw new Error(data.detail || 'Erreur upload');
+        }
       }
+      toast({
+        title: "Image(s) uploadee(s)",
+        description: `${selectedFiles.length} fichier(s) uploade(s) avec succes`
+      });
     } catch (error) {
       toast({
         title: "Erreur",
-        description: "Impossible d'uploader l'image: " + error.message,
+        description: "Impossible d'uploader: " + error.message,
         variant: "destructive"
       });
     } finally {
@@ -275,16 +273,10 @@ const KitsManager = () => {
       const data = await response.json();
       
       if (data.success && data.imageUrl) {
-        let finalUrl = data.imageUrl;
-        if (finalUrl.startsWith('/uploads/') || finalUrl.includes('localhost')) {
-          const filename = finalUrl.split('/uploads/').pop();
-          finalUrl = `/uploads/${filename}`;  // Store relative URL
-        }
-        
-        handleInputChange(fieldName, finalUrl);
+        handleInputChange(fieldName, data.imageUrl);
         toast({
-          title: "✅ Fichier uploadé",
-          description: `Le fichier ${fileType === 'plan' ? 'du plan' : 'de la liste matériaux'} a été uploadé`
+          title: "Fichier uploade",
+          description: `Le fichier ${fileType === 'plan' ? 'du plan' : 'de la liste materiaux'} a ete uploade`
         });
       } else {
         throw new Error(data.detail || 'Erreur upload');

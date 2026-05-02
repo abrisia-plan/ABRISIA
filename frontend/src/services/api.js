@@ -8,12 +8,11 @@ export const resolveImageUrl = (url) => {
   if (!url) return null;
   // Si c'est déjà une URL absolue externe (https://), la garder telle quelle
   if (url.startsWith('http://') || url.startsWith('https://')) {
-    // Si c'est une ancienne URL avec un domaine différent, extraire le fichier
-    if (url.includes('/uploads/') && !url.includes(BACKEND_URL)) {
-      const filename = url.split('/uploads/').pop();
-      return `${BACKEND_URL}/uploads/${filename}`;
-    }
     return url;
+  }
+  // Si c'est un chemin API (stockage permanent /api/files/...)
+  if (url.startsWith('/api/files/')) {
+    return `${BACKEND_URL}${url}`;
   }
   // Si c'est une URL relative (/uploads/...), la résoudre avec BACKEND_URL
   if (url.startsWith('/uploads/')) {
