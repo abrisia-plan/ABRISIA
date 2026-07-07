@@ -12,7 +12,7 @@ import {
   Image as ImageIcon, Save, X, Upload, Loader2
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
-import { projectService, handleApiError } from '../../services/api';
+import { projectService, handleApiError, resolveImageUrl } from '../../services/api';
 
 const ProjectsManager = () => {
   const { toast } = useToast();
@@ -211,7 +211,7 @@ const ProjectsManager = () => {
         {filteredProjects.map((project) => (
           <Card key={project.id} className={`overflow-hidden ${!project.isVisible ? 'opacity-50 border-dashed' : ''}`} data-testid={`project-card-${project.id}`}>
             <div className="relative h-48">
-              <img src={project.image} alt={project.title} className="w-full h-full object-cover"
+              <img src={resolveImageUrl(project.image)} alt={project.title} className="w-full h-full object-cover"
                 onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800'; }} />
               <div className="absolute top-2 left-2">
                 <Badge className="bg-teal-600">{project.category}</Badge>

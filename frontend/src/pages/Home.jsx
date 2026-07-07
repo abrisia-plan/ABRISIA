@@ -4,6 +4,7 @@ import { ArrowRight, CheckCircle, Star, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { approaches, processSteps } from '../data/mock';
+import { resolveImageUrl } from '../services/api';
 import * as Icons from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -291,7 +292,7 @@ const Home = () => {
               >
                 <div className="relative overflow-hidden h-48">
                   <img
-                    src={project.image}
+                    src={resolveImageUrl(project.image)}
                     alt={project.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />

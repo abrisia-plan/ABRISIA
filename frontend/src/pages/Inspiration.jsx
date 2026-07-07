@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/
 import { Eye, ArrowRight, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../hooks/use-toast';
+import { resolveImageUrl } from '../services/api';
 import { faqItems } from '../data/mock';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -131,7 +132,7 @@ const Inspiration = () => {
                 >
                   <div className="relative overflow-hidden h-56">
                     <img
-                      src={project.image}
+                      src={resolveImageUrl(project.image)}
                       alt={project.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -169,7 +170,7 @@ const Inspiration = () => {
               </DialogHeader>
               <div className="space-y-4">
                 <img
-                  src={selectedProject.image}
+                  src={resolveImageUrl(selectedProject.image)}
                   alt={selectedProject.title}
                   className="w-full h-64 object-cover rounded-lg"
                 />

@@ -973,7 +973,7 @@ const KitsManager = () => {
                   {formData.main_image ? (
                     <div className="relative">
                       <img
-                        src={formData.main_image}
+                        src={resolveImageUrl(formData.main_image)}
                         alt="Aperçu"
                         className="w-full h-48 object-cover rounded-lg"
                       />

@@ -19,14 +19,12 @@ import {
   ClipboardList
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
-import ServicesManager from './ServicesManager';
-import FormOptionsManager from './FormOptionsManager';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const ContentManager = () => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('services');
+  const [activeTab, setActiveTab] = useState('process');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -174,18 +172,10 @@ const ContentManager = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="services" className="flex items-center gap-2">
-            <FileText className="w-4 h-4" />
-            Services & Prix
-          </TabsTrigger>
-          <TabsTrigger value="form" className="flex items-center gap-2">
-            <ClipboardList className="w-4 h-4" />
-            Formulaire devis
-          </TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="process" className="flex items-center gap-2">
             <RefreshCw className="w-4 h-4" />
-            Étapes processus
+            Etapes processus
           </TabsTrigger>
           <TabsTrigger value="home" className="flex items-center gap-2">
             <Home className="w-4 h-4" />
@@ -196,16 +186,6 @@ const ContentManager = () => {
             Autres pages
           </TabsTrigger>
         </TabsList>
-
-        {/* Onglet Services & Prix */}
-        <TabsContent value="services">
-          <ServicesManager />
-        </TabsContent>
-
-        {/* Onglet Options du formulaire */}
-        <TabsContent value="form">
-          <FormOptionsManager />
-        </TabsContent>
 
         {/* Onglet Étapes du processus */}
         <TabsContent value="process" className="space-y-6">
