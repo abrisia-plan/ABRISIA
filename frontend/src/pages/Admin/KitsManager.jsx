@@ -154,17 +154,17 @@ const KitsManager = () => {
         name: kitData.name || '',
         description: kitData.description || '',
         dimensions: kitData.dimensions || '',
-        surface_sqft: kitData.surfaceArea?.replace(/[^\d.]/g, '') || '',
+        surface_sqft: (kitData.surface_area || kitData.surfaceArea || '').replace(/[^\d.]/g, ''),
         rooms: kitData.rooms || '',
         includes: kitData.includes?.length ? kitData.includes : [''],
         price: kitData.price?.toString() || '',
-        main_image: kitData.mainImage || '',
-        gallery_images: kitData.galleryImages || [],
-        designer_name: kitData.designerName || '',
-        plan_file_url: kitData.planFileUrl || '',
-        materials_list_enabled: kitData.materialsListEnabled || false,
-        materials_list_price: kitData.materialsListPrice?.toString() || '200',
-        materials_list_file_url: kitData.materialsListFileUrl || ''
+        main_image: kitData.main_image || kitData.mainImage || '',
+        gallery_images: kitData.gallery_images || kitData.galleryImages || [],
+        designer_name: kitData.designer_name || kitData.designerName || '',
+        plan_file_url: kitData.plan_file_url || kitData.planFileUrl || '',
+        materials_list_enabled: kitData.materials_list_enabled || kitData.materialsListEnabled || false,
+        materials_list_price: (kitData.materials_list_price || kitData.materialsListPrice || '200').toString(),
+        materials_list_file_url: kitData.materials_list_file_url || kitData.materialsListFileUrl || ''
       });
       setIsModalOpen(true);
     } catch (error) {
@@ -393,13 +393,13 @@ const KitsManager = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ is_active: !kit.isActive })
+        body: JSON.stringify({ is_active: !kit.is_active })
       });
 
       if (response.ok) {
         toast({
           title: "Statut modifie",
-          description: `Le kit est maintenant ${!kit.isActive ? 'visible' : 'masque'}`
+          description: `Le kit est maintenant ${!kit.is_active ? 'visible' : 'masque'}`
         });
         loadKits();
       }
@@ -421,12 +421,12 @@ const KitsManager = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ is_featured: !kit.isFeatured })
+        body: JSON.stringify({ is_featured: !kit.is_featured })
       });
 
       if (response.ok) {
         toast({
-          title: `Kit ${!kit.isFeatured ? 'ajoute a' : 'retire de'} l'accueil`,
+          title: `Kit ${!kit.is_featured ? 'ajoute a' : 'retire de'} l'accueil`,
         });
         loadKits();
       }
@@ -498,11 +498,11 @@ const KitsManager = () => {
       {/* Liste des kits */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {kits.map((kit) => (
-          <Card key={kit.id} className={`overflow-hidden ${!kit.isActive ? 'opacity-60' : ''}`}>
+          <Card key={kit.id} className={`overflow-hidden ${!kit.is_active ? 'opacity-60' : ''}`}>
             <div className="relative h-48 bg-gray-100">
-              {kit.mainImage ? (
+              {kit.main_image ? (
                 <img
-                  src={resolveImageUrl(kit.mainImage)}
+                  src={resolveImageUrl(kit.main_image)}
                   alt={kit.name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
@@ -514,7 +514,7 @@ const KitsManager = () => {
                   <ImageIcon className="w-16 h-16 text-gray-300" />
                 </div>
               )}
-              {!kit.isActive && (
+              {!kit.is_active && (
                 <div className="absolute top-2 right-2">
                   <Badge variant="secondary" className="bg-gray-800 text-white">
                     <EyeOff className="w-3 h-3 mr-1" />
@@ -522,8 +522,8 @@ const KitsManager = () => {
                   </Badge>
                 </div>
               )}
-              {kit.isFeatured && (
-                <div className={`absolute top-2 ${!kit.isActive ? 'right-24' : 'right-2'}`}>
+              {kit.is_featured && (
+                <div className={`absolute top-2 ${!kit.is_active ? 'right-24' : 'right-2'}`}>
                   <Badge className="bg-blue-600 text-white">
                     <Home className="w-3 h-3 mr-1" />
                     Accueil
@@ -561,11 +561,11 @@ const KitsManager = () => {
               <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
                 <span className="flex items-center">
                   <ShoppingCart className="w-4 h-4 mr-1" />
-                  {kit.salesCount || 0} ventes
+                  {kit.sales_count || 0} ventes
                 </span>
                 <span className="flex items-center">
                   <Eye className="w-4 h-4 mr-1" />
-                  {kit.viewsCount || 0} vues
+                  {kit.views_count || 0} vues
                 </span>
               </div>
               
@@ -574,16 +574,16 @@ const KitsManager = () => {
                   size="sm"
                   variant="outline"
                   onClick={() => toggleActive(kit)}
-                  title={kit.isActive ? 'Masquer' : 'Afficher'}
+                  title={kit.is_active ? 'Masquer' : 'Afficher'}
                 >
-                  {kit.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                  {kit.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 </Button>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => toggleFeatured(kit)}
-                  title={kit.isFeatured ? "Retirer de l'accueil" : "Mettre sur l'accueil"}
-                  className={kit.isFeatured ? 'border-blue-300 text-blue-700 bg-blue-50' : ''}
+                  title={kit.is_featured ? "Retirer de l'accueil" : "Mettre sur l'accueil"}
+                  className={kit.is_featured ? 'border-blue-300 text-blue-700 bg-blue-50' : ''}
                 >
                   <Home className="w-4 h-4" />
                 </Button>

@@ -308,10 +308,10 @@ class ProductCreate(BaseModel):
     includes: List[str] = []
     file_formats: List[str] = ["PDF", "DWG"]
     pages_count: Optional[int] = None
-    main_image: str
+    main_image: str = ""
     gallery_images: List[str] = []
     video_url: Optional[str] = None
-    slug: str
+    slug: str = ""
     meta_title: Optional[str] = ""
     meta_description: Optional[str] = ""
     tags: List[str] = []

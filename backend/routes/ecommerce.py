@@ -302,27 +302,48 @@ async def get_admin_products(
         total = await db.products.count_documents(filter_query)
         total_pages = (total + per_page - 1) // per_page
         
-        # Formater pour admin
+        # Formater pour admin - retourner TOUS les champs
         formatted_products = []
         for product in products:
             formatted_products.append({
                 "id": str(product["_id"]),
                 "name": product["name"],
+                "description": product.get("description", ""),
+                "long_description": product.get("long_description", ""),
                 "category": product["category"],
+                "subcategory": product.get("subcategory", ""),
                 "price": product["price"],
-                "isActive": product.get("is_active", True),
-                "isFeatured": product.get("is_featured", False),
-                "salesCount": product.get("sales_count", 0),
-                "viewsCount": product.get("views_count", 0),
+                "original_price": product.get("original_price"),
+                "surface_area": product.get("surface_area", ""),
+                "dimensions": product.get("dimensions", ""),
+                "rooms": product.get("rooms", ""),
+                "building_type": product.get("building_type", ""),
+                "includes": product.get("includes", []),
+                "file_formats": product.get("file_formats", []),
+                "pages_count": product.get("pages_count"),
+                "main_image": product.get("main_image", ""),
+                "gallery_images": product.get("gallery_images", []),
+                "video_url": product.get("video_url"),
+                "slug": product.get("slug", ""),
+                "meta_title": product.get("meta_title", ""),
+                "meta_description": product.get("meta_description", ""),
+                "tags": product.get("tags", []),
+                "is_active": product.get("is_active", True),
+                "is_featured": product.get("is_featured", False),
+                "is_visible": product.get("is_visible", True),
+                "difficulty_level": product.get("difficulty_level", ""),
+                "discount_percentage": product.get("discount_percentage"),
+                "designer_name": product.get("designer_name"),
+                "plan_file_url": product.get("plan_file_url"),
+                "materials_list_enabled": product.get("materials_list_enabled", False),
+                "materials_list_price": product.get("materials_list_price"),
+                "materials_list_file_url": product.get("materials_list_file_url"),
+                "sales_count": product.get("sales_count", 0),
+                "views_count": product.get("views_count", 0),
                 "rating": product.get("rating", 0.0),
-                "reviewsCount": product.get("reviews_count", 0),
-                "createdAt": product["created_at"].isoformat(),
-                "updatedAt": product["updated_at"].isoformat(),
-                # Nouveaux champs admin
-                "mainImage": product.get("main_image"),
-                "designerName": product.get("designer_name"),
-                "materialsListEnabled": product.get("materials_list_enabled", False),
-                "materialsListPrice": product.get("materials_list_price"),
+                "reviews_count": product.get("reviews_count", 0),
+                "created_at": product["created_at"].isoformat(),
+                "updated_at": product["updated_at"].isoformat(),
             })
         
         return PaginatedResponse(
@@ -350,12 +371,18 @@ async def create_product(
     try:
         db = get_database()
         
+        # Auto-générer le slug si absent
+        if not product_data.slug:
+            import re
+            slug = re.sub(r'[^a-z0-9]+', '-', product_data.name.lower()).strip('-')
+            product_data.slug = slug
+        
         # Vérifier l'unicité du slug
         existing = await db.products.find_one({"slug": product_data.slug})
         if existing:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Un produit avec ce slug existe déjà"
+                detail="Un produit avec ce slug existe deja"
             )
         
         # Créer le produit
@@ -371,11 +398,12 @@ async def create_product(
         
         result = await db.products.insert_one(product_doc)
         
-        logger.info(f"✅ Nouveau produit créé: {product_data.name} par {current_user['name']}")
+        logger.info(f"Nouveau produit cree: {product_data.name}")
         
         return SuccessResponse(
             success=True,
-            message=f"Produit '{product_data.name}' créé avec succès"
+            message=f"Produit '{product_data.name}' cree avec succes",
+            data={"id": str(result.inserted_id)}
         )
         
     except HTTPException:
