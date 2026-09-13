@@ -14,6 +14,7 @@ from models import (
 from database import get_database
 from auth import require_admin
 from bson import ObjectId
+from object_storage import put_object, get_object as storage_get_object
 import logging
 
 logger = logging.getLogger(__name__)
@@ -400,18 +401,17 @@ async def upload_media_file(
         
         # Générer un nom de fichier unique
         unique_filename = f"{uuid.uuid4()}{file_extension}"
-        file_path = UPLOAD_DIR / unique_filename
         
-        # Sauvegarder le fichier
-        with open(file_path, "wb") as buffer:
-            buffer.write(content)
-        
-        # Enregistrer en base de données
+        # Sauvegarder dans Emergent Object Storage
+        storage_path = f"abrisia-plan/media/{unique_filename}"
+        result_storage = put_object(storage_path, content, file.content_type or "application/octet-stream")
+
         db = get_database()
         media_doc = {
             "filename": unique_filename,
             "original_name": file.filename,
-            "file_path": f"/uploads/{unique_filename}",
+            "file_path": f"/api/files/{unique_filename}",
+            "storage_path": result_storage.get("path", storage_path),
             "file_size": len(content),
             "mime_type": file.content_type,
             "category": category,
@@ -427,7 +427,7 @@ async def upload_media_file(
         
         return {
             "success": True,
-            "fileUrl": f"/uploads/{unique_filename}",
+            "fileUrl": f"/api/files/{unique_filename}",
             "fileId": str(result.inserted_id),
             "message": "Fichier uploadé avec succès"
         }

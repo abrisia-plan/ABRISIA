@@ -20,13 +20,18 @@ logger = logging.getLogger(__name__)
 # Imports des modules
 from database import connect_to_mongo, close_mongo_connection
 from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments
+from object_storage import init_storage
 
 # Lifespan manager pour la DB
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     await connect_to_mongo()
-    logger.info("🚀 Application démarrée")
+    try:
+        init_storage()
+    except Exception as e:
+        logger.warning(f"Object storage init failed (will retry on first upload): {e}")
+    logger.info("Application demarree")
     yield
     # Shutdown
     await close_mongo_connection()
@@ -88,10 +93,35 @@ api_router.include_router(payments.router)
 # Inclure le router principal dans l'app
 app.include_router(api_router)
 
-# Servir les fichiers statiques (images uploadées)
+# Servir les fichiers statiques (images uploadées - rétrocompatibilité)
 uploads_dir = Path("/app/uploads")
 uploads_dir.mkdir(exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
+
+# Endpoint pour servir les fichiers depuis Emergent Object Storage
+from fastapi.responses import Response as FastAPIResponse
+from object_storage import get_object as storage_get_object
+
+@app.get("/api/files/{filename}")
+async def serve_file(filename: str):
+    """Sert un fichier depuis le cloud storage, avec fallback local"""
+    # D'abord essayer le cloud storage
+    for prefix in ["abrisia-plan/images/", "abrisia-plan/media/"]:
+        try:
+            data, content_type = storage_get_object(f"{prefix}{filename}")
+            return FastAPIResponse(content=data, media_type=content_type)
+        except Exception:
+            continue
+    
+    # Fallback: fichier local
+    local_path = uploads_dir / filename
+    if local_path.exists():
+        import mimetypes
+        mime = mimetypes.guess_type(str(local_path))[0] or "application/octet-stream"
+        return FastAPIResponse(content=local_path.read_bytes(), media_type=mime)
+    
+    from fastapi import HTTPException as HTTPExc
+    raise HTTPExc(status_code=404, detail="Fichier non trouvé")
 
 # Route de santé
 @app.get("/health")

@@ -39,11 +39,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0">
+              <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 bg-white">
                 <img 
-                  src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
+                  src="/logo-abrisia.jpg" 
                   alt="Logo Abrisia" 
-                  className="w-full h-full object-cover scale-125 invert"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <span className="text-2xl font-bold">ABRISIA PLAN</span>

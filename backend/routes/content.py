@@ -10,6 +10,21 @@ import logging
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["content"])
 
+
+def serialize_doc(doc):
+    """Convert MongoDB document to JSON-serializable dict"""
+    if doc is None:
+        return None
+    doc = dict(doc)
+    if "_id" in doc:
+        doc["_id"] = str(doc["_id"])
+    return doc
+
+
+def serialize_docs(docs):
+    """Convert list of MongoDB documents to JSON-serializable list"""
+    return [serialize_doc(d) for d in docs]
+
 # ============ MODÈLES ============
 
 class ServicePrice(BaseModel):
@@ -52,7 +67,7 @@ async def get_services():
             ]
             return {"success": True, "data": default_services}
         
-        return {"success": True, "data": services}
+        return {"success": True, "data": serialize_docs(services)}
     except Exception as e:
         logger.error(f"❌ Erreur récupération services: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -63,7 +78,7 @@ async def get_all_services_admin(current_user: dict = Depends(require_admin)):
     try:
         db = get_database()
         services = await db.services.find().sort("order", 1).to_list(length=100)
-        return {"success": True, "data": services}
+        return {"success": True, "data": serialize_docs(services)}
     except Exception as e:
         logger.error(f"❌ Erreur récupération services admin: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -89,7 +104,7 @@ async def create_service(service: ServicePrice, current_user: dict = Depends(req
         await db.services.insert_one(service_data)
         logger.info(f"✅ Service créé: {service.name}")
         
-        return {"success": True, "data": service_data, "message": "Service créé"}
+        return {"success": True, "data": serialize_doc(service_data), "message": "Service créé"}
     except Exception as e:
         logger.error(f"❌ Erreur création service: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -216,7 +231,7 @@ async def get_process_steps():
             ]
             return {"success": True, "data": default_steps}
         
-        return {"success": True, "data": steps}
+        return {"success": True, "data": serialize_docs(steps)}
     except Exception as e:
         logger.error(f"❌ Erreur récupération étapes: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -291,7 +306,7 @@ async def get_form_options():
             if not options:
                 result[option_type] = DEFAULT_FORM_OPTIONS[option_type]
             else:
-                result[option_type] = options
+                result[option_type] = serialize_docs(options)
         
         return {"success": True, "data": result}
     except Exception as e:
@@ -308,7 +323,7 @@ async def get_form_options_admin(option_type: str, current_user: dict = Depends(
         if not options and option_type in DEFAULT_FORM_OPTIONS:
             return {"success": True, "data": DEFAULT_FORM_OPTIONS[option_type]}
         
-        return {"success": True, "data": options}
+        return {"success": True, "data": serialize_docs(options)}
     except Exception as e:
         logger.error(f"❌ Erreur récupération options admin: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -369,7 +384,7 @@ async def get_visible_categories():
             # Retourner seulement les catégories visibles par défaut
             return {"success": True, "data": [c for c in DEFAULT_CATEGORIES if c["is_visible"]]}
         
-        return {"success": True, "data": categories}
+        return {"success": True, "data": serialize_docs(categories)}
     except Exception as e:
         logger.error(f"❌ Erreur récupération catégories: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -384,7 +399,7 @@ async def get_all_categories_admin(current_user: dict = Depends(require_admin)):
         if not categories:
             return {"success": True, "data": DEFAULT_CATEGORIES}
         
-        return {"success": True, "data": categories}
+        return {"success": True, "data": serialize_docs(categories)}
     except Exception as e:
         logger.error(f"❌ Erreur récupération catégories admin: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -460,7 +475,7 @@ async def get_visible_testimonials():
         if not testimonials:
             return {"success": True, "data": DEFAULT_TESTIMONIALS}
         
-        return {"success": True, "data": testimonials}
+        return {"success": True, "data": serialize_docs(testimonials)}
     except Exception as e:
         logger.error(f"❌ Erreur récupération témoignages: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -475,7 +490,7 @@ async def get_all_testimonials_admin(current_user: dict = Depends(require_admin)
         if not testimonials:
             return {"success": True, "data": DEFAULT_TESTIMONIALS}
         
-        return {"success": True, "data": testimonials}
+        return {"success": True, "data": serialize_docs(testimonials)}
     except Exception as e:
         logger.error(f"❌ Erreur récupération témoignages admin: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -501,7 +516,7 @@ async def create_testimonial(testimonial: dict, current_user: dict = Depends(req
         await db.testimonials.insert_one(testimonial_data)
         logger.info(f"✅ Témoignage créé par {current_user['name']}")
         
-        return {"success": True, "data": testimonial_data, "message": "Témoignage créé"}
+        return {"success": True, "data": serialize_doc(testimonial_data), "message": "Témoignage créé"}
     except Exception as e:
         logger.error(f"❌ Erreur création témoignage: {e}")
         raise HTTPException(status_code=500, detail=str(e))

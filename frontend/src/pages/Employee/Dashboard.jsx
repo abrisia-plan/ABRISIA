@@ -18,6 +18,7 @@ import {
   MessageSquare,
   TrendingUp
 } from 'lucide-react';
+import { Label } from '../../components/ui/label';
 import { useToast } from '../../hooks/use-toast';
 
 const EmployeeDashboard = () => {

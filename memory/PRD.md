@@ -64,17 +64,29 @@ Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini
 14. ✅ **Onglet Candidatures CV** — Interface admin pour voir/télécharger les CV reçus
 15. ✅ **Témoignages dynamiques** — Accueil affiche les avis approuvés depuis la BD (plus de mock data)
 
+## Corrections en cours (2026-09-13)
+16. ✅ **Logo mis à jour** — Nouveau logo Abrisia téléchargé dans `/frontend/public/logo-abrisia.jpg`, appliqué dans Header.jsx et Footer.jsx
+17. ✅ **Fix Label import** — Ajout import Label dans Employee/Dashboard.jsx
+18. ✅ **Fix ObjectId serialization dans content.py** — Ajout helper `serialize_doc`/`serialize_docs` appliqué sur tous les retours MongoDB
+19. ✅ **Migration Object Storage** — Uploads migrés vers Emergent Object Storage (cms.py, projects.py). Endpoint `/api/files/{filename}` ajouté avec fallback local. Fichier `object_storage.py` créé.
+
 ## Tâches Restantes
 
+### P0 - Immédiat
+- Finir la correction des erreurs de lint ObjectId serialization dans content.py
+- Vérifier visuellement que le logo s'affiche correctement (screenshot)
+
 ### P1 - À venir
-- Finaliser "Envoyer mon CV" (interface admin pour voir candidatures)
+- SEO & Google Search Console (sitemap, robots.txt, balises meta)
 - Finaliser Stripe (paiement carte de crédit)
+- Accompagner les tests E2E de l'utilisateur
 
 ### P2 - Futur
 - Mini-espace projet client
 - Messagerie client-dessinateur
 - Upload fichiers clients
 - Paiement dépôt/solde final
+- Migration des uploads locaux vers Emergent Object Storage
 
 ## Identifiants
 - Admin: admin@abrisia-plan.ca / admin123

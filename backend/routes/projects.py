@@ -9,6 +9,7 @@ from models import Project, ProjectCreate, ProjectUpdate, SuccessResponse, ListR
 from database import get_database
 from auth import require_admin
 from bson import ObjectId
+from object_storage import put_object, get_object as storage_get_object
 import logging
 
 logger = logging.getLogger(__name__)
@@ -278,14 +279,12 @@ async def upload_image(
         
         # Générer un nom de fichier unique
         unique_filename = f"{uuid.uuid4()}{file_extension}"
-        file_path = UPLOAD_DIR / unique_filename
         
-        # Sauvegarder le fichier
-        with open(file_path, "wb") as buffer:
-            buffer.write(content)
-        
-        # Retourner l'URL relative
-        image_url = f"/uploads/{unique_filename}"
+        # Sauvegarder dans Emergent Object Storage
+        storage_path = f"abrisia-plan/images/{unique_filename}"
+        put_object(storage_path, content, file.content_type or "application/octet-stream")
+
+        image_url = f"/api/files/{unique_filename}"
         
         logger.info(f"✅ Image uploadée: {unique_filename} par {current_user['name']}")
         
