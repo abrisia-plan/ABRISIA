@@ -70,12 +70,11 @@ const Login = () => {
       <div className="w-full max-w-sm space-y-6">
         {/* Logo et titre */}
         <div className="text-center">
-          <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-2 border-stone-200">
+          <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-2 border-stone-200 bg-white">
             <img 
-              src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png" 
+              src="/logo-abrisia.jpg" 
               alt="Logo Abrisia" 
-              className="w-full h-full object-cover scale-125"
-              style={{ mixBlendMode: 'multiply' }}
+              className="w-full h-full object-contain"
             />
           </div>
           <h1 className="text-2xl font-bold text-slate-800 tracking-wide">ABRISIA PLAN</h1>

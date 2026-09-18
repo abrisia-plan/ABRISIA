@@ -74,12 +74,11 @@ const Temoignage = () => {
       <div className="max-w-lg mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border-2 border-stone-200">
+          <div className="w-16 h-16 rounded-full overflow-hidden mx-auto mb-4 border-2 border-stone-200 bg-white">
             <img
-              src="https://customer-assets.emergentagent.com/job_tiny-house-hub/artifacts/9faf0wxc_Screenshot_20250814-012530.png"
+              src="/logo-abrisia.jpg"
               alt="Logo Abrisia"
-              className="w-full h-full object-cover scale-125"
-              style={{ mixBlendMode: 'multiply' }}
+              className="w-full h-full object-contain"
             />
           </div>
           <h1 className="text-3xl font-bold text-slate-800">Laissez-nous votre avis</h1>

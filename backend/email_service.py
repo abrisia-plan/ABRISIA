@@ -13,6 +13,7 @@ class EmailService:
         self.smtp_port = int(os.getenv('SMTP_PORT', 587))
         self.sender_email = os.getenv('SENDER_EMAIL', 'abrisia0plan@gmail.com')
         self.sender_password = os.getenv('SENDER_PASSWORD')
+        self.app_url = os.getenv('APP_URL', 'https://abrisia-plan.ca')
     
     def _send_email(self, to_email, subject, html_content):
         """Méthode interne pour envoyer un email"""
@@ -114,7 +115,7 @@ class EmailService:
                         </p>
                         
                         <div style="text-align: center; margin: 30px 0;">
-                            <a href="https://abrisia-plan.ca" style="display: inline-block; background: #0f766e; color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                            <a href="{self.app_url}" style="display: inline-block; background: #0f766e; color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
                                 🏠 Retourner sur Abrisia Plan
                             </a>
                         </div>
@@ -256,7 +257,7 @@ class EmailService:
                         </table>
                         {f'<div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;"><p style="margin: 0;">{candidature_data.get("message")}</p></div>' if candidature_data.get('message') else ''}
                         <div style="text-align: center; margin: 30px 0;">
-                            <a href="https://abrisia-plan.ca/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Voir dans l'admin</a>
+                            <a href="{self.app_url}/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Voir dans l'admin</a>
                         </div>
                     </div>
                 </div>
@@ -295,7 +296,7 @@ class EmailService:
                             <p style="margin: 0; color: #92400e;">⏳ <strong>En attente d'approbation</strong><br>Connectez-vous à l'admin pour approuver ou rejeter cet avis.</p>
                         </div>
                         <div style="text-align: center; margin: 20px 0;">
-                            <a href="https://abrisia-plan.ca/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Gerer les temoignages</a>
+                            <a href="{self.app_url}/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Gerer les temoignages</a>
                         </div>
                     </div>
                 </div>

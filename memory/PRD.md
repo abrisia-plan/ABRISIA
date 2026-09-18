@@ -101,3 +101,8 @@ Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini
 - Gmail SMTP (notifications)
 - Stripe (prêt mais inactif)
 - Emergent Object Storage (uploads)
+
+## Déploiement
+- Health check passé le 2026-09-18 : aucun bloqueur
+- Toutes les URLs externalisées (env vars)
+- App prête pour Kubernetes / Emergent
