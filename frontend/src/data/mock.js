@@ -98,7 +98,7 @@ export const approaches = [
   {
     id: 3,
     title: "Prix accessible",
-    description: "Des tarifs compétitifs pour des plans professionnels conformes au Code du bâtiment du Québec.",
+    description: "Des tarifs compétitifs pour des plans professionnels conformes au Code du bâtiment du Québec et du Canada.",
     icon: "DollarSign"
   }
 ];
@@ -636,7 +636,7 @@ export const faqItems = [
   {
     id: 3,
     question: "Vos constructions respectent-elles le Code du bâtiment ?",
-    answer: "Absolument. Tous nos plans respectent le Code du bâtiment du Québec et les normes locales en vigueur."
+    answer: "Absolument. Tous nos plans respectent le Code du bâtiment du Québec et du Canada ainsi que les normes locales en vigueur."
   },
   {
     id: 4,

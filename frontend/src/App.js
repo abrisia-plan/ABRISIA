@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import Inspiration from "./pages/Inspiration";
 import Kit from "./pages/Kit";
 import Collection from "./pages/Collection";
+import EspacePro from "./pages/EspacePro";
 import Devis from "./pages/Devis";
 import Feedback from "./pages/Feedback";
 import Contact from "./pages/Contact";
@@ -41,6 +42,7 @@ function App() {
                 <Route path="/inspiration" element={<Inspiration />} />
                 <Route path="/kit" element={<Navigate to="/collection" replace />} />
                 <Route path="/collection" element={<Collection />} />
+                <Route path="/espace-pro" element={<EspacePro />} />
                 <Route path="/devis" element={<Devis />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/contact" element={<Contact />} />

@@ -53,6 +53,12 @@ const Collection = () => {
   const [checkoutForm, setCheckoutForm] = useState({ name: '', email: '', phone: '' });
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
+  // Gallery
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  const allImages = selectedModel
+    ? [selectedModel.mainImage, ...(selectedModel.galleryImages || [])].filter(Boolean)
+    : [];
+
   useEffect(() => {
     loadModels();
     loadFilters();
@@ -115,6 +121,7 @@ const Collection = () => {
     setSelectedModel(model);
     setSelectedVariant(null);
     setSelectedOptionIds([]);
+    setGalleryIndex(0);
     await loadVariants(model.id);
   };
 
@@ -472,14 +479,59 @@ const Collection = () => {
                 <DialogTitle className="text-2xl">{selectedModel.name}</DialogTitle>
               </DialogHeader>
               <div className="space-y-6 pt-2">
-                {/* Images */}
-                <div className="rounded-lg overflow-hidden h-64 bg-gray-100">
-                  <img
-                    src={resolveImageUrl(selectedModel.mainImage)}
-                    alt={selectedModel.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800'; }}
-                  />
+                {/* Image Gallery / Carousel */}
+                <div className="space-y-2">
+                  <div className="rounded-lg overflow-hidden h-72 bg-gray-100 relative group">
+                    <img
+                      src={resolveImageUrl(
+                        (selectedModel.galleryImages?.length > 0 && galleryIndex > 0)
+                          ? selectedModel.galleryImages[galleryIndex - 1]
+                          : selectedModel.mainImage
+                      )}
+                      alt={selectedModel.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800'; }}
+                    />
+                    {allImages.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setGalleryIndex(i => (i - 1 + allImages.length) % allImages.length)}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          data-testid="gallery-prev"
+                        >
+                          <ChevronUp className="w-4 h-4 -rotate-90" />
+                        </button>
+                        <button
+                          onClick={() => setGalleryIndex(i => (i + 1) % allImages.length)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          data-testid="gallery-next"
+                        >
+                          <ChevronDown className="w-4 h-4 -rotate-90" />
+                        </button>
+                        <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                          {galleryIndex + 1} / {allImages.length}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                  {allImages.length > 1 && (
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                      {allImages.map((img, idx) => (
+                        <button
+                          key={`thumb-${idx}`}
+                          onClick={() => setGalleryIndex(idx)}
+                          className={`flex-shrink-0 w-16 h-12 rounded overflow-hidden border-2 transition-colors ${galleryIndex === idx ? 'border-teal-600' : 'border-transparent hover:border-gray-300'}`}
+                        >
+                          <img
+                            src={resolveImageUrl(img)}
+                            alt={`Vue ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.target.style.display = 'none'; }}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Caractéristiques */}

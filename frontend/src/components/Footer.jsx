@@ -50,7 +50,7 @@ const Footer = () => {
             </div>
             <p className="text-slate-300 leading-relaxed">
               Service de plans architecturaux au Québec. Mini-maisons, chalets, maisons, extensions.
-              Plans conformes au Code du bâtiment du Québec, jusqu'à 600m² de plancher.
+              Plans conformes au Code du bâtiment du Québec et du Canada, jusqu'à 600m² de plancher.
             </p>
           </div>
 
@@ -89,7 +89,7 @@ const Footer = () => {
 
         <div className="border-t border-slate-700 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-slate-400">&copy; 2025 Abrisia Plan. Tous droits réservés.</p>
+            <p className="text-slate-400">&copy; 2027 Abrisia Plan. Tous droits réservés.</p>
             <div className="flex space-x-6 text-sm text-slate-400">
               <button onClick={() => handleNavigation('/mentions-legales')} className="hover:text-teal-400 transition-colors">
                 Mentions légales

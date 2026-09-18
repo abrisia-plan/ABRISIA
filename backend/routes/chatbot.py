@@ -20,7 +20,7 @@ IMPORTANT : Abrisia fait de la CONCEPTION et du DESSIN de plans. Abrisia ne fait
 Informations clés :
 - Services : Plans architecturaux, dessins techniques, plans de mini-maisons, chalets, maisons unifamiliales, ébénisterie, agrandissements
 - Capacité : Jusqu'à 600 m² de plancher (6000 pi²)
-- Plans conformes au Code du bâtiment du Québec
+- Plans conformes au Code du bâtiment du Québec et du Canada
 - La "Collection ABRISIA" propose des modèles pré-dessinés achetables en ligne avec des variantes et options
 - Les clients peuvent aussi demander un devis personnalisé pour un projet sur mesure
 - Localisation : Saguenay, QC, Canada

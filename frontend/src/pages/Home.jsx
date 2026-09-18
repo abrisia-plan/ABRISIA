@@ -159,6 +159,76 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Parcours Client - Choisissez votre profil */}
+      <section className="py-16 bg-white" data-testid="parcours-client">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 text-center mb-3">
+            Quel est votre projet ?
+          </h2>
+          <p className="text-slate-600 text-center mb-10 text-base">
+            Choisissez votre profil pour une expérience adaptée à vos besoins.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Card
+              className="group cursor-pointer border-2 border-slate-200 hover:border-teal-500 hover:shadow-xl transition-all duration-300"
+              onClick={() => navigate('/devis')}
+              data-testid="parcours-particulier"
+            >
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 bg-teal-50 group-hover:bg-teal-100 rounded-2xl flex items-center justify-center mx-auto mb-5 transition-colors">
+                  <Icons.Home className="w-8 h-8 text-teal-700" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-2">Je réalise mon projet</h3>
+                <p className="text-sm text-slate-600 mb-4">
+                  Vous avez un terrain et un rêve ? Obtenez un devis pour vos plans personnalisés.
+                </p>
+                <span className="inline-flex items-center text-teal-700 font-medium text-sm group-hover:gap-2 transition-all">
+                  Demander un devis <ArrowRight className="w-4 h-4 ml-1" />
+                </span>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="group cursor-pointer border-2 border-slate-200 hover:border-slate-700 hover:shadow-xl transition-all duration-300"
+              onClick={() => navigate('/espace-pro')}
+              data-testid="parcours-entrepreneur"
+            >
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 bg-slate-100 group-hover:bg-slate-200 rounded-2xl flex items-center justify-center mx-auto mb-5 transition-colors">
+                  <Icons.Briefcase className="w-8 h-8 text-slate-700" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-2">Je suis entrepreneur</h3>
+                <p className="text-sm text-slate-600 mb-4">
+                  Accédez à l'Espace Pro pour des tarifs préférentiels et un partenariat dédié.
+                </p>
+                <span className="inline-flex items-center text-slate-700 font-medium text-sm group-hover:gap-2 transition-all">
+                  Espace Pro <ArrowRight className="w-4 h-4 ml-1" />
+                </span>
+              </CardContent>
+            </Card>
+
+            <Card
+              className="group cursor-pointer border-2 border-slate-200 hover:border-amber-500 hover:shadow-xl transition-all duration-300"
+              onClick={() => navigate('/collection')}
+              data-testid="parcours-collection"
+            >
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 bg-amber-50 group-hover:bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-5 transition-colors">
+                  <Icons.LayoutGrid className="w-8 h-8 text-amber-700" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-2">Je veux un modèle prêt</h3>
+                <p className="text-sm text-slate-600 mb-4">
+                  Parcourez notre Collection ABRISIA de modèles pré-dessinés, prêts à acheter.
+                </p>
+                <span className="inline-flex items-center text-amber-700 font-medium text-sm group-hover:gap-2 transition-all">
+                  Voir la collection <ArrowRight className="w-4 h-4 ml-1" />
+                </span>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Section "Ce qu'on fait" */}
       <section className="py-20 bg-stone-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -167,7 +237,7 @@ const Home = () => {
               Nos services de dessin
             </h2>
             <p className="text-lg text-slate-600 max-w-4xl mx-auto leading-relaxed">
-              Plans professionnels conformes au Code du bâtiment du Québec.
+              Plans professionnels conformes au Code du bâtiment du Québec et du Canada.
               <strong className="text-teal-800"> Jusqu'à 600m² de plancher (6000 pi²).</strong>
             </p>
           </div>

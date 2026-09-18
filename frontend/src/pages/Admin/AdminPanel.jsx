@@ -454,6 +454,7 @@ const NavigationManager = () => {
     { name: 'Accueil', href: '/', locked: true },
     { name: 'Inspiration', href: '/inspiration' },
     { name: 'Collection', href: '/collection' },
+    { name: 'Espace Pro', href: '/espace-pro' },
     { name: 'Demander un devis', href: '/devis' },
     { name: 'À propos', href: '/about' },
     { name: 'Contact', href: '/contact' },

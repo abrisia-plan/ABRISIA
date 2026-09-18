@@ -150,6 +150,7 @@ async def dynamic_sitemap():
     static_pages = [
         {"loc": "/", "changefreq": "weekly", "priority": "1.0"},
         {"loc": "/collection", "changefreq": "weekly", "priority": "0.9"},
+        {"loc": "/espace-pro", "changefreq": "monthly", "priority": "0.7"},
         {"loc": "/devis", "changefreq": "monthly", "priority": "0.9"},
         {"loc": "/inspiration", "changefreq": "weekly", "priority": "0.8"},
         {"loc": "/about", "changefreq": "monthly", "priority": "0.7"},

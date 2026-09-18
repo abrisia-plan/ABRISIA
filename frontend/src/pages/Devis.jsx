@@ -511,7 +511,7 @@ const Devis = () => {
                     onChange={handleInputChange}
                     rows={8}
                     className="border-stone-300 focus:border-teal-500"
-                    placeholder="Exemple : Mini-maison 35m² sur fondations béton, style scandinave moderne. Bois local, isolation supérieure, chauffage géothermique. Terrain plat avec pente douce vers sud, services municipaux à 50m. Budget construction 180000$, plans requis pour printemps 2025. Inspiration : grandes fenêtres, toit cathédrale, foyer central..."
+                    placeholder="Exemple : Mini-maison 35m² sur fondations béton, style scandinave moderne. Bois local, isolation supérieure, chauffage géothermique. Terrain plat avec pente douce vers sud, services municipaux à 50m. Budget construction 180000$, plans requis pour printemps 2027. Inspiration : grandes fenêtres, toit cathédrale, foyer central..."
                   />
                 </div>
 
@@ -557,7 +557,7 @@ const Devis = () => {
               </p>
               <p>
                 Nous étudions votre projet de construction permanente sur fondations et vous proposons un devis détaillé 
-                conforme au Code du bâtiment du Québec.
+                conforme au Code du bâtiment du Québec et du Canada.
               </p>
               <p className="text-sm text-slate-500">
                 <strong>Spécialité :</strong> Constructions permanentes sur fondations jusqu'à 600m² de plancher total (6000 pi²)

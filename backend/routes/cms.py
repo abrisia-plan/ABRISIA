@@ -539,7 +539,8 @@ async def get_public_navigation():
                 {"name": "Accueil", "href": "/", "visible": True, "order": 0},
                 {"name": "Inspiration", "href": "/inspiration", "visible": True, "order": 1},
                 {"name": "Collection", "href": "/collection", "visible": True, "order": 2},
-                {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 3},
+                {"name": "Espace Pro", "href": "/espace-pro", "visible": True, "order": 3},
+                {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 4},
                 {"name": "Contact", "href": "/contact", "visible": True, "order": 5},
             ]
             return {"success": True, "pages": default_pages}
@@ -549,6 +550,7 @@ async def get_public_navigation():
     except Exception as e:
         return {"success": True, "pages": [
             {"name": "Accueil", "href": "/", "visible": True},
-            {"name": "Kits", "href": "/kit", "visible": True},
+            {"name": "Collection", "href": "/collection", "visible": True},
+            {"name": "Espace Pro", "href": "/espace-pro", "visible": True},
             {"name": "Demander un devis", "href": "/devis", "visible": True},
         ]}
