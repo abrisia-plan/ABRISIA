@@ -86,20 +86,20 @@ export const approaches = [
   {
     id: 1,
     title: "Plans sur mesure",
-    description: "Chaque projet est unique. Vos plans sont dessinés selon vos besoins, votre terrain et votre budget.",
+    description: "Chaque plan est unique, conçu pour votre mode de vie, votre terrain et votre budget.",
     icon: "PenTool"
   },
   {
     id: 2,
-    title: "Flexibilité des horaires",
-    description: "On s'adapte à vos disponibilités pour un service personnalisé.",
-    icon: "Clock"
+    title: "100 % à distance",
+    description: "Visioconférence, courriel et partage d'écrans — collaborez avec nous où que vous soyez.",
+    icon: "Globe"
   },
   {
     id: 3,
-    title: "Prix accessible",
-    description: "Des tarifs compétitifs pour des plans professionnels conformes au Code du bâtiment du Québec et du Canada.",
-    icon: "DollarSign"
+    title: "Conformité assurée",
+    description: "Dossiers rigoureusement conformes aux codes de construction pour accélérer vos permis.",
+    icon: "ShieldCheck"
   }
 ];
 
@@ -625,22 +625,22 @@ export const mockDesigners = [
 export const faqItems = [
   {
     id: 1,
-    question: "Dessinez-vous des maisons mobiles ou sur roues ?",
-    answer: "Non, nous nous spécialisons dans les constructions permanentes sur fondations : mini-maisons, chalets, maisons résidentielles et extensions."
+    question: "Offrez-vous des services à distance ?",
+    answer: "Oui ! Nos services de conception de plans sont entièrement à distance. Visioconférence, courriel et partage d'écrans nous permettent de collaborer avec vous, où que vous soyez."
   },
   {
     id: 2,
     question: "Jusqu'à quelle taille de maison pouvez-vous dessiner ?",
-    answer: "Légalement, je peux dessiner des constructions jusqu'à 6000m² de plancher total (incluant sous-sol, rez-de-chaussée et étages)."
+    answer: "Pour une habitation unifamiliale isolée, nous pouvons concevoir des plans pour une superficie brute totale de moins de 600 m² (~6 458 pi²), sur 2 étages plus 1 sous-sol, conformément à l'article 16.1 de la Loi sur les architectes du Québec."
   },
   {
     id: 3,
-    question: "Vos constructions respectent-elles le Code du bâtiment ?",
-    answer: "Absolument. Tous nos plans respectent le Code du bâtiment du Québec et du Canada ainsi que les normes locales en vigueur."
+    question: "Vos plans respectent-ils le Code du bâtiment ?",
+    answer: "Absolument. Tous nos plans sont rigoureusement conformes aux codes de construction en vigueur et aux normes locales, afin de simplifier et accélérer l'obtention de vos permis."
   },
   {
     id: 4,
-    question: "Travaillez-vous avec des matériaux québécois ?",
-    answer: "Nos plans sont conçus pour être réalisés avec des matériaux disponibles chez les fournisseurs locaux du Québec."
+    question: "Que se passe-t-il si mon projet dépasse les limites légales ?",
+    answer: "Pour les projets excédant les seuils de la Loi sur les architectes, Abrisia Plan intervient comme sous-traitant technique en collaboration avec des ingénieurs en structure ou des architectes pour que vos plans soient scellés et approuvés."
   }
 ];

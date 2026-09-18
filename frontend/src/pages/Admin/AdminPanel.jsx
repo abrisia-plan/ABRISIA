@@ -21,7 +21,7 @@ import {
   Navigation
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
-import { devisService, designerService, authService, handleApiError } from '../../services/api';
+import { devisService, authService, handleApiError } from '../../services/api';
 
 // Import des composants de gestion
 import ProjectsManager from './ProjectsManager';
@@ -31,9 +31,7 @@ import ContentManager from './ContentManager';
 import CategoriesManager from './CategoriesManager';
 import TestimonialsManager from './TestimonialsManager';
 import LegalPagesManager from './LegalPagesManager';
-import EmployeesManager from './EmployeesManager';
 import KitOrdersManager from './KitOrdersManager';
-import DevisManager from './DevisManager';
 import PlanOptionsManager from './PlanOptionsManager';
 import CandidaturesManager from './CandidaturesManager';
 import HomepageServicesManager from './HomepageServicesManager';
@@ -291,16 +289,8 @@ const AdminPanel = () => {
                 <LegalPagesManager />
               )}
               
-              {activeTab === 'employees' && (
-                <EmployeesManager />
-              )}
-              
               {activeTab === 'kit-orders' && (
                 <KitOrdersManager />
-              )}
-              
-              {activeTab === 'devis-manager' && (
-                <DevisManager />
               )}
               
               {activeTab === 'plan-options' && (
@@ -345,7 +335,7 @@ const DashboardTab = ({ stats }) => {
     const token = localStorage.getItem('authToken');
     try {
       const [ordersRes, devisRes] = await Promise.all([
-        fetch(`${DASHBOARD_URL}/api/admin/products/orders`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${DASHBOARD_URL}/api/admin/kit-orders`, { headers: { 'Authorization': `Bearer ${token}` } }),
         fetch(`${DASHBOARD_URL}/api/admin/devis`, { headers: { 'Authorization': `Bearer ${token}` } }),
       ]);
       const ordersData = await ordersRes.json();

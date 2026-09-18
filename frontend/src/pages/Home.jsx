@@ -247,8 +247,8 @@ const Home = () => {
               Nos services de dessin
             </h2>
             <p className="text-lg text-slate-600 max-w-4xl mx-auto leading-relaxed">
-              Plans professionnels conformes au Code du bâtiment du Québec et du Canada.
-              <strong className="text-teal-800"> Jusqu'à 600m² de plancher (6000 pi²).</strong>
+              Dossiers techniques complets, conformes aux codes de construction en vigueur.
+              <strong className="text-teal-800"> Services 100 % à distance, partout dans le monde.</strong>
             </p>
           </div>
 
