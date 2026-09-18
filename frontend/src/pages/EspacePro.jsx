@@ -55,7 +55,7 @@ const EspacePro = () => {
     { icon: FileText, title: "Plans sur mesure", desc: "Plans architecturaux adaptés à vos projets de construction" },
     { icon: Users, title: "Partenariat dédié", desc: "Un dessinateur attitré qui connaît vos standards" },
     { icon: Shield, title: "Conformité garantie", desc: "Plans conformes au Code du bâtiment du Québec et du Canada" },
-    { icon: Building2, title: "Volume avantageux", desc: "Tarifs préférentiels pour les entrepreneurs réguliers" },
+    { icon: Building2, title: "Volume avantageux", desc: "Tarif préférentiel de 1,50$/pi² pour les entrepreneurs réguliers" },
   ];
 
   return (
@@ -102,6 +102,26 @@ const EspacePro = () => {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Tarif Pro */}
+      <section className="py-12 bg-gradient-to-r from-teal-700 to-teal-800 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-teal-200 text-sm font-medium mb-2">Tarif entrepreneur</p>
+          <div className="flex items-baseline justify-center gap-1 mb-3">
+            <span className="text-6xl font-bold">1,50</span>
+            <span className="text-2xl font-medium">$ / pi²</span>
+          </div>
+          <p className="text-teal-100 text-lg max-w-xl mx-auto mb-6">
+            Un tarif préférentiel pour vos projets résidentiels.
+            Contactez-nous pour une entente de partenariat sur mesure.
+          </p>
+          <a href="#contact-pro">
+            <Button size="lg" className="bg-white text-teal-800 hover:bg-teal-50 font-semibold px-8 rounded-full" data-testid="pro-cta-btn">
+              Devenir partenaire <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </a>
         </div>
       </section>
 

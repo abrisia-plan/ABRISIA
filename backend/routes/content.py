@@ -906,3 +906,44 @@ async def delete_homepage_service(service_id: str, current_user: dict = Depends(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============ TARIFS CALCULATEUR ============
+
+DEFAULT_CALCULATOR_RATES = [
+    {"project_type": "Maison unifamiliale", "rate": 3.50, "unit": "$/pi²"},
+    {"project_type": "Mini-maison", "rate": 4.00, "unit": "$/pi²"},
+    {"project_type": "Chalet", "rate": 3.75, "unit": "$/pi²"},
+    {"project_type": "Agrandissement", "rate": 4.25, "unit": "$/pi²"},
+    {"project_type": "Garage", "rate": 2.50, "unit": "$/pi²"},
+    {"project_type": "Ébénisterie", "rate": 0, "unit": "Sur devis"},
+]
+
+
+@router.get("/calculator-rates")
+async def get_calculator_rates():
+    """Obtenir les tarifs du calculateur (public)"""
+    db = get_database()
+    doc = await db.site_settings.find_one({"key": "calculator_rates"})
+    if doc and doc.get("rates"):
+        return {"success": True, "data": doc["rates"]}
+    return {"success": True, "data": DEFAULT_CALCULATOR_RATES}
+
+
+class RateUpdate(BaseModel):
+    project_type: str
+    rate: float
+    unit: str = "$/pi²"
+
+
+@router.put("/calculator-rates", dependencies=[Depends(require_admin)])
+async def update_calculator_rates(rates: List[RateUpdate]):
+    """Mettre à jour les tarifs du calculateur (admin)"""
+    db = get_database()
+    rates_data = [r.dict() for r in rates]
+    await db.site_settings.update_one(
+        {"key": "calculator_rates"},
+        {"$set": {"key": "calculator_rates", "rates": rates_data}},
+        upsert=True,
+    )
+    return {"success": True, "message": "Tarifs mis à jour", "data": rates_data}

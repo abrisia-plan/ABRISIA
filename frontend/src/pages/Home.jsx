@@ -22,20 +22,30 @@ const Home = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [projRes, reviewsRes, kitsRes, servicesRes] = await Promise.all([
+        const [projRes, reviewsRes, kitsRes, servicesRes, testimonialsRes] = await Promise.all([
           fetch(`${BACKEND_URL}/api/projects?home_only=true&limit=100`),
           fetch(`${BACKEND_URL}/api/reviews`),
           fetch(`${BACKEND_URL}/api/products?featured=true`),
-          fetch(`${BACKEND_URL}/api/content/homepage-services`)
+          fetch(`${BACKEND_URL}/api/content/homepage-services`),
+          fetch(`${BACKEND_URL}/api/content/testimonials`)
         ]);
         const projData = await projRes.json();
         const reviewsData = await reviewsRes.json();
         const kitsData = await kitsRes.json();
         const servicesData = await servicesRes.json();
+        const testimonialsData = await testimonialsRes.json();
         if (projData.success) setInspirationProjects(projData.data || []);
         if (kitsData.success) setFeaturedKits(kitsData.data || []);
         if (servicesData.success) setHomepageServices(servicesData.data || []);
-        if (reviewsData.success && reviewsData.data?.length > 0) {
+        // Témoignages : priorité aux témoignages CMS, sinon reviews produit
+        if (testimonialsData.success && testimonialsData.data?.length > 0) {
+          setTestimonials(testimonialsData.data.map(r => ({
+            name: r.name,
+            project: r.role || r.location || 'Client',
+            text: r.content || r.text,
+            rating: r.rating || 5
+          })));
+        } else if (reviewsData.success && reviewsData.data?.length > 0) {
           setTestimonials(reviewsData.data.map(r => ({
             name: r.client_name || r.name,
             project: r.project_type || 'Projet',

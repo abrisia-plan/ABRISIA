@@ -35,15 +35,35 @@ const Devis = () => {
   const [calcWidth, setCalcWidth] = useState('');
   const [calcDepth, setCalcDepth] = useState('');
   const [calcFloors, setCalcFloors] = useState('1');
+  const [priceRates, setPriceRates] = useState({});
 
-  const PRICE_RATES = {
-    'Maison unifamiliale': { rate: 3.50, label: '$/pi²' },
-    'Mini-maison': { rate: 4.00, label: '$/pi²' },
-    'Chalet': { rate: 3.75, label: '$/pi²' },
-    'Agrandissement': { rate: 4.25, label: '$/pi²' },
-    'Garage': { rate: 2.50, label: '$/pi²' },
-    'Ébénisterie': { rate: 0, label: 'Sur devis' },
-  };
+  // Charger les tarifs depuis l'API
+  useEffect(() => {
+    const loadRates = async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/calculator-rates`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          const ratesMap = {};
+          data.data.forEach(r => { ratesMap[r.project_type] = { rate: r.rate, label: r.unit }; });
+          setPriceRates(ratesMap);
+        }
+      } catch {
+        // Fallback hardcoded
+        setPriceRates({
+          'Maison unifamiliale': { rate: 3.50, label: '$/pi²' },
+          'Mini-maison': { rate: 4.00, label: '$/pi²' },
+          'Chalet': { rate: 3.75, label: '$/pi²' },
+          'Agrandissement': { rate: 4.25, label: '$/pi²' },
+          'Garage': { rate: 2.50, label: '$/pi²' },
+          'Ébénisterie': { rate: 0, label: 'Sur devis' },
+        });
+      }
+    };
+    loadRates();
+  }, []);
+
+  const PRICE_RATES = priceRates;
 
   const calcEstimate = useMemo(() => {
     const w = parseFloat(calcWidth) || 0;
@@ -54,8 +74,7 @@ const Devis = () => {
     if (!rateInfo || rateInfo.rate === 0 || surface === 0) return null;
     const price = Math.round(surface * rateInfo.rate);
     return { surface: Math.round(surface), price, rate: rateInfo.rate };
-    // eslint-disable-next-line
-  }, [calcProjectType, calcWidth, calcDepth, calcFloors]);
+  }, [calcProjectType, calcWidth, calcDepth, calcFloors, PRICE_RATES]);
 
   useEffect(() => {
     // Pré-sélectionner la catégorie depuis l'URL ?service=Mini-maison

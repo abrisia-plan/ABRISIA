@@ -37,6 +37,7 @@ import DevisManager from './DevisManager';
 import PlanOptionsManager from './PlanOptionsManager';
 import CandidaturesManager from './CandidaturesManager';
 import HomepageServicesManager from './HomepageServicesManager';
+import CalculatorRatesManager from './CalculatorRatesManager';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -197,6 +198,14 @@ const AdminPanel = () => {
               Prix du devis
             </Button>
             <Button 
+              variant={activeTab === 'calculator-rates' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'calculator-rates' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('calculator-rates')}
+            >
+              <DollarSign className="w-4 h-4 mr-2" />
+              Tarifs calculateur
+            </Button>
+            <Button 
               variant={activeTab === 'cms' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'cms' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('cms')}
@@ -320,6 +329,10 @@ const AdminPanel = () => {
               
               {activeTab === 'plan-options' && (
                 <PlanOptionsManager />
+              )}
+              
+              {activeTab === 'calculator-rates' && (
+                <CalculatorRatesManager />
               )}
               
               {activeTab === 'navigation' && (
