@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -7,7 +7,7 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Checkbox } from '../components/ui/checkbox';
 import { projectTypes } from '../data/mock';
-import { Send, CheckCircle, Loader2 } from 'lucide-react';
+import { Send, CheckCircle, Loader2, Calculator } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import SEO from '../components/SEO';
 import { devisService, handleApiError } from '../services/api';
@@ -29,6 +29,33 @@ const Devis = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Calculateur de prix préliminaire
+  const [calcProjectType, setCalcProjectType] = useState('');
+  const [calcWidth, setCalcWidth] = useState('');
+  const [calcDepth, setCalcDepth] = useState('');
+  const [calcFloors, setCalcFloors] = useState('1');
+
+  const PRICE_RATES = {
+    'Maison unifamiliale': { rate: 3.50, label: '$/pi²' },
+    'Mini-maison': { rate: 4.00, label: '$/pi²' },
+    'Chalet': { rate: 3.75, label: '$/pi²' },
+    'Agrandissement': { rate: 4.25, label: '$/pi²' },
+    'Garage': { rate: 2.50, label: '$/pi²' },
+    'Ébénisterie': { rate: 0, label: 'Sur devis' },
+  };
+
+  const calcEstimate = useMemo(() => {
+    const w = parseFloat(calcWidth) || 0;
+    const d = parseFloat(calcDepth) || 0;
+    const f = parseInt(calcFloors) || 1;
+    const surface = w * d * f;
+    const rateInfo = PRICE_RATES[calcProjectType];
+    if (!rateInfo || rateInfo.rate === 0 || surface === 0) return null;
+    const price = Math.round(surface * rateInfo.rate);
+    return { surface: Math.round(surface), price, rate: rateInfo.rate };
+    // eslint-disable-next-line
+  }, [calcProjectType, calcWidth, calcDepth, calcFloors]);
 
   useEffect(() => {
     // Pré-sélectionner la catégorie depuis l'URL ?service=Mini-maison
@@ -206,6 +233,90 @@ const Devis = () => {
                   <h3 className="text-xl font-semibold text-slate-800 border-b border-stone-200 pb-2">
                     Cochez les plans dont vous avez besoin (prix à partir de)
                   </h3>
+
+                  {/* Calculateur de prix préliminaire */}
+                  <div className="bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200 rounded-xl p-5 space-y-4" data-testid="price-calculator">
+                    <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                      <Calculator className="w-5 h-5 text-teal-700" />
+                      Calculateur de prix préliminaire
+                    </h4>
+                    <p className="text-sm text-slate-600">Obtenez une estimation rapide basée sur les dimensions de votre projet.</p>
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      <div>
+                        <Label className="text-sm">Type de projet</Label>
+                        <select
+                          value={calcProjectType}
+                          onChange={(e) => setCalcProjectType(e.target.value)}
+                          className="mt-1 w-full rounded-md border border-input bg-white px-3 py-2 text-sm"
+                          data-testid="calc-project-type"
+                        >
+                          <option value="">-- Choisir --</option>
+                          {Object.keys(PRICE_RATES).map(t => (
+                            <option key={t} value={t}>{t}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <Label className="text-sm">Largeur (pi)</Label>
+                        <Input
+                          type="number"
+                          min="1"
+                          value={calcWidth}
+                          onChange={(e) => setCalcWidth(e.target.value)}
+                          placeholder="Ex: 30"
+                          className="mt-1"
+                          data-testid="calc-width"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-sm">Profondeur (pi)</Label>
+                        <Input
+                          type="number"
+                          min="1"
+                          value={calcDepth}
+                          onChange={(e) => setCalcDepth(e.target.value)}
+                          placeholder="Ex: 40"
+                          className="mt-1"
+                          data-testid="calc-depth"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-sm">Étages</Label>
+                        <select
+                          value={calcFloors}
+                          onChange={(e) => setCalcFloors(e.target.value)}
+                          className="mt-1 w-full rounded-md border border-input bg-white px-3 py-2 text-sm"
+                          data-testid="calc-floors"
+                        >
+                          <option value="1">1 étage</option>
+                          <option value="2">2 étages</option>
+                          <option value="3">3 étages</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {calcEstimate && (
+                      <div className="bg-white rounded-lg p-4 border border-teal-200 flex items-center justify-between" data-testid="calc-result">
+                        <div className="text-sm text-slate-600">
+                          <p>Surface totale : <strong>{calcEstimate.surface} pi²</strong></p>
+                          <p>Tarif : {calcEstimate.rate} $/pi²</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-slate-500">Estimation</p>
+                          <p className="text-2xl font-bold text-teal-800">{calcEstimate.price.toLocaleString('fr-CA')} $</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {calcProjectType && PRICE_RATES[calcProjectType]?.rate === 0 && (
+                      <div className="bg-white rounded-lg p-4 border border-amber-200 text-center">
+                        <p className="text-amber-800 font-medium">Ce type de projet requiert une évaluation personnalisée.</p>
+                      </div>
+                    )}
+
+                    <p className="text-xs text-slate-400">* Prix indicatif avant taxes. Le devis final sera ajusté selon la complexité du projet.</p>
+                  </div>
                   <p className="text-sm text-slate-600 italic">
                     Les prix indiqués sont des tarifs de base. Le devis final sera ajusté selon la complexité et les spécificités de votre projet.
                   </p>

@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 # Imports des modules
 from database import connect_to_mongo, close_mongo_connection, get_database
-from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, collection, chatbot
+from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, collection, chatbot, zoho
 from object_storage import init_storage
 
 # Lifespan manager pour la DB
@@ -93,6 +93,9 @@ api_router.include_router(collection.router, prefix="/collection")
 
 # Routes chatbot IA
 api_router.include_router(chatbot.router, prefix="/chatbot")
+
+# Routes Zoho CRM
+api_router.include_router(zoho.router, prefix="/zoho")
 
 # Inclure le router principal dans l'app
 app.include_router(api_router)

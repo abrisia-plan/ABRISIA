@@ -14,6 +14,36 @@ import logging
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["devis"])
 
+
+async def _create_zoho_lead_from_devis(devis_doc: dict):
+    """Créer un lead Zoho en arrière-plan pour chaque devis"""
+    try:
+        from routes.zoho import save_lead
+        name_parts = devis_doc.get("nom", "").split(" ", 1)
+        first_name = name_parts[0] if name_parts else "Visiteur"
+        last_name = name_parts[1] if len(name_parts) > 1 else first_name
+
+        zoho_record = {
+            "First_Name": first_name,
+            "Last_Name": last_name,
+            "Email": devis_doc.get("email", ""),
+            "Phone": devis_doc.get("telephone", ""),
+            "Company": "Visiteur site web",
+            "Lead_Source": "Demande de devis",
+            "Description": f"Type: {devis_doc.get('project_type', 'N/A')}\n"
+                           f"Plans: {', '.join(devis_doc.get('plans_choisis', []))}\n"
+                           f"Notes: {devis_doc.get('notes', '')}",
+        }
+        data = {
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": devis_doc.get("email", ""),
+            "phone": devis_doc.get("telephone", ""),
+        }
+        await save_lead("devis", data, zoho_record)
+    except Exception as e:
+        logger.warning(f"Zoho lead creation échouée pour devis: {e}")
+
 @router.post("/devis", response_model=DevisResponse)
 async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTasks):
     """Soumettre une demande de devis (public)"""
@@ -42,6 +72,9 @@ async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTask
             email_service.send_devis_notification, 
             devis_doc
         )
+        
+        # Créer un lead Zoho en arrière-plan
+        background_tasks.add_task(_create_zoho_lead_from_devis, devis_doc)
         
         logger.info(f"✅ Nouveau devis soumis par {devis_data.nom} ({devis_data.email}) - Email de notification programmé")
         

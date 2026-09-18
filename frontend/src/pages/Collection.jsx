@@ -4,6 +4,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { Checkbox } from '../components/ui/checkbox';
 import { useToast } from '../hooks/use-toast';
@@ -11,7 +12,7 @@ import { resolveImageUrl } from '../services/api';
 import {
   ShoppingCart, Filter, X, ChevronDown, ChevronUp,
   Ruler, BedDouble, Bath, Layers, Home, Eye, Plus, Minus, Trash2,
-  ArrowRight, Check, Loader2, SlidersHorizontal
+  ArrowRight, Check, Loader2, SlidersHorizontal, Paintbrush, CreditCard, ExternalLink
 } from 'lucide-react';
 import SEO from '../components/SEO';
 
@@ -40,6 +41,17 @@ const Collection = () => {
   const [cart, setCart] = useState({ items: [], subtotal: 0, tps: 0, tvq: 0, total: 0 });
   const [showCart, setShowCart] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+
+  // Personnalisation modal
+  const [showCustomize, setShowCustomize] = useState(false);
+  const [customizeModel, setCustomizeModel] = useState(null);
+  const [customizeForm, setCustomizeForm] = useState({ first_name: '', last_name: '', email: '', phone: '', message: '' });
+  const [customizeLoading, setCustomizeLoading] = useState(false);
+
+  // Checkout modal
+  const [showCheckout, setShowCheckout] = useState(false);
+  const [checkoutForm, setCheckoutForm] = useState({ name: '', email: '', phone: '' });
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   useEffect(() => {
     loadModels();
@@ -141,6 +153,104 @@ const Collection = () => {
       await fetch(`${BACKEND_URL}/api/collection/cart/${cartSessionId}/item/${cartItemId}`, { method: 'DELETE' });
       loadCart();
     } catch (err) { /* silent */ }
+  };
+
+  // Personnaliser ce modèle
+  const openCustomize = (model) => {
+    setCustomizeModel(model);
+    setShowCustomize(true);
+    setCustomizeForm({ first_name: '', last_name: '', email: '', phone: '', message: '' });
+  };
+
+  const submitCustomize = async () => {
+    if (!customizeForm.first_name || !customizeForm.last_name || !customizeForm.email) {
+      toast({ title: "Champs requis", description: "Veuillez remplir nom, prénom et courriel", variant: "destructive" });
+      return;
+    }
+    setCustomizeLoading(true);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/zoho/lead/customize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...customizeForm, model_name: customizeModel?.name, source: 'Personnalisation modèle' }),
+      });
+      if (res.ok) {
+        toast({ title: "Demande envoyée", description: "Nous vous contacterons pour personnaliser votre modèle." });
+        setShowCustomize(false);
+      } else {
+        throw new Error();
+      }
+    } catch {
+      toast({ title: "Erreur", description: "Impossible d'envoyer la demande. Réessayez.", variant: "destructive" });
+    } finally {
+      setCustomizeLoading(false);
+    }
+  };
+
+  // Checkout - Passer à la caisse
+  const openCheckout = () => {
+    if (cart.items.length === 0) return;
+    setShowCart(false);
+    setShowCheckout(true);
+    setCheckoutForm({ name: '', email: '', phone: '' });
+  };
+
+  const payWithStripe = async () => {
+    if (!checkoutForm.name || !checkoutForm.email) {
+      toast({ title: "Champs requis", description: "Nom et courriel sont requis", variant: "destructive" });
+      return;
+    }
+    setCheckoutLoading(true);
+    try {
+      const firstItem = cart.items[0];
+      const res = await fetch(`${BACKEND_URL}/api/payments/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          kit_id: firstItem.product_id,
+          customer_name: checkoutForm.name,
+          customer_email: checkoutForm.email,
+          customer_phone: checkoutForm.phone,
+          include_materials: false,
+          success_url: window.location.origin + '/collection?payment=success',
+          cancel_url: window.location.origin + '/collection?payment=cancel',
+        }),
+      });
+      const data = await res.json();
+      if (data.success && data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.detail || 'Erreur Stripe');
+      }
+    } catch (err) {
+      toast({ title: "Erreur paiement", description: "Impossible de démarrer le paiement Stripe", variant: "destructive" });
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
+  const payWithPaypal = () => {
+    if (!checkoutForm.name || !checkoutForm.email) {
+      toast({ title: "Champs requis", description: "Nom et courriel sont requis", variant: "destructive" });
+      return;
+    }
+    // Zoho lead pour l'achat PayPal
+    fetch(`${BACKEND_URL}/api/zoho/lead/purchase`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        first_name: checkoutForm.name.split(' ')[0],
+        last_name: checkoutForm.name.split(' ').slice(1).join(' ') || checkoutForm.name,
+        email: checkoutForm.email,
+        phone: checkoutForm.phone,
+        model_name: cart.items.map(i => i.product_name).join(', '),
+        amount: cart.total,
+      }),
+    }).catch(() => {});
+    // Redirect to PayPal.me
+    const amount = cart.total.toFixed(2);
+    window.open(`https://paypal.me/Abrisia/${amount}CAD`, '_blank');
+    toast({ title: "Redirection PayPal", description: "Complétez le paiement dans l'onglet PayPal." });
   };
 
   const clearFiltersAction = () => {
@@ -483,9 +593,10 @@ const Collection = () => {
                     </Button>
                     <Button
                       variant="outline"
-                      onClick={() => { setSelectedModel(null); window.location.href = `/devis?model=${selectedModel.name}`; }}
+                      onClick={() => { setSelectedModel(null); openCustomize(selectedModel); }}
+                      data-testid="customize-model-btn"
                     >
-                      Adapter ce plan
+                      <Paintbrush className="w-4 h-4 mr-2" /> Personnaliser
                     </Button>
                   </div>
                 </div>
@@ -565,11 +676,180 @@ const Collection = () => {
                   </div>
                 </div>
 
-                <Button className="w-full bg-teal-700 hover:bg-teal-800" data-testid="checkout-btn">
+                <Button className="w-full bg-teal-700 hover:bg-teal-800" data-testid="checkout-btn" onClick={openCheckout}>
                   <ArrowRight className="w-4 h-4 mr-2" /> Passer à la caisse
                 </Button>
               </>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+      {/* Personnaliser ce modèle Modal */}
+      <Dialog open={showCustomize} onOpenChange={setShowCustomize}>
+        <DialogContent className="max-w-md" data-testid="customize-modal">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Paintbrush className="w-5 h-5 text-teal-700" />
+              Personnaliser ce modèle
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            {customizeModel && (
+              <div className="bg-teal-50 p-3 rounded-lg text-sm">
+                <p className="font-medium">{customizeModel.name}</p>
+                <p className="text-gray-500">Nous adapterons ce modèle selon vos besoins spécifiques.</p>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label>Prénom *</Label>
+                <Input
+                  value={customizeForm.first_name}
+                  onChange={(e) => setCustomizeForm(f => ({ ...f, first_name: e.target.value }))}
+                  placeholder="Jean"
+                  data-testid="customize-firstname"
+                />
+              </div>
+              <div>
+                <Label>Nom *</Label>
+                <Input
+                  value={customizeForm.last_name}
+                  onChange={(e) => setCustomizeForm(f => ({ ...f, last_name: e.target.value }))}
+                  placeholder="Tremblay"
+                  data-testid="customize-lastname"
+                />
+              </div>
+            </div>
+            <div>
+              <Label>Courriel *</Label>
+              <Input
+                type="email"
+                value={customizeForm.email}
+                onChange={(e) => setCustomizeForm(f => ({ ...f, email: e.target.value }))}
+                placeholder="jean@exemple.com"
+                data-testid="customize-email"
+              />
+            </div>
+            <div>
+              <Label>Téléphone</Label>
+              <Input
+                value={customizeForm.phone}
+                onChange={(e) => setCustomizeForm(f => ({ ...f, phone: e.target.value }))}
+                placeholder="418-555-1234"
+                data-testid="customize-phone"
+              />
+            </div>
+            <div>
+              <Label>Décrivez vos modifications souhaitées</Label>
+              <textarea
+                className="w-full mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm min-h-[80px]"
+                value={customizeForm.message}
+                onChange={(e) => setCustomizeForm(f => ({ ...f, message: e.target.value }))}
+                placeholder="Ex: Ajouter une chambre, agrandir le salon, changer la fondation..."
+                data-testid="customize-message"
+              />
+            </div>
+            <Button
+              className="w-full bg-teal-700 hover:bg-teal-800"
+              onClick={submitCustomize}
+              disabled={customizeLoading}
+              data-testid="customize-submit-btn"
+            >
+              {customizeLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <ArrowRight className="w-4 h-4 mr-2" />}
+              Envoyer ma demande
+            </Button>
+            <p className="text-xs text-gray-400 text-center">Un conseiller vous contactera sous 24 heures ouvrables.</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Checkout Modal */}
+      <Dialog open={showCheckout} onOpenChange={setShowCheckout}>
+        <DialogContent className="max-w-md" data-testid="checkout-modal">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-teal-700" />
+              Passer à la caisse
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            {/* Résumé commande */}
+            <div className="bg-gray-50 p-3 rounded-lg space-y-1">
+              {cart.items.map(item => (
+                <div key={item.cart_item_id} className="flex justify-between text-sm">
+                  <span className="truncate mr-2">{item.product_name}</span>
+                  <span className="font-medium flex-shrink-0">{formatPrice(item.item_total)}</span>
+                </div>
+              ))}
+              <div className="border-t pt-2 mt-2 flex justify-between font-bold">
+                <span>Total (taxes incluses)</span>
+                <span className="text-teal-700">{formatPrice(cart.total)}</span>
+              </div>
+            </div>
+
+            {/* Infos client */}
+            <div>
+              <Label>Nom complet *</Label>
+              <Input
+                value={checkoutForm.name}
+                onChange={(e) => setCheckoutForm(f => ({ ...f, name: e.target.value }))}
+                placeholder="Jean Tremblay"
+                data-testid="checkout-name"
+              />
+            </div>
+            <div>
+              <Label>Courriel *</Label>
+              <Input
+                type="email"
+                value={checkoutForm.email}
+                onChange={(e) => setCheckoutForm(f => ({ ...f, email: e.target.value }))}
+                placeholder="jean@exemple.com"
+                data-testid="checkout-email"
+              />
+            </div>
+            <div>
+              <Label>Téléphone</Label>
+              <Input
+                value={checkoutForm.phone}
+                onChange={(e) => setCheckoutForm(f => ({ ...f, phone: e.target.value }))}
+                placeholder="418-555-1234"
+                data-testid="checkout-phone"
+              />
+            </div>
+
+            {/* Boutons de paiement */}
+            <div className="space-y-3">
+              <Button
+                className="w-full bg-[#635BFF] hover:bg-[#5348db] text-white"
+                onClick={payWithStripe}
+                disabled={checkoutLoading}
+                data-testid="pay-stripe-btn"
+              >
+                {checkoutLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <CreditCard className="w-4 h-4 mr-2" />}
+                Payer par carte
+              </Button>
+              <div className="flex items-center justify-center gap-3 text-xs text-gray-400">
+                <span className="bg-gray-100 px-2 py-0.5 rounded">Google Pay</span>
+                <span className="bg-gray-100 px-2 py-0.5 rounded">Apple Pay</span>
+                <span className="text-gray-300">via Stripe</span>
+              </div>
+              <div className="relative flex items-center justify-center my-1">
+                <div className="border-t border-gray-200 flex-1" />
+                <span className="px-3 text-xs text-gray-400">ou</span>
+                <div className="border-t border-gray-200 flex-1" />
+              </div>
+              <Button
+                className="w-full bg-[#0070BA] hover:bg-[#005ea6] text-white"
+                onClick={payWithPaypal}
+                data-testid="pay-paypal-btn"
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Payer avec PayPal
+              </Button>
+            </div>
+            <p className="text-xs text-gray-400 text-center">
+              Paiement sécurisé. Google Pay et Apple Pay s'affichent automatiquement si disponibles. Vos fichiers seront envoyés par courriel après confirmation.
+            </p>
           </div>
         </DialogContent>
       </Dialog>

@@ -131,7 +131,7 @@ async def create_checkout_session(data: CreateCheckoutSession):
             "quantity": 1,
         })
         
-        # Créer la session Stripe
+        # Créer la session Stripe (card inclut Google Pay & Apple Pay automatiquement)
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=["card"],
             line_items=line_items,
@@ -139,6 +139,9 @@ async def create_checkout_session(data: CreateCheckoutSession):
             success_url=f"{data.success_url}?order_id={order_id}&session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{data.cancel_url}?order_id={order_id}",
             customer_email=data.customer_email,
+            payment_intent_data={
+                "description": f"Abrisia Plan - {kit['name']}"
+            },
             metadata={
                 "order_id": order_id,
                 "order_number": order_number,
@@ -215,6 +218,26 @@ async def verify_payment(order_id: str, session_id: Optional[str] = None):
                         email_service.send_kit_order_notification_to_admin(order)
                     except Exception as email_error:
                         logger.warning(f"⚠️ Erreur envoi email: {email_error}")
+                    
+                    # Créer un lead Zoho pour l'achat
+                    try:
+                        from routes.zoho import save_lead
+                        zoho_deal = {
+                            "Deal_Name": f"{order['kit_name']} - {order['customer_name']}",
+                            "Stage": "Closed Won",
+                            "Amount": order["total_amount"],
+                            "Description": f"Achat: {order['kit_name']}\nEmail: {order['customer_email']}\nCommande: {order['order_number']}",
+                        }
+                        await save_lead("purchase", {
+                            "first_name": order["customer_name"].split()[0],
+                            "last_name": " ".join(order["customer_name"].split()[1:]) or order["customer_name"],
+                            "email": order["customer_email"],
+                            "phone": order.get("customer_phone", ""),
+                            "model_name": order["kit_name"],
+                            "amount": order["total_amount"],
+                        }, zoho_deal)
+                    except Exception as zoho_err:
+                        logger.warning(f"⚠️ Zoho lead échoué: {zoho_err}")
                     
                     logger.info(f"✅ Paiement confirmé pour commande {order['order_number']}")
                     

@@ -141,7 +141,7 @@ const Home = () => {
             Abrisia Plan
           </h1>
           <p className="text-xl md:text-2xl mb-12 text-amber-100 font-light leading-relaxed">
-            Des espaces sur mesure, une vie à votre rythme
+            Des plans sur mesure, conçus pour votre réalité
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link to="#inspiration">
