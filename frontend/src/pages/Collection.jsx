@@ -752,7 +752,7 @@ const Collection = () => {
                 <p className="text-gray-500">Nous adapterons ce modèle selon vos besoins spécifiques.</p>
               </div>
             )}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-3">
               <div>
                 <Label>Prénom *</Label>
                 <Input

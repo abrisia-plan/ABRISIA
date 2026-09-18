@@ -206,26 +206,24 @@ const EspacePro = () => {
                       data-testid="pro-company"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label>Personne contact *</Label>
-                      <Input
-                        value={formData.contact_name}
-                        onChange={(e) => setFormData(f => ({ ...f, contact_name: e.target.value }))}
-                        placeholder="Jean Tremblay"
-                        data-testid="pro-contact-name"
-                      />
-                    </div>
-                    <div>
-                      <Label>Courriel *</Label>
-                      <Input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData(f => ({ ...f, email: e.target.value }))}
-                        placeholder="jean@construction.ca"
-                        data-testid="pro-email"
-                      />
-                    </div>
+                  <div>
+                    <Label>Personne contact *</Label>
+                    <Input
+                      value={formData.contact_name}
+                      onChange={(e) => setFormData(f => ({ ...f, contact_name: e.target.value }))}
+                      placeholder="Jean Tremblay"
+                      data-testid="pro-contact-name"
+                    />
+                  </div>
+                  <div>
+                    <Label>Courriel *</Label>
+                    <Input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData(f => ({ ...f, email: e.target.value }))}
+                      placeholder="jean@construction.ca"
+                      data-testid="pro-email"
+                    />
                   </div>
                   <div>
                     <Label>Téléphone</Label>

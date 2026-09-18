@@ -68,7 +68,7 @@ export const planOptions = [
   
   // Services
   { id: 'accompagnement', name: 'Calculs de matériaux', price: 'Sur devis', description: 'Liste de matériaux et estimation des quantités pour votre projet' },
-  { id: 'ebenisterie', name: 'Ébénisterie sur mesure', price: 'Sur devis', description: 'Conception et plans pour meubles et aménagements personnalisés' },
+  { id: 'ebenisterie', name: 'Ébénisterie sur mesure', price: 'Sur devis', description: 'Plans de meubles et aménagements sur mesure' },
   { id: 'autre', name: 'Autre (à préciser dans les notes)', price: 'Sur devis', description: 'Projet spécialisé ou besoins particuliers - décrivez vos besoins' }
 ];
 

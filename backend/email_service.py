@@ -14,6 +14,52 @@ class EmailService:
         self.sender_email = os.getenv('SENDER_EMAIL', 'abrisia0plan@gmail.com')
         self.sender_password = os.getenv('SENDER_PASSWORD')
         self.app_url = os.getenv('APP_URL', 'https://abrisia-plan.ca')
+
+    def _branded_header(self):
+        return """
+        <div style="background: linear-gradient(135deg, #0f766e 0%, #115e59 100%); padding: 24px 30px; text-align: center;">
+            <table style="margin: 0 auto;"><tr>
+                <td style="padding-right: 12px; vertical-align: middle;">
+                    <div style="width: 40px; height: 40px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                        <span style="color: #0f766e; font-weight: bold; font-size: 22px; line-height: 40px; display: block; text-align: center; width: 40px;">A</span>
+                    </div>
+                </td>
+                <td style="vertical-align: middle;">
+                    <span style="color: white; font-size: 22px; font-weight: bold; letter-spacing: 1px;">ABRISIA PLAN</span>
+                </td>
+            </tr></table>
+            <p style="color: #99f6e4; font-size: 12px; margin: 8px 0 0 0; letter-spacing: 0.5px;">Des plans sur mesure, conçus pour votre réalité</p>
+        </div>"""
+
+    def _branded_footer(self):
+        return f"""
+        <div style="background: #1e293b; padding: 24px 30px; text-align: center;">
+            <p style="color: #94a3b8; font-size: 13px; margin: 0 0 6px 0; font-weight: 600;">ABRISIA PLAN</p>
+            <p style="color: #64748b; font-size: 12px; margin: 0 0 4px 0;">Conception et dessin de plans architecturaux</p>
+            <p style="color: #64748b; font-size: 12px; margin: 0 0 4px 0;">Saguenay-Lac-Saint-Jean, Québec, Canada</p>
+            <p style="color: #64748b; font-size: 12px; margin: 0 0 12px 0;">Plans conformes au Code du bâtiment du Québec et du Canada</p>
+            <div style="border-top: 1px solid #334155; padding-top: 12px; margin-top: 4px;">
+                <a href="{self.app_url}" style="color: #5eead4; text-decoration: none; font-size: 12px; margin: 0 10px;">abrisia-plan.ca</a>
+                <span style="color: #475569;">|</span>
+                <a href="mailto:{self.sender_email}" style="color: #5eead4; text-decoration: none; font-size: 12px; margin: 0 10px;">{self.sender_email}</a>
+            </div>
+            <p style="color: #475569; font-size: 11px; margin: 10px 0 0 0;">© 2027 Abrisia Plan. Tous droits réservés.</p>
+        </div>"""
+
+    def _wrap_email(self, body_content):
+        """Enveloppe le contenu dans le template brandé"""
+        return f"""
+        <html>
+        <body style="font-family: 'Segoe UI', Arial, sans-serif; color: #333; line-height: 1.6; background: #f1f5f9; padding: 20px; margin: 0;">
+            <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                {self._branded_header()}
+                <div style="padding: 30px;">
+                    {body_content}
+                </div>
+                {self._branded_footer()}
+            </div>
+        </body>
+        </html>"""
     
     def _send_email(self, to_email, subject, html_content):
         """Méthode interne pour envoyer un email"""
@@ -51,30 +97,20 @@ class EmailService:
                 </tr>
                 """
             
-            html_content = f"""
-            <html>
-            <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; background: #f5f5f5; padding: 20px;">
-                <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    
-                    <div style="background: linear-gradient(135deg, #0f766e 0%, #115e59 100%); color: white; padding: 30px; text-align: center;">
-                        <h1 style="margin: 0; font-size: 28px;">✅ Commande confirmée !</h1>
-                        <p style="margin: 10px 0 0 0; opacity: 0.9; font-size: 16px;">Merci pour votre commande</p>
-                    </div>
-                    
-                    <div style="padding: 30px;">
+            body = f"""
                         <p style="font-size: 16px;">Bonjour <strong>{order_data['customer_name']}</strong>,</p>
                         
+                        <h2 style="color: #0f766e; margin: 20px 0 10px 0; font-size: 20px;">Commande confirmée</h2>
                         <p>Votre commande a bien été enregistrée. Voici les détails :</p>
                         
-                        <div style="background: #f8fafc; border-radius: 8px; padding: 20px; margin: 20px 0;">
-                            <p style="margin: 0 0 10px 0; color: #64748b; font-size: 14px;">Numéro de commande</p>
-                            <p style="margin: 0; font-size: 24px; font-weight: bold; color: #0f766e; font-family: monospace;">{order_data['order_number']}</p>
+                        <div style="background: #f0fdf4; border-radius: 8px; padding: 16px; margin: 16px 0; text-align: center;">
+                            <p style="margin: 0 0 4px 0; color: #64748b; font-size: 13px;">Numéro de commande</p>
+                            <p style="margin: 0; font-size: 22px; font-weight: bold; color: #0f766e; font-family: monospace;">{order_data['order_number']}</p>
                         </div>
                         
-                        <h3 style="color: #0f766e; margin-top: 30px;">📦 Votre commande</h3>
-                        <table style="width: 100%; border-collapse: collapse;">
+                        <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
                             <tr style="background: #f8fafc;">
-                                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">Kit : {order_data['kit_name']}</td>
+                                <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; font-weight: bold;">Modèle : {order_data['kit_name']}</td>
                                 <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">{order_data['base_price']:.2f} $</td>
                             </tr>
                             {materials_row}
@@ -87,57 +123,28 @@ class EmailService:
                                 <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">{order_data['tax_amount']:.2f} $</td>
                             </tr>
                             <tr style="background: #0f766e; color: white;">
-                                <td style="padding: 15px; font-weight: bold; font-size: 18px;">TOTAL À PAYER</td>
-                                <td style="padding: 15px; text-align: right; font-weight: bold; font-size: 18px;">{order_data['total_amount']:.2f} $</td>
+                                <td style="padding: 14px; font-weight: bold; font-size: 16px;">TOTAL</td>
+                                <td style="padding: 14px; text-align: right; font-weight: bold; font-size: 16px;">{order_data['total_amount']:.2f} $</td>
                             </tr>
                         </table>
                         
-                        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 20px; margin: 30px 0;">
-                            <h3 style="margin: 0 0 15px 0; color: #92400e;">💳 Instructions de paiement Interac</h3>
-                            <p style="margin: 0; color: #78350f;">
-                                Pour finaliser votre commande, envoyez le paiement par <strong>Virement Interac</strong> :
-                            </p>
-                            <div style="background: white; border-radius: 8px; padding: 15px; margin: 15px 0; text-align: center;">
-                                <p style="margin: 0; font-size: 18px; color: #0f766e; font-weight: bold;">
-                                    📧 abrisia0plan@gmail.com
-                                </p>
-                                <p style="margin: 10px 0 0 0; font-size: 14px; color: #64748b;">
-                                    Question secrète : <strong>Abrisia</strong> | Réponse : <strong>Plan</strong>
-                                </p>
-                            </div>
-                            <p style="margin: 0; color: #78350f; font-size: 14px; text-align: center;">
-                                ⚠️ Mentionnez votre numéro de commande : <strong>{order_data['order_number']}</strong>
-                            </p>
-                        </div>
-                        
                         <p style="color: #64748b; font-size: 14px;">
-                            Une fois le paiement reçu, vos fichiers vous seront envoyés par email dans les 24 heures.
+                            Vos fichiers vous seront envoyés par courriel une fois le paiement confirmé.
                         </p>
                         
-                        <div style="text-align: center; margin: 30px 0;">
-                            <a href="{self.app_url}" style="display: inline-block; background: #0f766e; color: white; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold;">
-                                🏠 Retourner sur Abrisia Plan
+                        <div style="text-align: center; margin: 24px 0;">
+                            <a href="{self.app_url}" style="display: inline-block; background: #0f766e; color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px;">
+                                Retourner sur Abrisia Plan
                             </a>
                         </div>
                         
-                        <p style="margin-top: 30px;">
-                            Des questions ? Répondez directement à cet email ou appelez-nous.
-                        </p>
-                        
-                        <p style="margin-top: 20px;">
-                            Cordialement,<br>
+                        <p style="margin-top: 20px; font-size: 14px;">
+                            Des questions ? Répondez directement à cet email.<br>
                             <strong>L'équipe Abrisia Plan</strong>
                         </p>
-                    </div>
-                    
-                    <div style="background: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b;">
-                        <p style="margin: 0;">Abrisia Plan - Plans sur mesure au Saguenay</p>
-                        <p style="margin: 5px 0 0 0;">📧 abrisia0plan@gmail.com</p>
-                    </div>
-                </div>
-            </body>
-            </html>
             """
+            
+            html_content = self._wrap_email(body)
             
             return self._send_email(order_data['customer_email'], subject, html_content)
             
@@ -238,35 +245,24 @@ class EmailService:
     def send_candidature_notification(self, candidature_data):
         """Envoie notification de nouvelle candidature à l'admin"""
         try:
-            subject = f"📄 Nouvelle candidature - {candidature_data.get('nom', 'Candidat')}"
-            html_content = f"""
-            <html>
-            <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; background: #f5f5f5; padding: 20px;">
-                <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    <div style="background: linear-gradient(135deg, #0f766e 0%, #115e59 100%); color: white; padding: 30px; text-align: center;">
-                        <h1 style="margin: 0; font-size: 24px;">📄 Nouvelle candidature</h1>
-                        <p style="margin: 10px 0 0 0; opacity: 0.9;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
-                    </div>
-                    <div style="padding: 30px;">
-                        <h3 style="color: #0f766e;">👤 Candidat</h3>
-                        <table style="width: 100%; margin-bottom: 20px;">
-                            <tr><td style="padding: 5px 0; font-weight: bold;">Nom :</td><td>{candidature_data.get('nom', '')}</td></tr>
-                            <tr><td style="padding: 5px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{candidature_data.get('email', '')}" style="color: #0f766e;">{candidature_data.get('email', '')}</a></td></tr>
-                            <tr><td style="padding: 5px 0; font-weight: bold;">Telephone :</td><td>{candidature_data.get('telephone', 'Non fourni')}</td></tr>
-                            <tr><td style="padding: 5px 0; font-weight: bold;">CV :</td><td>{candidature_data.get('cv_filename', 'Fichier joint')}</td></tr>
-                        </table>
-                        {f'<div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;"><p style="margin: 0;">{candidature_data.get("message")}</p></div>' if candidature_data.get('message') else ''}
-                        <div style="text-align: center; margin: 30px 0;">
-                            <a href="{self.app_url}/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Voir dans l'admin</a>
-                        </div>
-                    </div>
+            subject = f"Nouvelle candidature - {candidature_data.get('nom', 'Candidat')}"
+            body = f"""
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle candidature</h2>
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                <table style="width: 100%; margin-bottom: 20px;">
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{candidature_data.get('nom', '')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{candidature_data.get('email', '')}" style="color: #0f766e;">{candidature_data.get('email', '')}</a></td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{candidature_data.get('telephone', 'Non fourni')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">CV :</td><td>{candidature_data.get('cv_filename', 'Fichier joint')}</td></tr>
+                </table>
+                {f'<div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;"><p style="margin: 0;">{candidature_data.get("message")}</p></div>' if candidature_data.get('message') else ''}
+                <div style="text-align: center; margin: 24px 0;">
+                    <a href="{self.app_url}/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Voir dans l'admin</a>
                 </div>
-            </body>
-            </html>
             """
-            return self._send_email(self.sender_email, subject, html_content)
+            return self._send_email(self.sender_email, subject, self._wrap_email(body))
         except Exception as e:
-            logger.error(f"❌ Erreur envoi notification candidature: {str(e)}")
+            logger.error(f"Erreur envoi notification candidature: {str(e)}")
             return False
 
     def send_review_notification(self, review_data):
@@ -309,17 +305,10 @@ class EmailService:
             return False
         
     def send_devis_notification(self, devis_data):
-        """
-        Envoie une notification email pour un nouveau devis
-        """
+        """Envoie une notification email brandée pour un nouveau devis"""
         try:
-            # Destinataire : Abrisia Plan
             recipient_email = "abrisia0plan@gmail.com"
-            
-            # Formatage des plans choisis
             plans_choisis_text = ", ".join(devis_data.get('plansChoisis', []))
-            
-            # Formatage du type de représentation
             representation_type = devis_data.get('representationType', 'Non spécifié')
             representation_labels = {
                 'technique': 'Plans techniques détaillés',
@@ -328,8 +317,6 @@ class EmailService:
                 'flexible': 'À votre convenance'
             }
             representation_text = representation_labels.get(representation_type, representation_type)
-            
-            # Formatage de la préférence de réponse
             response_preference = devis_data.get('responsePreference', 'Non spécifié')
             response_labels = {
                 'phone': 'Appel téléphonique',
@@ -339,104 +326,65 @@ class EmailService:
             }
             response_text = response_labels.get(response_preference, response_preference)
             
-            # Création du sujet
-            subject = f"🏠 Nouveau devis - {devis_data.get('nom', 'Client')} - {datetime.now().strftime('%d/%m/%Y')}"
+            subject = f"Nouveau devis - {devis_data.get('nom', 'Client')} - {datetime.now().strftime('%d/%m/%Y')}"
             
-            # Création du contenu HTML
-            html_content = f"""
-            <html>
-                <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-                    <div style="max-width: 600px; margin: 0 auto; background: #f8f9fa; padding: 20px; border-radius: 10px;">
-                        <div style="background: #0f766e; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
-                            <h1 style="margin: 0; font-size: 24px;">🏠 Nouvelle demande de devis</h1>
-                            <p style="margin: 10px 0 0 0; opacity: 0.9;">Abrisia Plan - {datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
-                        </div>
-                        
-                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            <h2 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">👤 Informations client</h2>
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <tr>
-                                    <td style="padding: 8px 0; font-weight: bold; width: 30%;">Nom :</td>
-                                    <td style="padding: 8px 0;">{devis_data.get('nom', 'Non spécifié')}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 8px 0; font-weight: bold;">Email :</td>
-                                    <td style="padding: 8px 0;"><a href="mailto:{devis_data.get('email', '')}" style="color: #0f766e;">{devis_data.get('email', 'Non spécifié')}</a></td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 8px 0; font-weight: bold;">Téléphone :</td>
-                                    <td style="padding: 8px 0;">{devis_data.get('telephone', 'Non spécifié')}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        
-                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px;">
-                            <h2 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">📋 Détails du projet</h2>
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <tr>
-                                    <td style="padding: 8px 0; font-weight: bold; width: 30%;">Type de projet :</td>
-                                    <td style="padding: 8px 0;">{devis_data.get('projectType', 'Non spécifié')}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 8px 0; font-weight: bold;">Plans choisis :</td>
-                                    <td style="padding: 8px 0;">{plans_choisis_text or 'Aucun'}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 8px 0; font-weight: bold;">Représentation :</td>
-                                    <td style="padding: 8px 0;">{representation_text}</td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 8px 0; font-weight: bold;">Préférence réponse :</td>
-                                    <td style="padding: 8px 0;">{response_text}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        
-                        {f'''
-                        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px;">
-                            <h2 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px;">💬 Description du projet</h2>
-                            <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #0f766e;">
-                                <p style="margin: 0; white-space: pre-wrap;">{devis_data.get('notes', 'Aucune description fournie')}</p>
-                            </div>
-                        </div>
-                        ''' if devis_data.get('notes') else ''}
-                        
-                        <div style="background: #0f766e; color: white; padding: 15px; border-radius: 8px; text-align: center; margin-top: 20px;">
-                            <p style="margin: 0; font-size: 14px;">
-                                📧 Vous pouvez répondre directement à <strong>{devis_data.get('email', '')}</strong><br>
-                                📞 Ou appeler au <strong>{devis_data.get('telephone', 'Non spécifié')}</strong>
-                            </p>
-                        </div>
-                        
-                        <div style="text-align: center; margin-top: 20px; font-size: 12px; color: #666;">
-                            <p>Demande générée automatiquement depuis abrisia-plan.ca</p>
-                        </div>
+            notes_section = ""
+            if devis_data.get('notes'):
+                notes_section = f"""
+                    <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Description</h3>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #0f766e; margin-bottom: 20px;">
+                        <p style="margin: 0; white-space: pre-wrap;">{devis_data.get('notes', '')}</p>
                     </div>
-                </body>
-            </html>
+                """
+            
+            body = f"""
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle demande de devis</h2>
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 20px 0;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                
+                <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Informations client</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{devis_data.get('nom', 'Non spécifié')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{devis_data.get('email', '')}" style="color: #0f766e;">{devis_data.get('email', 'Non spécifié')}</a></td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{devis_data.get('telephone', 'Non spécifié')}</td></tr>
+                </table>
+                
+                <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Détails du projet</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Type :</td><td>{devis_data.get('projectType', 'Non spécifié')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Plans :</td><td>{plans_choisis_text or 'Aucun'}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Représentation :</td><td>{representation_text}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Préf. réponse :</td><td>{response_text}</td></tr>
+                </table>
+                
+                {notes_section}
+                
+                <div style="background: #f0fdf4; border-radius: 8px; padding: 12px; text-align: center;">
+                    <p style="margin: 0; font-size: 13px; color: #166534;">
+                        Répondre à <strong>{devis_data.get('email', '')}</strong> | Appeler au <strong>{devis_data.get('telephone', 'N/A')}</strong>
+                    </p>
+                </div>
             """
             
-            # Création du message
+            html_content = self._wrap_email(body)
+                        
             message = MIMEMultipart("alternative")
             message["Subject"] = subject
             message["From"] = self.sender_email
             message["To"] = recipient_email
             
-            # Ajout du contenu HTML
             html_part = MIMEText(html_content, "html")
             message.attach(html_part)
             
-            # Envoi de l'email
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
                 server.starttls()
                 server.login(self.sender_email, self.sender_password)
                 server.send_message(message)
                 
-            logger.info(f"✅ Email de notification envoyé pour le devis de {devis_data.get('nom', 'Client')}")
+            logger.info(f"Email de notification envoyé pour le devis de {devis_data.get('nom', 'Client')}")
             return True
             
         except Exception as e:
-            logger.error(f"❌ Erreur lors de l'envoi de l'email de notification: {str(e)}")
+            logger.error(f"Erreur envoi email devis: {str(e)}")
             return False
 
 # Instance globale du service email
