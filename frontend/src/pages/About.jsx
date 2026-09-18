@@ -102,7 +102,7 @@ const About = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {values.map((value, index) => (
-              <Card key={index} className="border-amber-100 hover:shadow-lg transition-shadow group">
+              <Card key={value.title} className="border-amber-100 hover:shadow-lg transition-shadow group">
                 <CardContent className="p-8 text-center">
                   <div className="w-16 h-16 bg-slate-100 group-hover:bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors">
                     {value.icon}

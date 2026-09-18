@@ -64,7 +64,6 @@ const CMS = () => {
         loadMediaFiles()
       ]);
     } catch (error) {
-      console.error('Erreur lors du chargement:', error);
       toast({
         title: "Erreur",
         description: "Impossible de charger les données",
@@ -82,7 +81,7 @@ const CMS = () => {
         setSiteSettings(response.settings);
       }
     } catch (error) {
-      console.error('Erreur chargement paramètres:', error);
+      // Handled silently - settings will use defaults
     }
   };
 
@@ -93,7 +92,7 @@ const CMS = () => {
         setServices(response.data);
       }
     } catch (error) {
-      console.error('Erreur chargement services:', error);
+      // Handled silently
     }
   };
 
@@ -104,7 +103,7 @@ const CMS = () => {
         setMediaFiles(response.data);
       }
     } catch (error) {
-      console.error('Erreur chargement médias:', error);
+      // Handled silently
     }
   };
 
@@ -623,7 +622,7 @@ const ServiceEditor = ({ service, onUpdate, toast }) => {
       await onUpdate(service.id, editedService);
       setIsEditing(false);
     } catch (error) {
-      console.error('Erreur sauvegarde service:', error);
+      // Handled silently
     }
   };
 

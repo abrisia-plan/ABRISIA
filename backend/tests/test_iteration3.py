@@ -18,7 +18,7 @@ class TestPlanOptionsAPI:
         assert response.status_code == 200
         
         data = response.json()
-        assert data["success"] is True
+        assert data["success"] == True
         assert "data" in data
         assert len(data["data"]) > 0
         
@@ -65,7 +65,7 @@ class TestNavigationAPI:
         assert response.status_code == 200
         
         data = response.json()
-        assert data["success"] is True
+        assert data["success"] == True
         assert "pages" in data
         print(f"✅ Navigation menu has {len(data['pages'])} pages")
     
@@ -108,7 +108,7 @@ class TestAdminAuthentication:
         assert response.status_code == 200
         
         data = response.json()
-        assert data["success"] is True
+        assert data["success"] == True
         assert "token" in data
         assert "user" in data
         assert data["user"]["role"] == "admin"
@@ -153,7 +153,7 @@ class TestAdminPlanOptions:
         assert response.status_code == 200
         
         data = response.json()
-        assert data["success"] is True
+        assert data["success"] == True
         assert "data" in data
         print(f"✅ Admin can view {len(data['data'])} plan options")
     
@@ -232,7 +232,7 @@ class TestEmployeesAPI:
         assert response.status_code == 200
         
         data = response.json()
-        assert data["success"] is True
+        assert data["success"] == True
         print(f"✅ Found {len(data.get('data', []))} employees")
     
     def test_no_fake_designers_in_database(self, admin_token):

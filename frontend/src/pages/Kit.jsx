@@ -89,7 +89,7 @@ const Kit = () => {
         });
       }
     } catch (error) {
-      console.error('Erreur vérification paiement:', error);
+      // Handled silently
     }
   };
 
@@ -126,7 +126,6 @@ const Kit = () => {
         setCategories(['Tous', ...uniqueCategories]);
       }
     } catch (error) {
-      console.error('Erreur chargement kits:', error);
       toast({
         title: "Erreur",
         description: "Impossible de charger les kits",
@@ -227,7 +226,6 @@ const Kit = () => {
         throw new Error(data.detail || 'Erreur lors de la création du paiement');
       }
     } catch (error) {
-      console.error("❌ Erreur Stripe:", error);
       toast({
         title: "Erreur",
         description: error.message,

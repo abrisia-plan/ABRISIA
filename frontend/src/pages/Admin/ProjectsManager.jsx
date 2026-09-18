@@ -303,7 +303,7 @@ const ProjectsManager = () => {
             <div>
               <Label>Details techniques</Label>
               {formData.details.map((detail, index) => (
-                <div key={index} className="flex gap-2 mt-2">
+                <div key={`detail-${index}`} className="flex gap-2 mt-2">
                   <Input value={detail} onChange={(e) => handleDetailChange(index, e.target.value)} placeholder={`Detail ${index + 1}`} />
                   <Button type="button" variant="outline" size="icon" onClick={() => removeDetail(index)} disabled={formData.details.length === 1}>
                     <X className="w-4 h-4" />

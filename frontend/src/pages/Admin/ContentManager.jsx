@@ -69,7 +69,7 @@ const ContentManager = () => {
         setProcessSteps(data.data.map(s => ({ title: s.title, description: s.description })));
       }
     } catch (error) {
-      console.error('Erreur chargement étapes:', error);
+      // Handled silently
     }
   };
 
@@ -219,7 +219,7 @@ const ContentManager = () => {
               </p>
               
               {processSteps.map((step, index) => (
-                <div key={index} className="p-4 border rounded-lg bg-gray-50">
+                <div key={step.title || `step-${index}`} className="p-4 border rounded-lg bg-gray-50">
                   <div className="flex items-center justify-between mb-3">
                     <span className="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center font-bold">
                       {index + 1}

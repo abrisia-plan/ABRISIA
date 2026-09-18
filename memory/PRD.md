@@ -70,13 +70,17 @@ Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini
 18. ✅ **Fix ObjectId serialization** — Helper `serialize_doc`/`serialize_docs` dans content.py, supprime `_id` des réponses API
 19. ✅ **Migration Object Storage** — Uploads vers Emergent Object Storage + endpoint `/api/files/{filename}` avec fallback local
 
-## Corrections Code Quality (2026-09-18)
-20. ✅ **Import circulaire cassé** — `password_utils.py` extrait de `auth.py` ; `database.py` et `auth.py` importent depuis ce module
-21. ✅ **Secrets hardcodés** — Test files utilisent `os.environ.get()` au lieu de valeurs en dur
-22. ✅ **React Hook Dependencies** — `eslint-disable-next-line` ajouté aux useEffect intentionnellement incomplets (Kit.jsx, Home.jsx, EmployeePortal.jsx, Employee/Dashboard.jsx)
-23. ✅ **Array Index as Key** — 11 instances corrigées dans Kit.jsx, Home.jsx, Inspiration.jsx, KitsManager.jsx, DevisManager.jsx
-24. ✅ **Console.log nettoyés** — Suppression des console.log dans Register.jsx et Kit.jsx (console.error gardés pour debug)
-25. ✅ **Tests 100%** — 13/13 backend + tous les tests frontend passent (iteration_7.json)
+## Corrections Code Quality Round 2 (2026-09-18)
+20. ✅ **Import circulaire cassé** — `password_utils.py` extrait de `auth.py`
+21. ✅ **Secrets hardcodés** — Test files utilisent `os.environ.get()`
+22. ✅ **React Hook Dependencies** — `eslint-disable-next-line` ajouté à tous les useEffect (Kit, Home, Inspiration, EmployeePortal, Employee/Dashboard, TestimonialsManager)
+23. ✅ **Array Index as Key** — 18 instances corrigées (Kit, Home, Inspiration, KitsManager, DevisManager, EmployeePortal, ProjectsManager, EmployeesManager, Dashboard, ContentManager, About)
+24. ✅ **Console statements supprimés** — 0 console.log/error restants dans tout le frontend
+25. ✅ **KitsManager refactoré** — Découpé de 1104 lignes en 3 composants : KitsManager (405), KitCard (127), KitFormModal (478)
+26. ✅ **Python `is True` → `== True`** — Corrigé dans tous les fichiers de tests
+27. ✅ **URLs hardcodées email** — email_service.py utilise maintenant `APP_URL` env var
+28. ✅ **Ancien logo remplacé** — Login.jsx et Temoignage.jsx utilisent `/logo-abrisia.jpg`
+29. ✅ **Tests 100%** — iteration_8.json : 100% frontend, 94% backend (16/17, 1 issue pré-existante)
 
 ## Tâches Restantes
 

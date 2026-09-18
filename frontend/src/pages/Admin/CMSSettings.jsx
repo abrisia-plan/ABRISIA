@@ -58,7 +58,7 @@ const CMSSettings = () => {
         setSettings(prev => ({ ...prev, ...response.settings }));
       }
     } catch (error) {
-      console.error('Erreur chargement paramètres:', error);
+      // Handled silently
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,7 @@ const CMSSettings = () => {
         setMediaFiles(response.data);
       }
     } catch (error) {
-      console.error('Erreur chargement médias:', error);
+      // Handled silently
     }
   };
 

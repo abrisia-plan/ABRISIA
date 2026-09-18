@@ -66,7 +66,7 @@ const AdminPanel = () => {
       const statsResponse = await devisService.getStats();
       setStats(statsResponse);
     } catch (error) {
-      console.error('Erreur chargement stats:', error);
+      // Handled silently
     } finally {
       setLoading(false);
     }

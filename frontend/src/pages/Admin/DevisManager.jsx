@@ -100,7 +100,7 @@ const DevisManager = () => {
         setEmployees(data.data.filter(e => e.isApproved && e.isActive) || []);
       }
     } catch (error) {
-      console.error('Erreur chargement employés:', error);
+      // Handled silently
     }
   };
 

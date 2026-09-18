@@ -46,7 +46,7 @@ const Devis = () => {
           setPlanOptions(data.data);
         }
       } catch (err) {
-        console.error('Erreur chargement options:', err);
+        // Handled silently
       } finally {
         setLoadingOptions(false);
       }

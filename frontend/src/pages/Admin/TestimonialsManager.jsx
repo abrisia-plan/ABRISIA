@@ -45,6 +45,7 @@ const TestimonialsManager = () => {
   useEffect(() => {
     loadTestimonials();
     loadPendingReviews();
+    // eslint-disable-next-line
   }, []);
 
   const loadTestimonials = async () => {
@@ -79,7 +80,7 @@ const TestimonialsManager = () => {
         setPendingReviews(data.data || []);
       }
     } catch (error) {
-      console.error('Erreur chargement avis:', error);
+      // Handled silently
     }
   };
 

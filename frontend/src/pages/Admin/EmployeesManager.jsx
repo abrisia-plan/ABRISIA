@@ -434,7 +434,7 @@ const EmployeesManager = () => {
                   <div className="mb-4">
                     <div className="flex flex-wrap gap-1">
                       {employee.specialties.map((spec, idx) => (
-                        <Badge key={idx} variant="secondary" className="text-xs">
+                        <Badge key={`spec-${spec}`} variant="secondary" className="text-xs">
                           {spec}
                         </Badge>
                       ))}

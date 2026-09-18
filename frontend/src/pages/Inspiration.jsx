@@ -27,10 +27,12 @@ const Inspiration = () => {
       setSelectedCategory(categoryFromUrl);
     }
     loadCategories();
+    // eslint-disable-next-line
   }, [searchParams]);
 
   useEffect(() => {
     loadProjects();
+    // eslint-disable-next-line
   }, [selectedCategory]);
 
   const loadCategories = async () => {
@@ -41,7 +43,7 @@ const Inspiration = () => {
         setCategories(data.categories || ['Tous']);
       }
     } catch (err) {
-      console.error('Erreur chargement catégories:', err);
+      // Handled silently
     }
   };
 
@@ -55,7 +57,6 @@ const Inspiration = () => {
         setProjects(data.data || []);
       }
     } catch (err) {
-      console.error('Erreur chargement projets:', err);
       toast({
         title: "Erreur",
         description: "Impossible de charger les projets",

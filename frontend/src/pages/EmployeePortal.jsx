@@ -174,7 +174,7 @@ export const EmployeePortal = () => {
         setAssignedDevis(data.projects || []);
       }
     } catch (error) {
-      console.error('Erreur chargement devis:', error);
+      toast({ title: "Erreur", description: "Impossible de charger les devis", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -452,7 +452,7 @@ export const EmployeePortal = () => {
                       <span className="text-gray-600 text-sm">Plans demandés:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {selectedDevis.plansChoisis.map((plan, idx) => (
-                          <Badge key={idx} className="bg-teal-100 text-foret">
+                          <Badge key={`emp-plan-${plan}`} className="bg-teal-100 text-foret">
                             {plan}
                           </Badge>
                         ))}

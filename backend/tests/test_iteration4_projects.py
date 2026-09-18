@@ -23,7 +23,7 @@ class TestPublicProjectsAPI:
         response = requests.get(f"{BASE_URL}/api/projects?limit=100")
         assert response.status_code == 200
         data = response.json()
-        assert data.get("success") is True
+        assert data.get("success") == True
         print(f"✅ GET /api/projects returns success=True")
     
     def test_get_public_projects_returns_projects_array(self):
@@ -60,7 +60,7 @@ class TestPublicProjectsAPI:
         response = requests.get(f"{BASE_URL}/api/projects?category=Mini-maison&limit=100")
         assert response.status_code == 200
         data = response.json()
-        assert data.get("success") is True
+        assert data.get("success") == True
         
         # All returned projects should be Mini-maison category
         for project in data["data"]:
@@ -76,7 +76,7 @@ class TestCategoriesAPI:
         response = requests.get(f"{BASE_URL}/api/categories")
         assert response.status_code == 200
         data = response.json()
-        assert data.get("success") is True
+        assert data.get("success") == True
         print(f"✅ GET /api/categories returns success=True")
     
     def test_categories_include_tous(self):
@@ -134,7 +134,7 @@ class TestAdminProjectsAPI:
         )
         assert response.status_code == 200
         data = response.json()
-        assert data.get("success") is True
+        assert data.get("success") == True
         print(f"✅ Admin sees {len(data.get('data', []))} projects (including hidden)")
     
     def test_admin_projects_have_visibility_field(self):

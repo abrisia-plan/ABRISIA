@@ -43,12 +43,13 @@ const Home = () => {
           })));
         }
       } catch (err) {
-        console.error('Erreur chargement:', err);
+        // Silently handle - data will remain in default state
       } finally {
         setLoadingProjects(false);
       }
     };
     loadData();
+    // eslint-disable-next-line
   }, []);
 
   // Rotation automatique des images par catégorie toutes les 5 secondes

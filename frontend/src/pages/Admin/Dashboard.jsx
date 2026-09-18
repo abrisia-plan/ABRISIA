@@ -278,7 +278,7 @@ const Dashboard = () => {
                                 
                                 <div className="flex flex-wrap gap-2 mb-3">
                                   {devisItem.plansChoisis.map((service, index) => (
-                                    <Badge key={index} variant="outline" className="text-xs">
+                                    <Badge key={`svc-${service}`} variant="outline" className="text-xs">
                                       {service}
                                     </Badge>
                                   ))}
@@ -385,7 +385,7 @@ const Dashboard = () => {
                                   <p className="text-sm font-medium text-slate-700 mb-1">Spécialités :</p>
                                   <div className="flex flex-wrap gap-1">
                                     {designer.specialties.map((specialty, index) => (
-                                      <Badge key={index} variant="outline" className="text-xs">
+                                      <Badge key={`dspec-${specialty}`} variant="outline" className="text-xs">
                                         {specialty}
                                       </Badge>
                                     ))}
