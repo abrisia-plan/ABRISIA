@@ -38,7 +38,7 @@ const KitFormModal = ({
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl">
-            {editingKit ? 'Modifier le kit' : 'Ajouter un kit'}
+            {editingKit ? 'Modifier le modèle' : 'Ajouter un modèle'}
           </DialogTitle>
         </DialogHeader>
 
@@ -51,7 +51,7 @@ const KitFormModal = ({
             </h3>
             
             <div>
-              <Label htmlFor="name" className="font-semibold">Nom du kit *</Label>
+              <Label htmlFor="name" className="font-semibold">Nom du modèle *</Label>
               <Input
                 id="name"
                 value={formData.name}
@@ -95,6 +95,111 @@ const KitFormModal = ({
             
             <div className="grid grid-cols-3 gap-4">
               <div>
+                <Label htmlFor="model_number" className="font-semibold">N° du modèle</Label>
+                <Input
+                  id="model_number"
+                  value={formData.model_number || ''}
+                  onChange={(e) => onInputChange('model_number', e.target.value)}
+                  placeholder="Ex: ABR-2024-01"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="style" className="font-semibold">Style</Label>
+                <select
+                  id="style"
+                  value={formData.style || ''}
+                  onChange={(e) => onInputChange('style', e.target.value)}
+                  className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="">-- Choisir --</option>
+                  <option value="Moderne">Moderne</option>
+                  <option value="Contemporain">Contemporain</option>
+                  <option value="Champêtre">Champêtre</option>
+                  <option value="Scandinave">Scandinave</option>
+                  <option value="Rustique">Rustique</option>
+                  <option value="Classique">Classique</option>
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="foundation_type" className="font-semibold">Fondation</Label>
+                <select
+                  id="foundation_type"
+                  value={formData.foundation_type || ''}
+                  onChange={(e) => onInputChange('foundation_type', e.target.value)}
+                  className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="">-- Choisir --</option>
+                  <option value="Dalle sur sol">Dalle sur sol</option>
+                  <option value="Sous-sol complet">Sous-sol complet</option>
+                  <option value="Vide sanitaire">Vide sanitaire</option>
+                  <option value="Pilotis">Pilotis</option>
+                  <option value="Pieux vissés">Pieux vissés</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 gap-4">
+              <div>
+                <Label htmlFor="bedrooms" className="font-semibold">Chambres</Label>
+                <Input
+                  id="bedrooms"
+                  type="number"
+                  min="0"
+                  value={formData.bedrooms || ''}
+                  onChange={(e) => onInputChange('bedrooms', e.target.value)}
+                  placeholder="2"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="bathrooms" className="font-semibold">Salles de bain</Label>
+                <Input
+                  id="bathrooms"
+                  type="number"
+                  min="0"
+                  value={formData.bathrooms || ''}
+                  onChange={(e) => onInputChange('bathrooms', e.target.value)}
+                  placeholder="1"
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="has_garage" className="font-semibold">Garage</Label>
+                <select
+                  id="has_garage"
+                  value={formData.has_garage === true ? 'true' : formData.has_garage === false ? 'false' : ''}
+                  onChange={(e) => onInputChange('has_garage', e.target.value === '' ? null : e.target.value === 'true')}
+                  className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="">-- Non spécifié --</option>
+                  <option value="true">Oui</option>
+                  <option value="false">Non</option>
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="floors" className="font-semibold">Étages</Label>
+                <select
+                  id="floors"
+                  value={formData.floors || '1'}
+                  onChange={(e) => {
+                    onInputChange('floors', e.target.value);
+                    const w = parseFloat(formData.width_ft) || 0;
+                    const d = parseFloat(formData.depth_ft) || 0;
+                    const f = parseInt(e.target.value) || 1;
+                    if (w && d) onInputChange('surface_sqft', String(Math.round(w * d * f)));
+                  }}
+                  className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="1">1 étage</option>
+                  <option value="2">2 étages</option>
+                  <option value="3">3 étages</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
                 <Label htmlFor="width_ft" className="font-semibold">Largeur (pieds)</Label>
                 <Input
                   id="width_ft"
@@ -129,38 +234,6 @@ const KitFormModal = ({
                 />
               </div>
               <div>
-                <Label htmlFor="floors" className="font-semibold">Nombre d'étages</Label>
-                <select
-                  id="floors"
-                  value={formData.floors || '1'}
-                  onChange={(e) => {
-                    onInputChange('floors', e.target.value);
-                    const w = parseFloat(formData.width_ft) || 0;
-                    const d = parseFloat(formData.depth_ft) || 0;
-                    const f = parseInt(e.target.value) || 1;
-                    if (w && d) onInputChange('surface_sqft', String(Math.round(w * d * f)));
-                  }}
-                  className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                >
-                  <option value="1">1 étage</option>
-                  <option value="2">2 étages</option>
-                  <option value="3">3 étages</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="dimensions" className="font-semibold">Dimensions (résumé)</Label>
-                <Input
-                  id="dimensions"
-                  value={formData.dimensions}
-                  onChange={(e) => onInputChange('dimensions', e.target.value)}
-                  placeholder="Ex: 20' x 20'"
-                  className="mt-1"
-                />
-              </div>
-              <div>
                 <Label htmlFor="surface" className="font-semibold">Surface totale (pi²)</Label>
                 <Input
                   id="surface"
@@ -189,9 +262,21 @@ const KitFormModal = ({
               />
             </div>
 
-            {/* Ce que le kit comprend */}
             <div>
-              <Label className="font-semibold">Ce que le kit comprend</Label>
+              <Label htmlFor="tags_input" className="font-semibold">Tags / Filtres</Label>
+              <Input
+                id="tags_input"
+                value={formData.tags_input || ''}
+                onChange={(e) => onInputChange('tags_input', e.target.value)}
+                placeholder="Ex: mini-maison, chalet, moderne (séparés par virgule)"
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-400 mt-1">Séparez les tags par des virgules</p>
+            </div>
+
+            {/* Ce que le modèle comprend */}
+            <div>
+              <h3 className="font-semibold text-gray-900">Ce que le modèle comprend</h3>
               <div className="space-y-2 mt-2">
                 {formData.includes.map((item, index) => (
                   <div key={`include-${index}`} className="flex gap-2">
@@ -462,7 +547,7 @@ const KitFormModal = ({
               {saving ? (
                 <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Enregistrement...</>
               ) : (
-                <><Save className="w-4 h-4 mr-2" /> Enregistrer le kit</>
+                <><Save className="w-4 h-4 mr-2" /> Enregistrer le modèle</>
               )}
             </Button>
             <Button variant="outline" onClick={() => onClose(false)}>

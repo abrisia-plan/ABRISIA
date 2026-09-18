@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { approaches, processSteps } from '../data/mock';
 import * as Icons from 'lucide-react';
+import SEO from '../components/SEO';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -117,6 +118,11 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
+      <SEO 
+        title="Plans architecturaux, mini-maisons et chalets"
+        description="Abrisia Plan - Service professionnel de conception et dessin de plans architecturaux au Québec. Collection de modèles prêts à acheter, devis personnalisés pour mini-maisons, chalets et maisons."
+        path="/"
+      />
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         {/* Background Image - Norwegian Fjord */}
@@ -196,21 +202,21 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Kits de plans en vedette - AVANT Notre approche */}
+      {/* Collection ABRISIA - Modèles en vedette */}
       {featuredKits.length > 0 && (
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-              Kits de plans disponibles
+              Collection ABRISIA
             </h2>
             <p className="text-xl text-slate-600">
-              Plans pré-dessinés prêts à acheter
+              Modèles pré-dessinés prêts à acheter
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredKits.map((kit) => (
-              <Card key={kit.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer group" onClick={() => navigate('/kit')}>
+              <Card key={kit.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer group" onClick={() => navigate('/collection')}>
                 <div className="relative overflow-hidden h-56">
                   <img src={kit.mainImage || kit.image} alt={kit.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
@@ -223,9 +229,9 @@ const Home = () => {
             ))}
           </div>
           <div className="text-center mt-10">
-            <Link to="/kit">
+            <Link to="/collection">
               <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-3 rounded-full text-lg">
-                Voir tous les kits <ArrowRight className="ml-2 h-5 w-5" />
+                Voir toute la collection <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
           </div>

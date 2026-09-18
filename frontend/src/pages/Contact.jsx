@@ -6,6 +6,7 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { MapPin, Mail, Clock, Send, Upload, FileText, CheckCircle } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
+import SEO from '../components/SEO';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -69,6 +70,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen pt-20 bg-stone-50" data-testid="contact-page">
+      <SEO 
+        title="Contact"
+        description="Contactez Abrisia Plan pour vos projets de plans architecturaux. Envoyez-nous un message ou postulez en tant que dessinateur."
+        path="/contact"
+      />
       <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto text-center px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Contactez-nous</h1>

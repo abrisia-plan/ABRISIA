@@ -106,10 +106,19 @@ async def get_products(
                 "includes": product.get("includes", []),
                 "fileFormats": product.get("file_formats", ["PDF"]),
                 "tags": product.get("tags", []),
-                # Nouveaux champs Kits
+                # Nouveaux champs Collection ABRISIA
                 "designerName": product.get("designer_name"),
                 "materialsListEnabled": product.get("materials_list_enabled", False),
                 "materialsListPrice": product.get("materials_list_price"),
+                "modelNumber": product.get("model_number"),
+                "style": product.get("style"),
+                "foundationType": product.get("foundation_type"),
+                "hasGarage": product.get("has_garage"),
+                "bedrooms": product.get("bedrooms"),
+                "bathrooms": product.get("bathrooms"),
+                "floors": product.get("floors"),
+                "widthFt": product.get("width_ft"),
+                "depthFt": product.get("depth_ft"),
             })
         
         return PaginatedResponse(
@@ -205,12 +214,21 @@ async def get_product_by_slug(product_slug: str):
             "metaTitle": product.get("meta_title", ""),
             "metaDescription": product.get("meta_description", ""),
             "reviews": formatted_reviews,
-            # Nouveaux champs Kits
+            # Nouveaux champs Collection ABRISIA
             "designerName": product.get("designer_name"),
             "materialsListEnabled": product.get("materials_list_enabled", False),
             "materialsListPrice": product.get("materials_list_price"),
             "planFileUrl": product.get("plan_file_url"),
             "materialsListFileUrl": product.get("materials_list_file_url"),
+            "modelNumber": product.get("model_number"),
+            "style": product.get("style"),
+            "foundationType": product.get("foundation_type"),
+            "hasGarage": product.get("has_garage"),
+            "bedrooms": product.get("bedrooms"),
+            "bathrooms": product.get("bathrooms"),
+            "floors": product.get("floors"),
+            "widthFt": product.get("width_ft"),
+            "depthFt": product.get("depth_ft"),
         }
         
         return {
@@ -318,11 +336,26 @@ async def get_admin_products(
                 "reviewsCount": product.get("reviews_count", 0),
                 "createdAt": product["created_at"].isoformat(),
                 "updatedAt": product["updated_at"].isoformat(),
-                # Nouveaux champs admin
+                # Nouveaux champs admin Collection ABRISIA
                 "mainImage": product.get("main_image"),
                 "designerName": product.get("designer_name"),
                 "materialsListEnabled": product.get("materials_list_enabled", False),
                 "materialsListPrice": product.get("materials_list_price"),
+                "modelNumber": product.get("model_number"),
+                "style": product.get("style"),
+                "foundationType": product.get("foundation_type"),
+                "hasGarage": product.get("has_garage"),
+                "bedrooms": product.get("bedrooms"),
+                "bathrooms": product.get("bathrooms"),
+                "floors": product.get("floors"),
+                "widthFt": product.get("width_ft"),
+                "depthFt": product.get("depth_ft"),
+                "tags": product.get("tags", []),
+                "surfaceArea": product.get("surface_area", ""),
+                "dimensions": product.get("dimensions", ""),
+                "rooms": product.get("rooms", ""),
+                "includes": product.get("includes", []),
+                "galleryImages": product.get("gallery_images", []),
             })
         
         return PaginatedResponse(

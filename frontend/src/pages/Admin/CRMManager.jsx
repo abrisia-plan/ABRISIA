@@ -25,6 +25,8 @@ import {
   Calendar
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
+import CRMFormModal from './CRMFormModal';
+import CRMDetailModal from './CRMDetailModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -399,191 +401,28 @@ const CRMManager = () => {
       </Card>
 
       {/* Modal Ajouter/Modifier */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>
-              {editingClient ? 'Modifier le client' : 'Nouveau client'}
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="space-y-4 pt-4">
-            <div>
-              <Label>Nom complet *</Label>
-              <Input
-                value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
-                placeholder="Jean Tremblay"
-                className="mt-1"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Email</Label>
-                <Input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  placeholder="jean@email.com"
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label>Téléphone</Label>
-                <Input
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', e.target.value)}
-                  placeholder="418-555-0123"
-                  className="mt-1"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Ville</Label>
-                <Input
-                  value={formData.city}
-                  onChange={(e) => handleInputChange('city', e.target.value)}
-                  placeholder="Saguenay"
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label>Statut</Label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => handleInputChange('status', e.target.value)}
-                  className="w-full mt-1 h-10 px-3 border border-gray-300 rounded-md"
-                >
-                  {statusOptions.map((option) => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Type de projet</Label>
-                <Input
-                  value={formData.project_type}
-                  onChange={(e) => handleInputChange('project_type', e.target.value)}
-                  placeholder="Mini-maison, Chalet..."
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label>Source</Label>
-                <select
-                  value={formData.source}
-                  onChange={(e) => handleInputChange('source', e.target.value)}
-                  className="w-full mt-1 h-10 px-3 border border-gray-300 rounded-md"
-                >
-                  <option value="">Sélectionner...</option>
-                  {sourceOptions.map((source) => (
-                    <option key={source} value={source}>{source}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <Label>Notes</Label>
-              <Textarea
-                value={formData.notes}
-                onChange={(e) => handleInputChange('notes', e.target.value)}
-                placeholder="Notes sur le client..."
-                rows={3}
-                className="mt-1"
-              />
-            </div>
-
-            <div className="flex gap-2 pt-4 border-t">
-              <Button
-                onClick={handleSubmit}
-                disabled={saving}
-                className="flex-1 bg-teal-600 hover:bg-teal-700"
-              >
-                {saving ? (
-                  <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Sauvegarde...</>
-                ) : (
-                  <><Save className="w-4 h-4 mr-2" /> Enregistrer</>
-                )}
-              </Button>
-              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-                Annuler
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <CRMFormModal
+        isOpen={isModalOpen}
+        onClose={setIsModalOpen}
+        editingClient={editingClient}
+        formData={formData}
+        onInputChange={handleInputChange}
+        statusOptions={statusOptions}
+        sourceOptions={sourceOptions}
+        onSubmit={handleSubmit}
+        saving={saving}
+      />
 
       {/* Modal Détails client */}
-      <Dialog open={!!selectedClient} onOpenChange={() => setSelectedClient(null)}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Fiche client</DialogTitle>
-          </DialogHeader>
-          {selectedClient && (
-            <div className="space-y-4 pt-4">
-              <div className="text-center pb-4 border-b">
-                <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-2xl font-bold text-teal-700">
-                    {selectedClient.name?.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <h3 className="text-xl font-bold">{selectedClient.name}</h3>
-                {getStatusBadge(selectedClient.status)}
-              </div>
-              
-              <div className="space-y-3">
-                {selectedClient.email && (
-                  <p className="flex items-center text-gray-600">
-                    <Mail className="w-4 h-4 mr-3 text-gray-400" />
-                    {selectedClient.email}
-                  </p>
-                )}
-                {selectedClient.phone && (
-                  <p className="flex items-center text-gray-600">
-                    <Phone className="w-4 h-4 mr-3 text-gray-400" />
-                    {selectedClient.phone}
-                  </p>
-                )}
-                {selectedClient.city && (
-                  <p className="flex items-center text-gray-600">
-                    <MapPin className="w-4 h-4 mr-3 text-gray-400" />
-                    {selectedClient.city}
-                  </p>
-                )}
-                {selectedClient.project_type && (
-                  <p className="flex items-center text-gray-600">
-                    <FileText className="w-4 h-4 mr-3 text-gray-400" />
-                    Projet: {selectedClient.project_type}
-                  </p>
-                )}
-              </div>
-              
-              {selectedClient.notes && (
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <p className="text-sm text-gray-600">{selectedClient.notes}</p>
-                </div>
-              )}
-              
-              <div className="flex gap-2 pt-4">
-                <Button className="flex-1" onClick={() => {
-                  setSelectedClient(null);
-                  openEditModal(selectedClient);
-                }}>
-                  <Edit className="w-4 h-4 mr-2" />
-                  Modifier
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <CRMDetailModal
+        client={selectedClient}
+        onClose={() => setSelectedClient(null)}
+        onEdit={(client) => {
+          setSelectedClient(null);
+          openEditModal(client);
+        }}
+        getStatusBadge={getStatusBadge}
+      />
     </div>
   );
 };

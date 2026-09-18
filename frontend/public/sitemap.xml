@@ -31,8 +31,23 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://abrisia-plan.ca/temoignage</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://abrisia-plan.ca/feedback</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://abrisia-plan.ca/mentions-legales</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://abrisia-plan.ca/politique-confidentialite</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

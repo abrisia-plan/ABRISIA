@@ -8,6 +8,7 @@ import { Eye, ArrowRight, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../hooks/use-toast';
 import { faqItems } from '../data/mock';
+import SEO from '../components/SEO';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -77,6 +78,11 @@ const Inspiration = () => {
 
   return (
     <div className="min-h-screen pt-20 bg-stone-50">
+      <SEO 
+        title="Inspiration"
+        description="Découvrez nos réalisations et projets d'inspiration. Mini-maisons, chalets, maisons modernes et écologiques au Québec."
+        path="/inspiration"
+      />
       {/* Hero */}
       <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">

@@ -27,7 +27,9 @@ const KitsManager = () => {
     width_ft: '', depth_ft: '', floors: '1', rooms: '',
     includes: [''], price: '', main_image: '', gallery_images: [],
     designer_name: '', plan_file_url: '',
-    materials_list_enabled: false, materials_list_price: '', materials_list_file_url: ''
+    materials_list_enabled: false, materials_list_price: '', materials_list_file_url: '',
+    model_number: '', style: '', foundation_type: '', has_garage: null,
+    bedrooms: '', bathrooms: '', tags_input: '',
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -46,7 +48,7 @@ const KitsManager = () => {
       const data = await response.json();
       if (data.success) setKits(data.data);
     } catch (error) {
-      toast({ title: "Erreur", description: "Impossible de charger les kits", variant: "destructive" });
+      toast({ title: "Erreur", description: "Impossible de charger les modèles", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -71,7 +73,9 @@ const KitsManager = () => {
     width_ft: '', depth_ft: '', floors: '1', rooms: '',
     includes: [''], price: '', main_image: '', gallery_images: [],
     designer_name: '', plan_file_url: '',
-    materials_list_enabled: false, materials_list_price: '200', materials_list_file_url: ''
+    materials_list_enabled: false, materials_list_price: '200', materials_list_file_url: '',
+    model_number: '', style: '', foundation_type: '', has_garage: null,
+    bedrooms: '', bathrooms: '', tags_input: '',
   };
 
   const openAddModal = () => {
@@ -107,11 +111,18 @@ const KitsManager = () => {
         floors: kitData.floors?.toString() || '1',
         materials_list_enabled: kitData.materialsListEnabled || false,
         materials_list_price: kitData.materialsListPrice?.toString() || '200',
-        materials_list_file_url: kitData.materialsListFileUrl || ''
+        materials_list_file_url: kitData.materialsListFileUrl || '',
+        model_number: kitData.modelNumber || '',
+        style: kitData.style || '',
+        foundation_type: kitData.foundationType || '',
+        has_garage: kitData.hasGarage ?? null,
+        bedrooms: kitData.bedrooms?.toString() || '',
+        bathrooms: kitData.bathrooms?.toString() || '',
+        tags_input: (kitData.tags || []).join(', '),
       });
       setIsModalOpen(true);
     } catch (error) {
-      toast({ title: "Erreur", description: "Impossible de charger les détails du kit", variant: "destructive" });
+      toast({ title: "Erreur", description: "Impossible de charger les détails du modèle", variant: "destructive" });
     }
   };
 
@@ -228,7 +239,7 @@ const KitsManager = () => {
       
       const kitData = {
         name: formData.name, description: formData.description,
-        category: 'Kit', price: parseFloat(formData.price),
+        category: 'Collection', price: parseFloat(formData.price),
         main_image: formData.main_image,
         gallery_images: formData.gallery_images.filter(g => g),
         surface_area: surfaceDisplay, dimensions: formData.dimensions,
@@ -242,7 +253,17 @@ const KitsManager = () => {
         materials_list_price: formData.materials_list_enabled && formData.materials_list_price 
           ? parseFloat(formData.materials_list_price) : null,
         materials_list_file_url: formData.materials_list_enabled 
-          ? formData.materials_list_file_url || null : null
+          ? formData.materials_list_file_url || null : null,
+        model_number: formData.model_number || null,
+        style: formData.style || null,
+        foundation_type: formData.foundation_type || null,
+        has_garage: formData.has_garage,
+        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
+        bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : null,
+        floors: formData.floors ? parseInt(formData.floors) : null,
+        width_ft: formData.width_ft ? parseFloat(formData.width_ft) : null,
+        depth_ft: formData.depth_ft ? parseFloat(formData.depth_ft) : null,
+        tags: formData.tags_input ? formData.tags_input.split(',').map(t => t.trim()).filter(Boolean) : [],
       };
 
       const url = editingKit 
@@ -259,8 +280,8 @@ const KitsManager = () => {
 
       if (data.success) {
         toast({
-          title: editingKit ? "Kit mis à jour" : "Kit créé",
-          description: editingKit ? "Les modifications ont été enregistrées" : "Le nouveau kit a été ajouté"
+          title: editingKit ? "Modèle mis à jour" : "Modèle créé",
+          description: editingKit ? "Les modifications ont été enregistrées" : "Le nouveau modèle a été ajouté"
         });
         setIsModalOpen(false);
         loadKits();
@@ -283,7 +304,7 @@ const KitsManager = () => {
         body: JSON.stringify({ is_active: !kit.isActive })
       });
       if (response.ok) {
-        toast({ title: "Statut modifie", description: `Le kit est maintenant ${!kit.isActive ? 'visible' : 'masque'}` });
+        toast({ title: "Statut modifie", description: `Le modèle est maintenant ${!kit.isActive ? 'visible' : 'masque'}` });
         loadKits();
       }
     } catch (error) {
@@ -300,7 +321,7 @@ const KitsManager = () => {
         body: JSON.stringify({ is_featured: !kit.isFeatured })
       });
       if (response.ok) {
-        toast({ title: `Kit ${!kit.isFeatured ? 'ajoute a' : 'retire de'} l'accueil` });
+        toast({ title: `Modèle ${!kit.isFeatured ? 'ajoute a' : 'retire de'} l'accueil` });
         loadKits();
       }
     } catch (error) {
@@ -317,7 +338,7 @@ const KitsManager = () => {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (response.ok) {
-        toast({ title: "Kit supprimé", description: "Le kit a été supprimé avec succès" });
+        toast({ title: "Modèle supprimé", description: "Le modèle a été supprimé avec succès" });
         loadKits();
       }
     } catch (error) {
@@ -341,12 +362,12 @@ const KitsManager = () => {
     <div className="space-y-6" data-testid="kits-manager">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Kits de plans</h2>
-          <p className="text-gray-600 mt-1">Gérez vos plans pré-dessinés à vendre</p>
+          <h2 className="text-2xl font-bold text-gray-900">Collection ABRISIA</h2>
+          <p className="text-gray-600 mt-1">Gérez vos modèles de plans pré-dessinés</p>
         </div>
         <Button onClick={openAddModal} className="bg-teal-700 hover:bg-teal-800" data-testid="add-kit-btn">
           <Plus className="w-4 h-4 mr-2" />
-          Ajouter un kit
+          Ajouter un modèle
         </Button>
       </div>
 
@@ -367,10 +388,10 @@ const KitsManager = () => {
       {kits.length === 0 && (
         <div className="text-center py-12">
           <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500">Aucun kit pour le moment</p>
+          <p className="text-gray-500">Aucun modèle pour le moment</p>
           <Button onClick={openAddModal} className="mt-4">
             <Plus className="w-4 h-4 mr-2" />
-            Ajouter votre premier kit
+            Ajouter votre premier modèle
           </Button>
         </div>
       )}

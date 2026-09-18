@@ -8,6 +8,7 @@ import { Label } from '../components/ui/label';
 import { Checkbox } from '../components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { 
+
   Eye, 
   ArrowRight, 
   ShoppingCart, 
@@ -28,6 +29,7 @@ import {
 import { useToast } from '../hooks/use-toast';
 import { resolveImageUrl } from '../services/api';
 import { loadStripe } from '@stripe/stripe-js';
+import SEO from '../components/SEO';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const STRIPE_KEY = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
@@ -300,6 +302,11 @@ const Kit = () => {
 
   return (
     <div className="min-h-screen pt-20 bg-stone-50">
+      <SEO 
+        title="Kits de plans"
+        description="Achetez des kits de plans architecturaux prêts à construire. Mini-maisons, chalets, maisons unifamiliales. Livraison instantanée après paiement."
+        path="/kit"
+      />
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

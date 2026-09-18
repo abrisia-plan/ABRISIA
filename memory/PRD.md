@@ -1,7 +1,7 @@
 # Abrisia Plan - PRD (Product Requirements Document)
 
 ## Problème Original
-Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini-maisons, chalets, maisons, extensions. Plans conformes au Code du bâtiment du Québec.
+Site web pour Abrisia Plan - entreprise de **conception et dessin** de plans architecturaux au Québec (Saguenay-Lac-Saint-Jean). Mini-maisons, chalets, maisons, extensions. Plans conformes au Code du bâtiment du Québec. **Abrisia ne fait PAS de construction.**
 
 ## Architecture
 - **Frontend:** React + TailwindCSS + Shadcn UI
@@ -14,88 +14,76 @@ Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini
 ### Site Public
 - Page d'accueil avec hero, services, inspiration, processus, témoignages
 - Page Inspiration (galerie par catégories)
-- Page Kits de plans (vente de kits)
+- **Page Collection ABRISIA** (remplace "Kits") — modèles pré-dessinés avec variantes, options, filtres, panier
 - Page Devis (formulaire dynamique avec prix gérables)
 - Page Contact (avec formulaire "Envoyer mon CV")
 - Pages légales (mentions légales, politique de confidentialité)
 - SEO: sitemap.xml, robots.txt, métadonnées
+- **Chatbot IA** — Assistant virtuel (GPT) répondant aux questions des visiteurs en français
+- /kit redirige vers /collection
 
 ### Panneau Administration (/admin/panel)
 - Tableau de bord (statistiques devis)
 - Gestion des devis (CRUD + assignation)
 - Projets d'inspiration (CRUD)
 - Catégories d'accueil
-- Kits de plans (CRUD + upload PDF/DWG/SKP)
+- **Collection ABRISIA** (CRUD + champs: N° modèle, style, fondation, chambres, salles de bain, garage, tags, largeur, profondeur, surface)
 - Services & Prix (page d'accueil)
-- **Prix du devis** (gestion dynamique des prix du formulaire de devis)
+- Prix du devis (gestion dynamique)
 - Design & Images (CMS)
 - Témoignages (CRUD)
 - Pages légales (édition)
-- Menu du site (masquer/afficher pages — affecte Header ET Footer)
-- Gestion des employés (approuver, désactiver, supprimer)
-- Commandes kits
-- Gestion des devis avancée
+- Menu du site (masquer/afficher pages)
+- Gestion des employés
+- Commandes collection
 
 ### Portail Employé (/espace-employe)
 - Connexion employé
 - Projets assignés avec statuts
 - Notes et progression
-- Bouton "Voir le site"
 
 ### Sécurité
 - Authentification JWT
 - Rôles: admin, designer, constructor, employee
-- Identifiants non codés en dur
 
-## Corrections Effectuées (2026-03-07)
-1. ✅ Bouton "Espace équipe" déplacé du footer vers le header (plus visible)
-2. ✅ Page de connexion redessinée (professionnelle, avec logo + "Retour au site")
-3. ✅ Faux dessinateurs supprimés (BD + code de seed)
-4. ✅ Gestion des prix du devis (nouveau gestionnaire admin + API)
-5. ✅ Page Devis charge les prix dynamiquement depuis l'API
-6. ✅ Bouton "Voir le site" ajouté au portail employé
-7. ✅ Footer utilise la navigation dynamique (pages masquées disparaissent partout)
-8. ✅ Redirection /admin/dashboard → /admin/panel
-9. ✅ **Projets d'inspiration unifiés** — 29 projets dans la BD, gérés depuis l'admin
-10. ✅ **Double visibilité projets** — Oeil (Inspiration) + Maison (Accueil) séparés
-11. ✅ **Page témoignage publique** — /temoignage : lien client pour recueillir des avis
-12. ✅ **Filtres devis améliorés** — Filtrage par statut + mois + année avec compteur
-13. ✅ **Notifications email** — Email envoyé pour chaque nouveau devis, CV et témoignage
-14. ✅ **Onglet Candidatures CV** — Interface admin pour voir/télécharger les CV reçus
-15. ✅ **Témoignages dynamiques** — Accueil affiche les avis approuvés depuis la BD (plus de mock data)
+## Historique des Corrections
 
-## Corrections en cours (2026-09-13)
-16. ✅ **Logo mis à jour** — Nouveau logo Abrisia dans `/frontend/public/logo-abrisia.jpg`, Header.jsx et Footer.jsx
-17. ✅ **Fix Label import** — Ajout import Label dans Employee/Dashboard.jsx
-18. ✅ **Fix ObjectId serialization** — Helper `serialize_doc`/`serialize_docs` dans content.py, supprime `_id` des réponses API
-19. ✅ **Migration Object Storage** — Uploads vers Emergent Object Storage + endpoint `/api/files/{filename}` avec fallback local
+### 2026-03-07
+1-15. Corrections initiales (voir changelog)
 
-## Corrections Code Quality Round 2 (2026-09-18)
-20. ✅ **Import circulaire cassé** — `password_utils.py` extrait de `auth.py`
-21. ✅ **Secrets hardcodés** — Test files utilisent `os.environ.get()`
-22. ✅ **React Hook Dependencies** — `eslint-disable-next-line` ajouté à tous les useEffect (Kit, Home, Inspiration, EmployeePortal, Employee/Dashboard, TestimonialsManager)
-23. ✅ **Array Index as Key** — 18 instances corrigées (Kit, Home, Inspiration, KitsManager, DevisManager, EmployeePortal, ProjectsManager, EmployeesManager, Dashboard, ContentManager, About)
-24. ✅ **Console statements supprimés** — 0 console.log/error restants dans tout le frontend
-25. ✅ **KitsManager refactoré** — Découpé de 1104 lignes en 3 composants : KitsManager (405), KitCard (127), KitFormModal (478)
-26. ✅ **Python `is True` → `== True`** — Corrigé dans tous les fichiers de tests
-27. ✅ **URLs hardcodées email** — email_service.py utilise maintenant `APP_URL` env var
-28. ✅ **Ancien logo remplacé** — Login.jsx et Temoignage.jsx utilisent `/logo-abrisia.jpg`
-29. ✅ **Tests 100%** — iteration_8.json : 100% frontend, 94% backend (16/17, 1 issue pré-existante)
+### 2026-09-13
+16-19. Logo, ObjectId, Object Storage migration
+
+### 2026-09-18 — Code Quality Round 2
+20-29. Import circulaire, secrets, hooks, array keys, console cleanup, KitsManager refactoring
+
+### 2026-09-18 — Pivot Collection ABRISIA + Chatbot IA
+30. ✅ **Renommage global Kits → Collection ABRISIA** — Navigation, Home, Admin sidebar, formulaires, toasts, defaults backend, DB navigation, sitemap
+31. ✅ **Interface publique Collection.jsx** — Page catalogue avec filtres (tags, chambres, style, fondation), grille de modèles, modal détail, sélection variantes/options, panier
+32. ✅ **Backend Collection API** — `/api/collection/filters`, `/api/collection/tags`, `/api/collection/options`, `/api/collection/cart`
+33. ✅ **Admin: champs Collection** — Formulaire admin enrichi: N° modèle, style, fondation, chambres, salles de bain, garage, étages, tags
+34. ✅ **Backend: réponses produits enrichies** — GET /api/products et GET admin retournent tous les champs Collection (modelNumber, style, foundationType, bedrooms, bathrooms, floors, widthFt, depthFt, hasGarage, tags)
+35. ✅ **Chatbot IA** — Assistant Abrisia (ChatBot.jsx + /api/chatbot/chat) utilisant GPT via emergentintegrations, SSE simulé, historique MongoDB, réponses en français
+36. ✅ **Tests 100%** — iteration_9.json : 100% frontend + 100% backend (10/10)
 
 ## Tâches Restantes
 
-### P1 - À venir
-- SEO & Google Search Console (sitemap, robots.txt, balises meta)
-- Finaliser Stripe (paiement carte de crédit)
-- Accompagner les tests E2E de l'utilisateur
-- Migration localStorage → httpOnly cookies (changement architectural majeur, session dédiée)
+### P1 - Prochaines
+- Intégration Zoho CRM pour "Personnaliser ce modèle" (bouton + formulaire → Lead Zoho)
+- Refonte Demande de Devis & Calculateur de prix préliminaire (Type projet en premier, calcul Largeur × Profondeur = Superficie × Tarif)
+- Textes et positionnement ("Votre projet commence par un bon dessin", "Ce que fait ABRISIA / Là où notre mandat s'arrête")
+- Finaliser Stripe checkout pour la Collection
 
 ### P2 - Futur
+- Espace Pro ABRISIA (entrepreneurs, abonnement)
+- Parcours clients distincts ("Je réalise mon projet", "Je suis entrepreneur", "J'ai un projet immobilier")
+- Accompagner les tests E2E utilisateur
+
+### P3 - Backlog
 - Mini-espace projet client
 - Messagerie client-dessinateur
 - Upload fichiers clients
-- Paiement dépôt/solde final
-- Refactoring gros composants (KitsManager 1069 lignes, Kit.jsx 820 lignes)
+- Migration localStorage → httpOnly cookies
 
 ## Identifiants
 - Admin: admin@abrisia-plan.ca / admin123
@@ -105,6 +93,8 @@ Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini
 - Gmail SMTP (notifications)
 - Stripe (prêt mais inactif)
 - Emergent Object Storage (uploads)
+- **Emergent LLM Key** (chatbot IA via emergentintegrations, modèle GPT)
+- Zoho CRM (à venir)
 
 ## Déploiement
 - Health check passé le 2026-09-18 : aucun bloqueur

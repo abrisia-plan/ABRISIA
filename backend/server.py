@@ -18,8 +18,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Imports des modules
-from database import connect_to_mongo, close_mongo_connection
-from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments
+from database import connect_to_mongo, close_mongo_connection, get_database
+from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, collection, chatbot
 from object_storage import init_storage
 
 # Lifespan manager pour la DB
@@ -89,6 +89,10 @@ api_router.include_router(content.router)
 
 # Routes paiements Stripe
 api_router.include_router(payments.router)
+api_router.include_router(collection.router, prefix="/collection")
+
+# Routes chatbot IA
+api_router.include_router(chatbot.router, prefix="/chatbot")
 
 # Inclure le router principal dans l'app
 app.include_router(api_router)
@@ -132,6 +136,66 @@ async def health_check():
         "message": "Abrisia Plan API is running",
         "version": "1.0.0"
     }
+
+# Sitemap dynamique
+@app.get("/api/sitemap.xml")
+async def dynamic_sitemap():
+    """Générer un sitemap XML dynamique avec tous les kits actifs"""
+    from datetime import datetime
+    db = get_database()
+    
+    static_pages = [
+        {"loc": "/", "changefreq": "weekly", "priority": "1.0"},
+        {"loc": "/collection", "changefreq": "weekly", "priority": "0.9"},
+        {"loc": "/devis", "changefreq": "monthly", "priority": "0.9"},
+        {"loc": "/inspiration", "changefreq": "weekly", "priority": "0.8"},
+        {"loc": "/about", "changefreq": "monthly", "priority": "0.7"},
+        {"loc": "/contact", "changefreq": "monthly", "priority": "0.7"},
+        {"loc": "/temoignage", "changefreq": "weekly", "priority": "0.6"},
+        {"loc": "/feedback", "changefreq": "monthly", "priority": "0.5"},
+        {"loc": "/mentions-legales", "changefreq": "yearly", "priority": "0.3"},
+        {"loc": "/politique-confidentialite", "changefreq": "yearly", "priority": "0.3"},
+    ]
+    
+    base_url = "https://abrisia-plan.ca"
+    today = datetime.now().strftime("%Y-%m-%d")
+    
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    
+    for page in static_pages:
+        xml += f'  <url>\n'
+        xml += f'    <loc>{base_url}{page["loc"]}</loc>\n'
+        xml += f'    <lastmod>{today}</lastmod>\n'
+        xml += f'    <changefreq>{page["changefreq"]}</changefreq>\n'
+        xml += f'    <priority>{page["priority"]}</priority>\n'
+        xml += f'  </url>\n'
+    
+    # Ajouter les kits dynamiquement
+    try:
+        products = await db.products.find(
+            {"is_active": True}, 
+            {"slug": 1, "updated_at": 1}
+        ).to_list(length=500)
+        
+        for product in products:
+            slug = product.get("slug", "")
+            if slug:
+                updated = product.get("updated_at", today)
+                if hasattr(updated, 'strftime'):
+                    updated = updated.strftime("%Y-%m-%d")
+                xml += f'  <url>\n'
+                xml += f'    <loc>{base_url}/collection?product={slug}</loc>\n'
+                xml += f'    <lastmod>{updated}</lastmod>\n'
+                xml += f'    <changefreq>monthly</changefreq>\n'
+                xml += f'    <priority>0.8</priority>\n'
+                xml += f'  </url>\n'
+    except Exception:
+        pass
+    
+    xml += '</urlset>'
+    
+    return FastAPIResponse(content=xml, media_type="application/xml")
 
 # Route racine de l'API
 @app.get("/api")

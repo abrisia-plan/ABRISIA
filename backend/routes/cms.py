@@ -497,7 +497,7 @@ async def get_navigation(current_user: dict = Depends(require_admin)):
             default_pages = [
                 {"name": "Accueil", "href": "/", "visible": True, "order": 0},
                 {"name": "Inspiration", "href": "/inspiration", "visible": True, "order": 1},
-                {"name": "Kits", "href": "/kit", "visible": True, "order": 2},
+                {"name": "Collection", "href": "/collection", "visible": True, "order": 2},
                 {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 3},
                 {"name": "Contact", "href": "/contact", "visible": True, "order": 5},
             ]
@@ -538,7 +538,7 @@ async def get_public_navigation():
             default_pages = [
                 {"name": "Accueil", "href": "/", "visible": True, "order": 0},
                 {"name": "Inspiration", "href": "/inspiration", "visible": True, "order": 1},
-                {"name": "Kits", "href": "/kit", "visible": True, "order": 2},
+                {"name": "Collection", "href": "/collection", "visible": True, "order": 2},
                 {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 3},
                 {"name": "Contact", "href": "/contact", "visible": True, "order": 5},
             ]

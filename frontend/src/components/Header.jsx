@@ -7,7 +7,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const defaultNav = [
   { name: 'Accueil', href: '/' },
-  { name: 'Kits', href: '/kit' },
+  { name: 'Collection', href: '/collection' },
   { name: 'Demander un devis', href: '/devis' },
   { name: 'Contact', href: '/contact' }
 ];

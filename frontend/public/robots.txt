@@ -1,9 +1,13 @@
 User-agent: *
 Allow: /
 Sitemap: https://abrisia-plan.ca/sitemap.xml
+Sitemap: https://abrisia-plan.ca/api/sitemap.xml
 
 User-agent: Googlebot
 Allow: /
 
 Disallow: /admin
+Disallow: /admin/*
 Disallow: /espace-employe
+Disallow: /connexion-employe
+Disallow: /api/

@@ -1,14 +1,17 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "./components/ui/toaster";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import CookieBanner from "./components/CookieBanner";
+import ChatBot from "./components/ChatBot";
 import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Inspiration from "./pages/Inspiration";
 import Kit from "./pages/Kit";
+import Collection from "./pages/Collection";
 import Devis from "./pages/Devis";
 import Feedback from "./pages/Feedback";
 import Contact from "./pages/Contact";
@@ -24,6 +27,7 @@ import Temoignage from "./pages/Temoignage";
 
 function App() {
   return (
+    <HelmetProvider>
     <div className="App">
       <BrowserRouter>
         <ScrollToTop />
@@ -35,7 +39,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/inspiration" element={<Inspiration />} />
-                <Route path="/kit" element={<Kit />} />
+                <Route path="/kit" element={<Navigate to="/collection" replace />} />
+                <Route path="/collection" element={<Collection />} />
                 <Route path="/devis" element={<Devis />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/contact" element={<Contact />} />
@@ -45,6 +50,7 @@ function App() {
               </Routes>
               <Footer />
               <CookieBanner />
+              <ChatBot />
             </>
           } />
           
@@ -62,6 +68,7 @@ function App() {
         <Toaster />
       </BrowserRouter>
     </div>
+    </HelmetProvider>
   );
 }
 

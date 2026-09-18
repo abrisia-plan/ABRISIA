@@ -3,6 +3,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Leaf, Clock, Users, Heart, Shield, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 const About = () => {
   const values = [
@@ -40,6 +41,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen pt-20">
+      <SEO 
+        title="À propos"
+        description="Découvrez Abrisia Plan, service professionnel de plans architecturaux au Québec. Notre mission, nos valeurs et notre expertise."
+        path="/about"
+      />
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-b from-amber-50 to-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

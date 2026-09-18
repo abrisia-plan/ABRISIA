@@ -9,6 +9,7 @@ import { Checkbox } from '../components/ui/checkbox';
 import { projectTypes } from '../data/mock';
 import { Send, CheckCircle, Loader2 } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
+import SEO from '../components/SEO';
 import { devisService, handleApiError } from '../services/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -125,6 +126,11 @@ const Devis = () => {
 
   return (
     <div className="min-h-screen pt-20 bg-gradient-to-b from-amber-50 to-stone-50">
+      <SEO 
+        title="Demander un devis"
+        description="Demandez un devis gratuit pour vos plans architecturaux. Plans de mini-maison, chalet, maison unifamiliale, extension ou rénovation au Québec."
+        path="/devis"
+      />
       {/* Hero Section */}
       <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">

@@ -170,7 +170,7 @@ const AdminPanel = () => {
               onClick={() => setActiveTab('kits')}
             >
               <ShoppingCart className="w-4 h-4 mr-2" />
-              Kits de plans
+              Collection ABRISIA
             </Button>
             <Button 
               variant={activeTab === 'content' ? 'default' : 'ghost'}
@@ -245,7 +245,7 @@ const AdminPanel = () => {
               onClick={() => setActiveTab('kit-orders')}
             >
               <ShoppingCart className="w-4 h-4 mr-2" />
-              Commandes kits
+              Commandes collection
             </Button>
             <Button 
               variant={activeTab === 'devis-manager' ? 'default' : 'ghost'}
@@ -418,7 +418,7 @@ const DashboardTab = ({ stats }) => {
             </Button>
             <Button variant="outline" className="w-full justify-start">
               <ShoppingCart className="w-4 h-4 mr-2" />
-              Ajouter un kit
+              Ajouter un modèle
             </Button>
           </CardContent>
         </Card>
@@ -429,7 +429,7 @@ const DashboardTab = ({ stats }) => {
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-gray-600">
             <p>• <strong>Projets</strong> : Ajoutez des réalisations dans la page Inspiration</p>
-            <p>• <strong>Kits</strong> : Créez des plans pré-dessinés à vendre</p>
+            <p>• <strong>Collection</strong> : Créez des modèles pré-dessinés à vendre</p>
             <p>• <strong>Design</strong> : Modifiez le logo, les couleurs et images du site</p>
             <p>• <strong>Employés</strong> : Gérez votre équipe via l'onglet Employés</p>
           </CardContent>
@@ -453,7 +453,7 @@ const NavigationManager = () => {
   const allPages = [
     { name: 'Accueil', href: '/', locked: true },
     { name: 'Inspiration', href: '/inspiration' },
-    { name: 'Kits', href: '/kit' },
+    { name: 'Collection', href: '/collection' },
     { name: 'Demander un devis', href: '/devis' },
     { name: 'À propos', href: '/about' },
     { name: 'Contact', href: '/contact' },

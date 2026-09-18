@@ -281,17 +281,22 @@ class Product(BaseDocument):
     discount_percentage: Optional[float] = None
     promotion_end_date: Optional[datetime] = None
     
-    # ========== NOUVEAUX CHAMPS SYSTÈME KITS ==========
-    # Dessinatrice/Designer
-    designer_name: Optional[str] = None  # Nom de la dessinatrice
-    
-    # Fichiers téléchargeables
-    plan_file_url: Optional[str] = None  # Fichier PDF/AutoCAD du plan
-    
-    # Option liste matériaux
-    materials_list_enabled: bool = False  # Activer l'option liste matériaux
-    materials_list_price: Optional[float] = None  # Prix additionnel pour la liste
-    materials_list_file_url: Optional[str] = None  # Fichier PDF de la liste matériaux
+    # ========== NOUVEAUX CHAMPS COLLECTION ABRISIA ==========
+    designer_name: Optional[str] = None
+    plan_file_url: Optional[str] = None
+    materials_list_enabled: bool = False
+    materials_list_price: Optional[float] = None
+    materials_list_file_url: Optional[str] = None
+    # Filtres / Caractéristiques
+    model_number: Optional[str] = None
+    style: Optional[str] = None
+    foundation_type: Optional[str] = None
+    has_garage: Optional[bool] = None
+    bedrooms: Optional[int] = None
+    bathrooms: Optional[int] = None
+    floors: Optional[int] = None
+    width_ft: Optional[float] = None
+    depth_ft: Optional[float] = None
 
 class ProductCreate(BaseModel):
     name: str
@@ -319,12 +324,21 @@ class ProductCreate(BaseModel):
     is_featured: bool = False
     difficulty_level: str = "intermediate"
     discount_percentage: Optional[float] = None
-    # Nouveaux champs Kits
+    # Nouveaux champs Collection
     designer_name: Optional[str] = None
     plan_file_url: Optional[str] = None
     materials_list_enabled: bool = False
     materials_list_price: Optional[float] = None
     materials_list_file_url: Optional[str] = None
+    model_number: Optional[str] = None
+    style: Optional[str] = None
+    foundation_type: Optional[str] = None
+    has_garage: Optional[bool] = None
+    bedrooms: Optional[int] = None
+    bathrooms: Optional[int] = None
+    floors: Optional[int] = None
+    width_ft: Optional[float] = None
+    depth_ft: Optional[float] = None
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None
@@ -348,12 +362,21 @@ class ProductUpdate(BaseModel):
     is_featured: Optional[bool] = None
     difficulty_level: Optional[str] = None
     discount_percentage: Optional[float] = None
-    # Nouveaux champs Kits
+    # Nouveaux champs Collection
     designer_name: Optional[str] = None
     plan_file_url: Optional[str] = None
     materials_list_enabled: Optional[bool] = None
     materials_list_price: Optional[float] = None
     materials_list_file_url: Optional[str] = None
+    model_number: Optional[str] = None
+    style: Optional[str] = None
+    foundation_type: Optional[str] = None
+    has_garage: Optional[bool] = None
+    bedrooms: Optional[int] = None
+    bathrooms: Optional[int] = None
+    floors: Optional[int] = None
+    width_ft: Optional[float] = None
+    depth_ft: Optional[float] = None
 
 # ========== MODÈLES COMMANDES ==========
 class OrderItem(BaseModel):
