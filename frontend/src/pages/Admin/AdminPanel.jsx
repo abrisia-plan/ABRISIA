@@ -142,14 +142,6 @@ const AdminPanel = () => {
               Tableau de bord
             </Button>
             <Button 
-              variant={activeTab === 'devis' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'devis' ? 'bg-foret' : ''}`}
-              onClick={() => setActiveTab('devis-manager')}
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Devis (vue rapide)
-            </Button>
-            <Button 
               variant={activeTab === 'projects' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'projects' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('projects')}
@@ -241,28 +233,12 @@ const AdminPanel = () => {
             <div className="border-t border-gray-200 my-3"></div>
             
             <Button 
-              variant={activeTab === 'employees' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'employees' ? 'bg-foret' : ''}`}
-              onClick={() => setActiveTab('employees')}
-            >
-              <Users className="w-4 h-4 mr-2" />
-              Employés
-            </Button>
-            <Button 
               variant={activeTab === 'kit-orders' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'kit-orders' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('kit-orders')}
             >
               <ShoppingCart className="w-4 h-4 mr-2" />
               Commandes collection
-            </Button>
-            <Button 
-              variant={activeTab === 'devis-manager' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'devis-manager' ? 'bg-foret' : ''}`}
-              onClick={() => setActiveTab('devis-manager')}
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Gestion des devis
             </Button>
             <Button 
               variant={activeTab === 'candidatures' ? 'default' : 'ghost'}
@@ -354,8 +330,57 @@ const AdminPanel = () => {
   );
 };
 
-// Composant Dashboard
+// Composant Dashboard avec graphiques
+const DASHBOARD_URL = process.env.REACT_APP_BACKEND_URL;
+
 const DashboardTab = ({ stats }) => {
+  const [orders, setOrders] = useState([]);
+  const [devisStats, setDevisStats] = useState([]);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    const token = localStorage.getItem('authToken');
+    try {
+      const [ordersRes, devisRes] = await Promise.all([
+        fetch(`${DASHBOARD_URL}/api/admin/products/orders`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${DASHBOARD_URL}/api/admin/devis`, { headers: { 'Authorization': `Bearer ${token}` } }),
+      ]);
+      const ordersData = await ordersRes.json();
+      const devisData = await devisRes.json();
+      if (ordersData.success) setOrders(ordersData.data || []);
+      if (devisData.success) setDevisStats(devisData.data || []);
+    } catch { /* silent */ }
+  };
+
+  // Calcul des graphiques par mois (6 derniers mois)
+  const getMonthlyData = (items, dateField) => {
+    const months = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const label = d.toLocaleString('fr-CA', { month: 'short' });
+      const year = d.getFullYear();
+      const month = d.getMonth();
+      const count = items.filter(item => {
+        const itemDate = new Date(item[dateField] || item.created_at);
+        return itemDate.getFullYear() === year && itemDate.getMonth() === month;
+      }).length;
+      months.push({ label, count });
+    }
+    return months;
+  };
+
+  const ordersMonthly = getMonthlyData(orders, 'created_at');
+  const devisMonthly = getMonthlyData(devisStats, 'created_at');
+  const maxOrders = Math.max(...ordersMonthly.map(m => m.count), 1);
+  const maxDevis = Math.max(...devisMonthly.map(m => m.count), 1);
+
+  const totalRevenue = orders.filter(o => o.status === 'paid' || o.status === 'completed')
+    .reduce((sum, o) => sum + (o.total_amount || 0), 0);
+
   return (
     <div className="space-y-6">
       <div>
@@ -363,91 +388,112 @@ const DashboardTab = ({ stats }) => {
         <p className="text-gray-600 mt-1">Vue d'ensemble de votre activité</p>
       </div>
 
-      {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card className="border-stone-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-600">Total des devis</p>
-                  <p className="text-3xl font-bold text-slate-900">{stats.total_devis}</p>
-                </div>
-                <FileText className="w-8 h-8 text-foret" />
+      {/* Stats cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="border-stone-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Demandes de devis</p>
+                <p className="text-3xl font-bold text-slate-900">{stats?.total_devis || devisStats.length}</p>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-yellow-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-600">En attente</p>
-                  <p className="text-3xl font-bold text-yellow-600">{stats.pending_devis}</p>
-                </div>
-                <BarChart3 className="w-8 h-8 text-yellow-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-blue-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-600">En cours</p>
-                  <p className="text-3xl font-bold text-blue-600">{stats.active_devis}</p>
-                </div>
-                <Users className="w-8 h-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-green-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-600">Terminés</p>
-                  <p className="text-3xl font-bold text-green-600">{stats.completed_devis}</p>
-                </div>
-                <ShoppingCart className="w-8 h-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Actions rapides</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Button className="w-full justify-start bg-foret hover:bg-bois">
-              <FileText className="w-4 h-4 mr-2" />
-              Voir les devis en attente
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <ImageIcon className="w-4 h-4 mr-2" />
-              Ajouter un projet
-            </Button>
-            <Button variant="outline" className="w-full justify-start">
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              Ajouter un modèle
-            </Button>
+              <FileText className="w-8 h-8 text-foret" />
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Aide & Support</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm text-gray-600">
-            <p>• <strong>Projets</strong> : Ajoutez des réalisations dans la page Inspiration</p>
-            <p>• <strong>Collection</strong> : Créez des modèles pré-dessinés à vendre</p>
-            <p>• <strong>Design</strong> : Modifiez le logo, les couleurs et images du site</p>
-            <p>• <strong>Employés</strong> : Gérez votre équipe via l'onglet Employés</p>
+        <Card className="border-teal-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Commandes Collection</p>
+                <p className="text-3xl font-bold text-teal-700">{orders.length}</p>
+              </div>
+              <ShoppingCart className="w-8 h-8 text-teal-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-green-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Revenus Collection</p>
+                <p className="text-3xl font-bold text-green-700">{totalRevenue.toFixed(0)} $</p>
+              </div>
+              <DollarSign className="w-8 h-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-yellow-200">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Devis en attente</p>
+                <p className="text-3xl font-bold text-yellow-600">{stats?.pending_devis || 0}</p>
+              </div>
+              <BarChart3 className="w-8 h-8 text-yellow-600" />
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Graphiques */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><ShoppingCart className="w-5 h-5 text-teal-600" /> Commandes Collection</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-end gap-2 h-40">
+              {ordersMonthly.map((m, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                  <span className="text-xs font-bold text-slate-700">{m.count}</span>
+                  <div
+                    className="w-full bg-teal-500 rounded-t-md transition-all"
+                    style={{ height: `${Math.max((m.count / maxOrders) * 120, 4)}px` }}
+                  />
+                  <span className="text-xs text-slate-500">{m.label}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2"><FileText className="w-5 h-5 text-amber-600" /> Demandes de devis</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-end gap-2 h-40">
+              {devisMonthly.map((m, i) => (
+                <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                  <span className="text-xs font-bold text-slate-700">{m.count}</span>
+                  <div
+                    className="w-full bg-amber-500 rounded-t-md transition-all"
+                    style={{ height: `${Math.max((m.count / maxDevis) * 120, 4)}px` }}
+                  />
+                  <span className="text-xs text-slate-500">{m.label}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Actions rapides */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Aide & Support</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm text-gray-600">
+          <p>• <strong>Projets</strong> : Ajoutez des réalisations dans la page Inspiration</p>
+          <p>• <strong>Collection</strong> : Créez des modèles pré-dessinés à vendre</p>
+          <p>• <strong>Design</strong> : Modifiez le logo, les couleurs et images du site</p>
+          <p>• <strong>Tarifs</strong> : Ajustez les tarifs du calculateur de devis</p>
+        </CardContent>
+      </Card>
     </div>
   );
 };
