@@ -32,7 +32,7 @@ const EmployeeDashboard = () => {
   useEffect(() => {
     // Vérifier l'authentification
     const isAuthenticated = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('adminUser'); // Sera renommé en 'userData'
+    const userData = localStorage.getItem('adminUser');
     
     if (!isAuthenticated || !userData) {
       navigate('/employee/login');
@@ -49,6 +49,7 @@ const EmployeeDashboard = () => {
     
     setUser(parsedUser);
     loadEmployeeData();
+    // eslint-disable-next-line
   }, [navigate]);
 
   const loadEmployeeData = async () => {

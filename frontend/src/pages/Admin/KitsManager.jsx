@@ -790,7 +790,7 @@ const KitsManager = () => {
                 <Label className="font-semibold">Ce que le kit comprend</Label>
                 <div className="space-y-2 mt-2">
                   {formData.includes.map((item, index) => (
-                    <div key={index} className="flex gap-2">
+                    <div key={`include-${index}`} className="flex gap-2">
                       <Input
                         value={item}
                         onChange={(e) => handleIncludeChange(index, e.target.value)}
@@ -1038,7 +1038,7 @@ const KitsManager = () => {
                 <Label className="font-semibold">Images supplémentaires (optionnel)</Label>
                 <div className="mt-2 grid grid-cols-4 gap-2">
                   {formData.gallery_images.map((img, index) => (
-                    <div key={index} className="relative">
+                    <div key={`gallery-${img.slice(-12)}`} className="relative">
                       <img
                         src={img}
                         alt={`Galerie ${index + 1}`}

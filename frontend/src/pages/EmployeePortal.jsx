@@ -154,6 +154,7 @@ export const EmployeePortal = () => {
     } catch (e) {
       navigate('/admin');
     }
+    // eslint-disable-next-line
   }, [navigate]);
 
   const loadAssignedDevis = async (employeeName) => {

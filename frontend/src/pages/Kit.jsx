@@ -65,6 +65,7 @@ const Kit = () => {
     if (orderId && sessionId) {
       verifyPayment(orderId, sessionId);
     }
+    // eslint-disable-next-line
   }, [searchParams]);
 
   const verifyPayment = async (orderId, sessionId) => {
@@ -103,6 +104,7 @@ const Kit = () => {
 
   useEffect(() => {
     loadKits();
+    // eslint-disable-next-line
   }, [selectedCategory]);
 
   const loadKits = async () => {
@@ -193,7 +195,6 @@ const Kit = () => {
     setStripeUrl(null);
 
     try {
-      console.log("🔄 Création session Stripe...");
       const response = await fetch(`${BACKEND_URL}/api/payments/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -210,7 +211,6 @@ const Kit = () => {
       });
 
       const data = await response.json();
-      console.log("📦 Réponse Stripe:", data);
 
       if (data.success && data.url) {
         // Stocker l'URL et essayer la redirection
@@ -221,7 +221,7 @@ const Kit = () => {
         try {
           window.location.assign(data.url);
         } catch (e) {
-          console.log("Redirection manuelle nécessaire");
+          // Redirection manuelle nécessaire - le lien sera affiché
         }
       } else {
         throw new Error(data.detail || 'Erreur lors de la création du paiement');
@@ -594,7 +594,7 @@ const Kit = () => {
                       <h4 className="text-lg font-semibold text-slate-800 mb-4">Ce kit comprend :</h4>
                       <ul className="space-y-2">
                         {selectedKit.includes.map((item, index) => (
-                          <li key={index} className="flex items-start">
+                          <li key={`include-${item}`} className="flex items-start">
                             <Check className="w-5 h-5 text-teal-600 mt-0.5 mr-3 flex-shrink-0" />
                             <span className="text-slate-600">{item}</span>
                           </li>

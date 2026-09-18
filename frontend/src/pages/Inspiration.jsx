@@ -185,7 +185,7 @@ const Inspiration = () => {
                     <h4 className="font-semibold text-slate-800 mb-2">Détails</h4>
                     <ul className="space-y-1">
                       {selectedProject.details.map((detail, i) => (
-                        <li key={i} className="text-slate-600 text-sm flex items-start gap-2">
+                        <li key={`detail-${detail.slice(0, 20)}-${i}`} className="text-slate-600 text-sm flex items-start gap-2">
                           <span className="text-teal-600 mt-1">•</span>
                           {detail}
                         </li>
@@ -215,7 +215,7 @@ const Inspiration = () => {
           </h2>
           <div className="space-y-4">
             {faqItems.map((faq, index) => (
-              <Card key={index} className="border-stone-200">
+              <Card key={faq.question} className="border-stone-200">
                 <CardContent className="p-0">
                   <button
                     onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}

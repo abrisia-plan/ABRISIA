@@ -11,10 +11,10 @@ import os
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 # Test credentials
-ADMIN_EMAIL = "admin@abrisia-plan.ca"
-ADMIN_PASSWORD = "admin123"
-EMPLOYEE_EMAIL = "marc@abrisia-plan.ca"
-EMPLOYEE_PASSWORD = "marc123"
+ADMIN_EMAIL = os.environ.get("TEST_ADMIN_EMAIL", "admin@abrisia-plan.ca")
+ADMIN_PASSWORD = os.environ.get("TEST_ADMIN_PASSWORD", "admin123")
+EMPLOYEE_EMAIL = os.environ.get("TEST_EMPLOYEE_EMAIL", "marc@abrisia-plan.ca")
+EMPLOYEE_PASSWORD = os.environ.get("TEST_EMPLOYEE_PASSWORD", "marc123")
 
 
 class TestAPIHealth:

@@ -102,8 +102,6 @@ const EmployeeRegister = () => {
         specialties: formData.specialties
       };
 
-      console.log('Inscription employé:', registrationData);
-
       // Simulation réussie
       setTimeout(() => {
         toast({

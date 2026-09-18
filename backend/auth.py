@@ -1,4 +1,4 @@
-from passlib.context import CryptContext
+from password_utils import verify_password, get_password_hash, pwd_context
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from fastapi import HTTPException, Depends
@@ -13,23 +13,9 @@ SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "abrisia-secret-key-very-secure-20
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 * 24 * 60  # 30 jours
 
-# Contexte de chiffrement des mots de passe
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 # Security scheme
 security = HTTPBearer()
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Vérifier un mot de passe"""
-    try:
-        return pwd_context.verify(plain_password, hashed_password)
-    except Exception as e:
-        logger.error(f"Erreur vérification mot de passe: {e}")
-        return False
-
-def get_password_hash(password: str) -> str:
-    """Hasher un mot de passe"""
-    return pwd_context.hash(password)
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     """Créer un token JWT"""

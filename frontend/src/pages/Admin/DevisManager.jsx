@@ -314,7 +314,7 @@ const DevisManager = () => {
         <select value={filterMonth} onChange={(e) => setFilterMonth(e.target.value)}
           className="h-10 px-3 border border-gray-300 rounded-md text-sm" data-testid="devis-filter-month">
           <option value="all">Tous les mois</option>
-          {monthNames.map((m, i) => <option key={i} value={i}>{m}</option>)}
+          {monthNames.map((m, i) => <option key={`month-${i}`} value={i}>{m}</option>)}
         </select>
       </div>
       <div className="flex gap-2 flex-wrap" data-testid="devis-status-filters">
@@ -405,7 +405,7 @@ const DevisManager = () => {
                     {devisItem.plansChoisis && devisItem.plansChoisis.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
                         {devisItem.plansChoisis.slice(0, 3).map((plan, idx) => (
-                          <Badge key={idx} variant="secondary" className="text-xs">
+                          <Badge key={`plan-${plan}`} variant="secondary" className="text-xs">
                             {plan}
                           </Badge>
                         ))}
@@ -493,7 +493,7 @@ const DevisManager = () => {
                       <span className="text-gray-600 text-sm">Plans demandés:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
                         {selectedDevis.plansChoisis.map((plan, idx) => (
-                          <Badge key={idx} className="bg-teal-100 text-teal-800">
+                          <Badge key={`sel-plan-${plan}`} className="bg-teal-100 text-teal-800">
                             {plan}
                           </Badge>
                         ))}

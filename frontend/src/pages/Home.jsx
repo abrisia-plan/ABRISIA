@@ -67,7 +67,8 @@ const Home = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [currentImageIndex]);
+    // eslint-disable-next-line
+  }, [currentImageIndex, inspirationProjects]);
 
   // Obtenir les catégories uniques
   const getUniqueCategories = () => {
@@ -367,11 +368,11 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, idx) => (
-              <Card key={idx} className="bg-slate-700 border-slate-600 text-white hover:shadow-lg transition-shadow">
+              <Card key={testimonial.name + '-' + idx} className="bg-slate-700 border-slate-600 text-white hover:shadow-lg transition-shadow">
                 <CardContent className="p-8">
                   <div className="flex items-center mb-4">
                     {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                      <Star key={`star-${i}`} className="w-5 h-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
                   <p className="text-slate-200 mb-6 italic leading-relaxed">

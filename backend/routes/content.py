@@ -12,12 +12,12 @@ router = APIRouter(tags=["content"])
 
 
 def serialize_doc(doc):
-    """Convert MongoDB document to JSON-serializable dict"""
+    """Convert MongoDB document to JSON-serializable dict, excluding _id"""
     if doc is None:
         return None
     doc = dict(doc)
     if "_id" in doc:
-        doc["_id"] = str(doc["_id"])
+        del doc["_id"]
     return doc
 
 

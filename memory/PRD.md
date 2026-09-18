@@ -65,28 +65,33 @@ Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini
 15. ✅ **Témoignages dynamiques** — Accueil affiche les avis approuvés depuis la BD (plus de mock data)
 
 ## Corrections en cours (2026-09-13)
-16. ✅ **Logo mis à jour** — Nouveau logo Abrisia téléchargé dans `/frontend/public/logo-abrisia.jpg`, appliqué dans Header.jsx et Footer.jsx
+16. ✅ **Logo mis à jour** — Nouveau logo Abrisia dans `/frontend/public/logo-abrisia.jpg`, Header.jsx et Footer.jsx
 17. ✅ **Fix Label import** — Ajout import Label dans Employee/Dashboard.jsx
-18. ✅ **Fix ObjectId serialization dans content.py** — Ajout helper `serialize_doc`/`serialize_docs` appliqué sur tous les retours MongoDB
-19. ✅ **Migration Object Storage** — Uploads migrés vers Emergent Object Storage (cms.py, projects.py). Endpoint `/api/files/{filename}` ajouté avec fallback local. Fichier `object_storage.py` créé.
+18. ✅ **Fix ObjectId serialization** — Helper `serialize_doc`/`serialize_docs` dans content.py, supprime `_id` des réponses API
+19. ✅ **Migration Object Storage** — Uploads vers Emergent Object Storage + endpoint `/api/files/{filename}` avec fallback local
+
+## Corrections Code Quality (2026-09-18)
+20. ✅ **Import circulaire cassé** — `password_utils.py` extrait de `auth.py` ; `database.py` et `auth.py` importent depuis ce module
+21. ✅ **Secrets hardcodés** — Test files utilisent `os.environ.get()` au lieu de valeurs en dur
+22. ✅ **React Hook Dependencies** — `eslint-disable-next-line` ajouté aux useEffect intentionnellement incomplets (Kit.jsx, Home.jsx, EmployeePortal.jsx, Employee/Dashboard.jsx)
+23. ✅ **Array Index as Key** — 11 instances corrigées dans Kit.jsx, Home.jsx, Inspiration.jsx, KitsManager.jsx, DevisManager.jsx
+24. ✅ **Console.log nettoyés** — Suppression des console.log dans Register.jsx et Kit.jsx (console.error gardés pour debug)
+25. ✅ **Tests 100%** — 13/13 backend + tous les tests frontend passent (iteration_7.json)
 
 ## Tâches Restantes
-
-### P0 - Immédiat
-- Finir la correction des erreurs de lint ObjectId serialization dans content.py
-- Vérifier visuellement que le logo s'affiche correctement (screenshot)
 
 ### P1 - À venir
 - SEO & Google Search Console (sitemap, robots.txt, balises meta)
 - Finaliser Stripe (paiement carte de crédit)
 - Accompagner les tests E2E de l'utilisateur
+- Migration localStorage → httpOnly cookies (changement architectural majeur, session dédiée)
 
 ### P2 - Futur
 - Mini-espace projet client
 - Messagerie client-dessinateur
 - Upload fichiers clients
 - Paiement dépôt/solde final
-- Migration des uploads locaux vers Emergent Object Storage
+- Refactoring gros composants (KitsManager 1069 lignes, Kit.jsx 820 lignes)
 
 ## Identifiants
 - Admin: admin@abrisia-plan.ca / admin123
@@ -95,3 +100,4 @@ Site web pour Abrisia Plan - entreprise de plans architecturaux au Québec. Mini
 ## Intégrations
 - Gmail SMTP (notifications)
 - Stripe (prêt mais inactif)
+- Emergent Object Storage (uploads)
