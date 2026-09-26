@@ -112,8 +112,8 @@ const EspacePro = () => {
             Pourquoi choisir Abrisia pour vos projets ?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {advantages.map((adv, idx) => (
-              <Card key={idx} className="border-slate-200 hover:border-teal-300 hover:shadow-lg transition-all">
+            {advantages.map((adv) => (
+              <Card key={adv.title} className="border-slate-200 hover:border-teal-300 hover:shadow-lg transition-all">
                 <CardContent className="p-6 text-center">
                   <div className="w-12 h-12 bg-teal-50 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <adv.icon className="w-6 h-6 text-teal-700" />
@@ -163,8 +163,8 @@ const EspacePro = () => {
                   "Plans de mini-maisons, chalets, maisons",
                   "Plans d'agrandissement et rénovation",
                   "Accompagnement de permis de construction",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm">
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm">
                     <CheckCircle className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
                     {item}
                   </li>
@@ -182,8 +182,8 @@ const EspacePro = () => {
                   "Nous ne fournissons pas de matériaux",
                   "Nous ne sommes pas ingénieurs en structure",
                   "Les plans sont un guide — l'entrepreneur est responsable de l'exécution",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-sm">
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm">
                     <span className="w-4 h-4 bg-red-100 text-red-500 rounded-full flex items-center justify-center text-xs mt-0.5 flex-shrink-0">✕</span>
                     {item}
                   </li>

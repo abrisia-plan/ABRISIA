@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import React, { useState, useEffect, useMemo } from 'react';import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
@@ -116,7 +115,8 @@ const CategoriesManager = () => {
   };
 
   // Compter les catégories visibles
-  const visibleCount = categories.filter(c => c.is_visible).length;
+  const visibleCategories = useMemo(() => categories.filter(c => c.is_visible), [categories]);
+  const visibleCount = visibleCategories.length;
 
   if (loading) {
     return (
@@ -258,7 +258,7 @@ const CategoriesManager = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {categories.filter(c => c.is_visible).map((category) => (
+            {visibleCategories.map((category) => (
               <div key={category.id} className="p-4 bg-stone-50 rounded-lg text-center">
                 <span className="text-3xl">{category.icon}</span>
                 <p className="font-semibold text-sm mt-2">{category.name}</p>

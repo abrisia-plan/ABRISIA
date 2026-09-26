@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';import { Link, useSearchParams } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
@@ -67,10 +66,9 @@ const Kit = () => {
     if (orderId && sessionId) {
       verifyPayment(orderId, sessionId);
     }
-    // eslint-disable-next-line
   }, [searchParams]);
 
-  const verifyPayment = async (orderId, sessionId) => {
+  const verifyPayment = useCallback(async (orderId, sessionId) => {
     try {
       const response = await fetch(
         `${BACKEND_URL}/api/payments/verify-payment/${orderId}?session_id=${sessionId}`
@@ -93,7 +91,7 @@ const Kit = () => {
     } catch (error) {
       console.error('Erreur chargement paiement:', error);
     }
-  };
+  }, [toast]);
 
   // Conversion pi² → m²
   const sqftToSqm = (surfaceStr) => {
@@ -106,10 +104,9 @@ const Kit = () => {
 
   useEffect(() => {
     loadKits();
-    // eslint-disable-next-line
   }, [selectedCategory]);
 
-  const loadKits = async () => {
+  const loadKits = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -136,7 +133,7 @@ const Kit = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedCategory, toast]);
 
   const openKitModal = (kit) => {
     setSelectedKit(kit);

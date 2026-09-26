@@ -437,8 +437,8 @@ const DashboardTab = ({ stats }) => {
           </CardHeader>
           <CardContent>
             <div className="flex items-end gap-2 h-40">
-              {ordersMonthly.map((m, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              {ordersMonthly.map((m) => (
+                <div key={m.label} className="flex-1 flex flex-col items-center gap-1">
                   <span className="text-xs font-bold text-slate-700">{m.count}</span>
                   <div
                     className="w-full bg-teal-500 rounded-t-md transition-all"
@@ -457,8 +457,8 @@ const DashboardTab = ({ stats }) => {
           </CardHeader>
           <CardContent>
             <div className="flex items-end gap-2 h-40">
-              {devisMonthly.map((m, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              {devisMonthly.map((m) => (
+                <div key={m.label} className="flex-1 flex flex-col items-center gap-1">
                   <span className="text-xs font-bold text-slate-700">{m.count}</span>
                   <div
                     className="w-full bg-amber-500 rounded-t-md transition-all"

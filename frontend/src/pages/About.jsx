@@ -169,8 +169,8 @@ const About = () => {
                       <h3 className="text-lg font-bold text-slate-800 mb-1">{comp.title}</h3>
                       <p className="text-sm text-teal-700 font-medium mb-3">{comp.subtitle}</p>
                       <ul className="space-y-2">
-                        {comp.details.map((detail, i) => (
-                          <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                        {comp.details.map((detail) => (
+                          <li key={detail} className="flex items-start gap-2 text-sm text-slate-600">
                             <CheckCircle className="w-4 h-4 text-teal-600 mt-0.5 flex-shrink-0" />
                             <span>{detail}</span>
                           </li>

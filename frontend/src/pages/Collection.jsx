@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -64,10 +64,9 @@ const Collection = () => {
     loadFilters();
     loadOptions();
     loadCart();
-    // eslint-disable-next-line
   }, []);
 
-  const loadModels = async (filterParams = {}) => {
+  const loadModels = useCallback(async (filterParams = {}) => {
     try {
       setLoading(true);
       let url = `${BACKEND_URL}/api/products?per_page=50`;
@@ -80,25 +79,25 @@ const Collection = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadFilters = async () => {
+  const loadFilters = useCallback(async () => {
     try {
       const res = await fetch(`${BACKEND_URL}/api/collection/filters`);
       const data = await res.json();
       if (data.success) setFilters(data.data);
     } catch (err) { console.error('Erreur chargement filtres:', err); }
-  };
+  }, []);
 
-  const loadOptions = async () => {
+  const loadOptions = useCallback(async () => {
     try {
       const res = await fetch(`${BACKEND_URL}/api/collection/options`);
       const data = await res.json();
       if (data.success) setProductOptions(data.data);
-    } catch (err) { console.error('Erreur chargement filtres:', err); }
-  };
+    } catch (err) { console.error('Erreur chargement options:', err); }
+  }, []);
 
-  const loadCart = async () => {
+  const loadCart = useCallback(async () => {
     try {
       const res = await fetch(`${BACKEND_URL}/api/collection/cart/${cartSessionId}`);
       const data = await res.json();
@@ -106,8 +105,8 @@ const Collection = () => {
         setCart(data.data);
         setCartCount(data.data.items?.length || 0);
       }
-    } catch (err) { console.error('Erreur chargement filtres:', err); }
-  };
+    } catch (err) { console.error('Erreur chargement panier:', err); }
+  }, [cartSessionId]);
 
   const loadVariants = async (productId) => {
     try {
@@ -130,6 +129,12 @@ const Collection = () => {
       prev.includes(optionId) ? prev.filter(id => id !== optionId) : [...prev, optionId]
     );
   };
+
+  // Memoize filtered options for the selected product
+  const filteredProductOptions = useMemo(() => {
+    if (!selectedModel) return [];
+    return productOptions.filter(o => o.is_global || o.product_ids?.includes(selectedModel.id));
+  }, [productOptions, selectedModel]);
 
   const addToCart = async () => {
     if (!selectedModel) return;
@@ -590,11 +595,11 @@ const Collection = () => {
                 )}
 
                 {/* Options */}
-                {productOptions.length > 0 && (
+                {filteredProductOptions.length > 0 && (
                   <div>
                     <h4 className="font-semibold mb-3">Options supplémentaires</h4>
                     <div className="space-y-2">
-                      {productOptions.filter(o => o.is_global || o.product_ids?.includes(selectedModel.id)).map(opt => (
+                      {filteredProductOptions.map(opt => (
                         <div
                           key={opt.id}
                           className={`flex items-center justify-between border rounded-lg p-3 cursor-pointer transition-colors ${selectedOptionIds.includes(opt.id) ? 'border-teal-600 bg-teal-50' : 'hover:border-gray-400'}`}
