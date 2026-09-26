@@ -11,20 +11,25 @@ Site web pour Abrisia Plan - entreprise de **dessin en bâtiment et conception d
 ## Fonctionnalités Complètes
 
 ### Site Public
-- Accueil, Collection ABRISIA, Espace Pro, Devis (calculateur simplifié, prénom/nom séparés), Chatbot IA strict, SEO, pages légales, contact, inspiration
-- **Page À propos** : contenu professionnel complet (Art. 16.1, livrables techniques, collaboration avec ingénieurs, aménagement mécanique fonctionnel)
+- Accueil, Collection ABRISIA, Espace Pro (formulaire + email notification), Devis (calculateur simplifié un seul tarif, prénom/nom, sans prix sur les plans), Chatbot IA strict, SEO, pages légales, contact, inspiration
+- Page À propos : contenu professionnel complet (Art. 16.1, livrables, collaboration ingénieurs, aménagement mécanique)
+
+### Emails de notification
+- Devis → email à abrisia0plan@gmail.com
+- Commandes Collection → email admin
+- Candidatures CV → email admin
+- **Demandes entrepreneur (Espace Pro)** → email admin (via /api/pro-contact)
+- Témoignages → email admin
+- Tous avec branding header/footer
 
 ### Admin (/admin/panel)
-- Dashboard statistiques (4 KPI + 2 graphiques), Collection, Tarifs, projets, services, design, témoignages, commandes, candidatures
-- Devis et Employés retirés (gestion via Zoho)
+- Dashboard statistiques (4 KPI + 2 graphiques)
+- **Tarif calculateur** : un seul champ modifiable ($/pi²) avec aperçu en temps réel
+- Collection, Services & Prix, Services accueil, Prix du devis, Design & Images, Témoignages, Pages légales, Menu du site, Commandes, Candidatures
+- Devis et Employés retirés de l'admin
 
-### Sécurité (Code Quality Review appliquée)
-- JWT secret: secret 256-bit aléatoire (plus de placeholder)
-- Routes admin protégées: /admin/reviews, /zoho/leads requièrent auth
-- Webhook Stripe: vérification signature renforcée
-- Rate limiting: 10 tentatives/5min sur /auth/login
-- Empty catch blocks: console.error ajouté partout (~25 fichiers)
-- Hook dependencies: corrigées dans les fichiers critiques
+### Sécurité
+- JWT secret 256-bit, routes admin protégées, webhook Stripe vérifié, rate limiting login
 
 ## Identifiants
 - Admin: admin@abrisia-plan.ca / admin123
@@ -35,5 +40,4 @@ Site web pour Abrisia Plan - entreprise de **dessin en bâtiment et conception d
 ## Tâches restantes
 - (P1) Zoho CRM : en attente de clés API valides
 - (P2) Interface Admin pour Zoho Credentials
-- (P2) Split Collection.jsx (890 lignes) en composants plus petits
 - (P3) Affinement section Inspiration

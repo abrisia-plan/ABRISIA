@@ -53,7 +53,7 @@ const ContentManager = () => {
     },
     devis: {
       title: "Demander un devis",
-      subtitle: "Parlez-nous de votre idée - On s'occupe du reste"
+      subtitle: "Parlez-nous de votre idée"
     }
   });
 

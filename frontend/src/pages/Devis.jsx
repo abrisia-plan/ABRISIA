@@ -145,22 +145,8 @@ const Devis = () => {
   };
 
   const calculateTotal = () => {
-    const plansTotal = formData.plansChoisis.reduce((total, planId) => {
-      const plan = planOptions.find(p => p.id === planId);
-      if (plan && plan.price !== 'Sur devis' && plan.price !== 'x') {
-        return total + parseInt(plan.price.replace(/[^0-9]/g, ''));
-      }
-      return total;
-    }, 0);
-    
     const calcPrice = calcEstimate ? calcEstimate.price : 0;
-    
-    const hasCustomPricing = formData.plansChoisis.some(planId => {
-      const plan = planOptions.find(p => p.id === planId);
-      return plan && (plan.price === 'Sur devis' || plan.price === 'x');
-    });
-    
-    return { total: plansTotal + calcPrice, hasCustomPricing };
+    return { total: calcPrice, hasCustomPricing: false };
   };
 
   return (
@@ -177,7 +163,7 @@ const Devis = () => {
             Demander un devis
           </h1>
           <p className="text-xl text-teal-100 leading-relaxed">
-            Parlez-nous de votre idée - On s'occupe du reste
+            Parlez-nous de votre idée
           </p>
         </div>
       </section>
@@ -354,30 +340,22 @@ const Devis = () => {
                             )}
                           </div>
                         </div>
-                        <span className="text-teal-800 font-semibold ml-4">{plan.price}</span>
+                        <span className="text-teal-800 font-semibold ml-4"></span>
                       </div>
                     ))}
                   </div>
                   
                   {/* Total estimé */}
-                  {(calcEstimate || formData.plansChoisis.length > 0) && (
+                  {calcEstimate && (
                     <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mt-6">
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-semibold text-slate-800">Total estimé :</span>
                         <span className="text-2xl font-bold text-teal-800">
-                          {calculateTotal().total > 0 ? `~ ${calculateTotal().total.toLocaleString('fr-CA')}$` : ''}
-                          {calculateTotal().hasCustomPricing && calculateTotal().total > 0 && ' + Sur devis'}
-                          {calculateTotal().hasCustomPricing && calculateTotal().total === 0 && 'Sur devis'}
+                          ~ {calcEstimate.price.toLocaleString('fr-CA')}$
                         </span>
                       </div>
                       <p className="text-sm text-teal-700 mt-2">
                         Estimation préliminaire — Le prix final sera confirmé dans un devis personnalisé
-                        {calculateTotal().hasCustomPricing && (
-                          <>
-                            <br />
-                            <strong>Certains services seront évalués selon vos besoins spécifiques</strong>
-                          </>
-                        )}
                       </p>
                     </div>
                   )}

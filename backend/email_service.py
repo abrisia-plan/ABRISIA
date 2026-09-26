@@ -388,5 +388,32 @@ class EmailService:
             logger.error(f"Erreur envoi email devis: {str(e)}")
             return False
 
+    def send_pro_contact_notification(self, contact_data):
+        """Envoie notification de demande entrepreneur à l'admin"""
+        try:
+            recipient_email = "abrisia0plan@gmail.com"
+            company = contact_data.get('company', '')
+            contact_name = contact_data.get('contact_name', 'Entrepreneur')
+            subject = f"Nouvelle demande entrepreneur - {company} ({contact_name}) - {datetime.now().strftime('%d/%m/%Y')}"
+            body = f"""
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle demande — Espace Pro</h2>
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                <table style="width: 100%; margin-bottom: 20px;">
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Entreprise :</td><td>{company}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Nom du contact :</td><td>{contact_name}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{contact_data.get('email', '')}" style="color: #0f766e;">{contact_data.get('email', '')}</a></td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{contact_data.get('phone', 'Non fourni')}</td></tr>
+                </table>
+                {f'<div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;"><h4 style="margin: 0 0 8px 0; color: #0f766e;">Message :</h4><p style="margin: 0;">{contact_data.get("message", "")}</p></div>' if contact_data.get('message') else ''}
+                <div style="text-align: center; margin: 24px 0;">
+                    <a href="{self.app_url}/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Voir dans l'admin</a>
+                </div>
+            """
+            return self._send_email(recipient_email, subject, self._wrap_email(body))
+        except Exception as e:
+            logger.error(f"Erreur envoi notification entrepreneur: {str(e)}")
+            return False
+
+
 # Instance globale du service email
 email_service = EmailService()

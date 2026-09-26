@@ -29,21 +29,24 @@ const EspacePro = () => {
     }
     setLoading(true);
     try {
-      // Create Zoho lead for pro contact
-      await fetch(`${BACKEND_URL}/api/zoho/lead/customize`, {
+      const res = await fetch(`${BACKEND_URL}/api/pro-contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          first_name: formData.contact_name.split(' ')[0],
-          last_name: formData.contact_name.split(' ').slice(1).join(' ') || formData.contact_name,
+          company: formData.company,
+          contact_name: formData.contact_name,
           email: formData.email,
           phone: formData.phone,
-          message: `[ESPACE PRO] Entreprise: ${formData.company}\n${formData.message}`,
-          source: 'Espace Pro',
+          message: formData.message,
         }),
       });
-      setSubmitted(true);
-      toast({ title: "Demande envoyée", description: "Nous vous contacterons dans les 24h." });
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+        toast({ title: "Demande envoyée", description: "Nous vous contacterons dans les 24h." });
+      } else {
+        toast({ title: "Erreur", description: data.detail || "Veuillez réessayer.", variant: "destructive" });
+      }
     } catch {
       toast({ title: "Erreur", description: "Veuillez réessayer.", variant: "destructive" });
     } finally {
