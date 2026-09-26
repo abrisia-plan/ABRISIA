@@ -145,21 +145,22 @@ const Devis = () => {
   };
 
   const calculateTotal = () => {
-    const total = formData.plansChoisis.reduce((total, planId) => {
+    const plansTotal = formData.plansChoisis.reduce((total, planId) => {
       const plan = planOptions.find(p => p.id === planId);
-      if (plan && plan.price !== 'Sur devis') {
-        return total + parseInt(plan.price.replace('$', ''));
+      if (plan && plan.price !== 'Sur devis' && plan.price !== 'x') {
+        return total + parseInt(plan.price.replace(/[^0-9]/g, ''));
       }
       return total;
     }, 0);
     
-    // Vérifier si des services "Sur devis" sont sélectionnés
+    const calcPrice = calcEstimate ? calcEstimate.price : 0;
+    
     const hasCustomPricing = formData.plansChoisis.some(planId => {
       const plan = planOptions.find(p => p.id === planId);
-      return plan && plan.price === 'Sur devis';
+      return plan && (plan.price === 'Sur devis' || plan.price === 'x');
     });
     
-    return { total, hasCustomPricing };
+    return { total: plansTotal + calcPrice, hasCustomPricing };
   };
 
   return (
@@ -327,7 +328,7 @@ const Devis = () => {
                     <p className="text-xs text-slate-400">* Prix indicatif avant taxes. Le devis final sera ajusté selon la complexité du projet.</p>
                   </div>
                   <p className="text-sm text-slate-600 italic">
-                    Les prix indiqués sont des tarifs de base. Le devis final sera ajusté selon la complexité et les spécificités de votre projet.
+                    <strong>Estimation préliminaire seulement</strong> — Le montant affiché sert à donner un ordre de grandeur. Le prix final sera établi après l'analyse du projet et confirmé dans un devis personnalisé.
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {planOptions.map((plan) => (
@@ -359,22 +360,22 @@ const Devis = () => {
                   </div>
                   
                   {/* Total estimé */}
-                  {formData.plansChoisis.length > 0 && (
+                  {(calcEstimate || formData.plansChoisis.length > 0) && (
                     <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mt-6">
                       <div className="flex items-center justify-between">
                         <span className="text-lg font-semibold text-slate-800">Total estimé :</span>
                         <span className="text-2xl font-bold text-teal-800">
-                          {calculateTotal().total > 0 ? `${calculateTotal().total}$` : ''}
+                          {calculateTotal().total > 0 ? `~ ${calculateTotal().total.toLocaleString('fr-CA')}$` : ''}
                           {calculateTotal().hasCustomPricing && calculateTotal().total > 0 && ' + Sur devis'}
                           {calculateTotal().hasCustomPricing && calculateTotal().total === 0 && 'Sur devis'}
                         </span>
                       </div>
                       <p className="text-sm text-teal-700 mt-2">
-                        Prix indicatif - devis final après étude de votre projet
+                        Estimation préliminaire — Le prix final sera confirmé dans un devis personnalisé
                         {calculateTotal().hasCustomPricing && (
                           <>
                             <br />
-                            <strong>Services d'accompagnement évalués selon vos besoins spécifiques</strong>
+                            <strong>Certains services seront évalués selon vos besoins spécifiques</strong>
                           </>
                         )}
                       </p>
