@@ -18,25 +18,45 @@ const Home = () => {
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [testimonials, setTestimonials] = useState([]);
 
+  // Textes dynamiques de la page d'accueil
+  const [homeTexts, setHomeTexts] = useState({
+    hero_title: 'Abrisia Plan',
+    hero_subtitle: 'Des espaces sur mesure, une vie à votre rythme',
+    services_title: 'Nos services de dessin',
+    process_title: 'Comment ça marche ?',
+    process_subtitle: 'Un processus simple et transparent pour concrétiser votre projet'
+  });
+
   // Charger tout depuis l'API
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [projRes, reviewsRes, kitsRes, servicesRes, testimonialsRes] = await Promise.all([
+        const [projRes, reviewsRes, kitsRes, servicesRes, testimonialsRes, pageContentRes] = await Promise.all([
           fetch(`${BACKEND_URL}/api/projects?home_only=true&limit=100`),
           fetch(`${BACKEND_URL}/api/reviews`),
           fetch(`${BACKEND_URL}/api/products?featured=true`),
           fetch(`${BACKEND_URL}/api/content/homepage-services`),
-          fetch(`${BACKEND_URL}/api/content/testimonials`)
+          fetch(`${BACKEND_URL}/api/content/testimonials`),
+          fetch(`${BACKEND_URL}/api/content/pages/home`)
         ]);
         const projData = await projRes.json();
         const reviewsData = await reviewsRes.json();
         const kitsData = await kitsRes.json();
         const servicesData = await servicesRes.json();
         const testimonialsData = await testimonialsRes.json();
+        const pageData = await pageContentRes.json();
         if (projData.success) setInspirationProjects(projData.data || []);
         if (kitsData.success) setFeaturedKits(kitsData.data || []);
         if (servicesData.success) setHomepageServices(servicesData.data || []);
+        if (pageData.success && pageData.content) {
+          setHomeTexts(prev => ({
+            hero_title: pageData.content.hero_title?.value || prev.hero_title,
+            hero_subtitle: pageData.content.hero_subtitle?.value || prev.hero_subtitle,
+            services_title: pageData.content.services_title?.value || prev.services_title,
+            process_title: pageData.content.process_title?.value || prev.process_title,
+            process_subtitle: pageData.content.process_subtitle?.value || prev.process_subtitle
+          }));
+        }
         // Témoignages : priorité aux témoignages CMS, sinon reviews produit
         if (testimonialsData.success && testimonialsData.data?.length > 0) {
           setTestimonials(testimonialsData.data.map(r => ({
@@ -148,10 +168,10 @@ const Home = () => {
         {/* Content */}
         <div className="relative z-10 text-center text-white max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
-            Abrisia Plan
+            {homeTexts.hero_title}
           </h1>
           <p className="text-xl md:text-2xl mb-12 text-amber-100 font-light leading-relaxed">
-            Des plans sur mesure, conçus pour votre réalité
+            {homeTexts.hero_subtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <Link to="#inspiration">
@@ -244,7 +264,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-              Nos services de dessin
+              {homeTexts.services_title}
             </h2>
             <p className="text-lg text-slate-600 max-w-4xl mx-auto leading-relaxed">
               Dossiers techniques complets, conformes aux codes de construction en vigueur.
@@ -409,10 +429,10 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-              Comment ça marche ?
+              {homeTexts.process_title}
             </h2>
             <p className="text-xl text-slate-600">
-              Un processus simple et transparent pour concrétiser votre projet
+              {homeTexts.process_subtitle}
             </p>
           </div>
 

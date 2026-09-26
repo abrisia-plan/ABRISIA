@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -18,6 +18,25 @@ const EspacePro = () => {
   const [formData, setFormData] = useState({
     company: '', contact_name: '', email: '', phone: '', message: ''
   });
+  const [tarif, setTarif] = useState({ tarif_entrepreneur: '1,50', tarif_unite: '$ / pi²' });
+
+  useEffect(() => {
+    const loadTarif = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/content/pages/espace_pro`);
+        const data = await res.json();
+        if (data.success && data.content) {
+          setTarif(prev => ({
+            tarif_entrepreneur: data.content.tarif_entrepreneur?.value || prev.tarif_entrepreneur,
+            tarif_unite: data.content.tarif_unite?.value || prev.tarif_unite
+          }));
+        }
+      } catch (err) {
+        console.error('Erreur chargement tarif pro:', err);
+      }
+    };
+    loadTarif();
+  }, []);
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -58,7 +77,7 @@ const EspacePro = () => {
     { icon: FileText, title: "Plans sur mesure", desc: "Plans architecturaux adaptés à vos projets de construction" },
     { icon: Users, title: "Partenariat dédié", desc: "Un dessinateur attitré qui connaît vos standards" },
     { icon: Shield, title: "Conformité garantie", desc: "Plans conformes au Code du bâtiment du Québec et du Canada" },
-    { icon: Building2, title: "Volume avantageux", desc: "Tarif préférentiel de 1,50$/pi² pour les entrepreneurs réguliers" },
+    { icon: Building2, title: "Volume avantageux", desc: `Tarif préférentiel de ${tarif.tarif_entrepreneur}${tarif.tarif_unite} pour les entrepreneurs réguliers` },
   ];
 
   return (
@@ -113,8 +132,8 @@ const EspacePro = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-teal-200 text-sm font-medium mb-2">Tarif entrepreneur</p>
           <div className="flex items-baseline justify-center gap-1 mb-3">
-            <span className="text-6xl font-bold">1,50</span>
-            <span className="text-2xl font-medium">$ / pi²</span>
+            <span className="text-6xl font-bold" data-testid="pro-tarif-display">{tarif.tarif_entrepreneur}</span>
+            <span className="text-2xl font-medium">{tarif.tarif_unite}</span>
           </div>
           <p className="text-teal-100 text-lg max-w-xl mx-auto mb-6">
             Un tarif préférentiel pour vos projets résidentiels.

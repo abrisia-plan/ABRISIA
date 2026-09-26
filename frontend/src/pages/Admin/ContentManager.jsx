@@ -54,12 +54,38 @@ const ContentManager = () => {
     devis: {
       title: "Demander un devis",
       subtitle: "Parlez-nous de votre idée"
+    },
+    espace_pro: {
+      tarif_entrepreneur: "1,50",
+      tarif_unite: "$ / pi²"
     }
   });
 
   useEffect(() => {
     loadProcessSteps();
+    loadAllPageContent();
   }, []);
+
+  const loadAllPageContent = async () => {
+    try {
+      const pages = ['home', 'devis', 'espace_pro'];
+      const results = await Promise.all(
+        pages.map(p => fetch(`${BACKEND_URL}/api/content/pages/${p}`).then(r => r.json()))
+      );
+      const updated = { ...pageContent };
+      pages.forEach((pageId, i) => {
+        if (results[i].success && results[i].content) {
+          const content = results[i].content;
+          Object.keys(content).forEach(key => {
+            if (updated[pageId]) updated[pageId][key] = content[key].value;
+          });
+        }
+      });
+      setPageContent(updated);
+    } catch (error) {
+      console.error('Erreur chargement contenu pages:', error);
+    }
+  };
 
   const loadProcessSteps = async () => {
     try {
@@ -414,6 +440,45 @@ const ContentManager = () => {
                 onClick={() => savePageContent('about')} 
                 disabled={saving}
                 className="bg-teal-600 hover:bg-teal-700"
+              >
+                <Save className="w-4 h-4 mr-2" /> Sauvegarder
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Page Espace Pro (Entrepreneurs)</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label>Tarif entrepreneur</Label>
+                  <Input
+                    value={pageContent.espace_pro.tarif_entrepreneur}
+                    onChange={(e) => handlePageContentChange('espace_pro', 'tarif_entrepreneur', e.target.value)}
+                    className="mt-1"
+                    placeholder="1,50"
+                    data-testid="espace-pro-tarif-input"
+                  />
+                </div>
+                <div>
+                  <Label>Unité du tarif</Label>
+                  <Input
+                    value={pageContent.espace_pro.tarif_unite}
+                    onChange={(e) => handlePageContentChange('espace_pro', 'tarif_unite', e.target.value)}
+                    className="mt-1"
+                    placeholder="$ / pi²"
+                    data-testid="espace-pro-unite-input"
+                  />
+                </div>
+              </div>
+              <p className="text-sm text-slate-500">Ce tarif est affiché sur la page Espace Pro destinée aux entrepreneurs.</p>
+              <Button 
+                onClick={() => savePageContent('espace_pro')} 
+                disabled={saving}
+                className="bg-teal-600 hover:bg-teal-700"
+                data-testid="save-espace-pro-btn"
               >
                 <Save className="w-4 h-4 mr-2" /> Sauvegarder
               </Button>

@@ -31,6 +31,31 @@ const Devis = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Contenu dynamique de la page (titre, sous-titre)
+  const [pageTexts, setPageTexts] = useState({
+    title: 'Demander un devis',
+    subtitle: 'Parlez-nous de votre idée'
+  });
+
+  // Charger les textes de la page depuis l'API
+  useEffect(() => {
+    const loadPageContent = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/content/pages/devis`);
+        const data = await res.json();
+        if (data.success && data.content) {
+          setPageTexts(prev => ({
+            title: data.content.title?.value || prev.title,
+            subtitle: data.content.subtitle?.value || prev.subtitle
+          }));
+        }
+      } catch (err) {
+        console.error('Erreur chargement textes page:', err);
+      }
+    };
+    loadPageContent();
+  }, []);
+
   // Calculateur de prix préliminaire
   const [calcWidth, setCalcWidth] = useState('');
   const [calcDepth, setCalcDepth] = useState('');
@@ -160,10 +185,10 @@ const Devis = () => {
       <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Demander un devis
+            {pageTexts.title}
           </h1>
           <p className="text-xl text-teal-100 leading-relaxed">
-            Parlez-nous de votre idée
+            {pageTexts.subtitle}
           </p>
         </div>
       </section>

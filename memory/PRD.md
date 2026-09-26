@@ -1,7 +1,7 @@
 # Abrisia Plan - PRD
 
 ## Problème Original
-Site web pour Abrisia Plan - entreprise de **dessin en bâtiment et conception de plans** architecturaux au Québec. Services 100% à distance depuis le Saguenay–Lac-Saint-Jean. Conformes à l'article 16.1 de la Loi sur les architectes du Québec.
+Site web pour Abrisia Plan - entreprise de **dessin en bâtiment et conception de plans** architecturaux au Québec. Services 100% à distance depuis le Saguenay–Lac-Saint-Jean.
 
 ## Architecture
 - Frontend: React + TailwindCSS + Shadcn UI (port 3000)
@@ -10,26 +10,21 @@ Site web pour Abrisia Plan - entreprise de **dessin en bâtiment et conception d
 
 ## Fonctionnalités Complètes
 
+### CMS Dynamique (Admin → Pages publiques)
+- **Page Accueil** : titre hero, sous-titre hero, titre services, titre/sous-titre processus — tout modifiable via Admin > Gestion du contenu > Page Accueil
+- **Page Devis** : titre et sous-titre ("Parlez-nous de votre idée") modifiables via Admin > Gestion du contenu > Autres pages > Page Devis
+- **Page Espace Pro** : **tarif entrepreneur** (1,50$/pi²) et unité modifiables via Admin > Gestion du contenu > Autres pages > Page Espace Pro
+- Services & Prix, Étapes processus, Formulaire devis — tout modifiable
+
 ### Site Public
-- Accueil, Collection ABRISIA, Espace Pro (formulaire + email notification), Devis (calculateur simplifié un seul tarif, prénom/nom, sans prix sur les plans), Chatbot IA strict, SEO, pages légales, contact, inspiration
-- Page À propos : contenu professionnel complet (Art. 16.1, livrables, collaboration ingénieurs, aménagement mécanique)
+- Accueil (textes dynamiques), Collection ABRISIA, Espace Pro (tarif dynamique + email notification), Devis (calculateur + prénom/nom), Chatbot IA, SEO, pages légales, contact, inspiration, À propos
 
 ### Emails de notification
-- Devis → email à abrisia0plan@gmail.com
-- Commandes Collection → email admin
-- Candidatures CV → email admin
-- **Demandes entrepreneur (Espace Pro)** → email admin (via /api/pro-contact)
-- Témoignages → email admin
-- Tous avec branding header/footer
+- Devis, Commandes Collection, Candidatures CV, **Demandes entrepreneur (Espace Pro)**, Témoignages — tous avec branding
 
-### Admin (/admin/panel)
-- Dashboard statistiques (4 KPI + 2 graphiques)
-- **Tarif calculateur** : un seul champ modifiable ($/pi²) avec aperçu en temps réel
-- Collection, Services & Prix, Services accueil, Prix du devis, Design & Images, Témoignages, Pages légales, Menu du site, Commandes, Candidatures
-- Devis et Employés retirés de l'admin
-
-### Sécurité
-- JWT secret 256-bit, routes admin protégées, webhook Stripe vérifié, rate limiting login
+### Admin
+- Dashboard stats, Collection, Services & Prix, Tarifs calculateur, Design, Témoignages, Pages légales, Menu, Commandes, Candidatures
+- Sécurité : JWT 256-bit, routes admin protégées, rate limiting
 
 ## Identifiants
 - Admin: admin@abrisia-plan.ca / admin123
