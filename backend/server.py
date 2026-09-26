@@ -164,7 +164,7 @@ async def dynamic_sitemap():
         {"loc": "/politique-confidentialite", "changefreq": "yearly", "priority": "0.3"},
     ]
     
-    base_url = "https://abrisia-plan.ca"
+    base_url = os.getenv('APP_URL', 'https://abrisia-plan.ca')
     today = datetime.now().strftime("%Y-%m-%d")
     
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
