@@ -19,9 +19,8 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
     """Créer un lead Zoho en arrière-plan pour chaque devis"""
     try:
         from routes.zoho import save_lead
-        name_parts = devis_doc.get("nom", "").split(" ", 1)
-        first_name = name_parts[0] if name_parts else "Visiteur"
-        last_name = name_parts[1] if len(name_parts) > 1 else first_name
+        first_name = devis_doc.get("prenom", "") or devis_doc.get("nom", "").split(" ", 1)[0] or "Visiteur"
+        last_name = devis_doc.get("nom", "") or first_name
 
         zoho_record = {
             "First_Name": first_name,
@@ -52,10 +51,11 @@ async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTask
         
         # Créer le document devis
         devis_doc = {
+            "prenom": devis_data.prenom,
             "nom": devis_data.nom,
             "email": devis_data.email,
             "telephone": devis_data.telephone or "",
-            "project_type": devis_data.projectType,
+            "project_type": devis_data.projectType or "",
             "plans_choisis": devis_data.plansChoisis,
             "notes": devis_data.notes,
             "status": "En attente",
@@ -76,7 +76,7 @@ async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTask
         # Créer un lead Zoho en arrière-plan
         background_tasks.add_task(_create_zoho_lead_from_devis, devis_doc)
         
-        logger.info(f"✅ Nouveau devis soumis par {devis_data.nom} ({devis_data.email}) - Email de notification programmé")
+        logger.info(f"✅ Nouveau devis soumis par {devis_data.prenom} {devis_data.nom} ({devis_data.email}) - Email de notification programmé")
         
         return DevisResponse(
             success=True,
@@ -131,12 +131,13 @@ async def get_all_devis(
         for devis in devis_list:
             formatted_devis.append({
                 "id": str(devis["_id"]),
-                "nom": devis["nom"],
+                "prenom": devis.get("prenom", ""),
+                "nom": devis.get("nom", ""),
                 "email": devis["email"],
                 "telephone": devis.get("telephone", ""),
-                "projectType": devis["project_type"],
-                "plansChoisis": devis["plans_choisis"],
-                "notes": devis["notes"],
+                "projectType": devis.get("project_type", ""),
+                "plansChoisis": devis.get("plans_choisis", []),
+                "notes": devis.get("notes", ""),
                 "status": devis["status"],
                 "assignedTo": devis.get("assigned_to"),
                 "createdAt": devis["created_at"].isoformat(),

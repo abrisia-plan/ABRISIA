@@ -619,12 +619,13 @@ class Devis(BaseDocument):
     progress_notes: List[dict] = []
 
 class DevisCreate(BaseModel):
+    prenom: str
     nom: str
     email: EmailStr
     telephone: Optional[str] = ""
-    projectType: str
-    plansChoisis: List[str]
-    notes: str
+    projectType: Optional[str] = ""
+    plansChoisis: List[str] = []
+    notes: str = ""
 
 class DevisUpdate(BaseModel):
     status: Optional[str] = None

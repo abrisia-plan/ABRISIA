@@ -20,6 +20,7 @@ const Devis = () => {
   const [planOptions, setPlanOptions] = useState([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [formData, setFormData] = useState({
+    prenom: '',
     nom: '',
     email: '',
     telephone: '',
@@ -31,50 +32,41 @@ const Devis = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Calculateur de prix préliminaire
-  const [calcProjectType, setCalcProjectType] = useState('');
   const [calcWidth, setCalcWidth] = useState('');
   const [calcDepth, setCalcDepth] = useState('');
   const [calcFloors, setCalcFloors] = useState('1');
-  const [priceRates, setPriceRates] = useState({});
+  const [baseRate, setBaseRate] = useState(3.50);
 
-  // Charger les tarifs depuis l'API
+  // Charger le tarif de base depuis l'API (moyenne des tarifs configurés)
   useEffect(() => {
     const loadRates = async () => {
       try {
         const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/calculator-rates`);
         const data = await res.json();
         if (data.success && data.data) {
-          const ratesMap = {};
-          data.data.forEach(r => { ratesMap[r.project_type] = { rate: r.rate, label: r.unit }; });
-          setPriceRates(ratesMap);
+          const nonZero = data.data.filter(r => r.rate > 0);
+          if (nonZero.length > 0) {
+            const avg = nonZero.reduce((sum, r) => sum + r.rate, 0) / nonZero.length;
+            setBaseRate(Math.round(avg * 100) / 100);
+          }
         }
       } catch {
-        // Fallback hardcoded
-        setPriceRates({
-          'Maison unifamiliale': { rate: 3.50, label: '$/pi²' },
-          'Mini-maison': { rate: 4.00, label: '$/pi²' },
-          'Chalet': { rate: 3.75, label: '$/pi²' },
-          'Agrandissement': { rate: 4.25, label: '$/pi²' },
-          'Garage': { rate: 2.50, label: '$/pi²' },
-          'Ébénisterie': { rate: 0, label: 'Sur devis' },
-        });
+        // Fallback
+        setBaseRate(3.50);
       }
     };
     loadRates();
   }, []);
-
-  const PRICE_RATES = priceRates;
 
   const calcEstimate = useMemo(() => {
     const w = parseFloat(calcWidth) || 0;
     const d = parseFloat(calcDepth) || 0;
     const f = parseInt(calcFloors) || 1;
     const surface = w * d * f;
-    const rateInfo = PRICE_RATES[calcProjectType];
-    if (!rateInfo || rateInfo.rate === 0 || surface === 0) return null;
-    const price = Math.round(surface * rateInfo.rate);
-    return { surface: Math.round(surface), price, rate: rateInfo.rate };
-  }, [calcProjectType, calcWidth, calcDepth, calcFloors, PRICE_RATES]);
+    if (surface === 0) return null;
+    const price = Math.round(surface * baseRate);
+    return { surface: Math.round(surface), price, rate: baseRate };
+  }, [calcWidth, calcDepth, calcFloors, baseRate]);
 
   useEffect(() => {
     // Pré-sélectionner la catégorie depuis l'URL ?service=Mini-maison
@@ -134,7 +126,7 @@ const Devis = () => {
         
         // Reset form
         setFormData({
-          nom: '', email: '', telephone: '', projectType: '', plansChoisis: [], notes: ''
+          prenom: '', nom: '', email: '', telephone: '', projectType: '', plansChoisis: [], notes: ''
         });
       } else {
         throw new Error(response.message || 'Erreur lors de l\'envoi');
@@ -208,7 +200,20 @@ const Devis = () => {
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="nom" className="text-slate-700 font-medium">Nom complet *</Label>
+                      <Label htmlFor="prenom" className="text-slate-700 font-medium">Prénom *</Label>
+                      <Input
+                        id="prenom"
+                        name="prenom"
+                        value={formData.prenom}
+                        onChange={handleInputChange}
+                        required
+                        className="border-stone-300 focus:border-teal-500"
+                        placeholder="Votre prénom"
+                        data-testid="devis-prenom"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="nom" className="text-slate-700 font-medium">Nom *</Label>
                       <Input
                         id="nom"
                         name="nom"
@@ -216,11 +221,14 @@ const Devis = () => {
                         onChange={handleInputChange}
                         required
                         className="border-stone-300 focus:border-teal-500"
-                        placeholder="Votre nom et prénom"
+                        placeholder="Votre nom de famille"
+                        data-testid="devis-nom"
                       />
                     </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-slate-700 font-medium">Email *</Label>
+                      <Label htmlFor="email" className="text-slate-700 font-medium">Courriel *</Label>
                       <Input
                         id="email"
                         name="email"
@@ -230,20 +238,22 @@ const Devis = () => {
                         required
                         className="border-stone-300 focus:border-teal-500"
                         placeholder="votre@email.com"
+                        data-testid="devis-email"
                       />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="telephone" className="text-slate-700 font-medium">Téléphone (optionnel)</Label>
-                    <Input
-                      id="telephone"
-                      name="telephone"
-                      type="tel"
-                      value={formData.telephone}
-                      onChange={handleInputChange}
-                      className="border-stone-300 focus:border-teal-500"
-                      placeholder="(514) 555-0123"
-                    />
+                    <div className="space-y-2">
+                      <Label htmlFor="telephone" className="text-slate-700 font-medium">Téléphone (optionnel)</Label>
+                      <Input
+                        id="telephone"
+                        name="telephone"
+                        type="tel"
+                        value={formData.telephone}
+                        onChange={handleInputChange}
+                        className="border-stone-300 focus:border-teal-500"
+                        placeholder="(418) 555-1234"
+                        data-testid="devis-telephone"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -261,21 +271,7 @@ const Devis = () => {
                     </h4>
                     <p className="text-sm text-slate-600">Obtenez une estimation rapide basée sur les dimensions de votre projet.</p>
                     
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <div>
-                        <Label className="text-sm">Type de projet</Label>
-                        <select
-                          value={calcProjectType}
-                          onChange={(e) => setCalcProjectType(e.target.value)}
-                          className="mt-1 w-full rounded-md border border-input bg-white px-3 py-2 text-sm"
-                          data-testid="calc-project-type"
-                        >
-                          <option value="">-- Choisir --</option>
-                          {Object.keys(PRICE_RATES).map(t => (
-                            <option key={t} value={t}>{t}</option>
-                          ))}
-                        </select>
-                      </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                       <div>
                         <Label className="text-sm">Largeur (pi)</Label>
                         <Input
@@ -319,18 +315,12 @@ const Devis = () => {
                       <div className="bg-white rounded-lg p-4 border border-teal-200 flex items-center justify-between" data-testid="calc-result">
                         <div className="text-sm text-slate-600">
                           <p>Surface totale : <strong>{calcEstimate.surface} pi²</strong></p>
-                          <p>Tarif : {calcEstimate.rate} $/pi²</p>
+                          <p>Tarif approximatif : {calcEstimate.rate} $/pi²</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm text-slate-500">Estimation</p>
-                          <p className="text-2xl font-bold text-teal-800">{calcEstimate.price.toLocaleString('fr-CA')} $</p>
+                          <p className="text-sm text-slate-500">Estimation approximative</p>
+                          <p className="text-2xl font-bold text-teal-800">~ {calcEstimate.price.toLocaleString('fr-CA')} $</p>
                         </div>
-                      </div>
-                    )}
-
-                    {calcProjectType && PRICE_RATES[calcProjectType]?.rate === 0 && (
-                      <div className="bg-white rounded-lg p-4 border border-amber-200 text-center">
-                        <p className="text-amber-800 font-medium">Ce type de projet requiert une évaluation personnalisée.</p>
                       </div>
                     )}
 
@@ -539,7 +529,7 @@ const Devis = () => {
                   <Button 
                     type="submit" 
                     size="lg" 
-                    disabled={isSubmitting || formData.plansChoisis.length === 0}
+                    disabled={isSubmitting}
                     className="w-full bg-teal-800 hover:bg-teal-900 text-white py-4 text-lg font-semibold rounded-full transition-all duration-300 transform hover:scale-105"
                   >
                     {isSubmitting ? (
@@ -554,11 +544,6 @@ const Devis = () => {
                       </>
                     )}
                   </Button>
-                  {formData.plansChoisis.length === 0 && (
-                    <p className="text-center text-sm text-slate-500 mt-3">
-                      Sélectionnez au moins un plan pour continuer
-                    </p>
-                  )}
                 </div>
               </form>
             </CardContent>
@@ -575,11 +560,11 @@ const Devis = () => {
                 <strong>Contact :</strong> abrisia0plan@gmail.com
               </p>
               <p>
-                Nous étudions votre projet de construction permanente sur fondations et vous proposons un devis détaillé 
-                conforme au Code du bâtiment du Québec et du Canada.
+                Nous étudions votre projet et vous proposons un devis détaillé 
+                incluant les plans nécessaires (fondation, architecture, etc.) selon vos besoins.
               </p>
               <p className="text-sm text-slate-500">
-                <strong>Spécialité :</strong> Constructions permanentes sur fondations jusqu'à 600m² de plancher total (6000 pi²)
+                <strong>Spécialité :</strong> Habitations unifamiliales jusqu'à 600 m² (~6 458 pi²) — Services 100 % à distance
               </p>
             </div>
           </div>

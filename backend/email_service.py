@@ -326,7 +326,7 @@ class EmailService:
             }
             response_text = response_labels.get(response_preference, response_preference)
             
-            subject = f"Nouveau devis - {devis_data.get('nom', 'Client')} - {datetime.now().strftime('%d/%m/%Y')}"
+            subject = f"Nouveau devis - {devis_data.get('prenom', '')} {devis_data.get('nom', 'Client')} - {datetime.now().strftime('%d/%m/%Y')}"
             
             notes_section = ""
             if devis_data.get('notes'):
@@ -343,7 +343,8 @@ class EmailService:
                 
                 <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Informations client</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{devis_data.get('nom', 'Non spécifié')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Prénom :</td><td>{devis_data.get('prenom', 'Non spécifié')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Nom :</td><td>{devis_data.get('nom', 'Non spécifié')}</td></tr>
                     <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{devis_data.get('email', '')}" style="color: #0f766e;">{devis_data.get('email', 'Non spécifié')}</a></td></tr>
                     <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{devis_data.get('telephone', 'Non spécifié')}</td></tr>
                 </table>
