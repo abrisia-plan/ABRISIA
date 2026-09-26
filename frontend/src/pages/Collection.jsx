@@ -76,7 +76,7 @@ const Collection = () => {
       const data = await res.json();
       if (data.success) setModels(data.data || []);
     } catch (err) {
-      // Handled silently
+      console.error('Erreur chargement modèles:', err);
     } finally {
       setLoading(false);
     }
@@ -87,7 +87,7 @@ const Collection = () => {
       const res = await fetch(`${BACKEND_URL}/api/collection/filters`);
       const data = await res.json();
       if (data.success) setFilters(data.data);
-    } catch (err) { /* silent */ }
+    } catch (err) { console.error('Erreur chargement filtres:', err); }
   };
 
   const loadOptions = async () => {
@@ -95,7 +95,7 @@ const Collection = () => {
       const res = await fetch(`${BACKEND_URL}/api/collection/options`);
       const data = await res.json();
       if (data.success) setProductOptions(data.data);
-    } catch (err) { /* silent */ }
+    } catch (err) { console.error('Erreur chargement filtres:', err); }
   };
 
   const loadCart = async () => {
@@ -106,7 +106,7 @@ const Collection = () => {
         setCart(data.data);
         setCartCount(data.data.items?.length || 0);
       }
-    } catch (err) { /* silent */ }
+    } catch (err) { console.error('Erreur chargement filtres:', err); }
   };
 
   const loadVariants = async (productId) => {
@@ -114,7 +114,7 @@ const Collection = () => {
       const res = await fetch(`${BACKEND_URL}/api/collection/models/${productId}/variants`);
       const data = await res.json();
       if (data.success) setVariants(data.data);
-    } catch (err) { /* silent */ }
+    } catch (err) { console.error('Erreur chargement filtres:', err); }
   };
 
   const openModel = async (model) => {
@@ -159,7 +159,7 @@ const Collection = () => {
     try {
       await fetch(`${BACKEND_URL}/api/collection/cart/${cartSessionId}/item/${cartItemId}`, { method: 'DELETE' });
       loadCart();
-    } catch (err) { /* silent */ }
+    } catch (err) { console.error('Erreur chargement filtres:', err); }
   };
 
   // Personnaliser ce modèle

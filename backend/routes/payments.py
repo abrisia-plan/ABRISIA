@@ -283,13 +283,18 @@ async def stripe_webhook(request: Request):
     webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
     
     try:
-        if webhook_secret:
+        if webhook_secret and sig_header:
             event = stripe.Webhook.construct_event(
                 payload, sig_header, webhook_secret
             )
+        elif webhook_secret:
+            # Webhook secret configuré mais pas de signature — rejeter
+            logger.warning("Webhook reçu sans signature Stripe")
+            raise HTTPException(status_code=400, detail="Missing stripe-signature header")
         else:
-            # Mode test sans webhook secret
+            # Mode développement sans webhook secret — avertir
             import json
+            logger.warning("⚠️ STRIPE_WEBHOOK_SECRET non configuré — webhook non vérifié (dev only)")
             event = json.loads(payload)
         
         # Gérer l'événement checkout.session.completed

@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timezone
 from database import get_database
+from auth import require_admin
 import httpx
 import os
 import logging
@@ -167,7 +168,7 @@ async def create_purchase_lead(data: LeadRequest):
 
 
 @router.get("/leads")
-async def get_leads():
+async def get_leads(admin=Depends(require_admin)):
     """Obtenir tous les leads (admin)"""
     db = get_database()
     leads = await db.crm_leads.find().sort("created_at", -1).to_list(length=200)

@@ -4,6 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 import uuid
 from database import get_database
+from auth import require_admin
 import logging
 
 logger = logging.getLogger(__name__)
@@ -129,7 +130,8 @@ async def get_public_reviews(
 async def get_all_reviews_admin(
     limit: int = 50,
     skip: int = 0,
-    status_filter: Optional[str] = None
+    status_filter: Optional[str] = None,
+    admin=Depends(require_admin)
 ):
     """Obtenir tous les avis pour l'admin"""
     try:
@@ -174,7 +176,7 @@ async def get_all_reviews_admin(
         )
 
 @router.put("/admin/reviews/{review_id}/approve")
-async def approve_review(review_id: str):
+async def approve_review(review_id: str, admin=Depends(require_admin)):
     """Approuver un avis"""
     try:
         db = get_database()
@@ -205,7 +207,7 @@ async def approve_review(review_id: str):
         )
 
 @router.delete("/admin/reviews/{review_id}")
-async def delete_review(review_id: str):
+async def delete_review(review_id: str, admin=Depends(require_admin)):
     """Supprimer un avis"""
     try:
         db = get_database()

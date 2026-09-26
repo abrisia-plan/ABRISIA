@@ -44,7 +44,7 @@ const Inspiration = () => {
         setCategories(data.categories || ['Tous']);
       }
     } catch (err) {
-      // Handled silently
+      console.error("Erreur silencieuse:", err);
     }
   };
 

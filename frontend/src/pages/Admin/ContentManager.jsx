@@ -69,7 +69,7 @@ const ContentManager = () => {
         setProcessSteps(data.data.map(s => ({ title: s.title, description: s.description })));
       }
     } catch (error) {
-      // Handled silently
+      console.error("Erreur silencieuse:", error);
     }
   };
 

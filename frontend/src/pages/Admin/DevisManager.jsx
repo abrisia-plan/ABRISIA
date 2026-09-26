@@ -101,7 +101,7 @@ const DevisManager = () => {
         setEmployees(data.data.filter(e => e.isApproved && e.isActive) || []);
       }
     } catch (error) {
-      // Handled silently
+      console.error("Erreur silencieuse:", error);
     }
   };
 

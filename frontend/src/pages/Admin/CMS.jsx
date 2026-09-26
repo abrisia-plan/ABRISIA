@@ -81,7 +81,7 @@ const CMS = () => {
         setSiteSettings(response.settings);
       }
     } catch (error) {
-      // Handled silently - settings will use defaults
+      console.error('Erreur chargement paramètres:', error);
     }
   };
 
@@ -92,22 +92,16 @@ const CMS = () => {
         setServices(response.data);
       }
     } catch (error) {
-      // Handled silently
+      console.error('Erreur chargement services:', error);
     }
-  };
-
-  const loadMediaFiles = async () => {
     try {
       const response = await cmsService.getMediaFiles();
       if (response.success) {
         setMediaFiles(response.data);
       }
     } catch (error) {
-      // Handled silently
+      console.error('Erreur chargement médias:', error);
     }
-  };
-
-  const handleSettingsChange = (field, value) => {
     setSiteSettings(prev => ({
       ...prev,
       [field]: value
@@ -622,7 +616,7 @@ const ServiceEditor = ({ service, onUpdate, toast }) => {
       await onUpdate(service.id, editedService);
       setIsEditing(false);
     } catch (error) {
-      // Handled silently
+      console.error('Erreur sauvegarde service:', error);
     }
   };
 

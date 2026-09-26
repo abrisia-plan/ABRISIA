@@ -26,7 +26,7 @@ const Header = () => {
           setNavigation(data.pages.map(p => ({ name: p.name, href: p.href })));
         }
       })
-      .catch(() => {});
+      .catch((err) => console.error('Erreur nav:', err));
   }, []);
 
   const isActive = (path) => location.pathname === path;

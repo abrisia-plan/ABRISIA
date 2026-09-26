@@ -58,7 +58,7 @@ const CMSSettings = () => {
         setSettings(prev => ({ ...prev, ...response.settings }));
       }
     } catch (error) {
-      // Handled silently
+      console.error("Erreur silencieuse:", error);
     } finally {
       setLoading(false);
     }
@@ -71,7 +71,7 @@ const CMSSettings = () => {
         setMediaFiles(response.data);
       }
     } catch (error) {
-      // Handled silently
+      console.error("Erreur silencieuse:", error);
     }
   };
 

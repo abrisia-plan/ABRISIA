@@ -91,7 +91,7 @@ const Kit = () => {
         });
       }
     } catch (error) {
-      // Handled silently
+      console.error('Erreur chargement paiement:', error);
     }
   };
 

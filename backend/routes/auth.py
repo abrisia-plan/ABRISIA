@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, status, Request
 from models import (
     UserLogin, UserRegister, UserResponse, LoginResponse, 
     SuccessResponse, ListResponse, UserUpdate
@@ -7,14 +7,29 @@ from database import get_database
 from auth import verify_password, create_access_token, get_password_hash, require_admin, get_current_user
 from bson import ObjectId
 from datetime import datetime
+from collections import defaultdict
+import time
 import logging
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
+# Simple in-memory rate limiter for login
+_login_attempts = defaultdict(list)
+_MAX_ATTEMPTS = 10
+_WINDOW_SECONDS = 300  # 5 minutes
+
+def _check_rate_limit(ip: str):
+    now = time.time()
+    _login_attempts[ip] = [t for t in _login_attempts[ip] if now - t < _WINDOW_SECONDS]
+    if len(_login_attempts[ip]) >= _MAX_ATTEMPTS:
+        raise HTTPException(status_code=429, detail="Trop de tentatives. Réessayez dans quelques minutes.")
+    _login_attempts[ip].append(now)
+
 @router.post("/login", response_model=LoginResponse)
-async def login(user_credentials: UserLogin):
+async def login(user_credentials: UserLogin, request: Request):
     """Connexion utilisateur (tous rôles)"""
+    _check_rate_limit(request.client.host if request.client else "unknown")
     try:
         db = get_database()
         

@@ -54,7 +54,7 @@ const Home = () => {
           })));
         }
       } catch (err) {
-        // Silently handle - data will remain in default state
+        console.error('Erreur chargement données accueil:', err);
       } finally {
         setLoadingProjects(false);
       }

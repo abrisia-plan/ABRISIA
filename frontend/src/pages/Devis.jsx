@@ -85,7 +85,7 @@ const Devis = () => {
           setPlanOptions(data.data);
         }
       } catch (err) {
-        // Handled silently
+        console.error("Erreur silencieuse:", err);
       } finally {
         setLoadingOptions(false);
       }

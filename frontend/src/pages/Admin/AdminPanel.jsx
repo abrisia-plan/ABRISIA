@@ -65,7 +65,7 @@ const AdminPanel = () => {
       const statsResponse = await devisService.getStats();
       setStats(statsResponse);
     } catch (error) {
-      // Handled silently
+      console.error('Erreur chargement stats:', error);
     } finally {
       setLoading(false);
     }
@@ -342,7 +342,7 @@ const DashboardTab = ({ stats }) => {
       const devisData = await devisRes.json();
       if (ordersData.success) setOrders(ordersData.data || []);
       if (devisData.success) setDevisStats(devisData.data || []);
-    } catch { /* silent */ }
+    } catch (error) { console.error('Erreur chargement dashboard:', error); }
   };
 
   // Calcul des graphiques par mois (6 derniers mois)

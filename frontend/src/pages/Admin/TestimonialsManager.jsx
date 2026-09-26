@@ -80,11 +80,8 @@ const TestimonialsManager = () => {
         setPendingReviews(data.data || []);
       }
     } catch (error) {
-      // Handled silently
+      console.error('Erreur chargement avis en attente:', error);
     }
-  };
-
-  const openAddModal = () => {
     setEditingTestimonial(null);
     setFormData({
       client_name: '',
