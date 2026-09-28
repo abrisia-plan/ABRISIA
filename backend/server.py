@@ -104,8 +104,8 @@ api_router.include_router(pro_contact.router)
 app.include_router(api_router)
 
 # Servir les fichiers statiques (images uploadées - rétrocompatibilité)
-uploads_dir = Path("/app/uploads")
-uploads_dir.mkdir(exist_ok=True)
+uploads_dir = Path("/tmp/uploads")
+uploads_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
 
 # Endpoint pour servir les fichiers depuis Emergent Object Storage
