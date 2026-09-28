@@ -16,8 +16,8 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["projects"])
 
 # Configuration upload
-UPLOAD_DIR = Path("/app/uploads")
-UPLOAD_DIR.mkdir(exist_ok=True)
+UPLOAD_DIR = Path("/tmp/uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".pdf", ".dwg", ".dxf", ".skp", ".doc", ".docx"}
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
 
