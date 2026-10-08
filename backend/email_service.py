@@ -14,6 +14,11 @@ class EmailService:
         self.sender_email = os.getenv('SENDER_EMAIL', 'abrisia0plan@gmail.com')
         self.sender_password = os.getenv('SENDER_PASSWORD')
         self.app_url = os.getenv('APP_URL', 'https://abrisia-plan.ca')
+        # Envoi via l'API web de Resend (Render gratuit bloque le SMTP)
+        self.resend_api_key = os.getenv('RESEND_API_KEY')
+        # Tant que le domaine abrisia-plan.ca n'est pas vérifié chez Resend,
+        # on utilise l'adresse de test, qui ne peut écrire qu'au propriétaire du compte.
+        self.resend_from = os.getenv('RESEND_FROM', 'Abrisia Plan <onboarding@resend.dev>')
 
     def _branded_header(self):
         return """
@@ -63,6 +68,8 @@ class EmailService:
     
     def _send_email(self, to_email, subject, html_content):
         """Méthode interne pour envoyer un email"""
+        if self.resend_api_key:
+            return self._send_email_resend(to_email, subject, html_content)
         try:
             message = MIMEMultipart("alternative")
             message["Subject"] = subject
@@ -81,6 +88,31 @@ class EmailService:
             return True
         except Exception as e:
             logger.error(f"❌ Erreur envoi email à {to_email}: {str(e)}")
+            return False
+
+    def _send_email_resend(self, to_email, subject, html_content):
+        """Envoie un email par l'API web de Resend (https://resend.com)"""
+        import requests
+        try:
+            resp = requests.post(
+                "https://api.resend.com/emails",
+                headers={"Authorization": f"Bearer {self.resend_api_key}"},
+                json={
+                    "from": self.resend_from,
+                    "to": [to_email],
+                    "reply_to": self.sender_email,
+                    "subject": subject,
+                    "html": html_content,
+                },
+                timeout=30,
+            )
+            if resp.status_code >= 300:
+                logger.error(f"❌ Resend a refusé l'email à {to_email}: {resp.status_code} {resp.text}")
+                return False
+            logger.info(f"✅ Email envoyé à {to_email} (Resend)")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Erreur envoi email (Resend) à {to_email}: {str(e)}")
             return False
 
     def send_kit_order_confirmation_to_client(self, order_data):
