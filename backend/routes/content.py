@@ -773,7 +773,7 @@ async def update_plan_option(option_id: str, data: dict, current_user: dict = De
     try:
         db = get_database()
         update_fields = {}
-        for key in ["name", "price", "description", "category", "is_active", "order"]:
+        for key in ["name", "price", "description", "contenu", "category", "is_active", "order"]:
             if key in data:
                 update_fields[key] = data[key]
         
@@ -802,6 +802,7 @@ async def create_plan_option(data: dict, current_user: dict = Depends(require_ad
             "name": data.get("name", ""),
             "price": data.get("price", "Sur devis"),
             "description": data.get("description", ""),
+            "contenu": data.get("contenu", ""),
             "category": data.get("category", "plans"),
             "is_active": data.get("is_active", True),
             "order": data.get("order", 99),

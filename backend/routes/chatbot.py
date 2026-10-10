@@ -35,6 +35,33 @@ def fallback_answer(message: str) -> str:
             f"ou écrivez-nous : {SITE_URL}/contact")
 
 
+# Contenu habituel de chaque plan (utilisé si le champ « contenu » est vide dans l'admin)
+DEFAULT_PLAN_CONTENTS = {
+    "fondation": "Vue de dessus des murs de fondation avec toutes les cotes, épaisseur des murs, semelles (largeur et "
+                 "épaisseur), colonnes ou piliers et leurs semelles, ouvertures (portes, fenêtres de sous-sol), dalle, "
+                 "drain de fondation, coupe type de la fondation avec l'isolation. Si la structure le demande, les "
+                 "calculs sont faits par un ingénieur partenaire.",
+    "architecture": "Plans de chaque étage cotés (pièces, murs, portes, fenêtres, escaliers), élévations des façades, "
+                    "coupe du bâtiment et coupes de murs (composition des murs, planchers et toit), plan de toiture, "
+                    "détails de construction et tableau des portes et fenêtres : le dossier demandé pour le permis.",
+    "extension": "Plans de l'existant et de l'agrandissement, élévations, coupe et détails du raccordement entre "
+                 "l'ancien et le nouveau bâtiment (fondation, murs, toiture).",
+    "plomberie": "Emplacement des appareils sanitaires (toilettes, lavabos, douche, bain, chauffe-eau, laveuse), "
+                 "parcours des drains et des évents, et schéma d'évacuation pour guider le plombier.",
+    "electricite": "Emplacement des prises, interrupteurs, luminaires, du panneau électrique et des besoins "
+                   "spéciaux (cuisinière, sécheuse, borne de recharge, etc.). Le câblage est réalisé par un "
+                   "maître électricien.",
+    "ventilation": "Emplacement de l'échangeur d'air, des bouches d'entrée et de sortie et parcours des conduits "
+                   "principaux, ventilateurs de salle de bain et hotte de cuisine.",
+    "mini-maison-complete": "Ensemble complet pour une mini-maison : fondation, plans d'étage, élévations, coupes "
+                            "et détails nécessaires au permis.",
+    "chalet-complet": "Ensemble complet pour un chalet quatre saisons : fondation, plans d'étage, élévations, "
+                      "coupes et détails nécessaires au permis.",
+    "maison-complete": "Ensemble complet pour une maison : fondation, plans d'étage, élévations, coupes et "
+                       "détails nécessaires au permis.",
+    "accompagnement": "Liste des matériaux avec les quantités estimées, pour faire évaluer ou commander les matériaux.",
+}
+
 DEFAULT_STEPS = [
     {"title": "Parlez-nous de votre idée", "description": "Envoyez votre demande de devis avec vos besoins et vos idées."},
     {"title": "Croquis et devis", "description": "Premier contact, premiers dessins et estimation détaillée. Soumission et dépôt."},
@@ -102,14 +129,23 @@ async def build_site_knowledge(db) -> str:
 
         plans = await db.plan_options.find({"is_active": True}).sort("order", 1).to_list(length=50)
         if plans:
-            parts.append("PLANS ET PRIX « À PARTIR DE » (formulaire de devis) :\n" + "\n".join(
-                f"- {p.get('name')} : {p.get('price', 'sur devis')}" + (f" ({p['description']})" if p.get('description') else "")
-                for p in plans))
+            lines = []
+            for p in plans:
+                line = f"- {p.get('name')} : à partir de {p.get('price', 'sur devis')}"
+                if p.get('description'):
+                    line += f" ({p['description']})"
+                contenu = p.get('contenu') or DEFAULT_PLAN_CONTENTS.get(p.get('id'))
+                if contenu:
+                    line += f"\n  Contenu : {contenu}"
+                lines.append(line)
+            parts.append("PLANS OFFERTS, PRIX « À PARTIR DE » ET CE QU'ILS CONTIENNENT :\n" + "\n".join(lines))
 
         rates_doc = await db.site_settings.find_one({"key": "calculator_rates"})
-        if rates_doc and rates_doc.get("rates"):
-            parts.append("TARIFS DU CALCULATEUR DE PRIX PRÉLIMINAIRE :\n" + "\n".join(
-                f"- {r.get('project_type')} : {r.get('rate')} {r.get('unit', '$/pi²')}" for r in rates_doc["rates"]))
+        from routes.content import DEFAULT_CALCULATOR_RATES
+        rates = (rates_doc or {}).get("rates") or DEFAULT_CALCULATOR_RATES
+        parts.append("CALCULATEUR DE PRIX PRÉLIMINAIRE (page Devis) : estimation = surface totale en pi² "
+                     "(largeur × profondeur × nombre d'étages) × tarif au pi². Tarifs :\n" + "\n".join(
+            f"- {r.get('project_type')} : {r.get('rate')} {r.get('unit', '$/pi²')}" for r in rates))
 
         products = await db.products.find({"is_active": True}).limit(30).to_list(length=30)
         if products:
@@ -144,14 +180,15 @@ async def ask_gemini(history: list, message: str, knowledge: str = "") -> str:
         contents=contents,
         config=types.GenerateContentConfig(
             system_instruction=SYSTEM_PROMPT + ("\n\nINFORMATIONS À JOUR DU SITE :\n" + knowledge if knowledge else ""),
-            max_output_tokens=500,
+            max_output_tokens=700,
             temperature=0.3,
         ),
     )
     return (response.text or "").strip()
 
 SYSTEM_PROMPT = """Tu es l'assistant virtuel du site abrisia-plan.ca, l'entreprise Abrisia Plan.
-Tu réponds en français québécois, de façon chaleureuse, professionnelle et concise (2 à 4 phrases).
+Tu réponds en français québécois, de façon chaleureuse, professionnelle et concise (2 à 5 phrases,
+ou une courte liste quand tu expliques le contenu d'un plan).
 
 QUI EST ABRISIA PLAN :
 - Entreprise de dessin en bâtiment et de conception de plans, établie au Saguenay–Lac-Saint-Jean (Québec).
@@ -190,6 +227,19 @@ RÈGLES :
 5. Mets le lien de la bonne page quand c'est utile.
 6. Tu peux expliquer comment fonctionne un mandat (voir les étapes plus bas), décrire les offres et répondre aux
    questions fréquentes sur les plans, les permis et la Collection.
+
+APPROCHE DE CONSEILLER (comme un bon vendeur, sans pression) :
+- Quand quelqu'un parle d'un projet, aide-le à préciser ses besoins en posant UNE ou DEUX questions à la fois,
+  parmi : type de projet (maison, chalet, mini-maison, agrandissement, garage, meuble) ; neuf ou rénovation ;
+  dimensions ou superficie approximative et nombre d'étages ; municipalité ou région (pour le permis) ;
+  terrain déjà acheté ou non ; plans existants ou seulement une idée ; échéancier ; budget approximatif ;
+  style recherché ; s'il fait construire par un entrepreneur ou en autoconstruction.
+- Ensuite, recommande les plans pertinents (ex. permis de construction d'un chalet = plan de fondation +
+  plan architectural complet, ou le forfait chalet complet), explique ce qu'ils contiennent, et donne une
+  estimation avec le calculateur et les prix « à partir de » (toujours en précisant que c'est indicatif).
+- S'il existe un modèle de la Collection qui correspond, propose-le : c'est souvent plus rapide et moins cher.
+- Termine en proposant la prochaine étape : le formulaire de devis gratuit, ou prendre ses coordonnées ici.
+- Si la personne veut seulement une réponse rapide, réponds directement sans interrogatoire.
 
 PRISE DE COORDONNÉES, QUESTIONS ET PLAINTES :
 - Si la personne veut être rappelée, laisser un message, poser une question à laquelle tu ne peux pas répondre,

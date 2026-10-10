@@ -196,6 +196,16 @@ const PlanOptionsManager = () => {
                           onChange={(e) => setEditingOption({ ...editingOption, description: e.target.value })}
                         />
                       </div>
+                      <div>
+                        <Label className="text-xs">Ce que contient ce plan (utilisé par l'assistant du site)</Label>
+                        <textarea
+                          value={editingOption.contenu || ''}
+                          onChange={(e) => setEditingOption({ ...editingOption, contenu: e.target.value })}
+                          rows={3}
+                          placeholder="Ex. : semelles, murs de fondation cotés, colonnes, drain, coupe type... Laissez vide pour utiliser la description par défaut."
+                          className="w-full mt-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        />
+                      </div>
                       <div className="flex gap-2">
                         <Button size="sm" onClick={() => handleSave(editingOption)} disabled={saving} className="bg-teal-700 hover:bg-teal-800" data-testid={`save-${option.id}`}>
                           {saving ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Save className="w-3 h-3 mr-1" />}
