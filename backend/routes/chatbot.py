@@ -7,11 +7,48 @@ from database import get_database
 import os
 import logging
 import uuid
+import json
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["chatbot"])
 
-EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY")
+# Google Gemini (forfait gratuit). Sans clé, l'assistant donne des réponses simples.
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+
+SITE_URL = os.environ.get("APP_URL", "https://abrisia-plan.ca").rstrip("/")
+
+
+def fallback_answer(message: str) -> str:
+    """Réponse simple quand l'IA n'est pas disponible : on dirige vers la bonne page."""
+    text = message.lower()
+    if any(w in text for w in ("collection", "modèle", "modele", "kit", "acheter", "prêt")):
+        return f"Nos modèles prêts à construire sont dans la Collection ABRISIA : {SITE_URL}/collection"
+    if any(w in text for w in ("entrepreneur", "pro", "sous-traitance", "sous traitance")):
+        return f"Pour les entrepreneurs, consultez notre Espace Pro : {SITE_URL}/espace-pro"
+    if any(w in text for w in ("prix", "coût", "cout", "combien", "tarif", "devis", "soumission", "plan")):
+        return f"Chaque projet est unique : demandez un devis gratuit et sans engagement, nous vous répondons sous 24 h : {SITE_URL}/devis"
+    return ("Bonjour ! Je suis l'assistant d'Abrisia Plan. Pour un projet de plans (maison, chalet, mini-maison, "
+            f"agrandissement, meuble sur mesure), demandez un devis gratuit : {SITE_URL}/devis, "
+            f"ou écrivez-nous : {SITE_URL}/contact")
+
+
+async def ask_gemini(history: list, message: str) -> str:
+    from google import genai
+    from google.genai import types
+
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    contents = [
+        types.Content(role="user" if m.get("role") == "user" else "model", parts=[types.Part(text=m.get("content", ""))])
+        for m in history
+    ]
+    contents.append(types.Content(role="user", parts=[types.Part(text=message)]))
+    response = await client.aio.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=contents,
+        config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT, max_output_tokens=400, temperature=0.4),
+    )
+    return (response.text or "").strip()
 
 SYSTEM_PROMPT = """Tu es l'assistant virtuel d'Abrisia Plan. Tu dois être STRICT et PROFESSIONNEL.
 
@@ -58,77 +95,45 @@ class ChatMessage(BaseModel):
 
 @router.post("/chat")
 async def chat(data: ChatMessage):
-    """Chat avec l'assistant IA - streaming SSE"""
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(status_code=500, detail="Clé LLM non configurée")
-
+    """Chat avec l'assistant IA - flux SSE (chaque morceau est encodé en JSON)"""
     session_id = data.session_id or str(uuid.uuid4())
     db = get_database()
+    message = data.message.strip()[:2000]
 
-    # Sauvegarder le message utilisateur
+    # Historique récent (avant ce message)
+    history = await db.chat_messages.find(
+        {"session_id": session_id}
+    ).sort("created_at", -1).limit(8).to_list(length=8)
+    history.reverse()
+
     await db.chat_messages.insert_one({
         "session_id": session_id,
         "role": "user",
-        "content": data.message,
+        "content": message,
         "created_at": datetime.now(timezone.utc),
     })
 
-    # Charger l'historique récent (dernier 10 messages)
-    history = await db.chat_messages.find(
-        {"session_id": session_id}
-    ).sort("created_at", -1).limit(10).to_list(length=10)
-    history.reverse()
-
     async def event_generator():
-        try:
-            from emergentintegrations.llm.chat import LlmChat, UserMessage
+        answer = ""
+        if GEMINI_API_KEY:
+            try:
+                answer = await ask_gemini(history, message)
+            except Exception as e:
+                logger.error(f"Erreur chatbot (Gemini): {e}")
+        if not answer:
+            answer = fallback_answer(message)
 
-            chat_instance = LlmChat(
-                api_key=EMERGENT_LLM_KEY,
-                session_id=f"abrisia-chat-{session_id}",
-                system_message=SYSTEM_PROMPT,
-            ).with_model("openai", "gpt-4o-mini")
+        # Envoi par petits morceaux pour l'effet « en train d'écrire »
+        for i in range(0, len(answer), 20):
+            yield f"data: {json.dumps(answer[i:i + 20])}\n\n"
+        yield "data: [DONE]\n\n"
 
-            # Envoyer l'historique comme contexte
-            context_messages = []
-            for msg in history[:-1]:  # Tout sauf le dernier (qu'on envoie comme message)
-                role = msg.get("role", "user")
-                content = msg.get("content", "")
-                if role == "user":
-                    context_messages.append(f"Utilisateur: {content}")
-                else:
-                    context_messages.append(f"Assistant: {content}")
-
-            full_text = data.message
-            if context_messages:
-                context = "\n".join(context_messages[-6:])
-                full_text = f"[Historique récent]\n{context}\n\n[Message actuel]\n{data.message}"
-
-            user_msg = UserMessage(text=full_text)
-            
-            # Use send_message (non-streaming) and simulate streaming by sending chunks
-            full_response = await chat_instance.send_message(user_msg)
-            
-            # Send response in chunks to simulate streaming
-            chunk_size = 10
-            for i in range(0, len(full_response), chunk_size):
-                chunk = full_response[i:i+chunk_size]
-                yield f"data: {chunk}\n\n"
-
-            yield "data: [DONE]\n\n"
-
-            # Sauvegarder la réponse
-            await db.chat_messages.insert_one({
-                "session_id": session_id,
-                "role": "assistant",
-                "content": full_response,
-                "created_at": datetime.now(timezone.utc),
-            })
-
-        except Exception as e:
-            logger.error(f"Erreur chatbot: {e}")
-            yield f"data: Désolé, une erreur s'est produite. Veuillez réessayer.\n\n"
-            yield "data: [DONE]\n\n"
+        await db.chat_messages.insert_one({
+            "session_id": session_id,
+            "role": "assistant",
+            "content": answer,
+            "created_at": datetime.now(timezone.utc),
+        })
 
     return StreamingResponse(
         event_generator(),

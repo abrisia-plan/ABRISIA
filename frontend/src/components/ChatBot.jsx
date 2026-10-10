@@ -4,6 +4,15 @@ import { Button } from './ui/button';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Rend les adresses web cliquables dans les réponses de l'assistant
+const linkify = (text) => text.split(/(https?:\/\/[^\s]+)/g).map((part, i) => (
+  /^https?:\/\//.test(part) ? (
+    <a key={i} href={part.replace(/[.,;:!?)]+$/, '')} className="text-teal-700 underline break-all">
+      {part}
+    </a>
+  ) : part
+));
+
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -79,28 +88,35 @@ const ChatBot = () => {
         body: JSON.stringify({ message: text, session_id: sessionId }),
       });
 
+      if (!response.ok || !response.body) throw new Error('Erreur serveur');
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let fullContent = '';
+      let buffer = '';
+      let finished = false;
 
-      while (true) {
+      // Chaque ligne « data: ... » contient un morceau de texte encodé en JSON
+      while (!finished) {
         const { done, value } = await reader.read();
         if (done) break;
-
-        const chunk = decoder.decode(value, { stream: true });
-        const lines = chunk.split('\n');
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop(); // ligne incomplète : on attend la suite
 
         for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') break;
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6);
+          if (data === '[DONE]') { finished = true; break; }
+          try {
+            fullContent += JSON.parse(data);
+          } catch {
             fullContent += data;
-            setMessages(prev => {
-              const updated = [...prev];
-              updated[updated.length - 1] = { role: 'assistant', content: fullContent };
-              return updated;
-            });
           }
+          setMessages(prev => {
+            const updated = [...prev];
+            updated[updated.length - 1] = { role: 'assistant', content: fullContent };
+            return updated;
+          });
         }
       }
     } catch {
@@ -181,7 +197,7 @@ const ChatBot = () => {
                       : 'bg-white text-gray-800 border border-gray-200 rounded-bl-md shadow-sm'
                   }`}
                 >
-                  {msg.content || (
+                  {(msg.content && <span className="whitespace-pre-wrap">{linkify(msg.content)}</span>) || (
                     <span className="flex items-center gap-1 text-gray-400">
                       <Loader2 className="w-3 h-3 animate-spin" /> ...
                     </span>
