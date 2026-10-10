@@ -632,6 +632,17 @@ class DevisCreate(BaseModel):
     projectType: Optional[str] = ""
     plansChoisis: List[str] = []
     notes: str = ""
+    # Noms lisibles des plans cochés, ex. « Plan de fondation (300$) »
+    plansChoisisNoms: List[str] = []
+    representationType: Optional[str] = ""
+    contactPreference: Optional[str] = ""
+    styles: List[str] = []
+    # Calculateur de prix préliminaire
+    calcWidth: Optional[float] = None
+    calcDepth: Optional[float] = None
+    calcFloors: Optional[int] = None
+    calcSurface: Optional[float] = None
+    calcEstimate: Optional[float] = None
 
 class DevisUpdate(BaseModel):
     status: Optional[str] = None

@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from auth import require_admin
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Optional
@@ -8,13 +9,15 @@ import os
 import logging
 import uuid
 import json
+import re
+from starlette.concurrency import run_in_threadpool
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["chatbot"])
 
 # Google Gemini (forfait gratuit). Sans clé, l'assistant donne des réponses simples.
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
 
 SITE_URL = os.environ.get("APP_URL", "https://abrisia-plan.ca").rstrip("/")
 
@@ -33,7 +36,179 @@ def fallback_answer(message: str) -> str:
             f"ou écrivez-nous : {SITE_URL}/contact")
 
 
-async def ask_gemini(history: list, message: str) -> str:
+# Contenu habituel de chaque plan (utilisé si le champ « contenu » est vide dans l'admin)
+DEFAULT_PLAN_CONTENTS = {
+    "fondation": "Vue de dessus des murs de fondation avec toutes les cotes, épaisseur des murs, semelles (largeur et "
+                 "épaisseur), colonnes ou piliers et leurs semelles, ouvertures (portes, fenêtres de sous-sol), dalle, "
+                 "drain de fondation, coupe type de la fondation avec l'isolation. Si la structure le demande, les "
+                 "calculs sont faits par un ingénieur partenaire.",
+    "architecture": "Plans de chaque étage cotés (pièces, murs, portes, fenêtres, escaliers), élévations des façades, "
+                    "coupe du bâtiment et coupes de murs (composition des murs, planchers et toit), plan de toiture, "
+                    "détails de construction et tableau des portes et fenêtres : le dossier demandé pour le permis.",
+    "extension": "Plans de l'existant et de l'agrandissement, élévations, coupe et détails du raccordement entre "
+                 "l'ancien et le nouveau bâtiment (fondation, murs, toiture).",
+    "plomberie": "Emplacement des appareils sanitaires (toilettes, lavabos, douche, bain, chauffe-eau, laveuse), "
+                 "parcours des drains et des évents, et schéma d'évacuation pour guider le plombier.",
+    "electricite": "Emplacement des prises, interrupteurs, luminaires, du panneau électrique et des besoins "
+                   "spéciaux (cuisinière, sécheuse, borne de recharge, etc.). Le câblage est réalisé par un "
+                   "maître électricien.",
+    "ventilation": "Emplacement de l'échangeur d'air, des bouches d'entrée et de sortie et parcours des conduits "
+                   "principaux, ventilateurs de salle de bain et hotte de cuisine.",
+    "mini-maison-complete": "Ensemble complet pour une mini-maison : fondation, plans d'étage, élévations, coupes "
+                            "et détails nécessaires au permis.",
+    "chalet-complet": "Ensemble complet pour un chalet quatre saisons : fondation, plans d'étage, élévations, "
+                      "coupes et détails nécessaires au permis.",
+    "maison-complete": "Ensemble complet pour une maison : fondation, plans d'étage, élévations, coupes et "
+                       "détails nécessaires au permis.",
+    "accompagnement": "Liste des matériaux avec les quantités estimées, pour faire évaluer ou commander les matériaux.",
+}
+
+DEFAULT_STEPS = [
+    {"title": "Parlez-nous de votre idée", "description": "Envoyez votre demande de devis avec vos besoins et vos idées."},
+    {"title": "Croquis et devis", "description": "Premier contact, premiers dessins et estimation détaillée. Soumission et dépôt."},
+    {"title": "Plans détaillés", "description": "Réalisation des plans complets et professionnels selon vos besoins."},
+    {"title": "Accompagnement et retours", "description": "Conseils et références au besoin."},
+]
+
+FICHE_RE = re.compile(r"\[\[FICHE\]\]\s*(\{.*\})", re.S)
+
+
+def _number(value):
+    try:
+        number = float(value)
+        return number if number > 0 else None
+    except (TypeError, ValueError):
+        return None
+
+
+async def save_chat_devis(fiche: dict, session_id: str):
+    """Demande de devis recueillie dans le clavardage -> vrai devis (admin, courriel, Zoho)"""
+    from models import DevisCreate
+    from routes.devis import create_devis_from_chat
+    largeur, profondeur = _number(fiche.get("largeur")), _number(fiche.get("profondeur"))
+    etages = int(_number(fiche.get("etages")) or 1)
+    surface = largeur * profondeur * etages if largeur and profondeur else None
+    devis = DevisCreate(
+        prenom=(fiche.get("prenom") or "").strip()[:100] or "Visiteur",
+        nom=(fiche.get("nom") or "").strip()[:100],
+        email=(fiche.get("courriel") or "").strip(),
+        telephone=(fiche.get("telephone") or "").strip()[:50],
+        projectType=(fiche.get("type_projet") or "").strip()[:200],
+        plansChoisisNoms=[str(p)[:200] for p in (fiche.get("plans") or [])][:20],
+        representationType=fiche.get("recherche") or "",
+        contactPreference=fiche.get("contact_prefere") or "",
+        styles=[str(st)[:100] for st in (fiche.get("styles") or [])][:10],
+        calcWidth=largeur,
+        calcDepth=profondeur,
+        calcFloors=etages if surface else None,
+        calcSurface=surface,
+        notes=((fiche.get("message") or "").strip() + "\n\n(Demande faite avec l'assistant du site)").strip()[:5000],
+    )
+    return await create_devis_from_chat(devis)
+
+
+async def save_chat_contact(fiche: dict, session_id: str):
+    """Coordonnées données au chatbot : base, courriel à Abrisia et fiche Zoho"""
+    from email_service import email_service
+    from routes.contact import _contact_to_zoho
+    kind = (fiche.get("type") or "question").lower()
+    labels = {"plainte": "Plainte", "question": "Question", "projet": "Projet", "rappel": "Demande de rappel"}
+    doc = {
+        "nom": (fiche.get("nom") or "Visiteur").strip()[:200],
+        "email": (fiche.get("courriel") or "").strip()[:200],
+        "telephone": (fiche.get("telephone") or "").strip()[:50],
+        "sujet": f"Chatbot - {labels.get(kind, 'Message')}",
+        "message": (fiche.get("message") or "").strip()[:3000],
+        "type": kind,
+        "source": "chatbot",
+        "chat_session_id": session_id,
+        "status": "Nouveau",
+        "created_at": datetime.utcnow(),
+    }
+    await get_database().contacts.insert_one(doc)
+    await run_in_threadpool(email_service.send_contact_notification, doc)
+    if doc["email"]:
+        await _contact_to_zoho(doc)
+
+
+def extract_fiche(answer: str):
+    """Sépare la réponse visible de la fiche cachée [[FICHE]] {...}"""
+    match = FICHE_RE.search(answer)
+    if not match:
+        return answer, None
+    visible = answer[:match.start()].rstrip()
+    try:
+        fiche = json.loads(match.group(1))
+    except ValueError:
+        logger.warning("Fiche du chatbot illisible")
+        return visible, None
+    if fiche.get("type") == "devis":
+        # Un devis exige au moins un nom et un courriel
+        if not (fiche.get("prenom") or fiche.get("nom")) or "@" not in (fiche.get("courriel") or ""):
+            return visible, None
+        return visible, fiche
+    if not fiche.get("nom") or not (fiche.get("courriel") or fiche.get("telephone")):
+        return visible, None
+    return visible, fiche
+
+
+async def build_site_knowledge(db) -> str:
+    """Infos à jour tirées de l'admin : services, prix « à partir de », Collection."""
+    parts = []
+    try:
+        services = await db.homepage_services.find({"is_active": True}).sort("order", 1).to_list(length=30)
+        if services:
+            parts.append("SERVICES (page d'accueil) :\n" + "\n".join(
+                f"- {s.get('name')} : {s.get('description', '')} {s.get('price', '')}".strip() for s in services))
+
+        steps = await db.process_steps.find({"is_active": True}).sort("order", 1).to_list(length=10)
+        if not steps:
+            steps = DEFAULT_STEPS
+        parts.append("COMMENT ÇA FONCTIONNE (étapes d'un mandat) :\n" + "\n".join(
+            f"{i}. {st.get('title')} : {st.get('description', '')}" for i, st in enumerate(steps, 1)))
+
+        plans = await db.plan_options.find({"is_active": True}).sort("order", 1).to_list(length=50)
+        if plans:
+            lines = []
+            for p in plans:
+                line = f"- {p.get('name')} : à partir de {p.get('price', 'sur devis')}"
+                if p.get('description'):
+                    line += f" ({p['description']})"
+                contenu = p.get('contenu') or DEFAULT_PLAN_CONTENTS.get(p.get('id'))
+                if contenu:
+                    line += f"\n  Contenu : {contenu}"
+                lines.append(line)
+            parts.append("PLANS OFFERTS, PRIX « À PARTIR DE » ET CE QU'ILS CONTIENNENT :\n" + "\n".join(lines))
+
+        rates_doc = await db.site_settings.find_one({"key": "calculator_rates"})
+        from routes.content import DEFAULT_CALCULATOR_RATES
+        rates = (rates_doc or {}).get("rates") or DEFAULT_CALCULATOR_RATES
+        parts.append("CALCULATEUR DE PRIX PRÉLIMINAIRE (page Devis) : estimation = surface totale en pi² "
+                     "(largeur × profondeur × nombre d'étages) × tarif au pi². Tarifs :\n" + "\n".join(
+            f"- {r.get('project_type')} : {r.get('rate')} {r.get('unit', '$/pi²')}" for r in rates))
+
+        products = await db.products.find({"is_active": True}).limit(30).to_list(length=30)
+        if products:
+            parts.append("MODÈLES DE LA COLLECTION ABRISIA (achetables en ligne) :\n" + "\n".join(
+                f"- {p.get('name')} : {p.get('price')} $"
+                + (f", {p['surface_area']}" if p.get('surface_area') else "")
+                + (f", {p['bedrooms']} chambre(s)" if p.get('bedrooms') else "")
+                for p in products))
+
+        pro = await db.page_content.find({"page_id": "espace_pro"}).to_list(length=10)
+        for section in pro:
+            content = section.get("content") or {}
+            if content.get("tarif_entrepreneur"):
+                parts.append(f"TARIF ENTREPRENEUR (Espace Pro) : {content['tarif_entrepreneur']} {content.get('tarif_unite', '$ / pi²')}")
+        notes = await db.site_settings.find_one({"key": "chatbot_notes"})
+        if notes and notes.get("text", "").strip():
+            parts.append("PRÉCISIONS DE LA PROPRIÉTAIRE (prioritaires sur le reste) :\n" + notes["text"].strip())
+    except Exception as e:
+        logger.warning(f"Infos du site non chargées pour le chatbot: {e}")
+    return "\n\n".join(parts)
+
+
+async def ask_gemini(history: list, message: str, knowledge: str = "") -> str:
     from google import genai
     from google.genai import types
 
@@ -46,46 +221,140 @@ async def ask_gemini(history: list, message: str) -> str:
     response = await client.aio.models.generate_content(
         model=GEMINI_MODEL,
         contents=contents,
-        config=types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT, max_output_tokens=400, temperature=0.4),
+        config=types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT + ("\n\nINFORMATIONS À JOUR DU SITE :\n" + knowledge if knowledge else ""),
+            max_output_tokens=700,
+            temperature=0.3,
+        ),
     )
     return (response.text or "").strip()
 
-SYSTEM_PROMPT = """Tu es l'assistant virtuel d'Abrisia Plan. Tu dois être STRICT et PROFESSIONNEL.
+SYSTEM_PROMPT = """Tu es l'assistant virtuel du site abrisia-plan.ca, l'entreprise Abrisia Plan.
+Tu réponds en français québécois, de façon chaleureuse, professionnelle et concise (2 à 5 phrases,
+ou une courte liste quand tu expliques le contenu d'un plan).
 
-QUI EST ABRISIA :
-- Entreprise spécialisée dans la CONCEPTION et le DESSIN de plans architecturaux
-- Située au Saguenay-Lac-Saint-Jean, Québec, Canada
-- Plans conformes au Code du bâtiment du Québec et du Canada
-- Capacité : jusqu'à 600 m² de plancher (6000 pi²)
+QUI EST ABRISIA PLAN :
+- Entreprise de dessin en bâtiment et de conception de plans, établie au Saguenay–Lac-Saint-Jean (Québec).
+- Services offerts 100 % à distance, partout au Québec (et ailleurs).
+- Dossiers techniques complets pour obtenir un permis de construction ou de rénovation.
+- Codes suivis : le Code de construction du Québec (chapitre Bâtiment), basé sur le Code national du
+  bâtiment du Canada, ainsi que les règlements de la municipalité du client (zonage, marges, hauteur).
+- Au Québec, Abrisia Plan conçoit et signe de façon autonome les plans permis par l'article 16.1 de la
+  Loi sur les architectes (habitations unifamiliales, chalets, mini-maisons, agrandissements, garages, etc.),
+  jusqu'à environ 600 m² (6 000 pi²) de plancher.
+- Pour les éléments de structure complexes, Abrisia collabore avec des ingénieurs en structure et intègre
+  leurs plans scellés au dossier.
+- Les plans intérieurs positionnent appareils sanitaires, drains, panneau électrique, prises et ventilation.
+- Plans de meubles et d'aménagements sur mesure (ébénisterie) : conception seulement.
+- Collection ABRISIA : modèles de plans déjà dessinés, achetables en ligne, et personnalisables.
+- Espace Pro : sous-traitance de dessin pour les entrepreneurs en construction.
 
-CE QUE FAIT ABRISIA :
-- Plans de maisons unifamiliales, mini-maisons, chalets
-- Plans d'agrandissement et rénovation
-- Plans de meubles sur mesure (ébénisterie)
-- Dessins techniques de fabrication
-- Accompagnement de permis de construction
-- Collection ABRISIA : modèles pré-dessinés achetables en ligne
-- Personnalisation de modèles existants
+CE QU'ABRISIA NE FAIT PAS : construction, fabrication de meubles, supervision de chantier, vente de matériaux,
+calculs d'ingénierie de structure (faits par un ingénieur partenaire au besoin).
 
-CE QUE ABRISIA NE FAIT PAS :
-- PAS de construction
-- PAS de fabrication de meubles
-- PAS de supervision de chantiers
-- PAS de fourniture de matériaux
-- PAS d'ingénierie en structure
+PAGES UTILES DU SITE :
+- Demander un devis gratuit : https://abrisia-plan.ca/devis
+- Collection de modèles : https://abrisia-plan.ca/collection
+- Espace Pro (entrepreneurs) : https://abrisia-plan.ca/espace-pro
+- Inspirations / réalisations : https://abrisia-plan.ca/inspiration
+- Nous écrire : https://abrisia-plan.ca/contact
 
-TARIF ENTREPRENEUR : 1,50$/pi² (Espace Pro)
+RÈGLES :
+1. Réponds seulement aux questions liées à Abrisia Plan, aux plans, à la construction résidentielle et aux permis.
+   Hors sujet : « Je suis l'assistant d'Abrisia Plan et je peux vous aider avec nos services de plans. »
+2. Prix : les prix d'Abrisia ne sont pas encore définitifs. Ne propose pas de montant de toi-même. Si la
+   personne demande un prix, explique que chaque projet est évalué sur mesure et propose le devis gratuit ;
+   si elle insiste, tu peux mentionner les montants « à partir de » et le calculateur listés plus bas, en
+   précisant que ce sont des estimations préliminaires qui peuvent changer. N'invente jamais un prix.
+3. N'invente jamais d'information. Si tu ne sais pas, dis-le et invite à écrire via la page Contact ou à demander un devis.
+4. Pour un projet concret, propose le formulaire de devis (on peut y joindre photos et plans), ou propose de
+   prendre ses coordonnées ici pour qu'Abrisia le rappelle.
+5. Mets le lien de la bonne page quand c'est utile.
+6. Tu peux expliquer comment fonctionne un mandat (voir les étapes plus bas), décrire les offres et répondre aux
+   questions fréquentes sur les plans, les permis et la Collection.
 
-RÈGLES STRICTES :
-1. Réponds UNIQUEMENT en français québécois professionnel
-2. Parle SEULEMENT des services et du mandat d'Abrisia
-3. Si la question est hors sujet, dis poliment : "Je suis l'assistant Abrisia et je peux vous aider uniquement avec nos services de dessin de plans."
-4. Ne donne JAMAIS de prix précis — invite à demander un devis ou visiter la Collection
-5. Sois concis (2-3 phrases maximum)
-6. Pour toute demande concrète, COLLECTE les informations du client : nom, courriel, téléphone, description du projet
-7. Quand un client veut un devis, redirige vers la page Demander un devis
-8. Quand un client veut un modèle prêt, redirige vers la Collection ABRISIA
-9. Ne réponds JAMAIS à des questions personnelles, politiques, ou sans rapport avec l'architecture"""
+LE MÉTIER DE DESSINATRICE EN BÂTIMENT (explique-le simplement quand on te le demande) :
+- Une dessinatrice en bâtiment transforme une idée, un croquis ou des mesures en plans techniques précis,
+  à l'échelle, que la municipalité exige pour délivrer un permis et que l'entrepreneur suit pour construire.
+- Au Québec, pour les bâtiments couverts par l'article 16.1 de la Loi sur les architectes (par exemple une
+  maison unifamiliale, un chalet, une mini-maison, un garage, un agrandissement de petite taille), il n'est
+  pas obligatoire de faire appel à un architecte : une dessinatrice en bâtiment peut produire les plans.
+  Au-delà de ces limites, un architecte est requis ; si tu n'es pas sûr qu'un projet est couvert, dis-le
+  et invite la personne à en discuter avec Abrisia ou avec sa municipalité.
+
+À QUOI RESSEMBLENT LES PLANS :
+- Un ensemble de feuilles (format PDF, imprimables) dessinées à l'échelle, par exemple 1/4 po = 1 pi.
+- Chaque feuille a un cartouche : nom du projet et du client, adresse, titre de la feuille, échelle, date,
+  numéro de feuille et historique des révisions.
+- On y trouve les cotes (dimensions), les notes de construction, les légendes et la composition des murs,
+  planchers et toits (couches de matériaux, isolation, pare-vapeur, etc.).
+- Feuilles habituelles selon le projet : plan d'implantation sur le terrain (à partir du certificat de
+  localisation), fondation, plans d'étages, élévations des façades, coupes, détails, plan de toiture,
+  tableau des portes et fenêtres.
+
+OÙ COMMENCE ET OÙ S'ARRÊTE LE TRAVAIL D'ABRISIA :
+- Commence : rencontre (à distance) pour comprendre le besoin, collecte des infos (mesures, photos,
+  croquis, terrain, règlements de la municipalité fournis par le client), premiers croquis et devis.
+- Comprend : conception, plans détaillés, révisions convenues au devis, plans prêts pour la demande de permis,
+  réponses aux questions de la municipalité ou de l'entrepreneur sur les plans.
+- Ne comprend pas (fait par d'autres professionnels, au besoin) : calculs de structure et plans scellés
+  (ingénieur), certificat de localisation et piquetage (arpenteur-géomètre), étude de sol et installation
+  septique (technologue ou ingénieur), construction et surveillance du chantier (entrepreneur), et le dépôt
+  du permis lui-même (fait par le client ; Abrisia peut l'accompagner).
+
+QUAND FAIRE APPEL À ABRISIA :
+- Avant de construire une maison, un chalet, une mini-maison, un garage ou un abri.
+- Avant un agrandissement ou une rénovation qui touche aux murs, à la structure ou à l'aménagement.
+- Quand la municipalité demande des plans pour le permis.
+- Quand un entrepreneur a besoin de plans pour faire sa soumission ou construire.
+- Avant d'acheter un terrain, pour valider qu'un projet y est réalisable.
+- Pour un meuble ou un aménagement intérieur sur mesure.
+
+APPROCHE DE CONSEILLER (comme un bon vendeur, sans pression) :
+- Quand quelqu'un parle d'un projet, aide-le à préciser ses besoins en posant UNE ou DEUX questions à la fois,
+  parmi : type de projet (maison, chalet, mini-maison, agrandissement, garage, meuble) ; neuf ou rénovation ;
+  dimensions ou superficie approximative et nombre d'étages ; municipalité ou région (pour le permis) ;
+  terrain déjà acheté ou non ; plans existants ou seulement une idée ; échéancier ; budget approximatif ;
+  style recherché ; s'il fait construire par un entrepreneur ou en autoconstruction.
+- Ensuite, recommande les plans pertinents (ex. permis de construction d'un chalet = plan de fondation +
+  plan architectural complet, ou le forfait chalet complet), explique ce qu'ils contiennent, et donne une
+  estimation avec le calculateur et les prix « à partir de » (toujours en précisant que c'est indicatif).
+- S'il existe un modèle de la Collection qui correspond, propose-le : c'est souvent plus rapide et moins cher.
+- Termine en proposant la prochaine étape : le formulaire de devis gratuit, ou prendre ses coordonnées ici.
+- Si la personne veut seulement une réponse rapide, réponds directement sans interrogatoire.
+
+DEMANDE DE DEVIS DANS LE CLAVARDAGE :
+- Si la personne a un projet, propose-lui de faire sa demande de devis directement ici (c'est gratuit et sans
+  engagement), ou avec le formulaire https://abrisia-plan.ca/devis si elle veut joindre des photos ou des plans.
+- Si elle accepte, pose les questions du formulaire, UNE OU DEUX À LA FOIS, de façon naturelle :
+  1. Son projet : type (maison, chalet, mini-maison, agrandissement, garage, meuble...), neuf ou rénovation.
+  2. Les dimensions approximatives (largeur et profondeur en pieds) et le nombre d'étages.
+  3. Les plans dont elle pense avoir besoin (aide-la à choisir selon les plans offerts listés plus bas).
+  4. Ce qu'elle recherche : plans techniques détaillés, représentation visuelle, ou les deux.
+  5. Le style recherché (moderne, traditionnel québécois, rustique/chalet, minimaliste, industriel, scandinave...).
+  6. Une description libre : municipalité, terrain, échéancier, budget, idées, inspirations.
+  7. Son prénom, son nom, son courriel (obligatoire pour la soumission) et son téléphone.
+  8. Comment elle préfère être contactée : téléphone, courriel, texto ou peu importe.
+- La personne peut passer une question : ne bloque jamais la demande pour un détail.
+- Puis fais un résumé clair et demande : « Souhaitez-vous qu'Abrisia Plan communique avec vous pour vous
+  préparer une soumission et démarrer votre projet ? »
+- Si elle répond oui, remercie-la chaleureusement, dis que la demande est transmise et qu'Abrisia la
+  contactera rapidement pour la soumission, puis mentionne qu'elle pourra envoyer ses photos ou plans en
+  répondant au courriel d'Abrisia. Ajoute À LA FIN, sur une ligne seule, exactement :
+  [[FICHE]] {"type": "devis", "prenom": "...", "nom": "...", "courriel": "...", "telephone": "...", "type_projet": "...", "plans": ["..."], "largeur": 0, "profondeur": 0, "etages": 1, "recherche": "technique" ou "visuel" ou "both" ou "", "styles": ["..."], "contact_prefere": "telephone" ou "courriel" ou "texto" ou "peu-importe" ou "", "message": "description du projet et autres détails"}
+  (JSON valide ; nombres à 0 et textes vides si inconnus).
+
+PRISE DE COORDONNÉES, QUESTIONS ET PLAINTES :
+- Si la personne veut être rappelée, laisser un message, poser une question à laquelle tu ne peux pas répondre,
+  ou faire une plainte, recueille poliment, une question à la fois : son nom, son courriel ou son téléphone,
+  et son message (pour une plainte : ce qui s'est passé, avec empathie, sans promettre de compensation).
+- Demande la permission avant de prendre ses coordonnées, et précise qu'elles servent seulement à la recontacter.
+- Quand tu as au minimum le nom, un moyen de contact (courriel ou téléphone) et le message, résume-les et
+  demande de confirmer. Une fois confirmé, réponds que c'est transmis à l'équipe, qui fera un suivi rapidement,
+  puis ajoute À LA FIN de ta réponse, sur une ligne seule, exactement :
+  [[FICHE]] {"type": "plainte" ou "question" ou "projet" ou "rappel", "nom": "...", "courriel": "...", "telephone": "...", "message": "..."}
+  (JSON valide, chaînes vides si inconnu). N'écris cette ligne qu'une seule fois par demande et jamais avant la confirmation."""
+
 
 
 class ChatMessage(BaseModel):
@@ -117,11 +386,27 @@ async def chat(data: ChatMessage):
         answer = ""
         if GEMINI_API_KEY:
             try:
-                answer = await ask_gemini(history, message)
+                answer = await ask_gemini(history, message, await build_site_knowledge(db))
             except Exception as e:
                 logger.error(f"Erreur chatbot (Gemini): {e}")
         if not answer:
             answer = fallback_answer(message)
+
+        answer, fiche = extract_fiche(answer)
+        if fiche:
+            try:
+                if fiche.get("type") == "devis":
+                    try:
+                        await save_chat_devis(fiche, session_id)
+                    except ValueError as e:
+                        # Courriel invalide, etc. : on garde au moins les coordonnées
+                        logger.warning(f"Devis du chatbot invalide, enregistré comme message: {e}")
+                        fiche["nom"] = f"{fiche.get('prenom', '')} {fiche.get('nom', '')}".strip()
+                        await save_chat_contact({**fiche, "type": "projet"}, session_id)
+                else:
+                    await save_chat_contact(fiche, session_id)
+            except Exception as e:
+                logger.error(f"Fiche du chatbot non enregistrée: {e}")
 
         # Envoi par petits morceaux pour l'effet « en train d'écrire »
         for i in range(0, len(answer), 20):
@@ -140,6 +425,27 @@ async def chat(data: ChatMessage):
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+class ChatbotNotes(BaseModel):
+    text: str = ""
+
+
+@router.get("/admin/notes")
+async def get_chatbot_notes(current_user: dict = Depends(require_admin)):
+    """Précisions écrites par la propriétaire pour l'assistant"""
+    doc = await get_database().site_settings.find_one({"key": "chatbot_notes"})
+    return {"success": True, "text": (doc or {}).get("text", "")}
+
+
+@router.put("/admin/notes")
+async def update_chatbot_notes(data: ChatbotNotes, current_user: dict = Depends(require_admin)):
+    await get_database().site_settings.update_one(
+        {"key": "chatbot_notes"},
+        {"$set": {"text": data.text[:20000], "updated_at": datetime.utcnow()}},
+        upsert=True,
+    )
+    return {"success": True}
 
 
 @router.get("/chat/history/{session_id}")

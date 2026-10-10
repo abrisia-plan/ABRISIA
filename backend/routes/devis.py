@@ -3,6 +3,7 @@ from pydantic import ValidationError
 from typing import List
 import json
 import os
+from starlette.concurrency import run_in_threadpool
 from datetime import datetime
 from models import (
     Devis, DevisCreate, DevisUpdate, DevisResponse, 
@@ -32,9 +33,13 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
             "Email": devis_doc.get("email", ""),
             "Phone": devis_doc.get("telephone", ""),
             "Company": "Visiteur site web",
-            "Lead_Source": "Demande de devis",
-            "Description": f"Type: {devis_doc.get('project_type', 'N/A')}\n"
-                           f"Plans: {', '.join(devis_doc.get('plans_choisis', []))}\n"
+            "Lead_Source": "Devis par l'assistant du site" if devis_doc.get("source") == "chatbot" else "Demande de devis",
+            "Description": f"Type: {devis_doc.get('project_type') or 'N/A'}\n"
+                           f"Plans: {', '.join(devis_doc.get('plans_noms') or devis_doc.get('plans_choisis', []))}\n"
+                           f"Contact préféré: {devis_doc.get('contact_preference') or 'N/A'}\n"
+                           f"Style: {', '.join(devis_doc.get('styles') or []) or 'N/A'}\n"
+                           + (f"Calculateur: {devis_doc['calculateur']['surface']} pi² ~ {devis_doc['calculateur']['estimation']} $\n" if devis_doc.get('calculateur') else "")
+                           + 
                            f"Notes: {devis_doc.get('notes', '')}"
                            + "".join(f"\nFichier reçu par courriel : {f['filename']}" for f in devis_doc.get('fichiers', [])),
         }
@@ -61,22 +66,49 @@ ALLOWED_EXTENSIONS = {
 }
 
 
-async def _create_devis(devis_data: DevisCreate, fichiers: list, background_tasks: BackgroundTasks, attachments=None):
-    db = get_database()
-    devis_doc = {
+def _build_devis_doc(devis_data: DevisCreate, fichiers: list, source: str = "formulaire") -> dict:
+    has_calc = devis_data.calcEstimate or devis_data.calcSurface
+    return {
         "prenom": devis_data.prenom,
         "nom": devis_data.nom,
         "email": devis_data.email,
         "telephone": devis_data.telephone or "",
         "project_type": devis_data.projectType or "",
         "plans_choisis": devis_data.plansChoisis,
+        "plans_noms": devis_data.plansChoisisNoms,
+        "representation_type": devis_data.representationType or "",
+        "contact_preference": devis_data.contactPreference or "",
+        "styles": devis_data.styles,
+        "calculateur": {
+            "largeur": devis_data.calcWidth,
+            "profondeur": devis_data.calcDepth,
+            "etages": devis_data.calcFloors,
+            "surface": devis_data.calcSurface,
+            "estimation": int(devis_data.calcEstimate) if devis_data.calcEstimate else None,
+        } if has_calc else None,
         "notes": devis_data.notes,
         "fichiers": fichiers,
+        "source": source,
         "status": "En attente",
         "assigned_to": None,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
     }
+
+
+async def create_devis_from_chat(devis_data: DevisCreate) -> str:
+    """Devis recueilli par l'assistant du site : base, courriel et Zoho (sans fichiers)"""
+    devis_doc = _build_devis_doc(devis_data, [], source="chatbot")
+    result = await get_database().devis.insert_one(devis_doc)
+    await run_in_threadpool(email_service.send_devis_notification, devis_doc, None)
+    await _create_zoho_lead_from_devis(devis_doc)
+    logger.info(f"✅ Devis recueilli par l'assistant pour {devis_data.prenom} {devis_data.nom} ({devis_data.email})")
+    return str(result.inserted_id)
+
+
+async def _create_devis(devis_data: DevisCreate, fichiers: list, background_tasks: BackgroundTasks, attachments=None):
+    db = get_database()
+    devis_doc = _build_devis_doc(devis_data, fichiers)
 
     # Le devis est d'abord enregistré en base : il n'est jamais perdu,
     # même si le courriel ou Zoho échoue ensuite.
@@ -210,7 +242,12 @@ async def get_all_devis(
                 "email": devis["email"],
                 "telephone": devis.get("telephone", ""),
                 "projectType": devis.get("project_type", ""),
-                "plansChoisis": devis.get("plans_choisis", []),
+                "plansChoisis": devis.get("plans_noms") or devis.get("plans_choisis", []),
+                "contactPreference": devis.get("contact_preference", ""),
+                "representationType": devis.get("representation_type", ""),
+                "styles": devis.get("styles", []),
+                "calculateur": devis.get("calculateur"),
+                "source": devis.get("source", "formulaire"),
                 "notes": devis.get("notes", ""),
                 "fichiers": devis.get("fichiers", []),
                 "status": devis["status"],

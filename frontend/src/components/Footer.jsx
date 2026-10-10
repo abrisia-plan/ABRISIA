@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { MapPin, Mail, Users } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const defaultFooterNav = [
   { name: 'Accueil', href: '/' },
-  { name: 'Kits de plans', href: '/kit' },
+  { name: 'Collection de plans', href: '/collection' },
   { name: 'Demander un devis', href: '/devis' },
   { name: 'Contact', href: '/contact' }
 ];
 
 const Footer = () => {
-  const navigate = useNavigate();
   const [navigation, setNavigation] = useState(defaultFooterNav);
 
   useEffect(() => {
@@ -26,12 +25,8 @@ const Footer = () => {
       .catch((err) => console.error('Erreur nav:', err));
   }, []);
 
-  const handleNavigation = (path) => {
-    navigate(path);
-    setTimeout(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 100);
-  };
+  // Vrais liens (<a href>) : Google peut les suivre pour découvrir les pages
+  const scrollTop = () => setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
 
   return (
     <footer className="bg-slate-800 text-white">
@@ -50,7 +45,7 @@ const Footer = () => {
             </div>
             <p className="text-slate-300 leading-relaxed">
               Service de plans architecturaux au Québec. Mini-maisons, chalets, maisons, extensions.
-              Plans conformes au Code du bâtiment du Québec et du Canada, jusqu'à 600m² de plancher.
+              Plans conformes au Code de construction du Québec et au Code national du bâtiment du Canada, jusqu'à 600 m² de plancher.
             </p>
           </div>
 
@@ -59,14 +54,16 @@ const Footer = () => {
             <ul className="space-y-2 text-slate-300" data-testid="footer-navigation">
               {navigation.map((item) => (
                 <li key={item.href}>
-                  <button 
-                    onClick={() => handleNavigation(item.href)} 
-                    className="hover:text-teal-400 transition-colors"
-                  >
+                  <Link to={item.href} onClick={scrollTop} className="hover:text-teal-400 transition-colors">
                     {item.name}
-                  </button>
+                  </Link>
                 </li>
               ))}
+              <li>
+                <Link to="/faq" onClick={scrollTop} className="hover:text-teal-400 transition-colors">
+                  Questions fréquentes
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -89,22 +86,23 @@ const Footer = () => {
 
         <div className="border-t border-slate-700 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-slate-400">&copy; 2027 Abrisia Plan. Tous droits réservés.</p>
+            <p className="text-slate-400">&copy; {new Date().getFullYear()} Abrisia Plan. Tous droits réservés.</p>
             <div className="flex space-x-6 text-sm text-slate-400">
-              <button onClick={() => handleNavigation('/mentions-legales')} className="hover:text-teal-400 transition-colors">
+              <Link to="/mentions-legales" onClick={scrollTop} className="hover:text-teal-400 transition-colors">
                 Mentions légales
-              </button>
-              <button onClick={() => handleNavigation('/politique-confidentialite')} className="hover:text-teal-400 transition-colors">
+              </Link>
+              <Link to="/politique-confidentialite" onClick={scrollTop} className="hover:text-teal-400 transition-colors">
                 Politique de confidentialité
-              </button>
-              <button 
-                onClick={() => handleNavigation('/admin')} 
+              </Link>
+              <Link 
+                to="/admin"
+                rel="nofollow"
                 className="hover:text-teal-400 transition-colors font-medium flex items-center gap-1"
                 data-testid="footer-team-link"
               >
                 <Users className="w-3.5 h-3.5" />
                 Espace équipe
-              </button>
+              </Link>
             </div>
           </div>
         </div>

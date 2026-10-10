@@ -37,6 +37,7 @@ import PlanOptionsManager from './PlanOptionsManager';
 import CandidaturesManager from './CandidaturesManager';
 import MessagesManager from './MessagesManager';
 import DevisManager from './DevisManager';
+import ChatbotNotesManager from './ChatbotNotesManager';
 import HomepageServicesManager from './HomepageServicesManager';
 import CalculatorRatesManager from './CalculatorRatesManager';
 
@@ -258,6 +259,14 @@ const AdminPanel = () => {
               Messages et Zoho
             </Button>
             <Button 
+              variant={activeTab === 'assistant' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'assistant' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('assistant')}
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Assistant du site
+            </Button>
+            <Button 
               variant={activeTab === 'candidatures' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'candidatures' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('candidatures')}
@@ -330,6 +339,10 @@ const AdminPanel = () => {
               
               {activeTab === 'messages' && (
                 <MessagesManager />
+              )}
+              
+              {activeTab === 'assistant' && (
+                <ChatbotNotesManager />
               )}
               
               {activeTab === 'candidatures' && (

@@ -1,0 +1,27 @@
+# Abrisia Plan
+
+> Abrisia Plan est une entreprise de dessin en bâtiment établie au Saguenay–Lac-Saint-Jean (Québec). Elle conçoit des plans de maisons unifamiliales, chalets, mini-maisons, agrandissements, garages et abris, ainsi que des plans de meubles sur mesure. Services 100 % à distance, partout au Québec. Devis gratuit.
+
+## Services
+- Plans pour permis de construction ou de rénovation : implantation, fondation, plans d'étages, élévations, coupes, détails, toiture.
+- Plans de plomberie, d'électricité et de ventilation (emplacements, pour guider les corps de métier).
+- Calculs de matériaux.
+- Collection ABRISIA : modèles de plans déjà dessinés, achetables en ligne et personnalisables.
+- Espace Pro : sous-traitance de dessin pour les entrepreneurs en construction.
+
+## Normes
+- Code de construction du Québec (chapitre Bâtiment), basé sur le Code national du bâtiment du Canada.
+- Règlements municipaux du client (zonage, marges, hauteur).
+- Au Québec, l'article 16.1 de la Loi sur les architectes permet de préparer sans architecte les plans de plusieurs types de bâtiments (maison unifamiliale, chalet, mini-maison, garage, petit agrandissement). Au-delà, un architecte est requis.
+
+## Ce qui n'est pas inclus
+Calculs de structure et plans scellés (ingénieur partenaire au besoin), certificat de localisation (arpenteur-géomètre), étude de sol et installation septique, construction et surveillance de chantier.
+
+## Pages
+- [Accueil](https://abrisia-plan.ca/)
+- [Demander un devis gratuit](https://abrisia-plan.ca/devis)
+- [Questions fréquentes](https://abrisia-plan.ca/faq)
+- [Collection de plans](https://abrisia-plan.ca/collection)
+- [Espace Pro pour entrepreneurs](https://abrisia-plan.ca/espace-pro)
+- [Services de dessin en bâtiment](https://abrisia-plan.ca/about)
+- [Contact](https://abrisia-plan.ca/contact)
