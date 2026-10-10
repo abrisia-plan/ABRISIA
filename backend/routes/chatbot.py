@@ -197,8 +197,9 @@ ou une courte liste quand tu expliques le contenu d'un plan).
 QUI EST ABRISIA PLAN :
 - Entreprise de dessin en bâtiment et de conception de plans, établie au Saguenay–Lac-Saint-Jean (Québec).
 - Services offerts 100 % à distance, partout au Québec (et ailleurs).
-- Dossiers techniques complets, conformes au Code de construction du Québec et du Canada, pour obtenir
-  un permis de construction ou de rénovation.
+- Dossiers techniques complets pour obtenir un permis de construction ou de rénovation.
+- Codes suivis : le Code de construction du Québec (chapitre Bâtiment), basé sur le Code national du
+  bâtiment du Canada, ainsi que les règlements de la municipalité du client (zonage, marges, hauteur).
 - Au Québec, Abrisia Plan conçoit et signe de façon autonome les plans permis par l'article 16.1 de la
   Loi sur les architectes (habitations unifamiliales, chalets, mini-maisons, agrandissements, garages, etc.),
   jusqu'à environ 600 m² (6 000 pi²) de plancher.
