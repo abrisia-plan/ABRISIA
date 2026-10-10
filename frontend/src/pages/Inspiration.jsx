@@ -79,7 +79,7 @@ const Inspiration = () => {
   return (
     <div className="min-h-screen pt-20 bg-stone-50">
       <SEO 
-        title="Inspiration"
+        title="Inspirations : plans de maisons, chalets et mini-maisons"
         description="Découvrez nos réalisations et projets d'inspiration. Mini-maisons, chalets, maisons modernes et écologiques au Québec."
         path="/inspiration"
       />

@@ -476,9 +476,10 @@ class EmailService:
         """Notification d'un message reçu par le formulaire de contact"""
         try:
             esc = lambda key: html.escape(str(contact_data.get(key) or ''))
-            subject = f"Nouveau message - {contact_data.get('nom', 'Visiteur')} - {contact_data.get('sujet') or 'Contact'}"
+            prefix = "⚠️ PLAINTE" if contact_data.get('type') == 'plainte' else "Nouveau message"
+            subject = f"{prefix} - {contact_data.get('nom', 'Visiteur')} - {contact_data.get('sujet') or 'Contact'}"
             body = f"""
-                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouveau message — formulaire de contact</h2>
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">{'Plainte reçue par le chatbot' if contact_data.get('type') == 'plainte' else ('Message reçu par le chatbot' if contact_data.get('source') == 'chatbot' else 'Nouveau message — formulaire de contact')}</h2>
                 <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{_now_qc().strftime('%d/%m/%Y à %H:%M')}</p>
                 <table style="width: 100%; margin-bottom: 20px;">
                     <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{esc('nom')}</td></tr>

@@ -8,6 +8,8 @@ import os
 import logging
 import uuid
 import json
+import re
+from starlette.concurrency import run_in_threadpool
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["chatbot"])
@@ -33,6 +35,56 @@ def fallback_answer(message: str) -> str:
             f"ou écrivez-nous : {SITE_URL}/contact")
 
 
+DEFAULT_STEPS = [
+    {"title": "Parlez-nous de votre idée", "description": "Envoyez votre demande de devis avec vos besoins et vos idées."},
+    {"title": "Croquis et devis", "description": "Premier contact, premiers dessins et estimation détaillée. Soumission et dépôt."},
+    {"title": "Plans détaillés", "description": "Réalisation des plans complets et professionnels selon vos besoins."},
+    {"title": "Accompagnement et retours", "description": "Conseils et références au besoin."},
+]
+
+FICHE_RE = re.compile(r"\[\[FICHE\]\]\s*(\{.*\})", re.S)
+
+
+async def save_chat_contact(fiche: dict, session_id: str):
+    """Coordonnées données au chatbot : base, courriel à Abrisia et fiche Zoho"""
+    from email_service import email_service
+    from routes.contact import _contact_to_zoho
+    kind = (fiche.get("type") or "question").lower()
+    labels = {"plainte": "Plainte", "question": "Question", "projet": "Projet", "rappel": "Demande de rappel"}
+    doc = {
+        "nom": (fiche.get("nom") or "Visiteur").strip()[:200],
+        "email": (fiche.get("courriel") or "").strip()[:200],
+        "telephone": (fiche.get("telephone") or "").strip()[:50],
+        "sujet": f"Chatbot - {labels.get(kind, 'Message')}",
+        "message": (fiche.get("message") or "").strip()[:3000],
+        "type": kind,
+        "source": "chatbot",
+        "chat_session_id": session_id,
+        "status": "Nouveau",
+        "created_at": datetime.utcnow(),
+    }
+    await get_database().contacts.insert_one(doc)
+    await run_in_threadpool(email_service.send_contact_notification, doc)
+    if doc["email"]:
+        await _contact_to_zoho(doc)
+
+
+def extract_fiche(answer: str):
+    """Sépare la réponse visible de la fiche cachée [[FICHE]] {...}"""
+    match = FICHE_RE.search(answer)
+    if not match:
+        return answer, None
+    visible = answer[:match.start()].rstrip()
+    try:
+        fiche = json.loads(match.group(1))
+    except ValueError:
+        logger.warning("Fiche du chatbot illisible")
+        return visible, None
+    if not fiche.get("nom") or not (fiche.get("courriel") or fiche.get("telephone")):
+        return visible, None
+    return visible, fiche
+
+
 async def build_site_knowledge(db) -> str:
     """Infos à jour tirées de l'admin : services, prix « à partir de », Collection."""
     parts = []
@@ -41,6 +93,12 @@ async def build_site_knowledge(db) -> str:
         if services:
             parts.append("SERVICES (page d'accueil) :\n" + "\n".join(
                 f"- {s.get('name')} : {s.get('description', '')} {s.get('price', '')}".strip() for s in services))
+
+        steps = await db.process_steps.find({"is_active": True}).sort("order", 1).to_list(length=10)
+        if not steps:
+            steps = DEFAULT_STEPS
+        parts.append("COMMENT ÇA FONCTIONNE (étapes d'un mandat) :\n" + "\n".join(
+            f"{i}. {st.get('title')} : {st.get('description', '')}" for i, st in enumerate(steps, 1)))
 
         plans = await db.plan_options.find({"is_active": True}).sort("order", 1).to_list(length=50)
         if plans:
@@ -127,9 +185,22 @@ RÈGLES :
    affichés sur le site), en précisant toujours que c'est une estimation et que le prix final est confirmé
    dans un devis gratuit et personnalisé. N'invente jamais un prix qui n'est pas dans la liste.
 3. N'invente jamais d'information. Si tu ne sais pas, dis-le et invite à écrire via la page Contact ou à demander un devis.
-4. Pour un projet concret, invite la personne à remplir le formulaire de devis (elle peut y joindre photos et plans).
-   Ne demande pas de renseignements personnels dans le clavardage.
-5. Mets le lien de la bonne page quand c'est utile."""
+4. Pour un projet concret, propose le formulaire de devis (on peut y joindre photos et plans), ou propose de
+   prendre ses coordonnées ici pour qu'Abrisia le rappelle.
+5. Mets le lien de la bonne page quand c'est utile.
+6. Tu peux expliquer comment fonctionne un mandat (voir les étapes plus bas), décrire les offres et répondre aux
+   questions fréquentes sur les plans, les permis et la Collection.
+
+PRISE DE COORDONNÉES, QUESTIONS ET PLAINTES :
+- Si la personne veut être rappelée, laisser un message, poser une question à laquelle tu ne peux pas répondre,
+  ou faire une plainte, recueille poliment, une question à la fois : son nom, son courriel ou son téléphone,
+  et son message (pour une plainte : ce qui s'est passé, avec empathie, sans promettre de compensation).
+- Demande la permission avant de prendre ses coordonnées, et précise qu'elles servent seulement à la recontacter.
+- Quand tu as au minimum le nom, un moyen de contact (courriel ou téléphone) et le message, résume-les et
+  demande de confirmer. Une fois confirmé, réponds que c'est transmis à l'équipe, qui fera un suivi rapidement,
+  puis ajoute À LA FIN de ta réponse, sur une ligne seule, exactement :
+  [[FICHE]] {"type": "plainte" ou "question" ou "projet" ou "rappel", "nom": "...", "courriel": "...", "telephone": "...", "message": "..."}
+  (JSON valide, chaînes vides si inconnu). N'écris cette ligne qu'une seule fois par demande et jamais avant la confirmation."""
 
 
 
@@ -167,6 +238,13 @@ async def chat(data: ChatMessage):
                 logger.error(f"Erreur chatbot (Gemini): {e}")
         if not answer:
             answer = fallback_answer(message)
+
+        answer, fiche = extract_fiche(answer)
+        if fiche:
+            try:
+                await save_chat_contact(fiche, session_id)
+            except Exception as e:
+                logger.error(f"Fiche du chatbot non enregistrée: {e}")
 
         # Envoi par petits morceaux pour l'effet « en train d'écrire »
         for i in range(0, len(answer), 20):

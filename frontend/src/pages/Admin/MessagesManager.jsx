@@ -14,6 +14,7 @@ const KIND_LABELS = {
   kit_order: 'Commande Collection',
   customize: 'Personnalisation',
   purchase: 'Achat en ligne',
+  chatbot: 'Chatbot',
 };
 
 const ZOHO_STATUS = {
