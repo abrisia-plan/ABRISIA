@@ -15,7 +15,7 @@ import { devisService, handleApiError } from '../services/api';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Valeurs par défaut; les vraies limites viennent du serveur (/api/devis/limites)
-const DEFAULT_LIMITS = { max_file_mb: 10, max_files: 10 };
+const DEFAULT_LIMITS = { max_total_mb: 18, max_files: 10 };
 const formatSize = (bytes) => bytes < 1024 * 1024
   ? `${Math.max(1, Math.round(bytes / 1024))} Ko`
   : `${(bytes / 1024 / 1024).toFixed(1)} Mo`;
@@ -40,13 +40,13 @@ const Devis = () => {
   const [files, setFiles] = useState([]);
   const [fileError, setFileError] = useState('');
   const [limits, setLimits] = useState(DEFAULT_LIMITS);
-  const MAX_FILE_MB = limits.max_file_mb;
+  const MAX_TOTAL_MB = limits.max_total_mb;
   const MAX_FILES = limits.max_files;
 
   useEffect(() => {
     fetch(`${BACKEND_URL}/api/devis/limites`)
       .then(res => (res.ok ? res.json() : null))
-      .then(data => { if (data?.max_file_mb) setLimits(data); })
+      .then(data => { if (data?.max_total_mb) setLimits(data); })
       .catch(() => {});
   }, []);
 
@@ -157,18 +157,22 @@ const Devis = () => {
   const handleFilesChange = (e) => {
     const picked = Array.from(e.target.files || []);
     e.target.value = ''; // permet de rechoisir le même fichier
-    const tooBig = picked.filter(f => f.size > MAX_FILE_MB * 1024 * 1024);
-    const accepted = picked.filter(f => f.size <= MAX_FILE_MB * 1024 * 1024);
-    const combined = [...files, ...accepted];
-    const errors = [];
-    if (tooBig.length) {
-      errors.push(`Trop gros (maximum ${MAX_FILE_MB} Mo par fichier) : ${tooBig.map(f => f.name).join(', ')}. Vous pourrez nous envoyer ces fichiers par courriel après votre demande.`);
-    }
-    if (combined.length > MAX_FILES) {
-      errors.push(`Maximum ${MAX_FILES} fichiers par demande.`);
-    }
-    setFileError(errors.join(' '));
-    setFiles(combined.slice(0, MAX_FILES));
+    const maxBytes = MAX_TOTAL_MB * 1024 * 1024;
+    const accepted = [...files];
+    const refused = [];
+    let total = files.reduce((sum, f) => sum + f.size, 0);
+    picked.forEach(f => {
+      if (accepted.length < MAX_FILES && total + f.size <= maxBytes) {
+        accepted.push(f);
+        total += f.size;
+      } else {
+        refused.push(f.name);
+      }
+    });
+    setFileError(refused.length
+      ? `Non ajouté (maximum ${MAX_FILES} fichiers et ${MAX_TOTAL_MB} Mo au total) : ${refused.join(', ')}. Vous pourrez nous envoyer ces fichiers par courriel après votre demande.`
+      : '');
+    setFiles(accepted);
   };
 
   const removeFile = (index) => {
@@ -579,7 +583,7 @@ const Devis = () => {
                     Joindre des fichiers (optionnel)
                   </Label>
                   <p className="text-sm text-slate-600">
-                    Photos, croquis, plans PDF ou DWG, etc. Maximum {MAX_FILES} fichiers de {MAX_FILE_MB} Mo chacun.
+                    Photos, croquis, plans PDF ou DWG, etc. Maximum {MAX_FILES} fichiers et {MAX_TOTAL_MB} Mo au total.
                   </p>
                   <label
                     htmlFor="files"

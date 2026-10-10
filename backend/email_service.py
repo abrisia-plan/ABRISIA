@@ -3,6 +3,7 @@ import os
 import html
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 from datetime import datetime
 import logging
 
@@ -73,18 +74,25 @@ class EmailService:
         </body>
         </html>"""
     
-    def _send_email(self, to_email, subject, html_content):
-        """Méthode interne pour envoyer un email"""
+    def _send_email(self, to_email, subject, html_content, attachments=None):
+        """Méthode interne pour envoyer un email.
+
+        attachments : liste de (nom du fichier, contenu en bytes), envoyés en pièces jointes.
+        """
         if self.resend_api_key:
-            return self._send_email_resend(to_email, subject, html_content)
+            return self._send_email_resend(to_email, subject, html_content, attachments)
         try:
-            message = MIMEMultipart("alternative")
+            message = MIMEMultipart("mixed")
             message["Subject"] = subject
             message["From"] = f"Abrisia Plan <{self.sender_email}>"
             message["To"] = to_email
             
             html_part = MIMEText(html_content, "html")
             message.attach(html_part)
+            for filename, content in attachments or []:
+                part = MIMEApplication(content, Name=filename)
+                part["Content-Disposition"] = f'attachment; filename="{filename}"'
+                message.attach(part)
             
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
                 server.starttls()
@@ -97,21 +105,28 @@ class EmailService:
             logger.error(f"❌ Erreur envoi email à {to_email}: {str(e)}")
             return False
 
-    def _send_email_resend(self, to_email, subject, html_content):
+    def _send_email_resend(self, to_email, subject, html_content, attachments=None):
         """Envoie un email par l'API web de Resend (https://resend.com)"""
         import requests
+        import base64
+        payload = {
+            "from": self.resend_from,
+            "to": [to_email],
+            "reply_to": self.sender_email,
+            "subject": subject,
+            "html": html_content,
+        }
+        if attachments:
+            payload["attachments"] = [
+                {"filename": name, "content": base64.b64encode(content).decode()}
+                for name, content in attachments
+            ]
         try:
             resp = requests.post(
                 "https://api.resend.com/emails",
                 headers={"Authorization": f"Bearer {self.resend_api_key}"},
-                json={
-                    "from": self.resend_from,
-                    "to": [to_email],
-                    "reply_to": self.sender_email,
-                    "subject": subject,
-                    "html": html_content,
-                },
-                timeout=30,
+                json=payload,
+                timeout=120,
             )
             if resp.status_code >= 300:
                 logger.error(f"❌ Resend a refusé l'email à {to_email}: {resp.status_code} {resp.text}")
@@ -343,7 +358,7 @@ class EmailService:
             logger.error(f"❌ Erreur envoi notification temoignage: {str(e)}")
             return False
         
-    def send_devis_notification(self, devis_data):
+    def send_devis_notification(self, devis_data, attachments=None):
         """Envoie une notification email brandée pour un nouveau devis"""
         try:
             recipient_email = os.getenv('ADMIN_EMAIL', 'abrisia0plan@gmail.com')
@@ -368,12 +383,13 @@ class EmailService:
             fichiers_section = ""
             if fichiers:
                 items = "".join(
-                    f'<li style="margin: 6px 0;"><a href="{html.escape(f["url"])}" style="color: #0f766e;">{html.escape(f["filename"])}</a>'
+                    f'<li style="margin: 6px 0;">{html.escape(f["filename"])}'
                     f' <span style="color: #64748b; font-size: 12px;">({_format_size(f["size"])})</span></li>'
                     for f in fichiers
                 )
                 fichiers_section = f"""
-                    <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Fichiers joints ({len(fichiers)})</h3>
+                    <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Fichiers du client ({len(fichiers)})</h3>
+                    <p style="margin: 0 0 8px 0; color: #64748b; font-size: 13px;">En pièces jointes de ce courriel. Ils ne sont pas gardés sur le site : téléchargez-les ou placez-les dans votre WorkDrive.</p>
                     <ul style="margin: 0 0 20px 0; padding-left: 20px;">{items}</ul>
                 """
 
@@ -405,7 +421,11 @@ class EmailService:
                 </div>
             """
 
-            return self._send_email(recipient_email, subject, self._wrap_email(body))
+            sent = self._send_email(recipient_email, subject, self._wrap_email(body), attachments)
+            if not sent and attachments:
+                # Les fichiers ne sont gardés nulle part : on réessaie une fois
+                sent = self._send_email(recipient_email, subject, self._wrap_email(body), attachments)
+            return sent
 
         except Exception as e:
             logger.error(f"Erreur envoi email devis: {str(e)}")

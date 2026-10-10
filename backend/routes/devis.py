@@ -11,7 +11,7 @@ from models import (
 from database import get_database
 from auth import require_admin
 from email_service import email_service
-from file_storage import save_file, FileTooLarge, MAX_FILE_MB, MAX_FILE_SIZE, file_size
+from file_storage import file_size
 from bson import ObjectId
 import logging
 
@@ -36,7 +36,7 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
             "Description": f"Type: {devis_doc.get('project_type', 'N/A')}\n"
                            f"Plans: {', '.join(devis_doc.get('plans_choisis', []))}\n"
                            f"Notes: {devis_doc.get('notes', '')}"
-                           + "".join(f"\nFichier: {f['filename']} - {f['url']}" for f in devis_doc.get('fichiers', [])),
+                           + "".join(f"\nFichier reçu par courriel : {f['filename']}" for f in devis_doc.get('fichiers', [])),
         }
         data = {
             "first_name": first_name,
@@ -48,8 +48,12 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
     except Exception as e:
         logger.warning(f"Zoho lead creation échouée pour devis: {e}")
 
-# Limites des pièces jointes (taille par fichier : voir file_storage)
+# Les fichiers des clients ne sont PAS gardés sur le site : ils partent en
+# pièces jointes du courriel. Gmail refuse les courriels de plus de 25 Mo et
+# l'encodage des pièces jointes ajoute environ un tiers : 18 Mo au total.
 MAX_FILES = 10
+MAX_TOTAL_MB = 18
+MAX_TOTAL_SIZE = MAX_TOTAL_MB * 1024 * 1024
 ALLOWED_EXTENSIONS = {
     ".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".heif", ".bmp", ".tif", ".tiff",
     ".pdf", ".dwg", ".dxf", ".skp", ".rvt", ".ifc",
@@ -57,7 +61,7 @@ ALLOWED_EXTENSIONS = {
 }
 
 
-async def _create_devis(devis_data: DevisCreate, fichiers: list, background_tasks: BackgroundTasks):
+async def _create_devis(devis_data: DevisCreate, fichiers: list, background_tasks: BackgroundTasks, attachments=None):
     db = get_database()
     devis_doc = {
         "prenom": devis_data.prenom,
@@ -78,7 +82,7 @@ async def _create_devis(devis_data: DevisCreate, fichiers: list, background_task
     # même si le courriel ou Zoho échoue ensuite.
     result = await db.devis.insert_one(devis_doc)
 
-    background_tasks.add_task(email_service.send_devis_notification, devis_doc)
+    background_tasks.add_task(email_service.send_devis_notification, devis_doc, attachments)
     background_tasks.add_task(_create_zoho_lead_from_devis, devis_doc)
 
     logger.info(f"✅ Nouveau devis soumis par {devis_data.prenom} {devis_data.nom} ({devis_data.email}), {len(fichiers)} fichier(s)")
@@ -98,7 +102,8 @@ async def _create_devis(devis_data: DevisCreate, fichiers: list, background_task
 async def get_upload_limits():
     """Limites des pièces jointes, affichées par le formulaire"""
     return {
-        "max_file_mb": MAX_FILE_MB,
+        "max_file_mb": MAX_TOTAL_MB,
+        "max_total_mb": MAX_TOTAL_MB,
         "max_files": MAX_FILES,
         "extensions": sorted(ALLOWED_EXTENSIONS),
     }
@@ -135,25 +140,28 @@ async def submit_devis_with_files(
     if len(files) > MAX_FILES:
         raise HTTPException(status_code=400, detail=f"Maximum {MAX_FILES} fichiers par demande.")
 
-    # Tout vérifier avant d'enregistrer quoi que ce soit
+    total = 0
     for upload in files:
         name = os.path.basename(upload.filename or "fichier")
         ext = os.path.splitext(name)[1].lower()
         if ext not in ALLOWED_EXTENSIONS:
             raise HTTPException(status_code=400, detail=f"Le type de fichier « {name} » n'est pas accepté.")
-        if file_size(upload.file) > MAX_FILE_SIZE:
-            raise HTTPException(status_code=413, detail=f"Le fichier « {name} » dépasse {MAX_FILE_MB} Mo.")
+        total += file_size(upload.file)
+    if total > MAX_TOTAL_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Vos fichiers dépassent {MAX_TOTAL_MB} Mo au total. Retirez-en quelques-uns : vous pourrez nous les envoyer par courriel après votre demande.",
+        )
 
     try:
-        fichiers = []
+        attachments = []
+        fichiers = []  # seulement le nom et la taille : le contenu n'est pas gardé
         for upload in files:
-            fichiers.append(await save_file(
-                upload.file, upload.filename, upload.content_type,
-                folder="devis", client_email=devis_data.email,
-            ))
-        return await _create_devis(devis_data, fichiers, background_tasks)
-    except FileTooLarge as e:
-        raise HTTPException(status_code=413, detail=f"Le fichier « {e} » dépasse {MAX_FILE_MB} Mo.")
+            name = os.path.basename(upload.filename or "fichier")
+            content = await upload.read()
+            attachments.append((name, content))
+            fichiers.append({"filename": name, "size": len(content)})
+        return await _create_devis(devis_data, fichiers, background_tasks, attachments)
     except Exception as e:
         logger.error(f"❌ Erreur soumission devis avec fichiers: {e}")
         raise HTTPException(
