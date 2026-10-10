@@ -218,8 +218,6 @@ async def get_product_by_slug(product_slug: str):
             "designerName": product.get("designer_name"),
             "materialsListEnabled": product.get("materials_list_enabled", False),
             "materialsListPrice": product.get("materials_list_price"),
-            "planFileUrl": product.get("plan_file_url"),
-            "materialsListFileUrl": product.get("materials_list_file_url"),
             "modelNumber": product.get("model_number"),
             "style": product.get("style"),
             "foundationType": product.get("foundation_type"),
@@ -356,6 +354,12 @@ async def get_admin_products(
                 "rooms": product.get("rooms", ""),
                 "includes": product.get("includes", []),
                 "galleryImages": product.get("gallery_images", []),
+                "description": product.get("description", ""),
+                # Fichiers à vendre : visibles seulement dans l'admin
+                "planFileUrl": product.get("plan_file_url"),
+                "planFileName": product.get("plan_file_name"),
+                "materialsListFileUrl": product.get("materials_list_file_url"),
+                "materialsListFileName": product.get("materials_list_file_name"),
             })
         
         return PaginatedResponse(
@@ -435,8 +439,12 @@ async def update_product(
         
         update_fields = {"updated_at": datetime.utcnow()}
         
+        # Ces champs peuvent être vidés volontairement (ex. retirer un fichier)
+        clearable = {"plan_file_url", "plan_file_name", "materials_list_file_url", "materials_list_file_name",
+                     "designer_name", "materials_list_price", "model_number", "style", "foundation_type",
+                     "has_garage", "bedrooms", "bathrooms", "floors", "width_ft", "depth_ft", "discount_percentage"}
         for field, value in update_data.dict(exclude_unset=True).items():
-            if value is not None:
+            if value is not None or field in clearable:
                 update_fields[field] = value
         
         result = await db.products.update_one(
@@ -594,6 +602,26 @@ async def create_kit_order(order_data: KitOrderCreate):
             email_service.send_kit_order_notification_to_admin(order_doc)
         except Exception as email_error:
             logger.warning(f"⚠️ Erreur envoi email pour commande {order_number}: {email_error}")
+
+        # Fiche Zoho (la commande reste en base même si Zoho échoue)
+        try:
+            from routes.zoho import save_lead, split_name
+            first_name, last_name = split_name(order_data.customer_name)
+            await save_lead("kit_order", {
+                "first_name": first_name, "last_name": last_name,
+                "email": order_data.customer_email, "phone": order_data.customer_phone,
+                "model_name": kit["name"], "amount": total_amount,
+            }, {
+                "First_Name": first_name,
+                "Last_Name": last_name,
+                "Email": order_data.customer_email,
+                "Phone": order_data.customer_phone,
+                "Company": "Client Collection",
+                "Lead_Source": "Commande Collection",
+                "Description": f"Commande {order_number} : {kit['name']} - {total_amount} $ CAD (statut: en attente)\n{order_data.notes or ''}",
+            })
+        except Exception as zoho_error:
+            logger.warning(f"⚠️ Zoho non mis à jour pour {order_number}: {zoho_error}")
         
         return {
             "success": True,

@@ -86,6 +86,18 @@ export const devisService = {
     return response.data;
   },
 
+  // Envoi avec pièces jointes : formulaire en JSON + fichiers
+  submitWithFiles: async (devisData, files) => {
+    const formData = new FormData();
+    formData.append('data', JSON.stringify(devisData));
+    files.forEach((file) => formData.append('files', file));
+    const response = await api.post('/devis/avec-fichiers', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 300000, // les gros fichiers peuvent prendre quelques minutes
+    });
+    return response.data;
+  },
+
   getAll: async (statusFilter = null, limit = 50, skip = 0) => {
     const params = { limit, skip };
     if (statusFilter) params.status_filter = statusFilter;

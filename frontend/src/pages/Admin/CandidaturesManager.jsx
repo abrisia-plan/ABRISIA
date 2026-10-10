@@ -48,8 +48,22 @@ const CandidaturesManager = () => {
     }
   };
 
-  const downloadCV = (candidature) => {
-    window.open(`${BACKEND_URL}/api/employees/admin/candidatures/${candidature.id}/cv`, '_blank');
+  // Le CV exige la connexion admin : on le télécharge avec le jeton puis on l'ouvre
+  const downloadCV = async (candidature) => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/employees/admin/candidatures/${candidature.id}/cv`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      if (!res.ok) throw new Error();
+      const url = URL.createObjectURL(await res.blob());
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = candidature.cv_filename || 'cv.pdf';
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } catch (err) {
+      toast({ title: "Erreur", description: "Impossible de télécharger le CV", variant: "destructive" });
+    }
   };
 
   const formatDate = (dateStr) => {

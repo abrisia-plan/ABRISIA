@@ -368,8 +368,8 @@ const KitFormModal = ({
                       {formData.materials_list_file_url ? (
                         <div className="flex items-center gap-2 p-3 bg-white rounded border">
                           <FileText className="w-5 h-5 text-bois" />
-                          <span className="text-sm flex-1 truncate">{formData.materials_list_file_url.split('/').pop()}</span>
-                          <Button type="button" variant="ghost" size="sm" onClick={() => onInputChange('materials_list_file_url', '')}>
+                          <a href={formData.materials_list_file_url} target="_blank" rel="noopener noreferrer" className="text-sm flex-1 truncate text-blue-700 underline" title="Fichier privé : visible seulement dans l'admin">{formData.materials_list_file_name || 'Fichier téléversé'}</a>
+                          <Button type="button" variant="ghost" size="sm" onClick={() => { onInputChange('materials_list_file_url', ''); onInputChange('materials_list_file_name', ''); }}>
                             <X className="w-4 h-4" />
                           </Button>
                         </div>
@@ -412,8 +412,8 @@ const KitFormModal = ({
             {formData.plan_file_url ? (
               <div className="flex items-center gap-2 p-3 bg-white rounded border">
                 <FileText className="w-5 h-5 text-blue-600" />
-                <span className="text-sm flex-1 truncate">{formData.plan_file_url.split('/').pop()}</span>
-                <Button type="button" variant="ghost" size="sm" onClick={() => onInputChange('plan_file_url', '')}>
+                <a href={formData.plan_file_url} target="_blank" rel="noopener noreferrer" className="text-sm flex-1 truncate text-blue-700 underline" title="Fichier privé : visible seulement dans l'admin">{formData.plan_file_name || 'Fichier téléversé'}</a>
+                <Button type="button" variant="ghost" size="sm" onClick={() => { onInputChange('plan_file_url', ''); onInputChange('plan_file_name', ''); }}>
                   <X className="w-4 h-4" />
                 </Button>
               </div>
@@ -427,14 +427,14 @@ const KitFormModal = ({
                 ) : (
                   <>
                     <Upload className="w-8 h-8 text-blue-400 mx-auto mb-2" />
-                    <p className="text-gray-500">Uploader le fichier du plan (PDF, DWG)</p>
-                    <p className="text-xs text-gray-400 mt-1">Ce fichier sera envoyé au client après paiement</p>
+                    <p className="text-gray-500">Téléverser le fichier du plan (PDF, DWG, ZIP...)</p>
+                    <p className="text-xs text-gray-400 mt-1">Fichier privé : seul un client qui a payé pourra le télécharger</p>
                   </>
                 )}
                 <input
                   ref={planFileRef}
                   type="file"
-                  accept=".pdf,.dwg,.dxf"
+                  accept=".pdf,.dwg,.dxf,.skp,.rvt,.ifc,.zip"
                   className="hidden"
                   onChange={(e) => onFileUpload(e, 'plan')}
                 />

@@ -284,9 +284,11 @@ class Product(BaseDocument):
     # ========== NOUVEAUX CHAMPS COLLECTION ABRISIA ==========
     designer_name: Optional[str] = None
     plan_file_url: Optional[str] = None
+    plan_file_name: Optional[str] = None
     materials_list_enabled: bool = False
     materials_list_price: Optional[float] = None
     materials_list_file_url: Optional[str] = None
+    materials_list_file_name: Optional[str] = None
     # Filtres / Caractéristiques
     model_number: Optional[str] = None
     style: Optional[str] = None
@@ -327,9 +329,11 @@ class ProductCreate(BaseModel):
     # Nouveaux champs Collection
     designer_name: Optional[str] = None
     plan_file_url: Optional[str] = None
+    plan_file_name: Optional[str] = None
     materials_list_enabled: bool = False
     materials_list_price: Optional[float] = None
     materials_list_file_url: Optional[str] = None
+    materials_list_file_name: Optional[str] = None
     model_number: Optional[str] = None
     style: Optional[str] = None
     foundation_type: Optional[str] = None
@@ -365,9 +369,11 @@ class ProductUpdate(BaseModel):
     # Nouveaux champs Collection
     designer_name: Optional[str] = None
     plan_file_url: Optional[str] = None
+    plan_file_name: Optional[str] = None
     materials_list_enabled: Optional[bool] = None
     materials_list_price: Optional[float] = None
     materials_list_file_url: Optional[str] = None
+    materials_list_file_name: Optional[str] = None
     model_number: Optional[str] = None
     style: Optional[str] = None
     foundation_type: Optional[str] = None
@@ -632,6 +638,8 @@ class DevisUpdate(BaseModel):
     assigned_designer: Optional[str] = None
     assigned_constructor: Optional[str] = None
     priority: Optional[str] = None
+    estimated_budget: Optional[float] = None
+    admin_notes: Optional[str] = None
 
 class DevisResponse(BaseModel):
     success: bool

@@ -32,11 +32,23 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/contact`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok || !result.success) {
+        throw new Error(res.status === 422 ? 'Vérifiez votre courriel et votre message.' : (result.detail || "Le message n'a pas pu être envoyé."));
+      }
       toast({ title: "Message envoyé !", description: "Nous vous répondrons dans les plus brefs délais." });
       setFormData({ nom: '', email: '', telephone: '', sujet: '', message: '' });
+    } catch (err) {
+      toast({ title: "Erreur", description: err.message, variant: "destructive" });
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   const handleCvSubmit = async (e) => {

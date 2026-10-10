@@ -1,11 +1,19 @@
 import smtplib
 import os
+import html
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def _format_size(size):
+    if size < 1024 * 1024:
+        return f"{max(1, round(size / 1024))} Ko"
+    return f"{size / 1024 / 1024:.1f} Mo"
 
 class EmailService:
     def __init__(self):
@@ -66,18 +74,25 @@ class EmailService:
         </body>
         </html>"""
     
-    def _send_email(self, to_email, subject, html_content):
-        """Méthode interne pour envoyer un email"""
+    def _send_email(self, to_email, subject, html_content, attachments=None):
+        """Méthode interne pour envoyer un email.
+
+        attachments : liste de (nom du fichier, contenu en bytes), envoyés en pièces jointes.
+        """
         if self.resend_api_key:
-            return self._send_email_resend(to_email, subject, html_content)
+            return self._send_email_resend(to_email, subject, html_content, attachments)
         try:
-            message = MIMEMultipart("alternative")
+            message = MIMEMultipart("mixed")
             message["Subject"] = subject
             message["From"] = f"Abrisia Plan <{self.sender_email}>"
             message["To"] = to_email
             
             html_part = MIMEText(html_content, "html")
             message.attach(html_part)
+            for filename, content in attachments or []:
+                part = MIMEApplication(content, Name=filename)
+                part["Content-Disposition"] = f'attachment; filename="{filename}"'
+                message.attach(part)
             
             with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
                 server.starttls()
@@ -90,21 +105,28 @@ class EmailService:
             logger.error(f"❌ Erreur envoi email à {to_email}: {str(e)}")
             return False
 
-    def _send_email_resend(self, to_email, subject, html_content):
+    def _send_email_resend(self, to_email, subject, html_content, attachments=None):
         """Envoie un email par l'API web de Resend (https://resend.com)"""
         import requests
+        import base64
+        payload = {
+            "from": self.resend_from,
+            "to": [to_email],
+            "reply_to": self.sender_email,
+            "subject": subject,
+            "html": html_content,
+        }
+        if attachments:
+            payload["attachments"] = [
+                {"filename": name, "content": base64.b64encode(content).decode()}
+                for name, content in attachments
+            ]
         try:
             resp = requests.post(
                 "https://api.resend.com/emails",
                 headers={"Authorization": f"Bearer {self.resend_api_key}"},
-                json={
-                    "from": self.resend_from,
-                    "to": [to_email],
-                    "reply_to": self.sender_email,
-                    "subject": subject,
-                    "html": html_content,
-                },
-                timeout=30,
+                json=payload,
+                timeout=120,
             )
             if resp.status_code >= 300:
                 logger.error(f"❌ Resend a refusé l'email à {to_email}: {resp.status_code} {resp.text}")
@@ -336,88 +358,100 @@ class EmailService:
             logger.error(f"❌ Erreur envoi notification temoignage: {str(e)}")
             return False
         
-    def send_devis_notification(self, devis_data):
+    def send_devis_notification(self, devis_data, attachments=None):
         """Envoie une notification email brandée pour un nouveau devis"""
         try:
-            recipient_email = "abrisia0plan@gmail.com"
-            plans_choisis_text = ", ".join(devis_data.get('plansChoisis', []))
-            representation_type = devis_data.get('representationType', 'Non spécifié')
-            representation_labels = {
-                'technique': 'Plans techniques détaillés',
-                'visuel': 'Représentation visuelle/esthétique',
-                'both': 'Les deux (technique + visuel)',
-                'flexible': 'À votre convenance'
-            }
-            representation_text = representation_labels.get(representation_type, representation_type)
-            response_preference = devis_data.get('responsePreference', 'Non spécifié')
-            response_labels = {
-                'phone': 'Appel téléphonique',
-                'email': 'Par courriel écrit',
-                'video': 'Vidéoconférence',
-                'flexible': 'À votre convenance'
-            }
-            response_text = response_labels.get(response_preference, response_preference)
-            
+            recipient_email = os.getenv('ADMIN_EMAIL', 'abrisia0plan@gmail.com')
+            # Les textes viennent du client : on les échappe pour qu'ils ne puissent pas injecter de HTML
+            esc = lambda key, default='Non spécifié': html.escape(str(devis_data.get(key) or default))
+            plans = devis_data.get('plans_choisis') or devis_data.get('plansChoisis') or []
+            plans_choisis_text = html.escape(", ".join(plans))
+            project_type = html.escape(devis_data.get('project_type') or devis_data.get('projectType') or 'Non spécifié')
+
             subject = f"Nouveau devis - {devis_data.get('prenom', '')} {devis_data.get('nom', 'Client')} - {datetime.now().strftime('%d/%m/%Y')}"
-            
+
             notes_section = ""
             if devis_data.get('notes'):
                 notes_section = f"""
                     <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Description</h3>
                     <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; border-left: 4px solid #0f766e; margin-bottom: 20px;">
-                        <p style="margin: 0; white-space: pre-wrap;">{devis_data.get('notes', '')}</p>
+                        <p style="margin: 0; white-space: pre-wrap;">{esc('notes', '')}</p>
                     </div>
                 """
-            
+
+            fichiers = devis_data.get('fichiers') or []
+            fichiers_section = ""
+            if fichiers:
+                items = "".join(
+                    f'<li style="margin: 6px 0;">{html.escape(f["filename"])}'
+                    f' <span style="color: #64748b; font-size: 12px;">({_format_size(f["size"])})</span></li>'
+                    for f in fichiers
+                )
+                fichiers_section = f"""
+                    <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Fichiers du client ({len(fichiers)})</h3>
+                    <p style="margin: 0 0 8px 0; color: #64748b; font-size: 13px;">En pièces jointes de ce courriel. Ils ne sont pas gardés sur le site : téléchargez-les ou placez-les dans votre WorkDrive.</p>
+                    <ul style="margin: 0 0 20px 0; padding-left: 20px;">{items}</ul>
+                """
+
             body = f"""
                 <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle demande de devis</h2>
                 <p style="color: #64748b; font-size: 13px; margin: 0 0 20px 0;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
-                
+
                 <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Informations client</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Prénom :</td><td>{devis_data.get('prenom', 'Non spécifié')}</td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">Nom :</td><td>{devis_data.get('nom', 'Non spécifié')}</td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{devis_data.get('email', '')}" style="color: #0f766e;">{devis_data.get('email', 'Non spécifié')}</a></td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{devis_data.get('telephone', 'Non spécifié')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Prénom :</td><td>{esc('prenom')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Nom :</td><td>{esc('nom')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{esc('email', '')}" style="color: #0f766e;">{esc('email')}</a></td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{esc('telephone')}</td></tr>
                 </table>
-                
+
                 <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Détails du projet</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Type :</td><td>{devis_data.get('projectType', 'Non spécifié')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Type :</td><td>{project_type}</td></tr>
                     <tr><td style="padding: 6px 0; font-weight: bold;">Plans :</td><td>{plans_choisis_text or 'Aucun'}</td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">Représentation :</td><td>{representation_text}</td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">Préf. réponse :</td><td>{response_text}</td></tr>
                 </table>
-                
+
                 {notes_section}
-                
+                {fichiers_section}
+
                 <div style="background: #f0fdf4; border-radius: 8px; padding: 12px; text-align: center;">
                     <p style="margin: 0; font-size: 13px; color: #166534;">
-                        Répondre à <strong>{devis_data.get('email', '')}</strong> | Appeler au <strong>{devis_data.get('telephone', 'N/A')}</strong>
+                        Répondre à <strong>{esc('email', '')}</strong> | Appeler au <strong>{esc('telephone', 'N/A')}</strong>
                     </p>
                 </div>
             """
-            
-            html_content = self._wrap_email(body)
-                        
-            message = MIMEMultipart("alternative")
-            message["Subject"] = subject
-            message["From"] = self.sender_email
-            message["To"] = recipient_email
-            
-            html_part = MIMEText(html_content, "html")
-            message.attach(html_part)
-            
-            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
-                server.starttls()
-                server.login(self.sender_email, self.sender_password)
-                server.send_message(message)
-                
-            logger.info(f"Email de notification envoyé pour le devis de {devis_data.get('nom', 'Client')}")
-            return True
-            
+
+            sent = self._send_email(recipient_email, subject, self._wrap_email(body), attachments)
+            if not sent and attachments:
+                # Les fichiers ne sont gardés nulle part : on réessaie une fois
+                sent = self._send_email(recipient_email, subject, self._wrap_email(body), attachments)
+            return sent
+
         except Exception as e:
             logger.error(f"Erreur envoi email devis: {str(e)}")
+            return False
+
+    def send_contact_notification(self, contact_data):
+        """Notification d'un message reçu par le formulaire de contact"""
+        try:
+            esc = lambda key: html.escape(str(contact_data.get(key) or ''))
+            subject = f"Nouveau message - {contact_data.get('nom', 'Visiteur')} - {contact_data.get('sujet') or 'Contact'}"
+            body = f"""
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouveau message — formulaire de contact</h2>
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                <table style="width: 100%; margin-bottom: 20px;">
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{esc('nom')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{esc('email')}" style="color: #0f766e;">{esc('email')}</a></td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{esc('telephone') or 'Non fourni'}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Sujet :</td><td>{esc('sujet') or 'Aucun'}</td></tr>
+                </table>
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;">
+                    <p style="margin: 0; white-space: pre-wrap;">{esc('message')}</p>
+                </div>
+            """
+            return self._send_email(os.getenv('ADMIN_EMAIL', 'abrisia0plan@gmail.com'), subject, self._wrap_email(body))
+        except Exception as e:
+            logger.error(f"Erreur envoi notification contact: {str(e)}")
             return False
 
     def send_pro_contact_notification(self, contact_data):

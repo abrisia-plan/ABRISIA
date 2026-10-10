@@ -18,7 +18,8 @@ import {
   Loader2,
   LayoutDashboard,
   DollarSign,
-  Navigation
+  Navigation,
+  Mail
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import { devisService, authService, handleApiError } from '../../services/api';
@@ -34,6 +35,8 @@ import LegalPagesManager from './LegalPagesManager';
 import KitOrdersManager from './KitOrdersManager';
 import PlanOptionsManager from './PlanOptionsManager';
 import CandidaturesManager from './CandidaturesManager';
+import MessagesManager from './MessagesManager';
+import DevisManager from './DevisManager';
 import HomepageServicesManager from './HomepageServicesManager';
 import CalculatorRatesManager from './CalculatorRatesManager';
 
@@ -239,6 +242,22 @@ const AdminPanel = () => {
               Commandes collection
             </Button>
             <Button 
+              variant={activeTab === 'devis' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'devis' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('devis')}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Demandes de devis
+            </Button>
+            <Button 
+              variant={activeTab === 'messages' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'messages' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('messages')}
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Messages et Zoho
+            </Button>
+            <Button 
               variant={activeTab === 'candidatures' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'candidatures' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('candidatures')}
@@ -303,6 +322,14 @@ const AdminPanel = () => {
               
               {activeTab === 'navigation' && (
                 <NavigationManager />
+              )}
+              
+              {activeTab === 'devis' && (
+                <DevisManager />
+              )}
+              
+              {activeTab === 'messages' && (
+                <MessagesManager />
               )}
               
               {activeTab === 'candidatures' && (

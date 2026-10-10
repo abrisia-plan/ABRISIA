@@ -19,18 +19,15 @@ logger = logging.getLogger(__name__)
 
 # Imports des modules
 from database import connect_to_mongo, close_mongo_connection, get_database
-from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, collection, chatbot, zoho, pro_contact
-from object_storage import init_storage
+from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, collection, chatbot, zoho, pro_contact, fichiers, contact
 
 # Lifespan manager pour la DB
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     await connect_to_mongo()
-    try:
-        init_storage()
-    except Exception as e:
-        logger.warning(f"Object storage init failed (will retry on first upload): {e}")
+    import file_storage
+    logger.info(f"Stockage des fichiers : {'Cloudflare R2' if file_storage.USE_R2 else 'MongoDB'} ({file_storage.MAX_FILE_MB} Mo max par fichier)")
     logger.info("Application demarree")
     yield
     # Shutdown
@@ -96,6 +93,12 @@ api_router.include_router(chatbot.router, prefix="/chatbot")
 
 # Routes Zoho CRM
 api_router.include_router(zoho.router, prefix="/zoho")
+
+# Téléchargement des fichiers stockés (pièces jointes, etc.)
+api_router.include_router(fichiers.router)
+
+# Formulaire de contact
+api_router.include_router(contact.router)
 
 # Routes contact entrepreneur (Espace Pro)
 api_router.include_router(pro_contact.router)
