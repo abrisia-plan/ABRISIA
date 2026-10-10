@@ -78,6 +78,24 @@ async def create_zoho_deal(record: dict) -> dict:
         return r.json()
 
 
+def zoho_configured() -> bool:
+    return all([ZOHO_CLIENT_ID, ZOHO_CLIENT_SECRET, ZOHO_REFRESH_TOKEN])
+
+
+def split_name(full_name: str):
+    """« Marie Tremblay » -> (« Marie », « Tremblay »). Zoho exige un nom de famille."""
+    parts = (full_name or "").strip().split(" ", 1)
+    first = parts[0] or "Visiteur"
+    last = parts[1] if len(parts) > 1 and parts[1].strip() else first
+    return first, last
+
+
+async def _send_to_zoho(kind: str, zoho_record: dict):
+    if kind == "purchase":
+        return await create_zoho_deal(zoho_record)
+    return await create_zoho_lead(zoho_record)
+
+
 async def save_lead(kind: str, data: dict, zoho_record: dict):
     """Sauvegarde le lead en base + tente l'envoi Zoho"""
     db = get_database()
@@ -91,12 +109,9 @@ async def save_lead(kind: str, data: dict, zoho_record: dict):
     result = await db.crm_leads.insert_one(lead_doc)
     lead_id = result.inserted_id
 
-    # Tenter l'envoi Zoho
+    # Tenter l'envoi Zoho (la demande reste en base même si Zoho échoue)
     try:
-        if kind == "purchase":
-            response = await create_zoho_deal(zoho_record)
-        else:
-            response = await create_zoho_lead(zoho_record)
+        response = await _send_to_zoho(kind, zoho_record)
         await db.crm_leads.update_one(
             {"_id": lead_id},
             {"$set": {"zoho_status": "sent", "zoho_response": str(response)}},
@@ -180,8 +195,43 @@ async def get_leads(admin=Depends(require_admin)):
                 "kind": lead.get("kind"),
                 "data": lead.get("data", {}),
                 "zoho_status": lead.get("zoho_status", "pending"),
+                "zoho_error": lead.get("zoho_error", ""),
                 "created_at": lead.get("created_at", "").isoformat() if lead.get("created_at") else "",
             }
             for lead in leads
         ],
     }
+
+
+@router.get("/status")
+async def zoho_status(admin=Depends(require_admin)):
+    """Indique si les clés Zoho sont configurées et si la connexion fonctionne"""
+    if not zoho_configured():
+        return {"configured": False, "connected": False, "message": "Clés Zoho absentes des variables Render"}
+    try:
+        await get_zoho_token()
+        return {"configured": True, "connected": True, "message": "Connexion à Zoho réussie"}
+    except Exception as e:
+        return {"configured": True, "connected": False, "message": f"Connexion refusée par Zoho : {e}"}
+
+
+@router.post("/leads/{lead_id}/retry")
+async def retry_lead(lead_id: str, admin=Depends(require_admin)):
+    """Renvoyer vers Zoho une demande dont l'envoi avait échoué"""
+    from bson import ObjectId
+    if not ObjectId.is_valid(lead_id):
+        raise HTTPException(status_code=400, detail="ID invalide")
+    db = get_database()
+    lead = await db.crm_leads.find_one({"_id": ObjectId(lead_id)})
+    if not lead:
+        raise HTTPException(status_code=404, detail="Demande introuvable")
+    try:
+        response = await _send_to_zoho(lead.get("kind"), lead.get("zoho_record", {}))
+    except Exception as e:
+        await db.crm_leads.update_one({"_id": lead["_id"]}, {"$set": {"zoho_status": "failed", "zoho_error": str(e)}})
+        raise HTTPException(status_code=502, detail=f"Zoho a refusé : {e}")
+    await db.crm_leads.update_one(
+        {"_id": lead["_id"]},
+        {"$set": {"zoho_status": "sent", "zoho_response": str(response)}, "$unset": {"zoho_error": ""}},
+    )
+    return {"success": True}

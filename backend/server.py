@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 # Imports des modules
 from database import connect_to_mongo, close_mongo_connection, get_database
-from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, collection, chatbot, zoho, pro_contact, fichiers
+from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, collection, chatbot, zoho, pro_contact, fichiers, contact
 from object_storage import init_storage
 
 # Lifespan manager pour la DB
@@ -99,6 +99,9 @@ api_router.include_router(zoho.router, prefix="/zoho")
 
 # Téléchargement des fichiers stockés (pièces jointes, etc.)
 api_router.include_router(fichiers.router)
+
+# Formulaire de contact
+api_router.include_router(contact.router)
 
 # Routes contact entrepreneur (Espace Pro)
 api_router.include_router(pro_contact.router)

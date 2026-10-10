@@ -594,6 +594,26 @@ async def create_kit_order(order_data: KitOrderCreate):
             email_service.send_kit_order_notification_to_admin(order_doc)
         except Exception as email_error:
             logger.warning(f"⚠️ Erreur envoi email pour commande {order_number}: {email_error}")
+
+        # Fiche Zoho (la commande reste en base même si Zoho échoue)
+        try:
+            from routes.zoho import save_lead, split_name
+            first_name, last_name = split_name(order_data.customer_name)
+            await save_lead("kit_order", {
+                "first_name": first_name, "last_name": last_name,
+                "email": order_data.customer_email, "phone": order_data.customer_phone,
+                "model_name": kit["name"], "amount": total_amount,
+            }, {
+                "First_Name": first_name,
+                "Last_Name": last_name,
+                "Email": order_data.customer_email,
+                "Phone": order_data.customer_phone,
+                "Company": "Client Collection",
+                "Lead_Source": "Commande Collection",
+                "Description": f"Commande {order_number} : {kit['name']} - {total_amount} $ CAD (statut: en attente)\n{order_data.notes or ''}",
+            })
+        except Exception as zoho_error:
+            logger.warning(f"⚠️ Zoho non mis à jour pour {order_number}: {zoho_error}")
         
         return {
             "success": True,

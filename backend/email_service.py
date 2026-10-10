@@ -411,6 +411,29 @@ class EmailService:
             logger.error(f"Erreur envoi email devis: {str(e)}")
             return False
 
+    def send_contact_notification(self, contact_data):
+        """Notification d'un message reçu par le formulaire de contact"""
+        try:
+            esc = lambda key: html.escape(str(contact_data.get(key) or ''))
+            subject = f"Nouveau message - {contact_data.get('nom', 'Visiteur')} - {contact_data.get('sujet') or 'Contact'}"
+            body = f"""
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouveau message — formulaire de contact</h2>
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                <table style="width: 100%; margin-bottom: 20px;">
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{esc('nom')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{esc('email')}" style="color: #0f766e;">{esc('email')}</a></td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{esc('telephone') or 'Non fourni'}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Sujet :</td><td>{esc('sujet') or 'Aucun'}</td></tr>
+                </table>
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;">
+                    <p style="margin: 0; white-space: pre-wrap;">{esc('message')}</p>
+                </div>
+            """
+            return self._send_email(os.getenv('ADMIN_EMAIL', 'abrisia0plan@gmail.com'), subject, self._wrap_email(body))
+        except Exception as e:
+            logger.error(f"Erreur envoi notification contact: {str(e)}")
+            return False
+
     def send_pro_contact_notification(self, contact_data):
         """Envoie notification de demande entrepreneur à l'admin"""
         try:
