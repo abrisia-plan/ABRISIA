@@ -394,14 +394,14 @@ class EmailService:
             calc = devis_data.get('calculateur') or {}
             num = lambda x: f"{x:g}" if isinstance(x, (int, float)) else str(x)
             calc_section = ""
-            if calc.get('estimation'):
+            if calc.get('surface') or calc.get('estimation'):
                 calc_section = f"""
                     <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Calculateur de prix</h3>
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                         {row('Dimensions', html.escape(f"{num(calc.get('largeur'))} pi × {num(calc.get('profondeur'))} pi"))}
                         {row('Étages', html.escape(str(calc.get('etages'))))}
                         {row('Surface totale', html.escape(f"{num(calc.get('surface'))} pi²"))}
-                        {row('Estimation affichée', html.escape(f"~ {calc.get('estimation'):,} $".replace(',', ' ')))}
+                        {row('Estimation affichée', html.escape(f"~ {calc.get('estimation'):,} $".replace(',', ' ')) if calc.get('estimation') else '')}
                     </table>
                 """
 
@@ -431,7 +431,7 @@ class EmailService:
                 """
 
             body = f"""
-                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle demande de devis</h2>
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle demande de devis{' (par l’assistant du site)' if devis_data.get('source') == 'chatbot' else ''}</h2>
                 <p style="color: #64748b; font-size: 13px; margin: 0 0 20px 0;">{_now_qc().strftime('%d/%m/%Y à %H:%M')}</p>
 
                 <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Informations client</h3>

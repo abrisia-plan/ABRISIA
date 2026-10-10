@@ -73,6 +73,40 @@ DEFAULT_STEPS = [
 FICHE_RE = re.compile(r"\[\[FICHE\]\]\s*(\{.*\})", re.S)
 
 
+def _number(value):
+    try:
+        number = float(value)
+        return number if number > 0 else None
+    except (TypeError, ValueError):
+        return None
+
+
+async def save_chat_devis(fiche: dict, session_id: str):
+    """Demande de devis recueillie dans le clavardage -> vrai devis (admin, courriel, Zoho)"""
+    from models import DevisCreate
+    from routes.devis import create_devis_from_chat
+    largeur, profondeur = _number(fiche.get("largeur")), _number(fiche.get("profondeur"))
+    etages = int(_number(fiche.get("etages")) or 1)
+    surface = largeur * profondeur * etages if largeur and profondeur else None
+    devis = DevisCreate(
+        prenom=(fiche.get("prenom") or "").strip()[:100] or "Visiteur",
+        nom=(fiche.get("nom") or "").strip()[:100],
+        email=(fiche.get("courriel") or "").strip(),
+        telephone=(fiche.get("telephone") or "").strip()[:50],
+        projectType=(fiche.get("type_projet") or "").strip()[:200],
+        plansChoisisNoms=[str(p)[:200] for p in (fiche.get("plans") or [])][:20],
+        representationType=fiche.get("recherche") or "",
+        contactPreference=fiche.get("contact_prefere") or "",
+        styles=[str(st)[:100] for st in (fiche.get("styles") or [])][:10],
+        calcWidth=largeur,
+        calcDepth=profondeur,
+        calcFloors=etages if surface else None,
+        calcSurface=surface,
+        notes=((fiche.get("message") or "").strip() + "\n\n(Demande faite avec l'assistant du site)").strip()[:5000],
+    )
+    return await create_devis_from_chat(devis)
+
+
 async def save_chat_contact(fiche: dict, session_id: str):
     """Coordonnées données au chatbot : base, courriel à Abrisia et fiche Zoho"""
     from email_service import email_service
@@ -108,6 +142,11 @@ def extract_fiche(answer: str):
     except ValueError:
         logger.warning("Fiche du chatbot illisible")
         return visible, None
+    if fiche.get("type") == "devis":
+        # Un devis exige au moins un nom et un courriel
+        if not (fiche.get("prenom") or fiche.get("nom")) or "@" not in (fiche.get("courriel") or ""):
+            return visible, None
+        return visible, fiche
     if not fiche.get("nom") or not (fiche.get("courriel") or fiche.get("telephone")):
         return visible, None
     return visible, fiche
@@ -284,6 +323,27 @@ APPROCHE DE CONSEILLER (comme un bon vendeur, sans pression) :
 - Termine en proposant la prochaine étape : le formulaire de devis gratuit, ou prendre ses coordonnées ici.
 - Si la personne veut seulement une réponse rapide, réponds directement sans interrogatoire.
 
+DEMANDE DE DEVIS DANS LE CLAVARDAGE :
+- Si la personne a un projet, propose-lui de faire sa demande de devis directement ici (c'est gratuit et sans
+  engagement), ou avec le formulaire https://abrisia-plan.ca/devis si elle veut joindre des photos ou des plans.
+- Si elle accepte, pose les questions du formulaire, UNE OU DEUX À LA FOIS, de façon naturelle :
+  1. Son projet : type (maison, chalet, mini-maison, agrandissement, garage, meuble...), neuf ou rénovation.
+  2. Les dimensions approximatives (largeur et profondeur en pieds) et le nombre d'étages.
+  3. Les plans dont elle pense avoir besoin (aide-la à choisir selon les plans offerts listés plus bas).
+  4. Ce qu'elle recherche : plans techniques détaillés, représentation visuelle, ou les deux.
+  5. Le style recherché (moderne, traditionnel québécois, rustique/chalet, minimaliste, industriel, scandinave...).
+  6. Une description libre : municipalité, terrain, échéancier, budget, idées, inspirations.
+  7. Son prénom, son nom, son courriel (obligatoire pour la soumission) et son téléphone.
+  8. Comment elle préfère être contactée : téléphone, courriel, texto ou peu importe.
+- La personne peut passer une question : ne bloque jamais la demande pour un détail.
+- Puis fais un résumé clair et demande : « Souhaitez-vous qu'Abrisia Plan communique avec vous pour vous
+  préparer une soumission et démarrer votre projet ? »
+- Si elle répond oui, remercie-la chaleureusement, dis que la demande est transmise et qu'Abrisia la
+  contactera rapidement pour la soumission, puis mentionne qu'elle pourra envoyer ses photos ou plans en
+  répondant au courriel d'Abrisia. Ajoute À LA FIN, sur une ligne seule, exactement :
+  [[FICHE]] {"type": "devis", "prenom": "...", "nom": "...", "courriel": "...", "telephone": "...", "type_projet": "...", "plans": ["..."], "largeur": 0, "profondeur": 0, "etages": 1, "recherche": "technique" ou "visuel" ou "both" ou "", "styles": ["..."], "contact_prefere": "telephone" ou "courriel" ou "texto" ou "peu-importe" ou "", "message": "description du projet et autres détails"}
+  (JSON valide ; nombres à 0 et textes vides si inconnus).
+
 PRISE DE COORDONNÉES, QUESTIONS ET PLAINTES :
 - Si la personne veut être rappelée, laisser un message, poser une question à laquelle tu ne peux pas répondre,
   ou faire une plainte, recueille poliment, une question à la fois : son nom, son courriel ou son téléphone,
@@ -335,7 +395,16 @@ async def chat(data: ChatMessage):
         answer, fiche = extract_fiche(answer)
         if fiche:
             try:
-                await save_chat_contact(fiche, session_id)
+                if fiche.get("type") == "devis":
+                    try:
+                        await save_chat_devis(fiche, session_id)
+                    except ValueError as e:
+                        # Courriel invalide, etc. : on garde au moins les coordonnées
+                        logger.warning(f"Devis du chatbot invalide, enregistré comme message: {e}")
+                        fiche["nom"] = f"{fiche.get('prenom', '')} {fiche.get('nom', '')}".strip()
+                        await save_chat_contact({**fiche, "type": "projet"}, session_id)
+                else:
+                    await save_chat_contact(fiche, session_id)
             except Exception as e:
                 logger.error(f"Fiche du chatbot non enregistrée: {e}")
 
