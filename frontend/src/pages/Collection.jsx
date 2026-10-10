@@ -302,7 +302,7 @@ const Collection = () => {
   return (
     <div className="min-h-screen pt-20 bg-stone-50" data-testid="collection-page">
       <SEO
-        title="Collection ABRISIA"
+        title="Collection ABRISIA : plans de maisons et chalets prêts à construire"
         description="Découvrez notre collection de modèles de plans. Mini-maisons, chalets, maisons. Choisissez un modèle, personnalisez-le et commandez en ligne."
         path="/collection"
       />

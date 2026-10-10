@@ -604,7 +604,7 @@ Abrisia Plan respecte la Loi sur la protection des renseignements personnels dan
 La propriétaire d'Abrisia Plan est responsable de la protection de vos renseignements personnels. Vous pouvez la joindre à abrisia0plan@gmail.com ou par le formulaire de contact du site.
 
 ## Renseignements recueillis
-Nous recueillons seulement les renseignements que vous nous donnez dans nos formulaires (demande de devis, contact, Espace Pro, commande, candidature) :
+Nous recueillons seulement les renseignements que vous nous donnez dans nos formulaires (demande de devis, contact, Espace Pro, commande, candidature) ou à notre assistant virtuel :
 - nom et prénom;
 - adresse courriel et numéro de téléphone;
 - description de votre projet et fichiers que vous joignez (photos, croquis, plans);
@@ -623,7 +623,7 @@ Pour faire fonctionner le site, vos renseignements sont traités par des fournis
 - hébergement du site et de la base de données (Vercel, Render, MongoDB Atlas);
 - envoi des courriels (Resend);
 - gestion de la relation client (Zoho CRM);
-- assistant virtuel du site (Google Gemini) : les questions posées à l'assistant lui sont transmises.
+- assistant virtuel du site (Google Gemini) : les messages écrits à l'assistant, y compris les coordonnées que vous choisissez de lui donner, lui sont transmis. Ne lui confiez pas de renseignements sensibles.
 
 Certains de ces fournisseurs conservent les données à l'extérieur du Québec, notamment aux États-Unis. Nous choisissons des fournisseurs qui offrent une protection adéquate des renseignements.
 
@@ -773,7 +773,7 @@ async def update_plan_option(option_id: str, data: dict, current_user: dict = De
     try:
         db = get_database()
         update_fields = {}
-        for key in ["name", "price", "description", "category", "is_active", "order"]:
+        for key in ["name", "price", "description", "contenu", "category", "is_active", "order"]:
             if key in data:
                 update_fields[key] = data[key]
         
@@ -802,6 +802,7 @@ async def create_plan_option(data: dict, current_user: dict = Depends(require_ad
             "name": data.get("name", ""),
             "price": data.get("price", "Sur devis"),
             "description": data.get("description", ""),
+            "contenu": data.get("contenu", ""),
             "category": data.get("category", "plans"),
             "is_active": data.get("is_active", True),
             "order": data.get("order", 99),

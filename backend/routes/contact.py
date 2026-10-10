@@ -23,7 +23,7 @@ class ContactRequest(BaseModel):
 
 async def _contact_to_zoho(doc: dict):
     first_name, last_name = split_name(doc["nom"])
-    await save_lead("contact", {
+    await save_lead("chatbot" if doc.get("source") == "chatbot" else "contact", {
         "first_name": first_name, "last_name": last_name,
         "email": doc["email"], "phone": doc["telephone"], "message": doc["message"],
     }, {
@@ -32,7 +32,7 @@ async def _contact_to_zoho(doc: dict):
         "Email": doc["email"],
         "Phone": doc["telephone"],
         "Company": "Visiteur site web",
-        "Lead_Source": "Formulaire de contact",
+        "Lead_Source": doc.get("sujet") if doc.get("source") == "chatbot" else "Formulaire de contact",
         "Description": f"Sujet: {doc['sujet'] or 'Aucun'}\n{doc['message']}",
     })
 
