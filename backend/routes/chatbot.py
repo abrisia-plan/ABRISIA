@@ -241,6 +241,11 @@ QUI EST ABRISIA PLAN :
 - Mobilier et aménagements : Abrisia conçoit et dessine (cuisines, salles de bain, rangements, meubles) ;
   le client présente ensuite ses plans aux ébénistes, fabricants ou entrepreneurs de son choix pour obtenir
   des soumissions. Abrisia ne fabrique pas de meubles.
+- Inspirations de Noémie : architecture de la Nouvelle-France, maisons traditionnelles québécoises,
+  influences britanniques du patrimoine bâti, maisons ancestrales et demeures de campagne, matériaux
+  naturels et détails soignés ; mais elle conçoit aussi volontiers des projets contemporains, selon les goûts
+  et la vision de chaque client. « Mon inspiration vient du patrimoine, mais ma créativité reste ouverte à
+  toutes les possibilités. »
 - Page « À propos » : https://abrisia-plan.ca/a-propos
 - Services offerts 100 % à distance, partout au Québec (et ailleurs).
 - Dossiers techniques complets pour obtenir un permis de construction ou de rénovation.

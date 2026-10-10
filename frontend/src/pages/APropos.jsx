@@ -141,6 +141,36 @@ const APropos = () => (
       </div>
     </section>
 
+    {/* Inspirations de Noémie (à la première personne) */}
+    <section className="py-14 sm:py-20 bg-stone-100">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p className="text-sm font-semibold uppercase tracking-widest text-teal-700 mb-2">Mes inspirations architecturales</p>
+        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">Le patrimoine comme point de départ</h2>
+        <div className="space-y-4 text-lg text-slate-700 leading-relaxed">
+          <p>
+            Je suis particulièrement inspirée par l'architecture de la Nouvelle-France, les maisons
+            traditionnelles québécoises et les influences britanniques qui ont marqué notre patrimoine bâti.
+          </p>
+          <p>
+            J'aime les constructions qui traversent le temps, les matériaux naturels, les détails soignés
+            et les maisons qui possèdent une véritable personnalité. Les maisons ancestrales, les demeures
+            de campagne et l'architecture patrimoniale occupent une place particulière dans mes inspirations.
+          </p>
+          <p>
+            Toutefois, ma créativité ne s'arrête pas à ces préférences. J'aime découvrir de nouveaux styles,
+            explorer des concepts contemporains et adapter chaque conception aux goûts, aux besoins et à la
+            vision de mes clients.
+          </p>
+        </div>
+        <blockquote className="mt-8 border-l-4 border-teal-600 pl-5">
+          <p className="text-2xl font-semibold text-teal-900 leading-snug">
+            « Mon inspiration vient du patrimoine, mais ma créativité reste ouverte à toutes les possibilités. »
+          </p>
+          <footer className="mt-2 text-slate-600">Noémie, fondatrice d'ABRISIA-PLAN</footer>
+        </blockquote>
+      </div>
+    </section>
+
     {/* Le territoire : photos prises par Noémie dans sa région */}
     <section className="py-14 sm:py-20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
