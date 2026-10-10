@@ -33,8 +33,12 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
             "Phone": devis_doc.get("telephone", ""),
             "Company": "Visiteur site web",
             "Lead_Source": "Demande de devis",
-            "Description": f"Type: {devis_doc.get('project_type', 'N/A')}\n"
-                           f"Plans: {', '.join(devis_doc.get('plans_choisis', []))}\n"
+            "Description": f"Type: {devis_doc.get('project_type') or 'N/A'}\n"
+                           f"Plans: {', '.join(devis_doc.get('plans_noms') or devis_doc.get('plans_choisis', []))}\n"
+                           f"Contact préféré: {devis_doc.get('contact_preference') or 'N/A'}\n"
+                           f"Style: {', '.join(devis_doc.get('styles') or []) or 'N/A'}\n"
+                           + (f"Calculateur: {devis_doc['calculateur']['surface']} pi² ~ {devis_doc['calculateur']['estimation']} $\n" if devis_doc.get('calculateur') else "")
+                           + 
                            f"Notes: {devis_doc.get('notes', '')}"
                            + "".join(f"\nFichier reçu par courriel : {f['filename']}" for f in devis_doc.get('fichiers', [])),
         }
@@ -70,6 +74,17 @@ async def _create_devis(devis_data: DevisCreate, fichiers: list, background_task
         "telephone": devis_data.telephone or "",
         "project_type": devis_data.projectType or "",
         "plans_choisis": devis_data.plansChoisis,
+        "plans_noms": devis_data.plansChoisisNoms,
+        "representation_type": devis_data.representationType or "",
+        "contact_preference": devis_data.contactPreference or "",
+        "styles": devis_data.styles,
+        "calculateur": {
+            "largeur": devis_data.calcWidth,
+            "profondeur": devis_data.calcDepth,
+            "etages": devis_data.calcFloors,
+            "surface": devis_data.calcSurface,
+            "estimation": int(devis_data.calcEstimate) if devis_data.calcEstimate else None,
+        } if devis_data.calcEstimate else None,
         "notes": devis_data.notes,
         "fichiers": fichiers,
         "status": "En attente",
@@ -210,7 +225,11 @@ async def get_all_devis(
                 "email": devis["email"],
                 "telephone": devis.get("telephone", ""),
                 "projectType": devis.get("project_type", ""),
-                "plansChoisis": devis.get("plans_choisis", []),
+                "plansChoisis": devis.get("plans_noms") or devis.get("plans_choisis", []),
+                "contactPreference": devis.get("contact_preference", ""),
+                "representationType": devis.get("representation_type", ""),
+                "styles": devis.get("styles", []),
+                "calculateur": devis.get("calculateur"),
                 "notes": devis.get("notes", ""),
                 "fichiers": devis.get("fichiers", []),
                 "status": devis["status"],

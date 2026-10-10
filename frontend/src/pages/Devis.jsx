@@ -15,6 +15,13 @@ import { devisService, handleApiError } from '../services/api';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Valeurs par défaut; les vraies limites viennent du serveur (/api/devis/limites)
+const CONTACT_PREFERENCES = [
+  { value: 'telephone', label: 'Par téléphone', help: 'Un appel pour discuter de votre projet' },
+  { value: 'courriel', label: 'Par courriel', help: 'Une réponse écrite avec les documents utiles' },
+  { value: 'texto', label: 'Par texto', help: 'Un message texte à votre numéro de téléphone' },
+  { value: 'peu-importe', label: 'Peu importe', help: 'Nous choisirons le moyen le plus pratique' },
+];
+
 const DEFAULT_LIMITS = { max_total_mb: 18, max_files: 10 };
 const formatSize = (bytes) => bytes < 1024 * 1024
   ? `${Math.max(1, Math.round(bytes / 1024))} Ko`
@@ -33,7 +40,10 @@ const Devis = () => {
     telephone: '',
     projectType: '',
     plansChoisis: [],
-    notes: ''
+    notes: '',
+    representationType: '',
+    contactPreference: '',
+    styles: []
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -186,9 +196,21 @@ const Devis = () => {
 
     try {
       // Envoyer vers l'API réelle
+      // Tout ce que le client a choisi est envoyé, y compris le calculateur
+      const payload = {
+        ...formData,
+        plansChoisisNoms: planOptions
+          .filter(p => formData.plansChoisis.includes(p.id))
+          .map(p => p.price ? `${p.name} (${p.price})` : p.name),
+        calcWidth: calcWidth || null,
+        calcDepth: calcDepth || null,
+        calcFloors: calcEstimate ? calcFloors : null,
+        calcSurface: calcEstimate ? calcEstimate.surface : null,
+        calcEstimate: calcEstimate ? calcEstimate.price : null,
+      };
       const response = files.length
-        ? await devisService.submitWithFiles(formData, files)
-        : await devisService.submit(formData);
+        ? await devisService.submitWithFiles(payload, files)
+        : await devisService.submit(payload);
       
       if (response.success) {
         toast({
@@ -198,7 +220,8 @@ const Devis = () => {
         
         // Reset form
         setFormData({
-          prenom: '', nom: '', email: '', telephone: '', projectType: '', plansChoisis: [], notes: ''
+          prenom: '', nom: '', email: '', telephone: '', projectType: '', plansChoisis: [], notes: '',
+          representationType: '', contactPreference: '', styles: []
         });
         setFiles([]);
         setFileError('');
@@ -452,6 +475,8 @@ const Devis = () => {
                             type="radio" 
                             name="representationType" 
                             value="technique"
+                            checked={formData.representationType === 'technique'}
+                            onChange={handleInputChange}
                             className="mt-1 text-teal-600 focus:ring-teal-500"
                           />
                           <div>
@@ -464,6 +489,8 @@ const Devis = () => {
                             type="radio" 
                             name="representationType" 
                             value="visuel"
+                            checked={formData.representationType === 'visuel'}
+                            onChange={handleInputChange}
                             className="mt-1 text-teal-600 focus:ring-teal-500"
                           />
                           <div>
@@ -476,6 +503,8 @@ const Devis = () => {
                             type="radio" 
                             name="representationType" 
                             value="both"
+                            checked={formData.representationType === 'both'}
+                            onChange={handleInputChange}
                             className="mt-1 text-teal-600 focus:ring-teal-500"
                           />
                           <div>
@@ -488,56 +517,24 @@ const Devis = () => {
                   </div>
 
                   <div className="border-t border-blue-200 pt-4">
-                    <h4 className="font-medium text-slate-700 mb-3">Comment préférez-vous recevoir la réponse à votre devis ?</h4>
+                    <h4 className="font-medium text-slate-700 mb-3">Comment préférez-vous qu'on vous contacte ?</h4>
                     <div className="space-y-2">
-                      <label className="flex items-start space-x-3 cursor-pointer">
-                        <input 
-                          type="radio" 
-                          name="responsePreference" 
-                          value="phone"
-                          className="mt-1 text-teal-600 focus:ring-teal-500"
-                        />
-                        <div>
-                          <span className="text-sm font-medium text-slate-700">Appel téléphonique</span>
-                          <p className="text-xs text-slate-600">Discussion directe pour répondre à vos questions</p>
-                        </div>
-                      </label>
-                      <label className="flex items-start space-x-3 cursor-pointer">
-                        <input 
-                          type="radio" 
-                          name="responsePreference" 
-                          value="email"
-                          className="mt-1 text-teal-600 focus:ring-teal-500"
-                        />
-                        <div>
-                          <span className="text-sm font-medium text-slate-700">Par courriel écrit</span>
-                          <p className="text-xs text-slate-600">Devis détaillé par écrit avec documents joints</p>
-                        </div>
-                      </label>
-                      <label className="flex items-start space-x-3 cursor-pointer">
-                        <input 
-                          type="radio" 
-                          name="responsePreference" 
-                          value="video"
-                          className="mt-1 text-teal-600 focus:ring-teal-500"
-                        />
-                        <div>
-                          <span className="text-sm font-medium text-slate-700">Vidéoconférence</span>
-                          <p className="text-xs text-slate-600">Présentation visuelle avec partage d'écran (Zoom, Teams, etc.)</p>
-                        </div>
-                      </label>
-                      <label className="flex items-start space-x-3 cursor-pointer">
-                        <input 
-                          type="radio" 
-                          name="responsePreference" 
-                          value="flexible"
-                          className="mt-1 text-teal-600 focus:ring-teal-500"
-                        />
-                        <div>
-                          <span className="text-sm font-medium text-slate-700">À votre convenance</span>
-                          <p className="text-xs text-slate-600">Nous vous contacterons selon vos disponibilités</p>
-                        </div>
-                      </label>
+                      {CONTACT_PREFERENCES.map((opt) => (
+                        <label key={opt.value} className="flex items-start space-x-3 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="contactPreference"
+                            value={opt.value}
+                            checked={formData.contactPreference === opt.value}
+                            onChange={handleInputChange}
+                            className="mt-1 text-teal-600 focus:ring-teal-500"
+                          />
+                          <div>
+                            <span className="text-sm font-medium text-slate-700">{opt.label}</span>
+                            <p className="text-xs text-slate-600">{opt.help}</p>
+                          </div>
+                        </label>
+                      ))}
                     </div>
                   </div>
 
@@ -549,7 +546,15 @@ const Devis = () => {
                         'Minimaliste', 'Industriel', 'Scandinave', 'Autre (à préciser)'
                       ].map((style) => (
                         <label key={style} className="flex items-center space-x-2 cursor-pointer bg-white px-3 py-1 rounded border border-blue-200 hover:bg-blue-50">
-                          <input type="checkbox" className="text-teal-600 focus:ring-teal-500" />
+                          <input
+                            type="checkbox"
+                            checked={formData.styles.includes(style)}
+                            onChange={(e) => setFormData(prev => ({
+                              ...prev,
+                              styles: e.target.checked ? [...prev.styles, style] : prev.styles.filter(st => st !== style)
+                            }))}
+                            className="text-teal-600 focus:ring-teal-500"
+                          />
                           <span className="text-sm text-slate-700">{style}</span>
                         </label>
                       ))}

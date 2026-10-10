@@ -5,9 +5,15 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from datetime import datetime
+from zoneinfo import ZoneInfo
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def _now_qc():
+    """Heure du Québec (le serveur Render est à l'heure universelle)"""
+    return datetime.now(ZoneInfo("America/Toronto"))
 
 
 def _format_size(size):
@@ -29,13 +35,11 @@ class EmailService:
         self.resend_from = os.getenv('RESEND_FROM', 'Abrisia Plan <onboarding@resend.dev>')
 
     def _branded_header(self):
-        return """
+        return f"""
         <div style="background: linear-gradient(135deg, #0f766e 0%, #115e59 100%); padding: 24px 30px; text-align: center;">
             <table style="margin: 0 auto;"><tr>
                 <td style="padding-right: 12px; vertical-align: middle;">
-                    <div style="width: 40px; height: 40px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <span style="color: #0f766e; font-weight: bold; font-size: 22px; line-height: 40px; display: block; text-align: center; width: 40px;">A</span>
-                    </div>
+                    <img src="{self.app_url}/logo-email.png" alt="Abrisia" width="48" height="48" style="display: block; width: 48px; height: 48px; border-radius: 50%; background: white;">
                 </td>
                 <td style="vertical-align: middle;">
                     <span style="color: white; font-size: 22px; font-weight: bold; letter-spacing: 1px;">ABRISIA PLAN</span>
@@ -56,7 +60,7 @@ class EmailService:
                 <span style="color: #475569;">|</span>
                 <a href="mailto:{self.sender_email}" style="color: #5eead4; text-decoration: none; font-size: 12px; margin: 0 10px;">{self.sender_email}</a>
             </div>
-            <p style="color: #475569; font-size: 11px; margin: 10px 0 0 0;">© 2027 Abrisia Plan. Tous droits réservés.</p>
+            <p style="color: #475569; font-size: 11px; margin: 10px 0 0 0;">© {_now_qc().year} Abrisia Plan. Tous droits réservés.</p>
         </div>"""
 
     def _wrap_email(self, body_content):
@@ -283,7 +287,7 @@ class EmailService:
                     </div>
                     
                     <div style="background: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b;">
-                        <p style="margin: 0;">Commande reçue le {datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                        <p style="margin: 0;">Commande reçue le {_now_qc().strftime('%d/%m/%Y à %H:%M')}</p>
                     </div>
                 </div>
             </body>
@@ -302,7 +306,7 @@ class EmailService:
             subject = f"Nouvelle candidature - {candidature_data.get('nom', 'Candidat')}"
             body = f"""
                 <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle candidature</h2>
-                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{_now_qc().strftime('%d/%m/%Y à %H:%M')}</p>
                 <table style="width: 100%; margin-bottom: 20px;">
                     <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{candidature_data.get('nom', '')}</td></tr>
                     <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{candidature_data.get('email', '')}" style="color: #0f766e;">{candidature_data.get('email', '')}</a></td></tr>
@@ -364,11 +368,44 @@ class EmailService:
             recipient_email = os.getenv('ADMIN_EMAIL', 'abrisia0plan@gmail.com')
             # Les textes viennent du client : on les échappe pour qu'ils ne puissent pas injecter de HTML
             esc = lambda key, default='Non spécifié': html.escape(str(devis_data.get(key) or default))
-            plans = devis_data.get('plans_choisis') or devis_data.get('plansChoisis') or []
-            plans_choisis_text = html.escape(", ".join(plans))
-            project_type = html.escape(devis_data.get('project_type') or devis_data.get('projectType') or 'Non spécifié')
+            # Noms lisibles des plans (« Plan de fondation (300$) »), sinon les codes
+            plans = devis_data.get('plans_noms') or devis_data.get('plans_choisis') or devis_data.get('plansChoisis') or []
+            plans_choisis_text = "<br>".join(html.escape(p) for p in plans)
+            project_type = html.escape(devis_data.get('project_type') or devis_data.get('projectType') or '')
 
-            subject = f"Nouveau devis - {devis_data.get('prenom', '')} {devis_data.get('nom', 'Client')} - {datetime.now().strftime('%d/%m/%Y')}"
+            representation_labels = {
+                'technique': 'Plans techniques détaillés',
+                'visuel': 'Représentation visuelle/esthétique',
+                'both': 'Les deux (technique + visuel)',
+            }
+            contact_labels = {
+                'telephone': 'Par téléphone',
+                'courriel': 'Par courriel',
+                'texto': 'Par texto',
+                'peu-importe': 'Peu importe',
+            }
+            representation = representation_labels.get(devis_data.get('representation_type') or '', '')
+            contact_pref = contact_labels.get(devis_data.get('contact_preference') or '', '')
+            styles = ", ".join(devis_data.get('styles') or [])
+
+            def row(label, value):
+                return f'<tr><td style="padding: 6px 0; font-weight: bold; width: 35%; vertical-align: top;">{label} :</td><td>{value}</td></tr>' if value else ''
+
+            calc = devis_data.get('calculateur') or {}
+            num = lambda x: f"{x:g}" if isinstance(x, (int, float)) else str(x)
+            calc_section = ""
+            if calc.get('estimation'):
+                calc_section = f"""
+                    <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Calculateur de prix</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                        {row('Dimensions', html.escape(f"{num(calc.get('largeur'))} pi × {num(calc.get('profondeur'))} pi"))}
+                        {row('Étages', html.escape(str(calc.get('etages'))))}
+                        {row('Surface totale', html.escape(f"{num(calc.get('surface'))} pi²"))}
+                        {row('Estimation affichée', html.escape(f"~ {calc.get('estimation'):,} $".replace(',', ' ')))}
+                    </table>
+                """
+
+            subject = f"Nouveau devis - {devis_data.get('prenom', '')} {devis_data.get('nom', 'Client')} - {_now_qc().strftime('%d/%m/%Y')}"
 
             notes_section = ""
             if devis_data.get('notes'):
@@ -395,7 +432,7 @@ class EmailService:
 
             body = f"""
                 <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle demande de devis</h2>
-                <p style="color: #64748b; font-size: 13px; margin: 0 0 20px 0;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 20px 0;">{_now_qc().strftime('%d/%m/%Y à %H:%M')}</p>
 
                 <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Informations client</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
@@ -407,10 +444,14 @@ class EmailService:
 
                 <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Détails du projet</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Type :</td><td>{project_type}</td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">Plans :</td><td>{plans_choisis_text or 'Aucun'}</td></tr>
+                    {row('Type', project_type)}
+                    {row('Plans demandés', plans_choisis_text or 'Aucun')}
+                    {row('Recherche', html.escape(representation))}
+                    {row('Style', html.escape(styles))}
+                    {row('Préfère être contacté', f'<strong>{html.escape(contact_pref)}</strong>' if contact_pref else '')}
                 </table>
 
+                {calc_section}
                 {notes_section}
                 {fichiers_section}
 
@@ -438,7 +479,7 @@ class EmailService:
             subject = f"Nouveau message - {contact_data.get('nom', 'Visiteur')} - {contact_data.get('sujet') or 'Contact'}"
             body = f"""
                 <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouveau message — formulaire de contact</h2>
-                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{_now_qc().strftime('%d/%m/%Y à %H:%M')}</p>
                 <table style="width: 100%; margin-bottom: 20px;">
                     <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{esc('nom')}</td></tr>
                     <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{esc('email')}" style="color: #0f766e;">{esc('email')}</a></td></tr>
@@ -460,10 +501,10 @@ class EmailService:
             recipient_email = "abrisia0plan@gmail.com"
             company = contact_data.get('company', '')
             contact_name = contact_data.get('contact_name', 'Entrepreneur')
-            subject = f"Nouvelle demande entrepreneur - {company} ({contact_name}) - {datetime.now().strftime('%d/%m/%Y')}"
+            subject = f"Nouvelle demande entrepreneur - {company} ({contact_name}) - {_now_qc().strftime('%d/%m/%Y')}"
             body = f"""
                 <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle demande — Espace Pro</h2>
-                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{datetime.now().strftime('%d/%m/%Y à %H:%M')}</p>
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{_now_qc().strftime('%d/%m/%Y à %H:%M')}</p>
                 <table style="width: 100%; margin-bottom: 20px;">
                     <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Entreprise :</td><td>{company}</td></tr>
                     <tr><td style="padding: 6px 0; font-weight: bold;">Nom du contact :</td><td>{contact_name}</td></tr>
