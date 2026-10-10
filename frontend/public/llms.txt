@@ -1,6 +1,6 @@
 # Abrisia Plan
 
-> Abrisia Plan est une entreprise de dessin en bâtiment établie au Saguenay–Lac-Saint-Jean (Québec). Elle conçoit des plans de maisons unifamiliales, chalets, mini-maisons, agrandissements, garages et abris, ainsi que des plans de meubles sur mesure. Services 100 % à distance, partout au Québec. Devis gratuit.
+> Abrisia Plan (ABRISIA-PLAN), fondée par Noémie, est un studio indépendant de conception et de dessin de plans établie au Saguenay–Lac-Saint-Jean (Québec). Elle conçoit des plans de maisons unifamiliales, chalets, mini-maisons, agrandissements, garages et abris, ainsi que des plans de meubles sur mesure. Services 100 % à distance, partout au Québec. Devis gratuit.
 
 ## Services
 - Plans pour permis de construction ou de rénovation : implantation, fondation, plans d'étages, élévations, coupes, détails, toiture.
@@ -20,6 +20,7 @@ Calculs de structure et plans scellés (ingénieur partenaire au besoin), certif
 ## Pages
 - [Accueil](https://abrisia-plan.ca/)
 - [Demander un devis gratuit](https://abrisia-plan.ca/devis)
+- [À propos d'ABRISIA et de sa fondatrice](https://abrisia-plan.ca/a-propos)
 - [Questions fréquentes](https://abrisia-plan.ca/faq)
 - [Collection de plans](https://abrisia-plan.ca/collection)
 - [Espace Pro pour entrepreneurs](https://abrisia-plan.ca/espace-pro)

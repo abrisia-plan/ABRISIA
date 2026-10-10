@@ -496,7 +496,7 @@ async def get_navigation(current_user: dict = Depends(require_admin)):
             ]
             await db.site_settings.insert_one({"key": "navigation", "pages": default_pages})
             return {"success": True, "pages": default_pages}
-        return {"success": True, "pages": nav.get("pages", [])}
+        return {"success": True, "pages": _with_a_propos(nav.get("pages", []))}
     except Exception as e:
         logger.error(f"Erreur navigation: {e}")
         raise HTTPException(status_code=500, detail="Erreur")
@@ -518,6 +518,16 @@ async def update_navigation(data: dict, current_user: dict = Depends(require_adm
         raise HTTPException(status_code=500, detail="Erreur")
 
 
+A_PROPOS_PAGE = {"name": "À propos", "href": "/a-propos", "visible": True, "order": 4.5}
+
+
+def _with_a_propos(pages: list) -> list:
+    """Ajoute « À propos » au menu s'il n'y est pas encore (on peut ensuite le masquer ou le déplacer)"""
+    if any(p.get("href") == "/a-propos" for p in pages):
+        return pages
+    return pages + [dict(A_PROPOS_PAGE)]
+
+
 # Route publique pour obtenir le menu (sans auth)
 public_router = APIRouter(prefix="/navigation", tags=["navigation"])
 
@@ -533,11 +543,12 @@ async def get_public_navigation():
                 {"name": "Inspiration", "href": "/inspiration", "visible": True, "order": 1},
                 {"name": "Collection", "href": "/collection", "visible": True, "order": 2},
                 {"name": "Espace Pro", "href": "/espace-pro", "visible": True, "order": 3},
-                {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 4},
+                {"name": "À propos", "href": "/a-propos", "visible": True, "order": 4},
+                {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 4.5},
                 {"name": "Contact", "href": "/contact", "visible": True, "order": 5},
             ]
             return {"success": True, "pages": default_pages}
-        visible = [p for p in nav.get("pages", []) if p.get("visible", True)]
+        visible = [p for p in _with_a_propos(nav.get("pages", [])) if p.get("visible", True)]
         visible.sort(key=lambda x: x.get("order", 99))
         return {"success": True, "pages": visible}
     except Exception as e:

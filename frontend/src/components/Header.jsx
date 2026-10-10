@@ -9,6 +9,7 @@ const defaultNav = [
   { name: 'Accueil', href: '/' },
   { name: 'Collection', href: '/collection' },
   { name: 'Espace Pro', href: '/espace-pro' },
+  { name: 'À propos', href: '/a-propos' },
   { name: 'Demander un devis', href: '/devis' },
   { name: 'Contact', href: '/contact' }
 ];

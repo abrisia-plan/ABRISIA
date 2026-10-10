@@ -7,6 +7,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const defaultFooterNav = [
   { name: 'Accueil', href: '/' },
   { name: 'Collection de plans', href: '/collection' },
+  { name: 'À propos', href: '/a-propos' },
   { name: 'Demander un devis', href: '/devis' },
   { name: 'Contact', href: '/contact' }
 ];
