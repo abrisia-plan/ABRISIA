@@ -9,7 +9,7 @@ import { FloorPlanDrawing, ElevationDrawing, FurnitureDrawing, BlueprintGrid } f
 
 // Vraies photos à ajouter quand elles seront prêtes (ex. '/noemie.jpg' dans frontend/public).
 // En attendant : le logo pour la fondatrice et des dessins en traits pour les autres sections.
-const FOUNDER_PHOTO = null;
+const FOUNDER_PHOTO = '/images/a-propos/noemie.jpg';
 const STORY_PHOTO = null;      // espace de travail, table à dessin, croquis...
 const LIBERTE_PHOTO = null;    // un aménagement ou un meuble conçu par Abrisia
 
