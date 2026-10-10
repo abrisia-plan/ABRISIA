@@ -1,5 +1,8 @@
-from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks, File, Form, UploadFile
+from pydantic import ValidationError
 from typing import List
+import json
+import os
 from datetime import datetime
 from models import (
     Devis, DevisCreate, DevisUpdate, DevisResponse, 
@@ -8,6 +11,7 @@ from models import (
 from database import get_database
 from auth import require_admin
 from email_service import email_service
+from file_storage import save_file, private_url
 from bson import ObjectId
 import logging
 
@@ -31,7 +35,8 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
             "Lead_Source": "Demande de devis",
             "Description": f"Type: {devis_doc.get('project_type', 'N/A')}\n"
                            f"Plans: {', '.join(devis_doc.get('plans_choisis', []))}\n"
-                           f"Notes: {devis_doc.get('notes', '')}",
+                           f"Notes: {devis_doc.get('notes', '')}"
+                           + "".join(f"\nFichier: {f['filename']} - {f['url']}" for f in devis_doc.get('fichiers', [])),
         }
         data = {
             "first_name": first_name,
@@ -43,53 +48,111 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
     except Exception as e:
         logger.warning(f"Zoho lead creation échouée pour devis: {e}")
 
+# Limites des pièces jointes (MongoDB gratuit = 512 Mo au total)
+MAX_FILE_MB = 10
+MAX_FILES = 10
+MAX_FILE_SIZE = MAX_FILE_MB * 1024 * 1024
+ALLOWED_EXTENSIONS = {
+    ".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".heif", ".bmp", ".tif", ".tiff",
+    ".pdf", ".dwg", ".dxf", ".skp", ".rvt", ".ifc",
+    ".doc", ".docx", ".xls", ".xlsx", ".odt", ".ods", ".txt", ".rtf", ".zip",
+}
+
+
+async def _create_devis(devis_data: DevisCreate, fichiers: list, background_tasks: BackgroundTasks):
+    db = get_database()
+    devis_doc = {
+        "prenom": devis_data.prenom,
+        "nom": devis_data.nom,
+        "email": devis_data.email,
+        "telephone": devis_data.telephone or "",
+        "project_type": devis_data.projectType or "",
+        "plans_choisis": devis_data.plansChoisis,
+        "notes": devis_data.notes,
+        "fichiers": fichiers,
+        "status": "En attente",
+        "assigned_to": None,
+        "created_at": datetime.utcnow(),
+        "updated_at": datetime.utcnow()
+    }
+
+    # Le devis est d'abord enregistré en base : il n'est jamais perdu,
+    # même si le courriel ou Zoho échoue ensuite.
+    result = await db.devis.insert_one(devis_doc)
+
+    background_tasks.add_task(email_service.send_devis_notification, devis_doc)
+    background_tasks.add_task(_create_zoho_lead_from_devis, devis_doc)
+
+    logger.info(f"✅ Nouveau devis soumis par {devis_data.prenom} {devis_data.nom} ({devis_data.email}), {len(fichiers)} fichier(s)")
+
+    return DevisResponse(
+        success=True,
+        message="Devis soumis avec succès. Nous vous contacterons sous 24h.",
+        devis={
+            "id": str(result.inserted_id),
+            "status": "En attente",
+            "createdAt": devis_doc["created_at"].isoformat()
+        }
+    )
+
+
 @router.post("/devis", response_model=DevisResponse)
 async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTasks):
-    """Soumettre une demande de devis (public)"""
+    """Soumettre une demande de devis sans fichiers (public)"""
     try:
-        db = get_database()
-        
-        # Créer le document devis
-        devis_doc = {
-            "prenom": devis_data.prenom,
-            "nom": devis_data.nom,
-            "email": devis_data.email,
-            "telephone": devis_data.telephone or "",
-            "project_type": devis_data.projectType or "",
-            "plans_choisis": devis_data.plansChoisis,
-            "notes": devis_data.notes,
-            "status": "En attente",
-            "assigned_to": None,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow()
-        }
-        
-        # Insérer en base
-        result = await db.devis.insert_one(devis_doc)
-        
-        # Envoyer la notification email en arrière-plan
-        background_tasks.add_task(
-            email_service.send_devis_notification, 
-            devis_doc
-        )
-        
-        # Créer un lead Zoho en arrière-plan
-        background_tasks.add_task(_create_zoho_lead_from_devis, devis_doc)
-        
-        logger.info(f"✅ Nouveau devis soumis par {devis_data.prenom} {devis_data.nom} ({devis_data.email}) - Email de notification programmé")
-        
-        return DevisResponse(
-            success=True,
-            message="Devis soumis avec succès. Nous vous contacterons sous 24h.",
-            devis={
-                "id": str(result.inserted_id),
-                "status": "En attente",
-                "createdAt": devis_doc["created_at"].isoformat()
-            }
-        )
-        
+        return await _create_devis(devis_data, [], background_tasks)
     except Exception as e:
         logger.error(f"❌ Erreur soumission devis: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Erreur lors de la soumission du devis"
+        )
+
+
+@router.post("/devis/avec-fichiers", response_model=DevisResponse)
+async def submit_devis_with_files(
+    background_tasks: BackgroundTasks,
+    data: str = Form(...),
+    files: List[UploadFile] = File(default=[]),
+):
+    """Soumettre une demande de devis avec pièces jointes (public).
+
+    `data` contient les champs du formulaire en JSON, `files` les fichiers.
+    """
+    try:
+        devis_data = DevisCreate(**json.loads(data))
+    except (ValueError, ValidationError):
+        raise HTTPException(status_code=422, detail="Informations du formulaire invalides. Vérifiez votre courriel.")
+
+    if len(files) > MAX_FILES:
+        raise HTTPException(status_code=400, detail=f"Maximum {MAX_FILES} fichiers par demande.")
+
+    # Tout vérifier avant d'enregistrer quoi que ce soit
+    contents = []
+    for upload in files:
+        name = os.path.basename(upload.filename or "fichier")
+        ext = os.path.splitext(name)[1].lower()
+        if ext not in ALLOWED_EXTENSIONS:
+            raise HTTPException(status_code=400, detail=f"Le type de fichier « {name} » n'est pas accepté.")
+        content = await upload.read(MAX_FILE_SIZE + 1)
+        if len(content) > MAX_FILE_SIZE:
+            raise HTTPException(status_code=413, detail=f"Le fichier « {name} » dépasse {MAX_FILE_MB} Mo.")
+        contents.append((name, content, upload.content_type or "application/octet-stream"))
+
+    try:
+        fichiers = []
+        for name, content, content_type in contents:
+            info = await save_file(content, name, content_type, folder="devis", client_email=devis_data.email)
+            fichiers.append({
+                "id": info["id"],
+                "filename": name,
+                "size": info["size"],
+                "content_type": content_type,
+                "url": private_url(info),
+            })
+        return await _create_devis(devis_data, fichiers, background_tasks)
+    except Exception as e:
+        logger.error(f"❌ Erreur soumission devis avec fichiers: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erreur lors de la soumission du devis"
@@ -138,6 +201,7 @@ async def get_all_devis(
                 "projectType": devis.get("project_type", ""),
                 "plansChoisis": devis.get("plans_choisis", []),
                 "notes": devis.get("notes", ""),
+                "fichiers": devis.get("fichiers", []),
                 "status": devis["status"],
                 "assignedTo": devis.get("assigned_to"),
                 "createdAt": devis["created_at"].isoformat(),

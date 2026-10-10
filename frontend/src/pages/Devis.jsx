@@ -7,12 +7,20 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Checkbox } from '../components/ui/checkbox';
 import { projectTypes } from '../data/mock';
-import { Send, CheckCircle, Loader2, Calculator } from 'lucide-react';
+import { Send, CheckCircle, Loader2, Calculator, Paperclip, X } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import SEO from '../components/SEO';
 import { devisService, handleApiError } from '../services/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Doit correspondre aux limites du serveur (backend/routes/devis.py)
+const MAX_FILE_MB = 10;
+const MAX_FILES = 10;
+const formatSize = (bytes) => bytes < 1024 * 1024
+  ? `${Math.max(1, Math.round(bytes / 1024))} Ko`
+  : `${(bytes / 1024 / 1024).toFixed(1)} Mo`;
+const ACCEPTED_FILES = '.jpg,.jpeg,.png,.gif,.webp,.heic,.heif,.bmp,.tif,.tiff,.pdf,.dwg,.dxf,.skp,.rvt,.ifc,.doc,.docx,.xls,.xlsx,.odt,.ods,.txt,.rtf,.zip';
 
 const Devis = () => {
   const { toast } = useToast();
@@ -30,6 +38,8 @@ const Devis = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [files, setFiles] = useState([]);
+  const [fileError, setFileError] = useState('');
 
   // Contenu dynamique de la page (titre, sous-titre)
   const [pageTexts, setPageTexts] = useState({
@@ -135,13 +145,37 @@ const Devis = () => {
     }));
   };
 
+  const handleFilesChange = (e) => {
+    const picked = Array.from(e.target.files || []);
+    e.target.value = ''; // permet de rechoisir le même fichier
+    const tooBig = picked.filter(f => f.size > MAX_FILE_MB * 1024 * 1024);
+    const accepted = picked.filter(f => f.size <= MAX_FILE_MB * 1024 * 1024);
+    const combined = [...files, ...accepted];
+    const errors = [];
+    if (tooBig.length) {
+      errors.push(`Trop gros (maximum ${MAX_FILE_MB} Mo par fichier) : ${tooBig.map(f => f.name).join(', ')}. Vous pourrez nous envoyer ces fichiers par courriel après votre demande.`);
+    }
+    if (combined.length > MAX_FILES) {
+      errors.push(`Maximum ${MAX_FILES} fichiers par demande.`);
+    }
+    setFileError(errors.join(' '));
+    setFiles(combined.slice(0, MAX_FILES));
+  };
+
+  const removeFile = (index) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+    setFileError('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
       // Envoyer vers l'API réelle
-      const response = await devisService.submit(formData);
+      const response = files.length
+        ? await devisService.submitWithFiles(formData, files)
+        : await devisService.submit(formData);
       
       if (response.success) {
         toast({
@@ -153,6 +187,8 @@ const Devis = () => {
         setFormData({
           prenom: '', nom: '', email: '', telephone: '', projectType: '', plansChoisis: [], notes: ''
         });
+        setFiles([]);
+        setFileError('');
       } else {
         throw new Error(response.message || 'Erreur lors de l\'envoi');
       }
@@ -528,6 +564,56 @@ const Devis = () => {
                   />
                 </div>
 
+                {/* Pièces jointes */}
+                <div className="space-y-2">
+                  <Label htmlFor="files" className="text-slate-700 font-medium">
+                    Joindre des fichiers (optionnel)
+                  </Label>
+                  <p className="text-sm text-slate-600">
+                    Photos, croquis, plans PDF ou DWG, etc. Maximum {MAX_FILES} fichiers de {MAX_FILE_MB} Mo chacun.
+                  </p>
+                  <label
+                    htmlFor="files"
+                    className="flex items-center justify-center gap-2 w-full p-4 border-2 border-dashed border-stone-300 rounded-lg cursor-pointer hover:border-teal-500 hover:bg-teal-50 transition-colors text-slate-700"
+                  >
+                    <Paperclip className="h-5 w-5" />
+                    Choisir des fichiers
+                  </label>
+                  <input
+                    id="files"
+                    type="file"
+                    multiple
+                    accept={ACCEPTED_FILES}
+                    onChange={handleFilesChange}
+                    className="hidden"
+                  />
+                  {fileError && (
+                    <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded p-3" role="alert">
+                      {fileError}
+                    </p>
+                  )}
+                  {files.length > 0 && (
+                    <ul className="space-y-2">
+                      {files.map((file, index) => (
+                        <li key={`${file.name}-${index}`} className="flex items-center justify-between gap-3 p-2 bg-stone-50 border border-stone-200 rounded text-sm">
+                          <span className="truncate">{file.name}</span>
+                          <span className="flex items-center gap-2 shrink-0 text-slate-500">
+                            {formatSize(file.size)}
+                            <button
+                              type="button"
+                              onClick={() => removeFile(index)}
+                              className="p-1 rounded hover:bg-stone-200"
+                              aria-label={`Retirer ${file.name}`}
+                            >
+                              <X className="h-4 w-4" />
+                            </button>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
                 {/* Soumission */}
                 <div className="pt-6 border-t border-stone-200">
                   <Button 
@@ -539,7 +625,7 @@ const Devis = () => {
                     {isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                        Envoi vers abrisia0plan@gmail.com...
+                        {files.length ? 'Envoi des fichiers en cours...' : 'Envoi en cours...'}
                       </>
                     ) : (
                       <>

@@ -84,6 +84,23 @@ const DevisDetailModal = ({
                 <p className="mt-1 text-gray-800 whitespace-pre-wrap">{selectedDevis.notes}</p>
               </div>
             )}
+
+            {selectedDevis.fichiers?.length > 0 && (
+              <div>
+                <span className="text-gray-600 text-sm">Fichiers joints :</span>
+                <ul className="mt-1 space-y-1">
+                  {selectedDevis.fichiers.map((f) => (
+                    <li key={f.id} className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-gray-500 shrink-0" />
+                      <a href={f.url} target="_blank" rel="noopener noreferrer" className="text-foret underline break-all">
+                        {f.filename}
+                      </a>
+                      <span className="text-xs text-gray-500">({f.size < 1024 * 1024 ? `${Math.max(1, Math.round(f.size / 1024))} Ko` : `${(f.size / 1024 / 1024).toFixed(1)} Mo`})</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
           {/* Gestion */}
