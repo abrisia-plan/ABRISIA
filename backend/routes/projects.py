@@ -9,7 +9,7 @@ from models import Project, ProjectCreate, ProjectUpdate, SuccessResponse, ListR
 from database import get_database
 from auth import require_admin
 from bson import ObjectId
-from object_storage import put_object, get_object as storage_get_object
+import file_storage
 import logging
 
 logger = logging.getLogger(__name__)
@@ -253,55 +253,54 @@ async def delete_project(
             detail="Erreur lors de la suppression du projet"
         )
 
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif", ".svg"}
+PRIVATE_EXTENSIONS = {".pdf", ".dwg", ".dxf", ".skp", ".rvt", ".ifc", ".zip", ".doc", ".docx", ".xls", ".xlsx",
+                      ".jpg", ".jpeg", ".png"}
+
+
+async def _admin_upload(file: UploadFile, allowed: set, public: bool, folder: str, user: dict) -> dict:
+    ext = Path(file.filename or "").suffix.lower()
+    if ext not in allowed:
+        raise HTTPException(status_code=400, detail=f"Type de fichier non autorisé. Acceptés : {', '.join(sorted(allowed))}")
+    try:
+        info = await file_storage.save_file(file.file, file.filename, file.content_type, folder=folder,
+                                            public=public, uploaded_by=user.get("name"))
+    except file_storage.FileTooLarge:
+        raise HTTPException(status_code=413, detail=f"Fichier trop volumineux. Maximum : {file_storage.MAX_FILE_MB} Mo")
+    logger.info(f"✅ Fichier {'public' if public else 'privé'} {info['filename']} ({info['id']}) par {user.get('name')}")
+    return info
+
+
 @router.post("/admin/upload-image")
 async def upload_image(
-    request: Request,
     file: UploadFile = File(...),
     current_user: dict = Depends(require_admin)
 ):
-    """Upload d'une image pour les projets"""
+    """Upload d'une image PUBLIQUE (photos du site, projets, collection)"""
     try:
-        # Vérifier l'extension du fichier
-        file_extension = Path(file.filename).suffix.lower()
-        if file_extension not in ALLOWED_EXTENSIONS:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Type de fichier non autorisé. Extensions autorisées: {', '.join(ALLOWED_EXTENSIONS)}"
-            )
-        
-        # Vérifier la taille du fichier
-        content = await file.read()
-        if len(content) > MAX_FILE_SIZE:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Fichier trop volumineux. Taille maximum: {MAX_FILE_SIZE // 1024 // 1024}MB"
-            )
-        
-        # Générer un nom de fichier unique
-        unique_filename = f"{uuid.uuid4()}{file_extension}"
-        
-        # Sauvegarder dans Emergent Object Storage
-        storage_path = f"abrisia-plan/images/{unique_filename}"
-        put_object(storage_path, content, file.content_type or "application/octet-stream")
-
-        image_url = f"/api/files/{unique_filename}"
-        
-        logger.info(f"✅ Image uploadée: {unique_filename} par {current_user['name']}")
-        
-        return {
-            "success": True,
-            "imageUrl": image_url,
-            "message": "Image uploadée avec succès"
-        }
-        
+        info = await _admin_upload(file, IMAGE_EXTENSIONS, True, "images", current_user)
+        return {"success": True, "imageUrl": info["url"], "file": info, "message": "Image téléversée avec succès"}
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"❌ Erreur upload image: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erreur lors de l'upload de l'image"
-        )
+        raise HTTPException(status_code=500, detail="Erreur lors du téléversement de l'image")
+
+
+@router.post("/admin/upload-private")
+async def upload_private_file(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(require_admin)
+):
+    """Upload d'un fichier PRIVÉ (plans à vendre) : jamais visible du public"""
+    try:
+        info = await _admin_upload(file, PRIVATE_EXTENSIONS, False, "collection-prive", current_user)
+        return {"success": True, "file": info, "message": "Fichier privé téléversé avec succès"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Erreur upload fichier privé: {e}")
+        raise HTTPException(status_code=500, detail="Erreur lors du téléversement du fichier")
 
 @router.get("/categories")
 async def get_project_categories():

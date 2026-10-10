@@ -26,8 +26,8 @@ const KitsManager = () => {
     name: '', description: '', dimensions: '', surface_sqft: '',
     width_ft: '', depth_ft: '', floors: '1', rooms: '',
     includes: [''], price: '', main_image: '', gallery_images: [],
-    designer_name: '', plan_file_url: '',
-    materials_list_enabled: false, materials_list_price: '', materials_list_file_url: '',
+    designer_name: '', plan_file_url: '', plan_file_name: '',
+    materials_list_enabled: false, materials_list_price: '', materials_list_file_url: '', materials_list_file_name: '',
     model_number: '', style: '', foundation_type: '', has_garage: null,
     bedrooms: '', bathrooms: '', tags_input: '',
   });
@@ -72,8 +72,8 @@ const KitsManager = () => {
     name: '', description: '', dimensions: '', surface_sqft: '',
     width_ft: '', depth_ft: '', floors: '1', rooms: '',
     includes: [''], price: '', main_image: '', gallery_images: [],
-    designer_name: '', plan_file_url: '',
-    materials_list_enabled: false, materials_list_price: '200', materials_list_file_url: '',
+    designer_name: '', plan_file_url: '', plan_file_name: '',
+    materials_list_enabled: false, materials_list_price: '200', materials_list_file_url: '', materials_list_file_name: '',
     model_number: '', style: '', foundation_type: '', has_garage: null,
     bedrooms: '', bathrooms: '', tags_input: '',
   };
@@ -84,14 +84,9 @@ const KitsManager = () => {
     setIsModalOpen(true);
   };
 
-  const openEditModal = async (kit) => {
+  const openEditModal = (kit) => {
     try {
-      const token = localStorage.getItem('authToken');
-      const response = await fetch(`${BACKEND_URL}/api/products/${kit.id}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
-      const kitData = data.product || kit;
+      const kitData = kit;
       
       setEditingKit(kit);
       setFormData({
@@ -106,12 +101,14 @@ const KitsManager = () => {
         gallery_images: kitData.galleryImages || [],
         designer_name: kitData.designerName || '',
         plan_file_url: kitData.planFileUrl || '',
+        plan_file_name: kitData.planFileName || '',
         width_ft: kitData.widthFt?.toString() || '',
         depth_ft: kitData.depthFt?.toString() || '',
         floors: kitData.floors?.toString() || '1',
         materials_list_enabled: kitData.materialsListEnabled || false,
         materials_list_price: kitData.materialsListPrice?.toString() || '200',
         materials_list_file_url: kitData.materialsListFileUrl || '',
+        materials_list_file_name: kitData.materialsListFileName || '',
         model_number: kitData.modelNumber || '',
         style: kitData.style || '',
         foundation_type: kitData.foundationType || '',
@@ -190,26 +187,24 @@ const KitsManager = () => {
     if (!file) return;
     const setUploadState = fileType === 'plan' ? setUploadingPlan : setUploadingMaterials;
     const fieldName = fileType === 'plan' ? 'plan_file_url' : 'materials_list_file_url';
+    const nameField = fileType === 'plan' ? 'plan_file_name' : 'materials_list_file_name';
     setUploadState(true);
 
     try {
       const formDataUpload = new FormData();
       formDataUpload.append('file', file);
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`${BACKEND_URL}/api/admin/upload-image`, {
+      // Fichier à vendre : stocké en PRIVÉ (jamais visible du public)
+      const response = await fetch(`${BACKEND_URL}/api/admin/upload-private`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` },
         body: formDataUpload
       });
       const data = await response.json();
       
-      if (data.success && data.imageUrl) {
-        let finalUrl = data.imageUrl;
-        if (finalUrl.startsWith('/uploads/') || finalUrl.includes('localhost')) {
-          const filename = finalUrl.split('/uploads/').pop();
-          finalUrl = `/uploads/${filename}`;
-        }
-        handleInputChange(fieldName, finalUrl);
+      if (data.success && data.file) {
+        handleInputChange(fieldName, data.file.url);
+        handleInputChange(nameField, data.file.filename);
         toast({ title: "Fichier uploadé", description: `Le fichier ${fileType === 'plan' ? 'du plan' : 'de la liste matériaux'} a été uploadé` });
       } else {
         throw new Error(data.detail || 'Erreur upload');
@@ -249,11 +244,14 @@ const KitsManager = () => {
         is_active: true, is_featured: false, difficulty_level: 'intermediate',
         designer_name: formData.designer_name || null,
         plan_file_url: formData.plan_file_url || null,
+        plan_file_name: formData.plan_file_url ? formData.plan_file_name || null : null,
         materials_list_enabled: formData.materials_list_enabled,
         materials_list_price: formData.materials_list_enabled && formData.materials_list_price 
           ? parseFloat(formData.materials_list_price) : null,
         materials_list_file_url: formData.materials_list_enabled 
           ? formData.materials_list_file_url || null : null,
+        materials_list_file_name: formData.materials_list_enabled && formData.materials_list_file_url
+          ? formData.materials_list_file_name || null : null,
         model_number: formData.model_number || null,
         style: formData.style || null,
         foundation_type: formData.foundation_type || null,
