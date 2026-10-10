@@ -11,7 +11,7 @@ from models import (
 from database import get_database
 from auth import require_admin
 from email_service import email_service
-from file_storage import save_file, private_url
+from file_storage import save_file, FileTooLarge, MAX_FILE_MB, MAX_FILE_SIZE, file_size
 from bson import ObjectId
 import logging
 
@@ -48,10 +48,8 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
     except Exception as e:
         logger.warning(f"Zoho lead creation échouée pour devis: {e}")
 
-# Limites des pièces jointes (MongoDB gratuit = 512 Mo au total)
-MAX_FILE_MB = 10
+# Limites des pièces jointes (taille par fichier : voir file_storage)
 MAX_FILES = 10
-MAX_FILE_SIZE = MAX_FILE_MB * 1024 * 1024
 ALLOWED_EXTENSIONS = {
     ".jpg", ".jpeg", ".png", ".gif", ".webp", ".heic", ".heif", ".bmp", ".tif", ".tiff",
     ".pdf", ".dwg", ".dxf", ".skp", ".rvt", ".ifc",
@@ -96,6 +94,16 @@ async def _create_devis(devis_data: DevisCreate, fichiers: list, background_task
     )
 
 
+@router.get("/devis/limites")
+async def get_upload_limits():
+    """Limites des pièces jointes, affichées par le formulaire"""
+    return {
+        "max_file_mb": MAX_FILE_MB,
+        "max_files": MAX_FILES,
+        "extensions": sorted(ALLOWED_EXTENSIONS),
+    }
+
+
 @router.post("/devis", response_model=DevisResponse)
 async def submit_devis(devis_data: DevisCreate, background_tasks: BackgroundTasks):
     """Soumettre une demande de devis sans fichiers (public)"""
@@ -128,29 +136,24 @@ async def submit_devis_with_files(
         raise HTTPException(status_code=400, detail=f"Maximum {MAX_FILES} fichiers par demande.")
 
     # Tout vérifier avant d'enregistrer quoi que ce soit
-    contents = []
     for upload in files:
         name = os.path.basename(upload.filename or "fichier")
         ext = os.path.splitext(name)[1].lower()
         if ext not in ALLOWED_EXTENSIONS:
             raise HTTPException(status_code=400, detail=f"Le type de fichier « {name} » n'est pas accepté.")
-        content = await upload.read(MAX_FILE_SIZE + 1)
-        if len(content) > MAX_FILE_SIZE:
+        if file_size(upload.file) > MAX_FILE_SIZE:
             raise HTTPException(status_code=413, detail=f"Le fichier « {name} » dépasse {MAX_FILE_MB} Mo.")
-        contents.append((name, content, upload.content_type or "application/octet-stream"))
 
     try:
         fichiers = []
-        for name, content, content_type in contents:
-            info = await save_file(content, name, content_type, folder="devis", client_email=devis_data.email)
-            fichiers.append({
-                "id": info["id"],
-                "filename": name,
-                "size": info["size"],
-                "content_type": content_type,
-                "url": private_url(info),
-            })
+        for upload in files:
+            fichiers.append(await save_file(
+                upload.file, upload.filename, upload.content_type,
+                folder="devis", client_email=devis_data.email,
+            ))
         return await _create_devis(devis_data, fichiers, background_tasks)
+    except FileTooLarge as e:
+        raise HTTPException(status_code=413, detail=f"Le fichier « {e} » dépasse {MAX_FILE_MB} Mo.")
     except Exception as e:
         logger.error(f"❌ Erreur soumission devis avec fichiers: {e}")
         raise HTTPException(

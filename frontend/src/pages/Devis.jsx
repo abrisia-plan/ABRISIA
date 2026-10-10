@@ -14,9 +14,8 @@ import { devisService, handleApiError } from '../services/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Doit correspondre aux limites du serveur (backend/routes/devis.py)
-const MAX_FILE_MB = 10;
-const MAX_FILES = 10;
+// Valeurs par défaut; les vraies limites viennent du serveur (/api/devis/limites)
+const DEFAULT_LIMITS = { max_file_mb: 10, max_files: 10 };
 const formatSize = (bytes) => bytes < 1024 * 1024
   ? `${Math.max(1, Math.round(bytes / 1024))} Ko`
   : `${(bytes / 1024 / 1024).toFixed(1)} Mo`;
@@ -40,6 +39,16 @@ const Devis = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [files, setFiles] = useState([]);
   const [fileError, setFileError] = useState('');
+  const [limits, setLimits] = useState(DEFAULT_LIMITS);
+  const MAX_FILE_MB = limits.max_file_mb;
+  const MAX_FILES = limits.max_files;
+
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/api/devis/limites`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => { if (data?.max_file_mb) setLimits(data); })
+      .catch(() => {});
+  }, []);
 
   // Contenu dynamique de la page (titre, sous-titre)
   const [pageTexts, setPageTexts] = useState({

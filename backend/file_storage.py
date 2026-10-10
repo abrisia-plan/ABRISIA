@@ -1,18 +1,22 @@
-"""Stockage permanent des fichiers dans MongoDB (GridFS).
+"""Stockage permanent des fichiers (pièces jointes, photos, plans à vendre).
 
-Le disque de Render s'efface à chaque déploiement : tous les fichiers
-(pièces jointes des devis, photos, plans à vendre) sont donc gardés
-dans la base MongoDB, qui, elle, est permanente.
+Le disque de Render s'efface à chaque déploiement, donc les fichiers sont
+gardés ailleurs :
+- Cloudflare R2, si les variables R2_* sont configurées (gros fichiers, 10 Go gratuits);
+- sinon MongoDB (GridFS), limité à 10 Mo par fichier (base gratuite de 512 Mo).
 
-Chaque fichier reçoit un jeton secret aléatoire : le lien de
-téléchargement ne fonctionne qu'avec ce jeton, ce qui garde les
-fichiers privés même si quelqu'un devine leur identifiant.
+Chaque fichier a une fiche dans la collection `stored_files` avec un jeton
+secret. Un fichier privé ne se télécharge qu'avec ce jeton (ou par un admin);
+un fichier public (photo du site) se télécharge sans jeton.
 """
 import os
 import secrets
 import logging
+from datetime import datetime, timezone
+from urllib.parse import quote
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorGridFSBucket
+from starlette.concurrency import run_in_threadpool
 from database import get_database
 
 logger = logging.getLogger(__name__)
@@ -20,56 +24,149 @@ logger = logging.getLogger(__name__)
 # Adresse publique du backend, utilisée pour fabriquer les liens dans les courriels
 BACKEND_PUBLIC_URL = os.getenv("BACKEND_PUBLIC_URL", "https://abrisia-plan-ca.onrender.com").rstrip("/")
 
-BUCKET_NAME = "fichiers"
+R2_ACCOUNT_ID = os.getenv("R2_ACCOUNT_ID", "")
+R2_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID", "")
+R2_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY", "")
+R2_BUCKET = os.getenv("R2_BUCKET", "")
+USE_R2 = all([R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET])
+
+# Taille maximale d'un fichier selon le stockage disponible
+MAX_FILE_MB = int(os.getenv("MAX_FILE_MB", "100" if USE_R2 else "10"))
+MAX_FILE_SIZE = MAX_FILE_MB * 1024 * 1024
+
+GRIDFS_BUCKET = "fichiers"
+_r2_client = None
 
 
-def _bucket() -> AsyncIOMotorGridFSBucket:
-    return AsyncIOMotorGridFSBucket(get_database(), bucket_name=BUCKET_NAME)
+class FileTooLarge(Exception):
+    pass
 
 
-async def save_file(data: bytes, filename: str, content_type: str, folder: str, **extra) -> dict:
-    """Enregistre un fichier et retourne ses informations (id, jeton, nom, taille)."""
-    token = secrets.token_urlsafe(24)
-    metadata = {"folder": folder, "content_type": content_type, "token": token, **extra}
-    file_id = await _bucket().upload_from_stream(filename, data, metadata=metadata)
-    return {
-        "id": str(file_id),
-        "token": token,
+def _r2():
+    global _r2_client
+    if _r2_client is None:
+        import boto3
+        _r2_client = boto3.client(
+            "s3",
+            endpoint_url=f"https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com",
+            aws_access_key_id=R2_ACCESS_KEY_ID,
+            aws_secret_access_key=R2_SECRET_ACCESS_KEY,
+            region_name="auto",
+        )
+    return _r2_client
+
+
+def _gridfs() -> AsyncIOMotorGridFSBucket:
+    return AsyncIOMotorGridFSBucket(get_database(), bucket_name=GRIDFS_BUCKET)
+
+
+def file_size(fileobj) -> int:
+    fileobj.seek(0, os.SEEK_END)
+    size = fileobj.tell()
+    fileobj.seek(0)
+    return size
+
+
+async def save_file(fileobj, filename: str, content_type: str, folder: str, public: bool = False, **extra) -> dict:
+    """Enregistre un fichier (objet fichier ou bytes) et retourne sa fiche.
+
+    Lève FileTooLarge si le fichier dépasse MAX_FILE_SIZE.
+    """
+    if isinstance(fileobj, (bytes, bytearray)):
+        import io
+        fileobj = io.BytesIO(fileobj)
+    size = file_size(fileobj)
+    if size > MAX_FILE_SIZE:
+        raise FileTooLarge(filename)
+
+    file_id = ObjectId()
+    filename = os.path.basename(filename or "fichier")
+    content_type = content_type or "application/octet-stream"
+
+    if USE_R2:
+        key = f"{folder}/{file_id}/{filename}"
+        await run_in_threadpool(
+            _r2().upload_fileobj, fileobj, R2_BUCKET, key, ExtraArgs={"ContentType": content_type}
+        )
+        backend = "r2"
+    else:
+        key = str(file_id)
+        await _gridfs().upload_from_stream_with_id(file_id, filename, fileobj.read())
+        backend = "gridfs"
+
+    doc = {
+        "_id": file_id,
+        "backend": backend,
+        "key": key,
         "filename": filename,
         "content_type": content_type,
-        "size": len(data),
+        "size": size,
+        "folder": folder,
+        "public": public,
+        "token": secrets.token_urlsafe(24),
+        "created_at": datetime.now(timezone.utc),
+        **extra,
+    }
+    await get_database().stored_files.insert_one(doc)
+    return file_info(doc)
+
+
+def file_info(doc: dict) -> dict:
+    """Informations utiles d'un fichier, avec son lien de téléchargement."""
+    url = f"{BACKEND_PUBLIC_URL}/api/fichiers/{doc['_id']}"
+    if not doc.get("public"):
+        url += f"?t={doc['token']}"
+    return {
+        "id": str(doc["_id"]),
+        "filename": doc["filename"],
+        "content_type": doc["content_type"],
+        "size": doc["size"],
+        "public": doc.get("public", False),
+        "url": url,
     }
 
 
-async def read_file(file_id: str, token: str = None):
-    """Lit un fichier. Si un jeton est fourni, il doit correspondre.
-
-    Retourne (contenu, type, nom) ou None si introuvable / jeton invalide.
-    """
+async def get_file_doc(file_id: str):
     if not ObjectId.is_valid(file_id):
         return None
-    try:
-        stream = await _bucket().open_download_stream(ObjectId(file_id))
-    except Exception:
-        return None
-    metadata = stream.metadata or {}
-    if token is not None and not secrets.compare_digest(token, metadata.get("token", "")):
-        return None
-    data = await stream.read()
-    return data, metadata.get("content_type", "application/octet-stream"), stream.filename
+    return await get_database().stored_files.find_one({"_id": ObjectId(file_id)})
+
+
+def token_ok(doc: dict, token) -> bool:
+    if doc.get("public"):
+        return True
+    return bool(token) and secrets.compare_digest(str(token), doc.get("token", ""))
+
+
+def r2_download_url(doc: dict, expires: int = 3600) -> str:
+    """Lien temporaire vers le fichier chez R2 (le fichier ne transite pas par Render)."""
+    return _r2().generate_presigned_url(
+        "get_object",
+        Params={
+            "Bucket": R2_BUCKET,
+            "Key": doc["key"],
+            "ResponseContentType": doc["content_type"],
+            "ResponseContentDisposition": f"inline; filename*=UTF-8''{quote(doc['filename'])}",
+        },
+        ExpiresIn=expires,
+    )
+
+
+async def read_gridfs(doc: dict) -> bytes:
+    stream = await _gridfs().open_download_stream(doc["_id"])
+    return await stream.read()
 
 
 async def delete_file(file_id: str) -> bool:
-    if not ObjectId.is_valid(file_id):
+    doc = await get_file_doc(file_id)
+    if not doc:
         return False
     try:
-        await _bucket().delete(ObjectId(file_id))
-        return True
+        if doc["backend"] == "r2":
+            await run_in_threadpool(_r2().delete_object, Bucket=R2_BUCKET, Key=doc["key"])
+        else:
+            await _gridfs().delete(doc["_id"])
     except Exception as e:
         logger.warning(f"Suppression du fichier {file_id} impossible: {e}")
-        return False
-
-
-def private_url(file_info: dict) -> str:
-    """Lien de téléchargement protégé par le jeton secret du fichier."""
-    return f"{BACKEND_PUBLIC_URL}/api/fichiers/{file_info['id']}?t={file_info['token']}"
+    await get_database().stored_files.delete_one({"_id": doc["_id"]})
+    return True
