@@ -2,13 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Home, Maximize2, LayoutGrid, ChefHat, Armchair, Trees, Layers, Compass,
-  PenTool, Footprints, Sparkles, ArrowRight,
+  PenTool, Lightbulb, Ruler, Hammer, ArrowRight, ChevronDown,
 } from 'lucide-react';
 import SEO from '../components/SEO';
+import { FloorPlanDrawing, ElevationDrawing, FurnitureDrawing, BlueprintGrid } from '../components/PlanIllustrations';
 
-// Photo de la fondatrice : mettre l'adresse de la vraie photo ici quand elle sera prête
-// (ex. '/noemie.jpg' dans frontend/public). En attendant, on affiche le logo.
+// Vraies photos à ajouter quand elles seront prêtes (ex. '/noemie.jpg' dans frontend/public).
+// En attendant : le logo pour la fondatrice et des dessins en traits pour les autres sections.
 const FOUNDER_PHOTO = null;
+const STORY_PHOTO = null;      // espace de travail, table à dessin, croquis...
+const LIBERTE_PHOTO = null;    // un aménagement ou un meuble conçu par Abrisia
 
 const SERVICES = [
   { icon: Home, text: 'Conception et dessin de plans de maisons, chalets et mini-maisons' },
@@ -39,20 +42,28 @@ const APropos = () => (
       path="/a-propos"
     />
 
-    {/* En-tête */}
-    <section className="py-20 sm:py-28 bg-gradient-to-br from-teal-800 to-teal-950 text-white">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <p className="text-teal-200 font-semibold tracking-widest uppercase text-sm mb-4">À propos</p>
-        <h1 className="text-4xl sm:text-6xl font-bold mb-6">Donnons forme à vos projets.</h1>
-        <p className="text-xl text-teal-100 leading-relaxed max-w-2xl mx-auto">
-          Un studio indépendant de conception et de dessin de plans sur mesure,
-          pour les particuliers et les entrepreneurs.
-        </p>
+    {/* En-tête : papier à plan et dessin d'élévation */}
+    <section className="relative overflow-hidden bg-gradient-to-br from-teal-800 to-teal-950 text-white">
+      <BlueprintGrid className="absolute inset-0 w-full h-full text-white/10" />
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 grid md:grid-cols-[1.2fr,1fr] gap-10 items-center">
+        <div className="text-center md:text-left">
+          <p className="text-teal-200 font-semibold tracking-widest uppercase text-sm mb-4">À propos</p>
+          <h1 className="text-4xl sm:text-6xl font-bold mb-6 leading-tight">Chaque grand projet commence par une idée.</h1>
+          <p className="text-xl text-teal-100 leading-relaxed mb-8">
+            Découvrez ABRISIA-PLAN, un studio indépendant de conception et de dessin de plans sur mesure,
+            pour les particuliers et les entrepreneurs.
+          </p>
+          <a href="#qui-sommes-nous" className="inline-flex items-center gap-2 text-teal-100 hover:text-white font-medium">
+            Découvrir notre histoire <ChevronDown className="w-5 h-5" />
+          </a>
+        </div>
+        <ElevationDrawing className="w-full max-w-md mx-auto text-teal-100/90" />
       </div>
     </section>
 
     {/* 1. Qui sommes-nous */}
-    <Section eyebrow="Qui sommes-nous ?" title="Des idées qui deviennent des projets concrets">
+    <div id="qui-sommes-nous" />
+    <Section eyebrow="Qui sommes-nous ?" title="Donnons forme à vos projets">
       <p>
         ABRISIA-PLAN transforme les idées en projets concrets, adaptés aux besoins, aux espaces,
         aux ambitions et à la réalité de chacun.
@@ -69,6 +80,22 @@ const APropos = () => (
         forme au fil du temps.
       </p>
     </Section>
+
+    {/* L'histoire en image */}
+    <section className="pb-14 sm:pb-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="rounded-2xl overflow-hidden bg-teal-900 text-teal-100 shadow-lg">
+          {STORY_PHOTO ? (
+            <img src={STORY_PHOTO} alt="L'espace de travail d'ABRISIA-PLAN" className="w-full h-72 sm:h-96 object-cover" />
+          ) : (
+            <div className="relative h-72 sm:h-96 flex items-center justify-center">
+              <BlueprintGrid className="absolute inset-0 w-full h-full text-white/10" />
+              <FloorPlanDrawing className="relative h-full py-8" />
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
 
     {/* 2. La fondatrice */}
     <section className="py-14 sm:py-20 bg-white">
@@ -144,6 +171,13 @@ const APropos = () => (
           <p className="text-sm font-semibold uppercase tracking-widest text-teal-700">Vos plans, votre liberté</p>
         </div>
         <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-6">Un bon plan ouvre plusieurs possibilités</h2>
+        <div className="rounded-2xl bg-stone-50 border border-stone-200 mb-8 overflow-hidden">
+          {LIBERTE_PHOTO ? (
+            <img src={LIBERTE_PHOTO} alt="Aménagement conçu par ABRISIA-PLAN" className="w-full h-64 sm:h-80 object-cover" />
+          ) : (
+            <FurnitureDrawing className="w-full h-64 sm:h-80 py-6 text-teal-800" />
+          )}
+        </div>
         <div className="space-y-4 text-lg text-slate-700 leading-relaxed">
           <p>
             Vous rêvez d'une cuisine personnalisée, d'un meuble parfaitement adapté à un espace,
@@ -183,19 +217,32 @@ const APropos = () => (
         Transformer une pièce aujourd'hui, préparer un agrandissement futur ou concevoir une maison
         complète : notre approche privilégie la planification, la flexibilité et les décisions réfléchies.
       </p>
-      <div className="grid sm:grid-cols-3 gap-4 pt-4">
-        {[
-          { icon: Sparkles, label: 'Voir grand.' },
-          { icon: Footprints, label: 'Commencer quelque part.' },
-          { icon: ArrowRight, label: 'Avancer à son rythme.' },
-        ].map(({ icon: Icon, label }) => (
-          <div key={label} className="bg-teal-800 text-white rounded-xl p-5 text-center">
-            <Icon className="w-6 h-6 mx-auto mb-2 text-teal-200" />
-            <p className="font-semibold">{label}</p>
-          </div>
-        ))}
-      </div>
+      <p className="text-xl font-semibold text-teal-800">Voir grand. Commencer quelque part. Avancer à son rythme.</p>
     </Section>
+
+    {/* Une idée aujourd'hui, un projet demain : 3 étapes reliées */}
+    <section className="py-14 sm:py-20 bg-teal-50">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12">Une idée aujourd'hui, un projet demain</h2>
+        <ol className="relative grid sm:grid-cols-3 gap-10 sm:gap-6">
+          <div className="hidden sm:block absolute top-8 left-[16.6%] right-[16.6%] border-t-2 border-dashed border-teal-300" aria-hidden="true" />
+          {[
+            { icon: Lightbulb, title: 'Imaginer', text: 'Vous nous partagez votre idée, vos besoins et vos inspirations.' },
+            { icon: Ruler, title: 'Concevoir', text: 'Nous dessinons des plans clairs et précis, pensés pour votre réalité.' },
+            { icon: Hammer, title: 'Réaliser à son rythme', text: 'Vous réalisez votre projet en une fois ou par étapes, avec les professionnels de votre choix.' },
+          ].map(({ icon: Icon, title, text }, i) => (
+            <li key={title} className="relative flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-teal-800 text-white flex items-center justify-center shadow-md ring-8 ring-teal-50">
+                <Icon className="w-7 h-7" />
+              </div>
+              <p className="mt-4 text-sm font-semibold text-teal-700">Étape {i + 1}</p>
+              <h3 className="text-xl font-bold text-slate-900 mt-1">{title}</h3>
+              <p className="mt-2 text-slate-700 max-w-xs">{text}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
 
     {/* 6. Vision */}
     <Section eyebrow="Tournée vers l'avenir" title="Une entreprise qui grandit avec ses clients" className="bg-white">
