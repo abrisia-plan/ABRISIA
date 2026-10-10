@@ -598,30 +598,49 @@ Les informations fournies sur ce site le sont à titre indicatif. Abrisia Plan n
         "content": """
 # Politique de confidentialité
 
-## Collecte des données
-Nous collectons les informations que vous nous fournissez volontairement via nos formulaires :
-- Nom et prénom
-- Adresse email
-- Numéro de téléphone
-- Informations sur votre projet
+Abrisia Plan respecte la Loi sur la protection des renseignements personnels dans le secteur privé du Québec (Loi 25).
 
-## Utilisation des données
-Vos données sont utilisées uniquement pour :
-- Répondre à vos demandes de devis
-- Vous contacter concernant votre projet
-- Améliorer nos services
+## Responsable de la protection des renseignements personnels
+La propriétaire d'Abrisia Plan est responsable de la protection de vos renseignements personnels. Vous pouvez la joindre à abrisia0plan@gmail.com ou par le formulaire de contact du site.
 
-## Protection des données
-Nous ne vendons ni ne partageons vos informations personnelles avec des tiers, sauf si requis par la loi.
+## Renseignements recueillis
+Nous recueillons seulement les renseignements que vous nous donnez dans nos formulaires (demande de devis, contact, Espace Pro, commande, candidature) :
+- nom et prénom;
+- adresse courriel et numéro de téléphone;
+- description de votre projet et fichiers que vous joignez (photos, croquis, plans);
+- pour une candidature : votre CV.
 
-## Cookies
-Ce site utilise des cookies pour améliorer votre expérience de navigation. Vous pouvez les désactiver dans les paramètres de votre navigateur.
+## Utilisation
+Vos renseignements servent uniquement à :
+- répondre à votre demande et préparer votre devis;
+- vous contacter au sujet de votre projet ou de votre commande;
+- assurer le suivi de nos clients.
+
+Nous ne vendons jamais vos renseignements.
+
+## Fournisseurs de services
+Pour faire fonctionner le site, vos renseignements sont traités par des fournisseurs de confiance, uniquement pour les besoins décrits ci-dessus :
+- hébergement du site et de la base de données (Vercel, Render, MongoDB Atlas);
+- envoi des courriels (Resend);
+- gestion de la relation client (Zoho CRM);
+- assistant virtuel du site (Google Gemini) : les questions posées à l'assistant lui sont transmises.
+
+Certains de ces fournisseurs conservent les données à l'extérieur du Québec, notamment aux États-Unis. Nous choisissons des fournisseurs qui offrent une protection adéquate des renseignements.
+
+## Fichiers joints aux demandes de devis
+Les fichiers joints à une demande de devis nous sont transmis par courriel et ne sont pas conservés sur le site.
+
+## Conservation
+Nous conservons vos renseignements le temps nécessaire pour traiter votre demande et assurer le suivi de votre projet, puis nous les supprimons.
+
+## Témoins (cookies)
+Ce site utilise des témoins pour son bon fonctionnement. Vous pouvez les désactiver dans les paramètres de votre navigateur.
 
 ## Vos droits
-Vous avez le droit d'accéder, de rectifier ou de supprimer vos données personnelles. Contactez-nous pour exercer ces droits.
+Vous pouvez en tout temps demander d'accéder à vos renseignements, de les corriger ou de les supprimer, ou retirer votre consentement. Écrivez à abrisia0plan@gmail.com : nous vous répondrons dans un délai de 30 jours.
 
 ## Contact
-Pour toute question concernant cette politique, contactez-nous via notre formulaire.
+Pour toute question concernant cette politique, écrivez à abrisia0plan@gmail.com ou utilisez le formulaire de contact.
 """
     }
 }
