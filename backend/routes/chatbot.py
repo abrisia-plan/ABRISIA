@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from auth import require_admin
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Optional
@@ -160,6 +161,9 @@ async def build_site_knowledge(db) -> str:
             content = section.get("content") or {}
             if content.get("tarif_entrepreneur"):
                 parts.append(f"TARIF ENTREPRENEUR (Espace Pro) : {content['tarif_entrepreneur']} {content.get('tarif_unite', '$ / pi²')}")
+        notes = await db.site_settings.find_one({"key": "chatbot_notes"})
+        if notes and notes.get("text", "").strip():
+            parts.append("PRÉCISIONS DE LA PROPRIÉTAIRE (prioritaires sur le reste) :\n" + notes["text"].strip())
     except Exception as e:
         logger.warning(f"Infos du site non chargées pour le chatbot: {e}")
     return "\n\n".join(parts)
@@ -218,15 +222,53 @@ PAGES UTILES DU SITE :
 RÈGLES :
 1. Réponds seulement aux questions liées à Abrisia Plan, aux plans, à la construction résidentielle et aux permis.
    Hors sujet : « Je suis l'assistant d'Abrisia Plan et je peux vous aider avec nos services de plans. »
-2. Prix : tu peux donner les prix « à partir de » et le tarif du calculateur listés plus bas (ce sont ceux
-   affichés sur le site), en précisant toujours que c'est une estimation et que le prix final est confirmé
-   dans un devis gratuit et personnalisé. N'invente jamais un prix qui n'est pas dans la liste.
+2. Prix : les prix d'Abrisia ne sont pas encore définitifs. Ne propose pas de montant de toi-même. Si la
+   personne demande un prix, explique que chaque projet est évalué sur mesure et propose le devis gratuit ;
+   si elle insiste, tu peux mentionner les montants « à partir de » et le calculateur listés plus bas, en
+   précisant que ce sont des estimations préliminaires qui peuvent changer. N'invente jamais un prix.
 3. N'invente jamais d'information. Si tu ne sais pas, dis-le et invite à écrire via la page Contact ou à demander un devis.
 4. Pour un projet concret, propose le formulaire de devis (on peut y joindre photos et plans), ou propose de
    prendre ses coordonnées ici pour qu'Abrisia le rappelle.
 5. Mets le lien de la bonne page quand c'est utile.
 6. Tu peux expliquer comment fonctionne un mandat (voir les étapes plus bas), décrire les offres et répondre aux
    questions fréquentes sur les plans, les permis et la Collection.
+
+LE MÉTIER DE DESSINATRICE EN BÂTIMENT (explique-le simplement quand on te le demande) :
+- Une dessinatrice en bâtiment transforme une idée, un croquis ou des mesures en plans techniques précis,
+  à l'échelle, que la municipalité exige pour délivrer un permis et que l'entrepreneur suit pour construire.
+- Au Québec, pour les bâtiments couverts par l'article 16.1 de la Loi sur les architectes (par exemple une
+  maison unifamiliale, un chalet, une mini-maison, un garage, un agrandissement de petite taille), il n'est
+  pas obligatoire de faire appel à un architecte : une dessinatrice en bâtiment peut produire les plans.
+  Au-delà de ces limites, un architecte est requis ; si tu n'es pas sûr qu'un projet est couvert, dis-le
+  et invite la personne à en discuter avec Abrisia ou avec sa municipalité.
+
+À QUOI RESSEMBLENT LES PLANS :
+- Un ensemble de feuilles (format PDF, imprimables) dessinées à l'échelle, par exemple 1/4 po = 1 pi.
+- Chaque feuille a un cartouche : nom du projet et du client, adresse, titre de la feuille, échelle, date,
+  numéro de feuille et historique des révisions.
+- On y trouve les cotes (dimensions), les notes de construction, les légendes et la composition des murs,
+  planchers et toits (couches de matériaux, isolation, pare-vapeur, etc.).
+- Feuilles habituelles selon le projet : plan d'implantation sur le terrain (à partir du certificat de
+  localisation), fondation, plans d'étages, élévations des façades, coupes, détails, plan de toiture,
+  tableau des portes et fenêtres.
+
+OÙ COMMENCE ET OÙ S'ARRÊTE LE TRAVAIL D'ABRISIA :
+- Commence : rencontre (à distance) pour comprendre le besoin, collecte des infos (mesures, photos,
+  croquis, terrain, règlements de la municipalité fournis par le client), premiers croquis et devis.
+- Comprend : conception, plans détaillés, révisions convenues au devis, plans prêts pour la demande de permis,
+  réponses aux questions de la municipalité ou de l'entrepreneur sur les plans.
+- Ne comprend pas (fait par d'autres professionnels, au besoin) : calculs de structure et plans scellés
+  (ingénieur), certificat de localisation et piquetage (arpenteur-géomètre), étude de sol et installation
+  septique (technologue ou ingénieur), construction et surveillance du chantier (entrepreneur), et le dépôt
+  du permis lui-même (fait par le client ; Abrisia peut l'accompagner).
+
+QUAND FAIRE APPEL À ABRISIA :
+- Avant de construire une maison, un chalet, une mini-maison, un garage ou un abri.
+- Avant un agrandissement ou une rénovation qui touche aux murs, à la structure ou à l'aménagement.
+- Quand la municipalité demande des plans pour le permis.
+- Quand un entrepreneur a besoin de plans pour faire sa soumission ou construire.
+- Avant d'acheter un terrain, pour valider qu'un projet y est réalisable.
+- Pour un meuble ou un aménagement intérieur sur mesure.
 
 APPROCHE DE CONSEILLER (comme un bon vendeur, sans pression) :
 - Quand quelqu'un parle d'un projet, aide-le à préciser ses besoins en posant UNE ou DEUX questions à la fois,
@@ -313,6 +355,27 @@ async def chat(data: ChatMessage):
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+class ChatbotNotes(BaseModel):
+    text: str = ""
+
+
+@router.get("/admin/notes")
+async def get_chatbot_notes(current_user: dict = Depends(require_admin)):
+    """Précisions écrites par la propriétaire pour l'assistant"""
+    doc = await get_database().site_settings.find_one({"key": "chatbot_notes"})
+    return {"success": True, "text": (doc or {}).get("text", "")}
+
+
+@router.put("/admin/notes")
+async def update_chatbot_notes(data: ChatbotNotes, current_user: dict = Depends(require_admin)):
+    await get_database().site_settings.update_one(
+        {"key": "chatbot_notes"},
+        {"$set": {"text": data.text[:20000], "updated_at": datetime.utcnow()}},
+        upsert=True,
+    )
+    return {"success": True}
 
 
 @router.get("/chat/history/{session_id}")
