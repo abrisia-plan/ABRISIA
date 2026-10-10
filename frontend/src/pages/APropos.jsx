@@ -141,6 +141,29 @@ const APropos = () => (
       </div>
     </section>
 
+    {/* Le territoire : photos prises par Noémie dans sa région */}
+    <section className="py-14 sm:py-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p className="text-sm font-semibold uppercase tracking-widest text-teal-700 mb-2">Notre territoire</p>
+        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">Ancrée au Saguenay–Lac-Saint-Jean</h2>
+        <p className="text-lg text-slate-700 leading-relaxed mb-8 max-w-3xl">
+          ABRISIA est née ici, entre les rivières, les forêts et un patrimoine bâti qui a du caractère.
+          Ce territoire inspire des plans pensés pour la réalité d'ici : nos hivers, notre lumière et nos paysages.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { src: '/images/a-propos/maisons-patrimoine.jpg', alt: 'Maisons patrimoniales en bardeaux de bois au Saguenay–Lac-Saint-Jean', pos: 'object-[30%_50%]' },
+            { src: '/images/a-propos/riviere-pont.jpg', alt: 'Rivière et pont au Saguenay–Lac-Saint-Jean', pos: 'object-[50%_65%]' },
+            { src: '/images/a-propos/chute.jpg', alt: 'Chute et arc-en-ciel au Saguenay–Lac-Saint-Jean', pos: 'object-center' },
+          ].map(({ src, alt, pos }) => (
+            <img key={src} src={src} alt={alt} loading="lazy"
+              className={`w-full h-80 sm:h-96 rounded-2xl object-cover shadow-md ${pos}`} />
+          ))}
+        </div>
+        <p className="mt-3 text-sm text-slate-500">Photos : Noémie, ABRISIA-PLAN</p>
+      </div>
+    </section>
+
     {/* 3. Services */}
     <section className="py-14 sm:py-20">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
