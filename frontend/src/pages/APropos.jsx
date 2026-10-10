@@ -168,6 +168,16 @@ const APropos = () => (
           </p>
           <footer className="mt-2 text-slate-600">Noémie, fondatrice d'ABRISIA-PLAN</footer>
         </blockquote>
+        <div className="grid grid-cols-3 gap-3 mt-10">
+          {[
+            { src: '/images/a-propos/maison-patrimoniale.jpg', alt: 'Maison patrimoniale québécoise en planches blanches' },
+            { src: '/images/a-propos/foyer-ancestral.jpg', alt: 'Foyer ancestral avec boiseries et armoire intégrée' },
+            { src: '/images/a-propos/mansarde.jpg', alt: 'Chambre sous les combles avec lucarne, murs de bois peints' },
+          ].map(({ src, alt }) => (
+            <img key={src} src={src} alt={alt} loading="lazy" className="w-full h-48 sm:h-80 object-cover rounded-xl shadow-sm" />
+          ))}
+        </div>
+        <p className="mt-3 text-sm text-slate-500">Patrimoine bâti du Québec, détails qui m'inspirent. Photos : Noémie</p>
       </div>
     </section>
 
@@ -180,14 +190,19 @@ const APropos = () => (
           ABRISIA est née ici, entre les rivières, les forêts et un patrimoine bâti qui a du caractère.
           Ce territoire inspire des plans pensés pour la réalité d'ici : nos hivers, notre lumière et nos paysages.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <img src="/images/a-propos/fjord.jpg" alt="Le fjord du Saguenay" loading="lazy"
+          className="w-full h-56 sm:h-80 object-cover rounded-2xl shadow-md mb-4" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {[
-            { src: '/images/a-propos/maisons-patrimoine.jpg', alt: 'Maisons patrimoniales en bardeaux de bois au Saguenay–Lac-Saint-Jean', pos: 'object-[30%_50%]' },
-            { src: '/images/a-propos/riviere-pont.jpg', alt: 'Rivière et pont au Saguenay–Lac-Saint-Jean', pos: 'object-[50%_65%]' },
-            { src: '/images/a-propos/chute.jpg', alt: 'Chute et arc-en-ciel au Saguenay–Lac-Saint-Jean', pos: 'object-center' },
+            { src: '/images/a-propos/maisons-patrimoine.jpg', alt: 'Maisons patrimoniales en bardeaux de bois', pos: 'object-[30%_50%]' },
+            { src: '/images/a-propos/coucher-soleil.jpg', alt: 'Coucher de soleil sur le fjord du Saguenay', pos: 'object-[50%_30%]' },
+            { src: '/images/a-propos/chute-foret.jpg', alt: 'Chute au cœur de la forêt boréale', pos: 'object-center' },
+            { src: '/images/a-propos/pins-automne.jpg', alt: 'Pins et couleurs d\'automne sur un sentier rocheux', pos: 'object-center' },
+            { src: '/images/a-propos/rivage-dore.jpg', alt: 'Rivage du fjord à marée basse, lumière du soir', pos: 'object-center' },
+            { src: '/images/a-propos/chute.jpg', alt: 'Chute et arc-en-ciel', pos: 'object-center' },
           ].map(({ src, alt, pos }) => (
             <img key={src} src={src} alt={alt} loading="lazy"
-              className={`w-full h-80 sm:h-96 rounded-2xl object-cover shadow-md ${pos}`} />
+              className={`w-full h-56 sm:h-80 rounded-2xl object-cover shadow-md ${pos}`} />
           ))}
         </div>
         <p className="mt-3 text-sm text-slate-500">Photos : Noémie, ABRISIA-PLAN</p>
