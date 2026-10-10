@@ -118,8 +118,8 @@ const DevisDetailModal = ({
                   <SelectContent>
                     <SelectItem value="En attente">En attente</SelectItem>
                     <SelectItem value="En cours">En cours</SelectItem>
-                    <SelectItem value="Termine">Termine</SelectItem>
-                    <SelectItem value="Rejete">Rejete</SelectItem>
+                    <SelectItem value="Terminé">Terminé</SelectItem>
+                    <SelectItem value="Rejeté">Rejeté</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

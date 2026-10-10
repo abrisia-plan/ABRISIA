@@ -207,6 +207,10 @@ async def get_all_devis(
                 "fichiers": devis.get("fichiers", []),
                 "status": devis["status"],
                 "assignedTo": devis.get("assigned_to"),
+                "assignedDesigner": devis.get("assigned_to"),
+                "priority": devis.get("priority", "normal"),
+                "estimatedBudget": devis.get("estimated_budget"),
+                "adminNotes": devis.get("admin_notes", ""),
                 "createdAt": devis["created_at"].isoformat(),
                 "updatedAt": devis["updated_at"].isoformat()
             })
@@ -224,6 +228,7 @@ async def get_all_devis(
             detail="Erreur lors de la récupération des devis"
         )
 
+@router.put("/admin/devis/{devis_id}", response_model=SuccessResponse)
 @router.put("/admin/devis/{devis_id}/status", response_model=SuccessResponse)
 async def update_devis_status(
     devis_id: str,
@@ -244,7 +249,13 @@ async def update_devis_status(
             update_fields["status"] = update_data.status
         
         if update_data.assigned_designer is not None:
-            update_fields["assigned_to"] = update_data.assigned_designer
+            # « non-assigne » = choix « Non assigné » dans l'admin
+            update_fields["assigned_to"] = None if update_data.assigned_designer in ("", "non-assigne") else update_data.assigned_designer
+
+        for field in ("priority", "estimated_budget", "admin_notes"):
+            value = getattr(update_data, field)
+            if value is not None:
+                update_fields[field] = value
             
         # Mettre à jour en base
         result = await db.devis.update_one(

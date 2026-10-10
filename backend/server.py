@@ -20,17 +20,14 @@ logger = logging.getLogger(__name__)
 # Imports des modules
 from database import connect_to_mongo, close_mongo_connection, get_database
 from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, collection, chatbot, zoho, pro_contact, fichiers, contact
-from object_storage import init_storage
 
 # Lifespan manager pour la DB
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     await connect_to_mongo()
-    try:
-        init_storage()
-    except Exception as e:
-        logger.warning(f"Object storage init failed (will retry on first upload): {e}")
+    import file_storage
+    logger.info(f"Stockage des fichiers : {'Cloudflare R2' if file_storage.USE_R2 else 'MongoDB'} ({file_storage.MAX_FILE_MB} Mo max par fichier)")
     logger.info("Application demarree")
     yield
     # Shutdown

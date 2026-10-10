@@ -14,7 +14,7 @@ from models import (
 from database import get_database
 from auth import require_admin
 from bson import ObjectId
-from object_storage import put_object, get_object as storage_get_object
+import file_storage
 import logging
 
 logger = logging.getLogger(__name__)
@@ -391,28 +391,21 @@ async def upload_media_file(
                 detail=f"Type de fichier non autorisé. Extensions autorisées: {', '.join(ALLOWED_EXTENSIONS)}"
             )
         
-        # Vérifier la taille du fichier
-        content = await file.read()
-        if len(content) > MAX_FILE_SIZE:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Fichier trop volumineux. Taille maximum: {MAX_FILE_SIZE // 1024 // 1024}MB"
-            )
-        
-        # Générer un nom de fichier unique
-        unique_filename = f"{uuid.uuid4()}{file_extension}"
-        
-        # Sauvegarder dans Emergent Object Storage
-        storage_path = f"abrisia-plan/media/{unique_filename}"
-        result_storage = put_object(storage_path, content, file.content_type or "application/octet-stream")
+        # Stockage permanent (public : ces médias s'affichent sur le site)
+        try:
+            info = await file_storage.save_file(file.file, file.filename, file.content_type,
+                                                folder="media", public=True, uploaded_by=current_user["name"])
+        except file_storage.FileTooLarge:
+            raise HTTPException(status_code=413, detail=f"Fichier trop volumineux. Maximum : {file_storage.MAX_FILE_MB} Mo")
+        unique_filename = info["id"]
 
         db = get_database()
         media_doc = {
-            "filename": unique_filename,
+            "filename": info["filename"],
             "original_name": file.filename,
-            "file_path": f"/api/files/{unique_filename}",
-            "storage_path": result_storage.get("path", storage_path),
-            "file_size": len(content),
+            "file_path": info["url"],
+            "storage_file_id": info["id"],
+            "file_size": info["size"],
             "mime_type": file.content_type,
             "category": category,
             "alt_text": alt_text,
@@ -427,7 +420,7 @@ async def upload_media_file(
         
         return {
             "success": True,
-            "fileUrl": f"/api/files/{unique_filename}",
+            "fileUrl": info["url"],
             "fileId": str(result.inserted_id),
             "message": "Fichier uploadé avec succès"
         }
