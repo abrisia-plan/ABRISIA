@@ -37,9 +37,9 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-stone-50/95 backdrop-blur-sm border-b border-stone-200/50 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+        <div className="flex justify-between items-center py-2 lg:py-1">
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 bg-white">
+            <div className="w-[4.5rem] h-[4.5rem] lg:w-20 lg:h-20 rounded-full overflow-hidden flex-shrink-0 bg-white">
               <img 
                 src={site.logo_url || "/logo-abrisia.jpg"} 
                 alt="Logo Abrisia" 

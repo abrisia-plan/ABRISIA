@@ -38,7 +38,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
-              <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 bg-white">
+              <div className="w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-white">
                 <img 
                   src={site.logo_url || "/logo-abrisia.jpg"} 
                   alt="Logo Abrisia" 
