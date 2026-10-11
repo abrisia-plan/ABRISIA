@@ -141,9 +141,13 @@ class EmailService:
             logger.error(f"❌ Erreur envoi email (Resend) à {to_email}: {str(e)}")
             return False
 
-    def send_kit_order_confirmation_to_client(self, order_data):
-        """Envoie confirmation de commande au client"""
+    def send_kit_order_confirmation_to_client(self, order_data, awaiting_invoice=False):
+        """Envoie confirmation de commande au client.
+        awaiting_invoice : commande sans paiement en ligne, la facture suit par courriel."""
         try:
+            order_data = {**order_data,
+                          "customer_name": html.escape(str(order_data.get('customer_name') or '')),
+                          "kit_name": html.escape(str(order_data.get('kit_name') or ''))}
             subject = f"🏠 Confirmation commande #{order_data['order_number']} - Abrisia Plan"
             
             materials_row = ""
@@ -176,10 +180,10 @@ class EmailService:
                                 <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">Sous-total</td>
                                 <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">{order_data['subtotal']:.2f} $</td>
                             </tr>
-                            <tr>
+                            {f"""<tr>
                                 <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">Taxes (TPS + TVQ)</td>
                                 <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">{order_data['tax_amount']:.2f} $</td>
-                            </tr>
+                            </tr>""" if order_data.get('tax_amount') else ""}
                             <tr style="background: #0f766e; color: white;">
                                 <td style="padding: 14px; font-weight: bold; font-size: 16px;">TOTAL</td>
                                 <td style="padding: 14px; text-align: right; font-weight: bold; font-size: 16px;">{order_data['total_amount']:.2f} $</td>
@@ -187,7 +191,7 @@ class EmailService:
                         </table>
                         
                         <p style="color: #64748b; font-size: 14px;">
-                            Vos fichiers vous seront envoyés par courriel une fois le paiement confirmé.
+                            {"Nous vous enverrons votre facture par courriel, avec un lien pour payer en ligne. Vos fichiers vous seront envoyés dès le paiement reçu." if awaiting_invoice else "Vos fichiers vous seront envoyés par courriel une fois le paiement confirmé."}
                         </p>
                         
                         <div style="text-align: center; margin: 24px 0;">

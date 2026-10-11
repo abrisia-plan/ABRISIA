@@ -12,7 +12,7 @@ import { resolveImageUrl } from '../services/api';
 import {
   ShoppingCart, Filter, X, ChevronDown, ChevronUp,
   Ruler, BedDouble, Bath, Layers, Home, Eye, Plus, Minus, Trash2,
-  ArrowRight, Check, Loader2, SlidersHorizontal, Paintbrush, CreditCard, ExternalLink
+  ArrowRight, Check, Loader2, SlidersHorizontal, Paintbrush, CreditCard, ExternalLink, Send
 } from 'lucide-react';
 import SEO from '../components/SEO';
 import VideoEmbed from '../components/VideoEmbed';
@@ -69,6 +69,45 @@ const Collection = () => {
     loadOptions();
     loadCart();
   }, []);
+
+  // Paiement en ligne activé ? Sinon : commande, puis facture envoyée par courriel
+  const [onlinePayment, setOnlinePayment] = useState(false);
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/api/payments/config`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => setOnlinePayment(!!data?.online))
+      .catch(() => {});
+  }, []);
+
+  const sendOrderRequest = async () => {
+    if (!checkoutForm.name || !checkoutForm.email) {
+      toast({ title: "Champs requis", description: "Nom et courriel sont requis", variant: "destructive" });
+      return;
+    }
+    setCheckoutLoading(true);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/payments/order-request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cart_session_id: cartSessionId,
+          customer_name: checkoutForm.name,
+          customer_email: checkoutForm.email,
+          customer_phone: checkoutForm.phone,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.detail || 'Erreur');
+      setShowCheckout(false);
+      setOrderSent(data.order);
+      loadCart();
+    } catch (err) {
+      toast({ title: "Erreur", description: err.message || "La commande n'a pas pu être envoyée", variant: "destructive" });
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+  const [orderSent, setOrderSent] = useState(null);
 
   // Retour de la page de paiement : on vérifie le paiement auprès du serveur
   const [paidOrder, setPaidOrder] = useState(null);
@@ -862,7 +901,7 @@ const Collection = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <CreditCard className="w-5 h-5 text-teal-700" />
-              Passer à la caisse
+              {onlinePayment ? 'Passer à la caisse' : 'Commander'}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
@@ -875,7 +914,7 @@ const Collection = () => {
                 </div>
               ))}
               <div className="border-t pt-2 mt-2 flex justify-between font-bold">
-                <span>Total (taxes incluses)</span>
+                <span>{cart.tax_amount > 0 ? 'Total (taxes incluses)' : 'Total'}</span>
                 <span className="text-teal-700">{formatPrice(cart.total)}</span>
               </div>
             </div>
@@ -911,6 +950,8 @@ const Collection = () => {
             </div>
 
             {/* Boutons de paiement */}
+            {onlinePayment ? (
+              <>
             <div className="space-y-3">
               <Button
                 className="w-full bg-[#635BFF] hover:bg-[#5348db] text-white"
@@ -945,11 +986,43 @@ const Collection = () => {
               )}
             </div>
             <p className="text-xs text-gray-400 text-center">
-              Paiement sécurisé. Google Pay et Apple Pay s'affichent automatiquement si disponibles. Vos fichiers seront envoyés par courriel après confirmation.
+              Paiement sécurisé par carte de crédit ou de débit (Visa, Mastercard, Amex), Apple Pay ou Google Pay. Vos informations de carte ne nous sont jamais transmises. Vos fichiers seront envoyés par courriel après confirmation.
             </p>
+              </>
+            ) : (
+              <>
+                <Button
+                  className="w-full bg-teal-700 hover:bg-teal-800 text-white"
+                  onClick={sendOrderRequest}
+                  disabled={checkoutLoading}
+                  data-testid="order-request-btn"
+                >
+                  {checkoutLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+                  Envoyer ma commande
+                </Button>
+                <p className="text-xs text-gray-500 text-center">
+                  Aucun paiement maintenant. Vous recevrez une confirmation, puis votre facture par courriel avec un lien pour payer en ligne. Vos fichiers vous seront envoyés dès le paiement reçu.
+                </p>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
+      {/* Confirmation de commande (facture à suivre) */}
+      <Dialog open={!!orderSent} onOpenChange={() => setOrderSent(null)}>
+        <DialogContent className="max-w-md text-center">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Merci pour votre commande !</DialogTitle>
+          </DialogHeader>
+          {orderSent && (
+            <div className="space-y-3 text-slate-700">
+              <p>Commande {orderSent.orderNumber} : {orderSent.kitName}</p>
+              <p>Une confirmation a été envoyée à <strong>{orderSent.customerEmail}</strong>. Vous recevrez ensuite votre facture avec un lien de paiement.</p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Confirmation après paiement */}
       <Dialog open={!!paidOrder} onOpenChange={() => setPaidOrder(null)}>
         <DialogContent className="max-w-md text-center">

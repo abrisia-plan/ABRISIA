@@ -259,9 +259,93 @@ async def stripe_webhook(request: Request):
     return {"status": "success"}
 
 
+class OrderRequest(BaseModel):
+    cart_session_id: str
+    customer_name: str
+    customer_email: str
+    customer_phone: Optional[str] = None
+    notes: Optional[str] = None
+
+
+@router.post("/order-request")
+async def order_request(data: OrderRequest):
+    """Commande sans paiement en ligne : la propriétaire envoie ensuite la facture
+    (Zoho Invoice/Books, Interac…). Le client et la propriétaire reçoivent un courriel."""
+    try:
+        db = get_database()
+        from routes.collection import compute_cart
+        cart = await compute_cart(db, data.cart_session_id)
+        if not cart["items"]:
+            raise HTTPException(status_code=400, detail="Panier vide")
+        if not data.customer_name.strip() or "@" not in data.customer_email:
+            raise HTTPException(status_code=400, detail="Nom et courriel requis")
+
+        kit_name = ", ".join(it["product_name"] + (f" – {it['variant_name']}" if it.get("variant_name") else "")
+                             for it in cart["items"])
+        order_count = await db.kit_orders.count_documents({})
+        order_number = f"KIT-{datetime.utcnow().strftime('%Y%m')}-{(order_count + 1):04d}"
+        order = {
+            "order_number": order_number,
+            "kit_id": cart["items"][0]["product_id"],
+            "kit_name": kit_name,
+            "items": cart["items"],
+            "customer_name": data.customer_name.strip(),
+            "customer_email": data.customer_email.strip(),
+            "customer_phone": data.customer_phone,
+            "include_materials": False,
+            "base_price": cart["subtotal"],
+            "materials_price": 0.0,
+            "subtotal": cart["subtotal"],
+            "tax_amount": cart["tax_amount"],
+            "total_amount": cart["total"],
+            "currency": "CAD",
+            "status": "pending",
+            "payment_method": "facture",
+            "payment_confirmed_at": None,
+            "files_sent": False,
+            "files_sent_at": None,
+            "notes": data.notes,
+            "admin_notes": None,
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow(),
+        }
+        await db.kit_orders.insert_one(order)
+        await db.carts.delete_one({"session_id": data.cart_session_id})
+
+        try:
+            email_service.send_kit_order_confirmation_to_client(order, awaiting_invoice=True)
+            email_service.send_kit_order_notification_to_admin(order)
+        except Exception as email_error:
+            logger.warning(f"⚠️ Erreur envoi email: {email_error}")
+        try:
+            from routes.zoho import save_lead
+            parts = order["customer_name"].split()
+            await save_lead("kit_order", {
+                "first_name": parts[0], "last_name": " ".join(parts[1:]) or parts[0],
+                "email": order["customer_email"], "phone": order.get("customer_phone") or "",
+                "model_name": kit_name, "amount": order["total_amount"],
+            }, {
+                "First_Name": parts[0], "Last_Name": " ".join(parts[1:]) or parts[0],
+                "Email": order["customer_email"], "Phone": order.get("customer_phone") or "",
+                "Company": "Client Collection", "Lead_Source": "Commande Collection (facture à envoyer)",
+                "Description": f"Commande {order_number} : {kit_name}\nTotal : {order['total_amount']:.2f} $\nFacture à envoyer.",
+            })
+        except Exception as zoho_err:
+            logger.warning(f"⚠️ Zoho lead échoué: {zoho_err}")
+
+        logger.info(f"✅ Commande {order_number} reçue (facture à envoyer)")
+        return {"success": True, "order": _order_summary(order)}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Erreur commande: {e}")
+        raise HTTPException(status_code=500, detail="La commande n'a pas pu être envoyée")
+
+
 @router.get("/config")
 async def get_stripe_config():
-    """Retourner la clé publique Stripe pour le frontend"""
+    """Clé publique Stripe, et si le paiement en ligne est activé"""
     return {
+        "online": bool(stripe.api_key),
         "publishableKey": os.getenv("STRIPE_PUBLISHABLE_KEY")
     }
