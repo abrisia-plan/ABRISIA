@@ -15,7 +15,7 @@
 - Au Québec, l'article 16.1 de la Loi sur les architectes permet de préparer sans architecte les plans de plusieurs types de bâtiments (maison unifamiliale, chalet, mini-maison, garage, petit agrandissement). Au-delà, un architecte est requis.
 
 ## Ce qui n'est pas inclus
-Calculs de structure et plans scellés (ingénieur partenaire au besoin), certificat de localisation (arpenteur-géomètre), étude de sol et installation septique, construction et surveillance de chantier.
+Calculs de structure et plans scellés (par un ingénieur : nous vous disons dès le départ si votre projet en demande un), certificat de localisation (arpenteur-géomètre), étude de sol et installation septique, construction et surveillance de chantier.
 
 ## Pages
 - [Accueil](https://abrisia-plan.ca/)

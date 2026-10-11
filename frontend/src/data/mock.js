@@ -68,6 +68,6 @@ export const faqItems = [
   {
     id: 4,
     question: "Que se passe-t-il si mon projet dépasse les limites légales ?",
-    answer: "Pour les projets excédant les seuils de la Loi sur les architectes, Abrisia Plan intervient comme sous-traitant technique en collaboration avec des ingénieurs en structure ou des architectes pour que vos plans soient scellés et approuvés."
+    answer: "Nous vous le disons dès le départ. Un projet qui dépasse les seuils de la Loi sur les architectes, ou qui demande l'intervention d'un ingénieur, doit être confié à ces professionnels."
   }
 ];

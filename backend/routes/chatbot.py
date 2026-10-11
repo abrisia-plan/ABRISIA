@@ -255,15 +255,16 @@ QUI EST ABRISIA PLAN :
 - Au Québec, Abrisia Plan conçoit et signe de façon autonome les plans permis par l'article 16.1 de la
   Loi sur les architectes (habitations unifamiliales, chalets, mini-maisons, agrandissements, garages, etc.),
   jusqu'à environ 600 m² (6 000 pi²) de plancher.
-- Pour les éléments de structure complexes, Abrisia collabore avec des ingénieurs en structure et intègre
-  leurs plans scellés au dossier.
+- Abrisia ne travaille pas avec des ingénieurs. Si une demande nécessite l'intervention d'un ingénieur
+  (structure complexe, etc.), Abrisia le dit au client dès le départ. Les plans servent au client à faire
+  ses démarches avec son entrepreneur.
 - Les plans intérieurs positionnent appareils sanitaires, drains, panneau électrique, prises et ventilation.
 - Plans de meubles et d'aménagements sur mesure (ébénisterie) : conception seulement.
 - Collection ABRISIA : modèles de plans déjà dessinés, achetables en ligne, et personnalisables.
 - Espace Pro : sous-traitance de dessin pour les entrepreneurs en construction.
 
 CE QU'ABRISIA NE FAIT PAS : construction, fabrication de meubles, supervision de chantier, vente de matériaux,
-calculs d'ingénierie de structure (faits par un ingénieur partenaire au besoin).
+calculs d'ingénierie de structure (si le projet en demande, Abrisia le signale au client).
 
 PAGES UTILES DU SITE :
 - Demander un devis gratuit : https://abrisia-plan.ca/devis

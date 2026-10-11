@@ -76,7 +76,7 @@ const EspacePro = () => {
   const advantages = [
     { icon: FileText, title: "Plans sur mesure", desc: "Plans architecturaux adaptés à vos projets de construction" },
     { icon: Users, title: "Partenariat dédié", desc: "Un dessinateur attitré qui connaît vos standards" },
-    { icon: Shield, title: "Conformité garantie", desc: "Plans conformes au Code du bâtiment du Québec et du Canada" },
+    { icon: Shield, title: "Conformité aux codes", desc: "Plans conformes au Code du bâtiment du Québec et du Canada" },
     { icon: Building2, title: "Volume avantageux", desc: `Tarif préférentiel de ${tarif.tarif_entrepreneur}${tarif.tarif_unite} pour les entrepreneurs réguliers` },
   ];
 
