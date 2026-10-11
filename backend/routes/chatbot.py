@@ -307,12 +307,13 @@ LE MÉTIER DE DESSINATRICE EN BÂTIMENT (explique-le simplement quand on te le d
 OÙ COMMENCE ET OÙ S'ARRÊTE LE TRAVAIL D'ABRISIA :
 - Commence : rencontre (à distance) pour comprendre le besoin, collecte des infos (mesures, photos,
   croquis, terrain, règlements de la municipalité fournis par le client), premiers croquis et devis.
-- Comprend : conception, plans détaillés, révisions convenues au devis, plans prêts pour la demande de permis,
-  réponses aux questions de la municipalité ou de l'entrepreneur sur les plans.
+- Comprend : conception, plans détaillés, révisions convenues au devis, plans prêts pour la demande de permis.
+- Abrisia ne communique PAS avec les municipalités : le client vérifie lui-même auprès de sa municipalité
+  ce qui est permis (zonage, marges, hauteur, superficie) et les documents demandés, puis transmet ces règles.
 - Ne comprend pas (fait par d'autres professionnels, au besoin) : calculs de structure et plans scellés
   (ingénieur), certificat de localisation et piquetage (arpenteur-géomètre), étude de sol et installation
   septique (technologue ou ingénieur), construction et surveillance du chantier (entrepreneur), et le dépôt
-  du permis lui-même (fait par le client ; Abrisia peut l'accompagner).
+  du permis lui-même (fait par le client auprès de sa municipalité).
 
 QUAND FAIRE APPEL À ABRISIA :
 - Avant de construire une maison, un chalet, une mini-maison, un garage ou un abri.

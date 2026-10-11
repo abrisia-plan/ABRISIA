@@ -45,7 +45,7 @@ module.exports = [
       { p: ["Abrisia Plan est un studio de dessin en bâtiment établi au Saguenay–Lac-Saint-Jean. Nous préparons les plans de maisons, chalets, camps, mini-maisons, agrandissements et garages de la région, prêts pour la demande de permis à votre municipalité."] },
       { h2: 'Où travaillons-nous ?', p: ["Partout au Saguenay–Lac-Saint-Jean : Saguenay (Chicoutimi, Jonquière, La Baie), Alma, Roberval, Saint-Félicien, Dolbeau-Mistassini, Saint-Honoré, Saint-Fulgence, L'Anse-Saint-Jean, Métabetchouan–Lac-à-la-Croix, Desbiens, Saint-Prime, Normandin et les environs, ainsi qu'ailleurs au Québec, à distance."] },
       { h2: 'Ce que contiennent nos plans', list: ["Plan d'implantation sur le terrain", 'Plan de fondation', 'Plans des étages, cotés', 'Élévations des façades', 'Coupes de mur et détails de construction', 'Cartouche sur chaque feuille'] },
-      { h2: 'Comment ça se passe', list: ['Vous décrivez votre projet dans le formulaire de devis (photos, croquis et plans acceptés).', 'Nous en discutons et préparons des croquis.', 'Nous réalisons les plans détaillés.', "Nous vous accompagnons jusqu'au permis."] },
+      { h2: 'Comment ça se passe', list: ['Vous décrivez votre projet dans le formulaire de devis (photos, croquis et plans acceptés).', 'Nous en discutons et préparons des croquis.', 'Nous réalisons les plans détaillés.', 'Vous recevez vos plans en PDF, prêts pour votre demande de permis.'] },
     ],
     links: [DEVIS, CONTACT, { href: '/faq', text: 'Questions fréquentes' }],
   },

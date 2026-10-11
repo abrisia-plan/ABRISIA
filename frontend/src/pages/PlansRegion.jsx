@@ -29,7 +29,7 @@ const ETAPES = [
   'Vous décrivez votre projet dans le formulaire de devis (photos, croquis et plans acceptés).',
   'Nous en discutons et préparons des croquis.',
   'Nous réalisons les plans détaillés.',
-  "Nous vous accompagnons jusqu'au permis.",
+  "Vous recevez vos plans en PDF, prêts à joindre à votre demande de permis.",
 ];
 
 const PlansRegion = () => {
