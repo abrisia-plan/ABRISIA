@@ -66,6 +66,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/plans-maison-saguenay-lac-saint-jean" onClick={scrollTop} className="hover:text-teal-400 transition-colors">
+                  Plans de maison au Saguenay–Lac-Saint-Jean
+                </Link>
+              </li>
+              <li>
                 <Link to="/carrieres" onClick={scrollTop} className="hover:text-teal-400 transition-colors">
                   Carrières : envoyer un CV
                 </Link>

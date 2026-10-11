@@ -20,6 +20,7 @@ import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import APropos from "./pages/APropos";
 import Carrieres from "./pages/Carrieres";
+import PlansRegion from "./pages/PlansRegion";
 import MentionsLegales from "./pages/Legal/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/Legal/PolitiqueConfidentialite";
 import Login from "./pages/Admin/Login";
@@ -53,6 +54,7 @@ function App() {
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/a-propos" element={<APropos />} />
                 <Route path="/carrieres" element={<Carrieres />} />
+                <Route path="/plans-maison-saguenay-lac-saint-jean" element={<PlansRegion />} />
                 <Route path="/mentions-legales" element={<MentionsLegales />} />
                 <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
               </Routes>
