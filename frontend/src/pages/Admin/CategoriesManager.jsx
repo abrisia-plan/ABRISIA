@@ -23,7 +23,17 @@ const CategoriesManager = () => {
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState([]);
 
-  const defaultIcons = ['🏠', '🏔️', '🏡', '🪟', '🪑', '📐', '🏛️', '🏢', '🌿', '✨'];
+  // Icônes proposées pour les catégories (le nom aide à choisir)
+  const defaultIcons = [
+    ['🏠', 'Maison'], ['🏡', 'Maison avec jardin'], ['🏘️', 'Multifamiliale / plex'], ['🏢', 'Immeuble à logements'],
+    ['🏬', 'Commercial'], ['🏚️', 'Rénovation / maison ancienne'], ['🏗️', 'Construction / agrandissement'],
+    ['🏔️', 'Chalet / montagne'], ['🛖', 'Cabane / camp'], ['🎣', 'Cabane à pêche'], ['⛺', 'Camping / prêt-à-camper'],
+    ['🌲', 'Forêt / bord de lac'], ['🚗', 'Garage'], ['🧱', 'Fondation / maçonnerie'], ['🪟', 'Fenêtres / verrière'],
+    ['☀️', 'Solarium'], ['🔥', 'Foyer'], ['🍳', 'Cuisine'], ['🛁', 'Salle de bain'], ['🛋️', 'Aménagement intérieur'],
+    ['🪑', 'Meuble / ébénisterie'], ['🪵', 'Bois'], ['🚪', 'Portes / accès'], ['♿', 'Accessibilité'],
+    ['📐', 'Dessins techniques'], ['📏', 'Plans / mesures'], ['✏️', 'Esquisse'], ['🏛️', 'Architectural / patrimoine'],
+    ['⛪', 'Bâtiment institutionnel'], ['🌿', 'Écologique'], ['🌱', 'Petit projet'], ['💡', 'Idées'], ['✨', 'Autre'],
+  ];
 
   useEffect(() => {
     loadCategories();
@@ -172,14 +182,20 @@ const CategoriesManager = () => {
                 </div>
                 
                 {/* Icône */}
-                <div className="relative">
+                <div className="relative w-14 h-14 shrink-0 border rounded-lg bg-white flex items-center justify-center text-2xl">
+                  {/* L'icône est affichée seule ; la liste (avec les noms) s'ouvre en touchant la case */}
+                  <span aria-hidden="true">{category.icon}</span>
                   <select
                     value={category.icon}
                     onChange={(e) => handleChange(index, 'icon', e.target.value)}
-                    className="w-14 h-14 text-2xl text-center border rounded-lg cursor-pointer appearance-none bg-white"
+                    aria-label="Choisir une icône"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   >
-                    {defaultIcons.map((icon) => (
-                      <option key={icon} value={icon}>{icon}</option>
+                    {category.icon && !defaultIcons.some(([icon]) => icon === category.icon) && (
+                      <option value={category.icon}>{category.icon}</option>
+                    )}
+                    {defaultIcons.map(([icon, label]) => (
+                      <option key={icon} value={icon}>{icon}  {label}</option>
                     ))}
                   </select>
                 </div>
