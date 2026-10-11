@@ -191,7 +191,7 @@ const AdminPanel = () => {
               onClick={() => setActiveTab('calculator-rates')}
             >
               <DollarSign className="w-4 h-4 mr-2" />
-              Tarifs calculateur
+              Tarifs
             </Button>
             <Button 
               variant={activeTab === 'cms' ? 'default' : 'ghost'}

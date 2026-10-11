@@ -115,10 +115,10 @@ const TestimonialsManager = () => {
   };
 
   const handleSubmit = async () => {
-    if (!formData.client_name || !formData.comment) {
+    if (!formData.client_name.trim() || !formData.comment.trim()) {
       toast({
-        title: "Erreur",
-        description: "Le nom et le commentaire sont requis",
+        title: !formData.comment.trim() ? "Commentaire manquant" : "Nom manquant",
+        description: !formData.comment.trim() ? "Écrivez ce que le client a dit." : "Écrivez le nom du client.",
         variant: "destructive"
       });
       return;
