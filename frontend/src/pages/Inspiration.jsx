@@ -4,11 +4,12 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Eye, ArrowRight, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Images, Loader2 } from 'lucide-react';
+import { Eye, ArrowRight, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Images, PlayCircle, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../hooks/use-toast';
 import { faqItems } from '../data/mock';
 import SEO from '../components/SEO';
+import VideoEmbed from '../components/VideoEmbed';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -159,6 +160,11 @@ const Inspiration = () => {
                         <Images className="w-3.5 h-3.5" /> {photosOf(project).length} photos
                       </div>
                     )}
+                    {project.videos?.length > 0 && (
+                      <div className="absolute bottom-3 left-3 flex items-center gap-1 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+                        <PlayCircle className="w-3.5 h-3.5" /> Vidéo
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                       <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
@@ -220,6 +226,9 @@ const Inspiration = () => {
                     ))}
                   </div>
                 )}
+                {(selectedProject.videos || []).map((url, i) => (
+                  <VideoEmbed key={`${i}-${url}`} url={url} title={`${selectedProject.title} — vidéo ${i + 1}`} />
+                ))}
                 <div className="flex items-center gap-2">
                   <Badge className="bg-teal-800 text-white">{selectedProject.category}</Badge>
                   {selectedProject.dimensions && (

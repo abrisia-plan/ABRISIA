@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import { projectService, handleApiError } from '../../services/api';
+import VideoLinksEditor from '../../components/VideoLinksEditor';
 
 const ProjectsManager = () => {
   const { toast } = useToast();
@@ -23,7 +24,7 @@ const ProjectsManager = () => {
   const [editingProject, setEditingProject] = useState(null);
   const [filterCategory, setFilterCategory] = useState('Tous');
   const [formData, setFormData] = useState({
-    title: '', category: '', image: '', gallery_images: [], description: '',
+    title: '', category: '', image: '', gallery_images: [], videos: [], description: '',
     details: [''], dimensions: '', is_visible: true, show_on_home: false
   });
   const [uploading, setUploading] = useState(false);
@@ -49,7 +50,7 @@ const ProjectsManager = () => {
   const openAddModal = () => {
     setEditingProject(null);
     setFormData({
-      title: '', category: categories[0], image: '', gallery_images: [], description: '',
+      title: '', category: categories[0], image: '', gallery_images: [], videos: [], description: '',
       details: [''], dimensions: '', is_visible: true, show_on_home: false
     });
     setIsModalOpen(true);
@@ -60,6 +61,7 @@ const ProjectsManager = () => {
     setFormData({
       title: project.title, category: project.category,
       image: project.image, gallery_images: project.galleryImages || [],
+      videos: project.videos || [],
       description: project.description,
       details: project.details || [''], dimensions: project.dimensions,
       is_visible: project.isVisible !== false,
@@ -354,6 +356,7 @@ const ProjectsManager = () => {
               <input id="project-gallery-upload" type="file" accept="image/*" multiple className="hidden"
                 onChange={(e) => handleImageUpload(e, true)} />
             </div>
+            <VideoLinksEditor videos={formData.videos} onChange={(v) => handleInputChange('videos', v)} />
             <div>
               <Label>Description</Label>
               <Textarea value={formData.description} onChange={(e) => handleInputChange('description', e.target.value)} placeholder="Description du projet" rows={3} />

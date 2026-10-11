@@ -5,6 +5,7 @@ import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Switch } from '../../components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
+import VideoLinksEditor from '../../components/VideoLinksEditor';
 import { 
   Plus, X, Upload, Loader2, Save, FileText, Package, 
   Image as ImageIcon, DollarSign, User 
@@ -550,6 +551,11 @@ const KitFormModal = ({
                 onChange={(e) => onImageUpload(e, true)}
               />
             </div>
+
+            <VideoLinksEditor
+              videos={formData.videos || []}
+              onChange={(v) => onInputChange('videos', v)}
+            />
           </div>
 
           {/* Boutons d'action */}

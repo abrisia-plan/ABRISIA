@@ -12,9 +12,24 @@ from database import get_database
 from auth import require_admin, get_current_user
 from bson import ObjectId
 from email_service import email_service
+from video_links import clean_videos, invalid_videos
 import logging
 
 logger = logging.getLogger(__name__)
+
+
+def _product_videos(product: dict) -> list:
+    """Liens vidéo du produit (l'ancien champ video_url est repris s'il existe)."""
+    return clean_videos((product.get("videos") or []) + [product.get("video_url") or ""])
+
+
+def _check_videos(urls):
+    bad = invalid_videos(urls)
+    if bad:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Ce lien n'est pas une vidéo YouTube ou Vimeo : {bad[0]}",
+        )
 router = APIRouter(tags=["ecommerce"])
 
 # ========== PRODUITS (PLANS À VENDRE) ==========
@@ -97,6 +112,7 @@ async def get_products(
                 "rooms": product.get("rooms", ""),
                 "mainImage": product["main_image"],
                 "galleryImages": product.get("gallery_images", []),
+                "videos": _product_videos(product),
                 "slug": product["slug"],
                 "isFeatured": product.get("is_featured", False),
                 "difficultyLevel": product.get("difficulty_level", "intermediate"),
@@ -200,6 +216,7 @@ async def get_product_by_slug(product_slug: str):
             "mainImage": product["main_image"],
             "galleryImages": product.get("gallery_images", []),
             "videoUrl": product.get("video_url"),
+            "videos": _product_videos(product),
             "slug": product["slug"],
             "includes": product.get("includes", []),
             "fileFormats": product.get("file_formats", ["PDF"]),
@@ -354,6 +371,7 @@ async def get_admin_products(
                 "rooms": product.get("rooms", ""),
                 "includes": product.get("includes", []),
                 "galleryImages": product.get("gallery_images", []),
+                "videos": _product_videos(product),
                 "description": product.get("description", ""),
                 # Fichiers à vendre : visibles seulement dans l'admin
                 "planFileUrl": product.get("plan_file_url"),
@@ -395,9 +413,12 @@ async def create_product(
                 detail="Un produit avec ce slug existe déjà"
             )
         
+        _check_videos(product_data.videos)
+
         # Créer le produit
         product_doc = {
             **product_data.dict(),
+            "videos": clean_videos(product_data.videos),
             "views_count": 0,
             "sales_count": 0,
             "rating": 0.0,
@@ -446,6 +467,9 @@ async def update_product(
         for field, value in update_data.dict(exclude_unset=True).items():
             if value is not None or field in clearable:
                 update_fields[field] = value
+        if update_data.videos is not None:
+            _check_videos(update_data.videos)
+            update_fields["videos"] = clean_videos(update_data.videos)
         
         result = await db.products.update_one(
             {"_id": ObjectId(product_id)},

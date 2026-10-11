@@ -258,6 +258,7 @@ class Product(BaseDocument):
     main_image: str
     gallery_images: List[str] = []
     video_url: Optional[str] = None
+    videos: List[str] = []
     
     # SEO et marketing
     slug: str  # URL friendly
@@ -318,6 +319,7 @@ class ProductCreate(BaseModel):
     main_image: str
     gallery_images: List[str] = []
     video_url: Optional[str] = None
+    videos: List[str] = []
     slug: str
     meta_title: Optional[str] = ""
     meta_description: Optional[str] = ""
@@ -359,6 +361,7 @@ class ProductUpdate(BaseModel):
     main_image: Optional[str] = None
     gallery_images: Optional[List[str]] = None
     video_url: Optional[str] = None
+    videos: Optional[List[str]] = None
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
     tags: Optional[List[str]] = None
@@ -662,6 +665,7 @@ class Project(BaseDocument):
     category: str
     image: str
     gallery_images: List[str] = []
+    videos: List[str] = []
     description: str
     details: List[str]
     dimensions: str
@@ -673,6 +677,7 @@ class ProjectCreate(BaseModel):
     category: str
     image: str
     gallery_images: List[str] = []
+    videos: List[str] = []
     description: str
     details: List[str]
     dimensions: str
@@ -684,6 +689,7 @@ class ProjectUpdate(BaseModel):
     category: Optional[str] = None
     image: Optional[str] = None
     gallery_images: Optional[List[str]] = None
+    videos: Optional[List[str]] = None
     description: Optional[str] = None
     details: Optional[List[str]] = None
     dimensions: Optional[str] = None
