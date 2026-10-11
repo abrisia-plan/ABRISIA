@@ -247,9 +247,9 @@ const About = () => {
               </h3>
               <p className="text-slate-300 leading-relaxed text-base">
                 Sur la vue en plan, nous indiquons l'emplacement des appareils (salle de bain, cuisine, buanderie)
-                pour que vos entrepreneurs <strong className="text-white">comprennent tout de suite la distribution de l'espace</strong>.
-                Nous ne faisons pas de plans d'électricité, de plomberie ou de ventilation : ces réseaux sont
-                planifiés par vos entrepreneurs spécialisés.
+                pour que votre plombier et votre électricien <strong className="text-white">comprennent tout de suite la distribution de l'espace</strong>
+                et planifient leurs réseaux. Si vous avez vraiment besoin d'un plan de mécanique du bâtiment
+                (plomberie, électricité, ventilation), nous pouvons le préparer sur demande, à un tarif à part.
               </p>
             </div>
           </div>
