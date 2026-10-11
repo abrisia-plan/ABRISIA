@@ -16,11 +16,11 @@ const FAQS = [
   },
   {
     q: "Quels plans faut-il pour obtenir un permis de construction ?",
-    a: "Les exigences varient selon la municipalité, mais on demande habituellement un plan d'implantation sur le terrain, un plan de fondation, les plans des étages, les élévations des façades et une coupe du bâtiment montrant la composition des murs, des planchers et du toit. Nous préparons le dossier selon ce que demande votre municipalité.",
+    a: "Les exigences varient selon la municipalité, mais on demande habituellement un plan d'implantation (que nous dessinons à partir de votre certificat de localisation), un plan de fondation, les plans des étages, les élévations des façades et une coupe du bâtiment montrant la composition des murs, des planchers et du toit. Informez-vous auprès de votre municipalité des documents demandés : nous préparons les plans en conséquence. Certaines municipalités exigent aussi un certificat d'implantation signé par un arpenteur-géomètre : ce document relève de l'arpenteur, pas de nous.",
   },
   {
     q: "Quels codes et normes vos plans respectent-ils ?",
-    a: "Nos plans sont conçus selon le Code de construction du Québec (chapitre Bâtiment), basé sur le Code national du bâtiment du Canada, ainsi que selon les règlements de votre municipalité (zonage, marges, hauteur, etc.).",
+    a: "Nos plans sont conçus selon le Code de construction du Québec (chapitre Bâtiment), basé sur le Code national du bâtiment du Canada, ainsi que selon les règlements de votre municipalité (zonage, marges, hauteur, etc.), que nous vous invitons à vérifier auprès d'elle.",
   },
   {
     q: "Que contient un plan de fondation ?",
@@ -32,7 +32,7 @@ const FAQS = [
   },
   {
     q: "Qu'est-ce qui n'est pas inclus dans vos services ?",
-    a: "Abrisia Plan conçoit et dessine les plans. Les calculs de structure et les plans scellés relèvent d'un ingénieur, le certificat de localisation et le piquetage d'un arpenteur-géomètre, l'étude de sol et l'installation septique d'un technologue ou d'un ingénieur, et la construction d'un entrepreneur. La demande de permis est déposée par le client, et nous pouvons l'accompagner.",
+    a: "Abrisia Plan conçoit et dessine les plans. Les calculs de structure et les plans scellés relèvent d'un ingénieur, le certificat de localisation et le piquetage d'un arpenteur-géomètre, l'étude de sol et l'installation septique d'un technologue ou d'un ingénieur, et la construction d'un entrepreneur. La demande de permis est faite par le client auprès de sa municipalité.",
   },
   {
     q: "Quand devrais-je faire appel à vos services ?",
@@ -40,11 +40,11 @@ const FAQS = [
   },
   {
     q: "Comment se déroule un projet avec Abrisia Plan ?",
-    a: "1. Vous nous décrivez votre projet dans le formulaire de devis (vous pouvez joindre photos, croquis et plans). 2. Nous discutons avec vous, préparons des croquis et un devis. 3. Nous réalisons les plans détaillés. 4. Nous vous accompagnons jusqu'au permis et répondons aux questions de la municipalité ou de l'entrepreneur.",
+    a: "1. Vous nous décrivez votre projet dans le formulaire de devis (vous pouvez joindre photos, croquis et plans). 2. Nous discutons avec vous, préparons des croquis et un devis. 3. Nous réalisons les plans détaillés. 4. Vous recevez vos plans en PDF, prêts à joindre à votre demande de permis.",
   },
   {
     q: "Travaillez-vous à distance ? Dans quelles régions ?",
-    a: "Oui, tout se fait à distance, par téléphone, courriel ou texto. Nous sommes établis au Saguenay–Lac-Saint-Jean et travaillons partout au Québec.",
+    a: "Oui. La plupart des projets se font à distance, par téléphone, courriel ou texto, et nous pouvons nous déplacer dans certains cas. Nous sommes établis au Saguenay–Lac-Saint-Jean et travaillons partout au Québec.",
   },
   {
     q: "Combien coûtent des plans de maison ou de chalet ?",

@@ -54,8 +54,8 @@ const About = () => {
   const livrables = [
     {
       icon: <MapPin className="w-6 h-6 text-teal-700" />,
-      title: "Plan d'implantation",
-      desc: "Positionnement stratégique du bâtiment selon les règles d'urbanisme."
+      title: "Plan d'implantation projeté",
+      desc: "Position prévue du bâtiment sur le terrain, dessinée à partir de votre certificat de localisation."
     },
     {
       icon: <Layers className="w-6 h-6 text-teal-700" />,
@@ -82,7 +82,7 @@ const About = () => {
   const avantages = [
     {
       icon: <Globe className="w-8 h-8 text-teal-700" />,
-      title: "Flexibilité et services 100 % à distance",
+      title: "Services à distance, déplacement au besoin",
       desc: "Plus besoin de vous déplacer. Que vous soyez au Saguenay–Lac-Saint-Jean ou ailleurs dans le monde, nous collaborons efficacement par téléphone, courriel ou texto."
     },
     {
@@ -130,7 +130,7 @@ const About = () => {
           <div className="space-y-6 text-base text-slate-700 leading-relaxed">
             <p>
               Établie au <strong className="text-slate-900">Saguenay–Lac-Saint-Jean</strong>, notre équipe 
-              offre des services de conception de plans <strong className="text-slate-900">entièrement à distance</strong>, 
+              offre des services de conception de plans <strong className="text-slate-900">à distance, avec déplacement au besoin</strong>, 
               ce qui nous permet de collaborer avec vous, où que vous soyez dans le monde.
             </p>
             <p>

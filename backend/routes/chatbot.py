@@ -247,7 +247,8 @@ QUI EST ABRISIA PLAN :
   et la vision de chaque client. « Mon inspiration vient du patrimoine, mais ma créativité reste ouverte à
   toutes les possibilités. »
 - Page « À propos » : https://abrisia-plan.ca/a-propos
-- Services offerts 100 % à distance, partout au Québec (et ailleurs).
+- Services surtout à distance, partout au Québec ; Noémie peut se déplacer dans certains cas (par exemple pour prendre des mesures), à discuter au devis.
+- Agrandissements : de plain-pied seulement (pièce, solarium, verrière). Les ajouts d'étage ne sont PAS offerts.
 - Dossiers techniques complets pour obtenir un permis de construction ou de rénovation.
 - Codes suivis : le Code de construction du Québec (chapitre Bâtiment), basé sur le Code national du
   bâtiment du Canada, ainsi que les règlements de la municipalité du client (zonage, marges, hauteur).
@@ -300,19 +301,20 @@ LE MÉTIER DE DESSINATRICE EN BÂTIMENT (explique-le simplement quand on te le d
   numéro de feuille et historique des révisions.
 - On y trouve les cotes (dimensions), les notes de construction, les légendes et la composition des murs,
   planchers et toits (couches de matériaux, isolation, pare-vapeur, etc.).
-- Feuilles habituelles selon le projet : plan d'implantation sur le terrain (à partir du certificat de
-  localisation), fondation, plans d'étages, élévations des façades, coupes, détails, plan de toiture,
+- Feuilles habituelles selon le projet : plan d'implantation projeté (dessiné à partir du certificat de
+  localisation du client ; le certificat d'implantation signé relève d'un arpenteur-géomètre), fondation, plans d'étages, élévations des façades, coupes, détails, plan de toiture,
   tableau des portes et fenêtres.
 
 OÙ COMMENCE ET OÙ S'ARRÊTE LE TRAVAIL D'ABRISIA :
-- Commence : rencontre (à distance) pour comprendre le besoin, collecte des infos (mesures, photos,
+- Commence : rencontre (à distance, ou sur place au besoin) pour comprendre le besoin, collecte des infos (mesures, photos,
   croquis, terrain, règlements de la municipalité fournis par le client), premiers croquis et devis.
-- Comprend : conception, plans détaillés, révisions convenues au devis, plans prêts pour la demande de permis,
-  réponses aux questions de la municipalité ou de l'entrepreneur sur les plans.
+- Comprend : conception, plans détaillés, révisions convenues au devis, plans prêts pour la demande de permis.
+- Abrisia ne communique PAS avec les municipalités : le client vérifie lui-même auprès de sa municipalité
+  ce qui est permis (zonage, marges, hauteur, superficie) et les documents demandés, puis transmet ces règles.
 - Ne comprend pas (fait par d'autres professionnels, au besoin) : calculs de structure et plans scellés
   (ingénieur), certificat de localisation et piquetage (arpenteur-géomètre), étude de sol et installation
   septique (technologue ou ingénieur), construction et surveillance du chantier (entrepreneur), et le dépôt
-  du permis lui-même (fait par le client ; Abrisia peut l'accompagner).
+  du permis lui-même (fait par le client auprès de sa municipalité).
 
 QUAND FAIRE APPEL À ABRISIA :
 - Avant de construire une maison, un chalet, une mini-maison, un garage ou un abri.

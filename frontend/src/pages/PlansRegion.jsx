@@ -21,7 +21,7 @@ const PROJETS = [
 ];
 
 const CONTENU = [
-  "Plan d'implantation sur le terrain", 'Plan de fondation', 'Plans des étages, cotés',
+  "Plan d'implantation projeté, à partir de votre certificat de localisation", 'Plan de fondation', 'Plans des étages, cotés',
   'Élévations des façades', 'Coupes de mur et détails de construction', 'Cartouche sur chaque feuille',
 ];
 
@@ -29,7 +29,7 @@ const ETAPES = [
   'Vous décrivez votre projet dans le formulaire de devis (photos, croquis et plans acceptés).',
   'Nous en discutons et préparons des croquis.',
   'Nous réalisons les plans détaillés.',
-  "Nous vous accompagnons jusqu'au permis.",
+  "Vous recevez vos plans en PDF, prêts à joindre à votre demande de permis.",
 ];
 
 const PlansRegion = () => {
@@ -75,7 +75,7 @@ const PlansRegion = () => {
                 de votre municipalité.
               </p>
               <p>
-                Tout peut se faire à distance, par courriel, téléphone ou texto : pas besoin de vous déplacer.
+                La plupart des projets se font à distance, par courriel, téléphone ou texto. Dans certains cas, nous pouvons nous déplacer pour prendre des mesures.
               </p>
             </div>
             <FloorPlanDrawing className="w-full max-w-sm mx-auto text-teal-800" />
