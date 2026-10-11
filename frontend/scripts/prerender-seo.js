@@ -39,7 +39,7 @@ for (const page of pages) {
   html = setMeta(html, 'name', 'description', page.description);
   html = setMeta(html, 'property', 'og:title', page.title);
   html = setMeta(html, 'property', 'og:description', page.description);
-  html = setMeta(html, 'property', 'og:url', url);
+  if (page.path !== '/') html = setMeta(html, 'property', 'og:url', url);
   html = setMeta(html, 'name', 'twitter:title', page.title);
   html = setMeta(html, 'name', 'twitter:description', page.description);
   // Pas d'adresse canonique sur la page d'accueil : son fichier sert aussi de secours
