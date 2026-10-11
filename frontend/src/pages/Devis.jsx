@@ -522,7 +522,8 @@ const Devis = () => {
                   </div>
 
                   <div className="border-t border-blue-200 pt-4">
-                    <h4 className="font-medium text-slate-700 mb-3">Comment préférez-vous qu'on vous contacte ?</h4>
+                    <h4 className="font-medium text-slate-700 mb-1">Pour discuter de votre projet, comment préférez-vous qu'on vous joigne ?</h4>
+                    <p className="text-xs text-slate-500 mb-3">Dès l'envoi, vous recevrez une confirmation automatique par courriel.</p>
                     <div className="space-y-2">
                       {formOptions.contact_methods.map((opt) => (
                         <label key={opt.label} className="flex items-start space-x-3 cursor-pointer">

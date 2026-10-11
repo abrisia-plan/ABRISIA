@@ -382,12 +382,12 @@ class EmailService:
             if fichiers:
                 lignes += f'<li>Fichiers reçus : {len(fichiers)}</li>'
             if pref:
-                lignes += f'<li>Vous préférez être contacté : {pref}</li>'
+                lignes += f'<li>Pour en discuter, vous préférez être joint : {pref}</li>'
             body = f"""
                 <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nous avons bien reçu votre demande</h2>
                 <p>Bonjour {prenom},</p>
                 <p>Merci d'avoir pensé à Abrisia Plan pour votre projet. Votre demande de devis nous est bien parvenue.
-                Nous l'étudions et nous vous contacterons rapidement{' (' + pref.lower() + ')' if pref and pref.lower() != 'peu importe' else ''}.</p>
+                Nous l'étudions et nous vous contacterons rapidement pour en discuter{' (' + pref.lower() + ')' if pref and pref.lower() != 'peu importe' else ''}.</p>
                 {f'<ul style="color: #334155; line-height: 1.8;">{lignes}</ul>' if lignes else ''}
                 <p>Vous avez oublié un détail ou un fichier ? Répondez simplement à ce courriel.</p>
                 <p style="margin-top: 24px;">À bientôt,<br><strong>Abrisia Plan</strong></p>
