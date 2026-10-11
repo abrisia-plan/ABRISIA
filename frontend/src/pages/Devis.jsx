@@ -246,7 +246,7 @@ const Devis = () => {
       if (response.success) {
         toast({
           title: "Demande envoyée !",
-          description: response.message || "Nous vous contacterons sous 24h à abrisia0plan@gmail.com",
+          description: response.message || "Une confirmation vous a été envoyée par courriel.",
         });
         
         // Reset form

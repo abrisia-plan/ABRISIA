@@ -362,6 +362,41 @@ class EmailService:
             logger.error(f"❌ Erreur envoi notification temoignage: {str(e)}")
             return False
         
+    def send_devis_confirmation_to_client(self, devis_data):
+        """Accusé de réception envoyé au client après sa demande de devis"""
+        try:
+            to = (devis_data.get('email') or '').strip()
+            if not to:
+                return False
+            esc = lambda v: html.escape(str(v or ''))
+            prenom = esc(devis_data.get('prenom')) or 'bonjour'
+            projet = esc(devis_data.get('project_type'))
+            plans = devis_data.get('plans_noms') or []
+            fichiers = devis_data.get('fichiers') or []
+            pref = esc(devis_data.get('contact_preference'))
+            lignes = ''
+            if projet:
+                lignes += f'<li>Projet : {projet}</li>'
+            if plans:
+                lignes += f'<li>Plans demandés : {esc(", ".join(plans))}</li>'
+            if fichiers:
+                lignes += f'<li>Fichiers reçus : {len(fichiers)}</li>'
+            if pref:
+                lignes += f'<li>Vous préférez être contacté : {pref}</li>'
+            body = f"""
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nous avons bien reçu votre demande</h2>
+                <p>Bonjour {prenom},</p>
+                <p>Merci d'avoir pensé à Abrisia Plan pour votre projet. Votre demande de devis nous est bien parvenue.
+                Nous l'étudions et nous vous contacterons rapidement{' (' + pref.lower() + ')' if pref and pref.lower() != 'peu importe' else ''}.</p>
+                {f'<ul style="color: #334155; line-height: 1.8;">{lignes}</ul>' if lignes else ''}
+                <p>Vous avez oublié un détail ou un fichier ? Répondez simplement à ce courriel.</p>
+                <p style="margin-top: 24px;">À bientôt,<br><strong>Abrisia Plan</strong></p>
+            """
+            return self._send_email(to, "Nous avons bien reçu votre demande de devis – Abrisia Plan", self._wrap_email(body))
+        except Exception as e:
+            logger.error(f"Erreur confirmation devis client: {str(e)}")
+            return False
+
     def send_devis_notification(self, devis_data, attachments=None):
         """Envoie une notification email brandée pour un nouveau devis"""
         try:

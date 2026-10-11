@@ -12,6 +12,7 @@ from models import (
 from database import get_database
 from auth import require_admin
 from email_service import email_service
+from sms_service import send_sms
 from file_storage import file_size
 from bson import ObjectId
 import logging
@@ -96,11 +97,28 @@ def _build_devis_doc(devis_data: DevisCreate, fichiers: list, source: str = "for
     }
 
 
+def _wants_sms(devis_doc: dict) -> bool:
+    pref = (devis_doc.get("contact_preference") or "").lower()
+    return "texto" in pref or "sms" in pref
+
+
+def confirm_to_client(devis_doc: dict):
+    """Accusé de réception au client : par courriel, et par texto s'il l'a choisi
+    (seulement quand l'envoi de textos est configuré)."""
+    email_service.send_devis_confirmation_to_client(devis_doc)
+    if _wants_sms(devis_doc) and devis_doc.get("telephone"):
+        prenom = devis_doc.get("prenom") or ""
+        send_sms(devis_doc["telephone"],
+                 f"Abrisia Plan : bonjour {prenom}, nous avons bien reçu votre demande de devis. "
+                 "Nous vous recontactons rapidement par texto. Merci !")
+
+
 async def create_devis_from_chat(devis_data: DevisCreate) -> str:
     """Devis recueilli par l'assistant du site : base, courriel et Zoho (sans fichiers)"""
     devis_doc = _build_devis_doc(devis_data, [], source="chatbot")
     result = await get_database().devis.insert_one(devis_doc)
     await run_in_threadpool(email_service.send_devis_notification, devis_doc, None)
+    await run_in_threadpool(confirm_to_client, devis_doc)
     await _create_zoho_lead_from_devis(devis_doc)
     logger.info(f"✅ Devis recueilli par l'assistant pour {devis_data.prenom} {devis_data.nom} ({devis_data.email})")
     return str(result.inserted_id)
@@ -115,13 +133,14 @@ async def _create_devis(devis_data: DevisCreate, fichiers: list, background_task
     result = await db.devis.insert_one(devis_doc)
 
     background_tasks.add_task(email_service.send_devis_notification, devis_doc, attachments)
+    background_tasks.add_task(confirm_to_client, devis_doc)
     background_tasks.add_task(_create_zoho_lead_from_devis, devis_doc)
 
     logger.info(f"✅ Nouveau devis soumis par {devis_data.prenom} {devis_data.nom} ({devis_data.email}), {len(fichiers)} fichier(s)")
 
     return DevisResponse(
         success=True,
-        message="Devis soumis avec succès. Nous vous contacterons sous 24h.",
+        message="Devis soumis avec succès. Une confirmation vous a été envoyée.",
         devis={
             "id": str(result.inserted_id),
             "status": "En attente",
