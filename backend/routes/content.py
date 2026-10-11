@@ -546,9 +546,6 @@ DEFAULT_LEGAL_PAGES = {
 **Localisation :** Saguenay–Lac-Saint-Jean, Québec, Canada
 **Courriel :** abrisia0plan@gmail.com
 
-## Hébergement
-Le site est hébergé par Vercel (pages du site) et Render (serveur), et les données sont conservées chez MongoDB Atlas.
-
 ## Propriété intellectuelle
 L'ensemble du contenu de ce site (textes, images, plans, logos, design) est la propriété d'Abrisia Plan ou de ses partenaires. Toute reproduction, totale ou partielle, est interdite sans autorisation écrite préalable.
 
@@ -594,10 +591,10 @@ Nous ne vendons jamais vos renseignements.
 
 ## Fournisseurs de services
 Pour faire fonctionner le site, vos renseignements sont traités par des fournisseurs de confiance, uniquement pour les besoins décrits ci-dessus :
-- hébergement du site et de la base de données (Vercel, Render, MongoDB Atlas);
-- envoi des courriels (Resend);
-- gestion de la relation client (Zoho CRM);
-- assistant virtuel du site (Google Gemini) : les messages écrits à l'assistant, y compris les coordonnées que vous choisissez de lui donner, lui sont transmis. Ne lui confiez pas de renseignements sensibles.
+- hébergement du site et de ses données;
+- envoi des courriels;
+- gestion de la relation client;
+- assistant virtuel du site (service d'intelligence artificielle) : les messages écrits à l'assistant, y compris les coordonnées que vous choisissez de lui donner, lui sont transmis. Ne lui confiez pas de renseignements sensibles.
 
 Certains de ces fournisseurs conservent les données à l'extérieur du Québec, notamment aux États-Unis. Nous choisissons des fournisseurs qui offrent une protection adéquate des renseignements.
 
