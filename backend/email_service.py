@@ -141,9 +141,13 @@ class EmailService:
             logger.error(f"❌ Erreur envoi email (Resend) à {to_email}: {str(e)}")
             return False
 
-    def send_kit_order_confirmation_to_client(self, order_data):
-        """Envoie confirmation de commande au client"""
+    def send_kit_order_confirmation_to_client(self, order_data, awaiting_invoice=False):
+        """Envoie confirmation de commande au client.
+        awaiting_invoice : commande sans paiement en ligne, la facture suit par courriel."""
         try:
+            order_data = {**order_data,
+                          "customer_name": html.escape(str(order_data.get('customer_name') or '')),
+                          "kit_name": html.escape(str(order_data.get('kit_name') or ''))}
             subject = f"🏠 Confirmation commande #{order_data['order_number']} - Abrisia Plan"
             
             materials_row = ""
@@ -176,10 +180,10 @@ class EmailService:
                                 <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">Sous-total</td>
                                 <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">{order_data['subtotal']:.2f} $</td>
                             </tr>
-                            <tr>
+                            {f"""<tr>
                                 <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">Taxes (TPS + TVQ)</td>
                                 <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">{order_data['tax_amount']:.2f} $</td>
-                            </tr>
+                            </tr>""" if order_data.get('tax_amount') else ""}
                             <tr style="background: #0f766e; color: white;">
                                 <td style="padding: 14px; font-weight: bold; font-size: 16px;">TOTAL</td>
                                 <td style="padding: 14px; text-align: right; font-weight: bold; font-size: 16px;">{order_data['total_amount']:.2f} $</td>
@@ -187,7 +191,7 @@ class EmailService:
                         </table>
                         
                         <p style="color: #64748b; font-size: 14px;">
-                            Vos fichiers vous seront envoyés par courriel une fois le paiement confirmé.
+                            {"Nous vous enverrons votre facture par courriel, avec un lien pour payer en ligne. Vos fichiers vous seront envoyés dès le paiement reçu." if awaiting_invoice else "Vos fichiers vous seront envoyés par courriel une fois le paiement confirmé."}
                         </p>
                         
                         <div style="text-align: center; margin: 24px 0;">
@@ -300,25 +304,25 @@ class EmailService:
             logger.error(f"❌ Erreur envoi notification admin: {str(e)}")
             return False
 
-    def send_candidature_notification(self, candidature_data):
-        """Envoie notification de nouvelle candidature à l'admin"""
+    def send_candidature_notification(self, candidature_data, attachments=None):
+        """Envoie la candidature (avec le CV en pièce jointe) à l'adresse de l'entreprise"""
         try:
+            esc = lambda key, default='': html.escape(str(candidature_data.get(key) or default))
             subject = f"Nouvelle candidature - {candidature_data.get('nom', 'Candidat')}"
+            message = esc('message').replace('\n', '<br>')
             body = f"""
                 <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle candidature</h2>
                 <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{_now_qc().strftime('%d/%m/%Y à %H:%M')}</p>
                 <table style="width: 100%; margin-bottom: 20px;">
-                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{candidature_data.get('nom', '')}</td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{candidature_data.get('email', '')}" style="color: #0f766e;">{candidature_data.get('email', '')}</a></td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{candidature_data.get('telephone', 'Non fourni')}</td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">CV :</td><td>{candidature_data.get('cv_filename', 'Fichier joint')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{esc('nom')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{esc('email')}" style="color: #0f766e;">{esc('email')}</a></td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{esc('telephone', 'Non fourni')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">CV :</td><td>{esc('cv_filename', 'Fichier joint')} (en pièce jointe)</td></tr>
                 </table>
-                {f'<div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;"><p style="margin: 0;">{candidature_data.get("message")}</p></div>' if candidature_data.get('message') else ''}
-                <div style="text-align: center; margin: 24px 0;">
-                    <a href="{self.app_url}/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Voir dans l'admin</a>
-                </div>
+                {f'<div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;"><p style="margin: 0;">{message}</p></div>' if message else ''}
             """
-            return self._send_email(self.sender_email, subject, self._wrap_email(body))
+            recipient = os.getenv('ADMIN_EMAIL', 'abrisia0plan@gmail.com')
+            return self._send_email(recipient, subject, self._wrap_email(body), attachments)
         except Exception as e:
             logger.error(f"Erreur envoi notification candidature: {str(e)}")
             return False
@@ -362,6 +366,41 @@ class EmailService:
             logger.error(f"❌ Erreur envoi notification temoignage: {str(e)}")
             return False
         
+    def send_devis_confirmation_to_client(self, devis_data):
+        """Accusé de réception envoyé au client après sa demande de devis"""
+        try:
+            to = (devis_data.get('email') or '').strip()
+            if not to:
+                return False
+            esc = lambda v: html.escape(str(v or ''))
+            prenom = esc(devis_data.get('prenom')) or 'bonjour'
+            projet = esc(devis_data.get('project_type'))
+            plans = devis_data.get('plans_noms') or []
+            fichiers = devis_data.get('fichiers') or []
+            pref = esc(devis_data.get('contact_preference'))
+            lignes = ''
+            if projet:
+                lignes += f'<li>Projet : {projet}</li>'
+            if plans:
+                lignes += f'<li>Plans demandés : {esc(", ".join(plans))}</li>'
+            if fichiers:
+                lignes += f'<li>Fichiers reçus : {len(fichiers)}</li>'
+            if pref:
+                lignes += f'<li>Pour en discuter, vous préférez être joint : {pref}</li>'
+            body = f"""
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nous avons bien reçu votre demande</h2>
+                <p>Bonjour {prenom},</p>
+                <p>Merci d'avoir pensé à Abrisia Plan pour votre projet. Votre demande de devis nous est bien parvenue.
+                Nous l'étudions et nous vous contacterons rapidement pour en discuter{' (' + pref.lower() + ')' if pref and pref.lower() != 'peu importe' else ''}.</p>
+                {f'<ul style="color: #334155; line-height: 1.8;">{lignes}</ul>' if lignes else ''}
+                <p>Vous avez oublié un détail ou un fichier ? Répondez simplement à ce courriel.</p>
+                <p style="margin-top: 24px;">À bientôt,<br><strong>Abrisia Plan</strong></p>
+            """
+            return self._send_email(to, "Nous avons bien reçu votre demande de devis – Abrisia Plan", self._wrap_email(body))
+        except Exception as e:
+            logger.error(f"Erreur confirmation devis client: {str(e)}")
+            return False
+
     def send_devis_notification(self, devis_data, attachments=None):
         """Envoie une notification email brandée pour un nouveau devis"""
         try:
@@ -384,8 +423,8 @@ class EmailService:
                 'texto': 'Par texto',
                 'peu-importe': 'Peu importe',
             }
-            representation = representation_labels.get(devis_data.get('representation_type') or '', '')
-            contact_pref = contact_labels.get(devis_data.get('contact_preference') or '', '')
+            representation = representation_labels.get(devis_data.get('representation_type') or '', devis_data.get('representation_type') or '')
+            contact_pref = contact_labels.get(devis_data.get('contact_preference') or '', devis_data.get('contact_preference') or '')
             styles = ", ".join(devis_data.get('styles') or [])
 
             def row(label, value):

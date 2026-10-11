@@ -6,6 +6,7 @@ import { Label } from '../components/ui/label';
 import { Textarea } from '../components/ui/textarea';
 import { Upload, Send, CheckCircle, FileText } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
+import SEO from '../components/SEO';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -67,6 +68,11 @@ const Carrieres = () => {
 
   return (
     <div className="min-h-screen pt-20 bg-stone-100" data-testid="carrieres-page">
+      <SEO
+        title="Carrières : envoyer votre CV"
+        description="Dessinateur, technicien en architecture ou passionné de construction ? Envoyez votre CV à Abrisia Plan, au Saguenay–Lac-Saint-Jean."
+        path="/carrieres"
+      />
       <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">Rejoignez l'équipe Abrisia</h1>
@@ -98,7 +104,7 @@ const Carrieres = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="telephone">Téléphone</Label>
-                  <Input id="telephone" name="telephone" value={formData.telephone} onChange={handleChange} placeholder="514-000-0000" className="bg-white" data-testid="cv-phone-input" />
+                  <Input id="telephone" name="telephone" value={formData.telephone} onChange={handleChange} placeholder="418-000-0000" className="bg-white" data-testid="cv-phone-input" />
                 </div>
 
                 <div className="space-y-2">
@@ -107,7 +113,7 @@ const Carrieres = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>CV (PDF) *</Label>
+                  <Label>CV (PDF, DOC ou DOCX, 10 Mo maximum) *</Label>
                   <div className="border-2 border-dashed border-stone-300 rounded-lg p-6 text-center hover:border-teal-500 transition-colors cursor-pointer"
                     onClick={() => document.getElementById('cv-upload').click()}>
                     <input id="cv-upload" type="file" accept=".pdf,.doc,.docx" className="hidden"

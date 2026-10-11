@@ -92,7 +92,7 @@ const CandidaturesManager = () => {
           <CardContent className="p-12 text-center">
             <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
             <p className="text-slate-500">Aucune candidature recue pour le moment</p>
-            <p className="text-sm text-slate-400 mt-2">Les candidatures apparaitront ici lorsque quelqu'un enverra son CV via la page Contact</p>
+            <p className="text-sm text-slate-400 mt-2">Les candidatures apparaîtront ici quand quelqu'un enverra son CV (pages Contact et Carrières). Le CV vous arrive aussi par courriel.</p>
           </CardContent>
         </Card>
       ) : (
@@ -145,9 +145,12 @@ const CandidaturesManager = () => {
                   </div>
 
                   <div className="flex gap-2 ml-4">
-                    {c.cv_base64 && (
+                    {c.cv_sent_by_email && !c.has_cv && (
+                      <span className="text-xs text-slate-500 self-center">CV envoyé par courriel</span>
+                    )}
+                    {c.has_cv && (
                       <Button size="sm" variant="outline" onClick={() => downloadCV(c)} className="border-teal-300 text-teal-700" data-testid={`download-cv-${c.id}`}>
-                        <Download className="w-4 h-4 mr-1" /> Telecharger CV
+                        <Download className="w-4 h-4 mr-1" /> Télécharger le CV
                       </Button>
                     )}
                     <Button size="sm" variant="ghost" className="text-red-500 hover:bg-red-50" onClick={() => deleteCandidature(c.id)}>

@@ -7,10 +7,12 @@ import { Textarea } from '../components/ui/textarea';
 import { MapPin, Mail, Clock, Send, Upload, FileText, CheckCircle } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import SEO from '../components/SEO';
+import useSiteSettings from '../hooks/useSiteSettings';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Contact = () => {
+  const site = useSiteSettings();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('message');
   const [formData, setFormData] = useState({ nom: '', email: '', telephone: '', sujet: '', message: '' });
@@ -113,7 +115,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-800">Adresse</h3>
-                    <p className="text-slate-600">Québec, Canada — Service dans tout le Québec</p>
+                    <p className="text-slate-600">{site.contact_address || "Saguenay–Lac-Saint-Jean"} — Service dans tout le Québec</p>
                   </div>
                 </div>
 
@@ -123,7 +125,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-800">Courriel</h3>
-                    <a href="mailto:abrisia0plan@gmail.com" className="text-teal-700 hover:underline">abrisia0plan@gmail.com</a>
+                    <a href={`mailto:${site.contact_email || "abrisia0plan@gmail.com"}`} className="text-teal-700 hover:underline">{site.contact_email || "abrisia0plan@gmail.com"}</a>{site.contact_phone && <p><a href={`tel:${site.contact_phone}`} className="text-teal-700 hover:underline">{site.contact_phone}</a></p>}
                   </div>
                 </div>
 
@@ -133,7 +135,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-800">Disponibilité</h3>
-                    <p className="text-slate-600">Lun-Jeu : 8h-16h | Ven-Sam-Dim : sur rendez-vous</p>
+                    <p className="text-slate-600">{site.business_hours || "Lun-Jeu : 8h-16h | Ven-Sam-Dim : sur rendez-vous"}</p>
                   </div>
                 </div>
               </div>
@@ -240,7 +242,7 @@ const Contact = () => {
                           <Textarea name="message" value={cvData.message} onChange={handleCvChange} placeholder="Votre expérience, compétences..." rows={3} className="bg-white border-stone-300" data-testid="cv-message" />
                         </div>
                         <div className="space-y-1.5">
-                          <Label>CV (PDF) *</Label>
+                          <Label>CV (PDF, DOC ou DOCX, 10 Mo maximum) *</Label>
                           <div className="border-2 border-dashed border-stone-300 rounded-lg p-5 text-center hover:border-teal-500 transition-colors cursor-pointer"
                             onClick={() => document.getElementById('cv-upload').click()}>
                             <input id="cv-upload" type="file" accept=".pdf,.doc,.docx" className="hidden"

@@ -8,7 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/ta
 import { 
   Save,
   Loader2,
-  FileText,
   Home,
   Info,
   Mail,
@@ -19,14 +18,13 @@ import {
   ClipboardList
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
-import ServicesManager from './ServicesManager';
 import FormOptionsManager from './FormOptionsManager';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const ContentManager = () => {
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState('services');
+  const [activeTab, setActiveTab] = useState('home');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   
@@ -48,8 +46,8 @@ const ContentManager = () => {
       process_subtitle: "Un processus simple et transparent pour concrétiser votre projet"
     },
     about: {
-      title: "À propos",
-      description: ""
+      hero_title: "Chaque grand projet commence par une idée.",
+      hero_text: "Découvrez ABRISIA-PLAN, un studio indépendant de conception et de dessin de plans sur mesure, pour les particuliers et les entrepreneurs."
     },
     devis: {
       title: "Demander un devis",
@@ -68,7 +66,7 @@ const ContentManager = () => {
 
   const loadAllPageContent = async () => {
     try {
-      const pages = ['home', 'devis', 'espace_pro'];
+      const pages = ['home', 'about', 'devis', 'espace_pro'];
       const results = await Promise.all(
         pages.map(p => fetch(`${BACKEND_URL}/api/content/pages/${p}`).then(r => r.json()))
       );
@@ -195,16 +193,12 @@ const ContentManager = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Gestion du contenu</h2>
-          <p className="text-gray-600 mt-1">Modifiez les textes, prix et éléments de chaque page</p>
+          <p className="text-gray-600 mt-1">Modifiez les textes de vos pages, les étapes et les choix du formulaire de devis. Les prix se règlent dans « Prix du devis ».</p>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="services" className="flex items-center gap-2">
-            <FileText className="w-4 h-4" />
-            Services & Prix
-          </TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="form" className="flex items-center gap-2">
             <ClipboardList className="w-4 h-4" />
             Formulaire devis
@@ -222,11 +216,6 @@ const ContentManager = () => {
             Autres pages
           </TabsTrigger>
         </TabsList>
-
-        {/* Onglet Services & Prix */}
-        <TabsContent value="services">
-          <ServicesManager />
-        </TabsContent>
 
         {/* Onglet Options du formulaire */}
         <TabsContent value="form">
@@ -418,22 +407,22 @@ const ContentManager = () => {
               <CardTitle>Page À propos</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <p className="text-sm text-gray-500">Le haut de la page À propos (le reste de la page reprend votre histoire).</p>
               <div>
-                <Label>Titre</Label>
+                <Label>Titre principal</Label>
                 <Input
-                  value={pageContent.about.title}
-                  onChange={(e) => handlePageContentChange('about', 'title', e.target.value)}
+                  value={pageContent.about.hero_title}
+                  onChange={(e) => handlePageContentChange('about', 'hero_title', e.target.value)}
                   className="mt-1"
                 />
               </div>
               <div>
-                <Label>Description</Label>
+                <Label>Texte d'introduction</Label>
                 <Textarea
-                  value={pageContent.about.description}
-                  onChange={(e) => handlePageContentChange('about', 'description', e.target.value)}
-                  rows={4}
+                  value={pageContent.about.hero_text}
+                  onChange={(e) => handlePageContentChange('about', 'hero_text', e.target.value)}
+                  rows={3}
                   className="mt-1"
-                  placeholder="Description de votre entreprise..."
                 />
               </div>
               <Button 

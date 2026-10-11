@@ -12,12 +12,25 @@ from models import (
 from database import get_database
 from auth import require_admin
 from email_service import email_service
+from sms_service import send_sms
 from file_storage import file_size
 from bson import ObjectId
 import logging
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["devis"])
+
+
+# Codes utilisés par l'assistant du site -> libellés lisibles
+CONTACT_PREF_LABELS = {
+    "telephone": "Par téléphone", "courriel": "Par courriel",
+    "texto": "Par texto", "peu-importe": "Peu importe",
+}
+
+
+def contact_preference_label(value: str) -> str:
+    value = (value or "").strip()
+    return CONTACT_PREF_LABELS.get(value, value)
 
 
 async def _create_zoho_lead_from_devis(devis_doc: dict):
@@ -27,6 +40,7 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
         first_name = devis_doc.get("prenom", "") or devis_doc.get("nom", "").split(" ", 1)[0] or "Visiteur"
         last_name = devis_doc.get("nom", "") or first_name
 
+        contact_pref = contact_preference_label(devis_doc.get("contact_preference"))
         zoho_record = {
             "First_Name": first_name,
             "Last_Name": last_name,
@@ -34,20 +48,26 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
             "Phone": devis_doc.get("telephone", ""),
             "Company": "Visiteur site web",
             "Lead_Source": "Devis par l'assistant du site" if devis_doc.get("source") == "chatbot" else "Demande de devis",
-            "Description": f"Type: {devis_doc.get('project_type') or 'N/A'}\n"
+            "Description": f"MODE DE COMMUNICATION PRÉFÉRÉ : {contact_pref or 'non précisé'}\n\n"
+                           f"Type: {devis_doc.get('project_type') or 'N/A'}\n"
                            f"Plans: {', '.join(devis_doc.get('plans_noms') or devis_doc.get('plans_choisis', []))}\n"
-                           f"Contact préféré: {devis_doc.get('contact_preference') or 'N/A'}\n"
                            f"Style: {', '.join(devis_doc.get('styles') or []) or 'N/A'}\n"
                            + (f"Calculateur: {devis_doc['calculateur']['surface']} pi² ~ {devis_doc['calculateur']['estimation']} $\n" if devis_doc.get('calculateur') else "")
                            + 
                            f"Notes: {devis_doc.get('notes', '')}"
                            + "".join(f"\nFichier reçu par courriel : {f['filename']}" for f in devis_doc.get('fichiers', [])),
         }
+        # Champ dédié dans Zoho (à créer dans Zoho, puis indiquer son nom d'API
+        # dans la variable ZOHO_CONTACT_PREF_FIELD sur Render, ex. Mode_de_communication)
+        pref_field = os.getenv("ZOHO_CONTACT_PREF_FIELD", "").strip()
+        if pref_field and contact_pref:
+            zoho_record[pref_field] = contact_pref
         data = {
             "first_name": first_name,
             "last_name": last_name,
             "email": devis_doc.get("email", ""),
             "phone": devis_doc.get("telephone", ""),
+            "contact_preference": contact_pref,
         }
         await save_lead("devis", data, zoho_record)
     except Exception as e:
@@ -96,11 +116,28 @@ def _build_devis_doc(devis_data: DevisCreate, fichiers: list, source: str = "for
     }
 
 
+def _wants_sms(devis_doc: dict) -> bool:
+    pref = (devis_doc.get("contact_preference") or "").lower()
+    return "texto" in pref or "sms" in pref
+
+
+def confirm_to_client(devis_doc: dict):
+    """Accusé de réception au client : par courriel, et par texto s'il l'a choisi
+    (seulement quand l'envoi de textos est configuré)."""
+    email_service.send_devis_confirmation_to_client(devis_doc)
+    if _wants_sms(devis_doc) and devis_doc.get("telephone"):
+        prenom = devis_doc.get("prenom") or ""
+        send_sms(devis_doc["telephone"],
+                 f"Abrisia Plan : bonjour {prenom}, nous avons bien reçu votre demande de devis. "
+                 "Nous vous recontactons rapidement par texto. Merci !")
+
+
 async def create_devis_from_chat(devis_data: DevisCreate) -> str:
     """Devis recueilli par l'assistant du site : base, courriel et Zoho (sans fichiers)"""
     devis_doc = _build_devis_doc(devis_data, [], source="chatbot")
     result = await get_database().devis.insert_one(devis_doc)
     await run_in_threadpool(email_service.send_devis_notification, devis_doc, None)
+    await run_in_threadpool(confirm_to_client, devis_doc)
     await _create_zoho_lead_from_devis(devis_doc)
     logger.info(f"✅ Devis recueilli par l'assistant pour {devis_data.prenom} {devis_data.nom} ({devis_data.email})")
     return str(result.inserted_id)
@@ -115,13 +152,14 @@ async def _create_devis(devis_data: DevisCreate, fichiers: list, background_task
     result = await db.devis.insert_one(devis_doc)
 
     background_tasks.add_task(email_service.send_devis_notification, devis_doc, attachments)
+    background_tasks.add_task(confirm_to_client, devis_doc)
     background_tasks.add_task(_create_zoho_lead_from_devis, devis_doc)
 
     logger.info(f"✅ Nouveau devis soumis par {devis_data.prenom} {devis_data.nom} ({devis_data.email}), {len(fichiers)} fichier(s)")
 
     return DevisResponse(
         success=True,
-        message="Devis soumis avec succès. Nous vous contacterons sous 24h.",
+        message="Devis soumis avec succès. Une confirmation vous a été envoyée.",
         devis={
             "id": str(result.inserted_id),
             "status": "En attente",

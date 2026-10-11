@@ -71,6 +71,7 @@ api_router.include_router(cms.router)
 
 # Routes navigation publique
 api_router.include_router(cms.public_router)
+api_router.include_router(cms.site_public_router)
 
 # Routes e-commerce
 api_router.include_router(ecommerce.router)

@@ -195,11 +195,11 @@ async def build_site_knowledge(db) -> str:
                 + (f", {p['bedrooms']} chambre(s)" if p.get('bedrooms') else "")
                 for p in products))
 
+        # page_content : une fiche par section, {section_id, content: {value}}
         pro = await db.page_content.find({"page_id": "espace_pro"}).to_list(length=10)
-        for section in pro:
-            content = section.get("content") or {}
-            if content.get("tarif_entrepreneur"):
-                parts.append(f"TARIF ENTREPRENEUR (Espace Pro) : {content['tarif_entrepreneur']} {content.get('tarif_unite', '$ / pi²')}")
+        pro_values = {sec.get("section_id"): (sec.get("content") or {}).get("value") for sec in pro}
+        if pro_values.get("tarif_entrepreneur"):
+            parts.append(f"TARIF ENTREPRENEUR (Espace Pro) : {pro_values['tarif_entrepreneur']} {pro_values.get('tarif_unite') or '$ / pi²'}")
         notes = await db.site_settings.find_one({"key": "chatbot_notes"})
         if notes and notes.get("text", "").strip():
             parts.append("PRÉCISIONS DE LA PROPRIÉTAIRE (prioritaires sur le reste) :\n" + notes["text"].strip())

@@ -5,6 +5,7 @@ import uuid
 from database import get_database
 from auth import require_admin
 from bson import ObjectId
+from sales_tax import compute_taxes
 import logging
 
 logger = logging.getLogger(__name__)
@@ -207,39 +208,38 @@ async def get_filter_values():
 
 # ==================== PANIER ====================
 
-@router.get("/cart/{session_id}")
-async def get_cart(session_id: str):
-    """Obtenir le panier d'un client"""
-    db = get_database()
-    cart = await db.carts.find_one({"session_id": session_id})
-    if not cart:
-        return {"success": True, "data": {"items": [], "subtotal": 0, "tps": 0, "tvq": 0, "total": 0}}
-
-    # Enrichir les items avec les données produit
+async def compute_cart(db, session_id: str) -> dict:
+    """Panier avec les prix calculés par le serveur (variantes, options, taxes).
+    Utilisé pour l'affichage ET pour le paiement : le client ne peut pas changer les prix."""
+    cart = await db.carts.find_one({"session_id": session_id}) or {}
     enriched_items = []
     subtotal = 0
     for item in cart.get("items", []):
-        product = await db.products.find_one({"_id": ObjectId(item["product_id"])})
+        if not ObjectId.is_valid(str(item.get("product_id"))):
+            continue
+        product = await db.products.find_one({"_id": ObjectId(item["product_id"]), "is_active": {"$ne": False}})
         if not product:
             continue
 
         variant = None
-        if item.get("variant_id"):
+        if item.get("variant_id") and ObjectId.is_valid(str(item["variant_id"])):
             variant_doc = await db.variants.find_one({"_id": ObjectId(item["variant_id"])})
             if variant_doc:
                 variant = serialize(variant_doc)
 
-        # Calculer prix des options
         options_total = 0
         selected_options = []
         for opt_id in item.get("selected_option_ids", []):
+            if not ObjectId.is_valid(str(opt_id)):
+                continue
             opt = await db.product_options.find_one({"_id": ObjectId(opt_id)})
             if opt:
                 options_total += opt.get("price", 0)
                 selected_options.append({"id": str(opt["_id"]), "name": opt["name"], "price": opt["price"]})
 
-        unit_price = (variant or {}).get("price", product.get("price", 0))
-        item_total = (unit_price + options_total) * item.get("quantity", 1)
+        unit_price = (variant or {}).get("price", product.get("price", 0)) or 0
+        quantity = max(1, int(item.get("quantity", 1) or 1))
+        item_total = (unit_price + options_total) * quantity
         subtotal += item_total
 
         enriched_items.append({
@@ -252,24 +252,25 @@ async def get_cart(session_id: str):
             "selected_options": selected_options,
             "unit_price": unit_price,
             "options_total": options_total,
-            "quantity": item.get("quantity", 1),
+            "quantity": quantity,
             "item_total": item_total,
         })
 
-    tps = round(subtotal * 0.05, 2)
-    tvq = round(subtotal * 0.09975, 2)
-    total = round(subtotal + tps + tvq, 2)
-
+    taxes = compute_taxes(subtotal)
     return {
-        "success": True,
-        "data": {
-            "items": enriched_items,
-            "subtotal": subtotal,
-            "tps": tps,
-            "tvq": tvq,
-            "total": total,
-        }
+        "items": enriched_items,
+        "subtotal": round(subtotal, 2),
+        "tps": taxes["tps"],
+        "tvq": taxes["tvq"],
+        "tax_amount": taxes["tax_amount"],
+        "total": taxes["total"],
     }
+
+
+@router.get("/cart/{session_id}")
+async def get_cart(session_id: str):
+    """Obtenir le panier d'un client"""
+    return {"success": True, "data": await compute_cart(get_database(), session_id)}
 
 
 @router.post("/cart/{session_id}/add")

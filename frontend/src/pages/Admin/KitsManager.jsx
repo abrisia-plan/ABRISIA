@@ -259,7 +259,10 @@ const KitsManager = () => {
         rooms: formData.rooms,
         includes: formData.includes.filter(i => i.trim() !== ''),
         file_formats: ['PDF'], slug: generateSlug(formData.name),
-        is_active: true, is_featured: false, difficulty_level: 'intermediate',
+        // À la modification, on garde l'état « visible » et « en vedette » du modèle
+        is_active: editingKit ? editingKit.isActive !== false : true,
+        is_featured: editingKit ? !!editingKit.isFeatured : false,
+        difficulty_level: 'intermediate',
         designer_name: formData.designer_name || null,
         plan_file_url: formData.plan_file_url || null,
         plan_file_name: formData.plan_file_url ? formData.plan_file_name || null : null,

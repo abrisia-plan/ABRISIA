@@ -29,11 +29,23 @@ const ProjectsManager = () => {
   });
   const [uploading, setUploading] = useState(false);
 
-  const categories = [
+  // Catégories : celles de l'onglet « Catégories accueil » (même liste que la page d'accueil)
+  const [categories, setCategories] = useState([
     'Maison unifamiliale', 'Chalet', 'Mini-maison',
     'Extensions verrières solarium', 'Autres dessins (ébénisterie)',
     'Dessins techniques', 'Dessins architecturaux'
-  ];
+  ]);
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/content/categories`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
+    })
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        const names = (data?.data || []).map(c => c.name).filter(Boolean);
+        if (names.length) setCategories(names);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => { loadProjects(); }, []);
 
@@ -314,6 +326,9 @@ const ProjectsManager = () => {
               <Label>Categorie *</Label>
               <select value={formData.category} onChange={(e) => handleInputChange('category', e.target.value)}
                 className="w-full h-10 px-3 border border-gray-300 rounded-md">
+                {formData.category && !categories.includes(formData.category) && (
+                  <option value={formData.category}>{formData.category}</option>
+                )}
                 {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
               </select>
             </div>

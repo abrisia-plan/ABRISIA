@@ -13,6 +13,9 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
+  			// Couleurs de la marque utilisées dans l'admin (vert forêt, comme le site)
+  			foret: '#115e59',
+  			bois: '#134e4a',
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

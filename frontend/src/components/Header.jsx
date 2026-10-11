@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Users } from 'lucide-react';
 import { Button } from './ui/button';
+import useSiteSettings from '../hooks/useSiteSettings';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -18,6 +19,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [navigation, setNavigation] = useState(defaultNav);
   const location = useLocation();
+  const site = useSiteSettings();
 
   useEffect(() => {
     fetch(`${BACKEND_URL}/api/navigation/menu`)
@@ -39,7 +41,7 @@ const Header = () => {
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 bg-white">
               <img 
-                src="/logo-abrisia.jpg" 
+                src={site.logo_url || "/logo-abrisia.jpg"} 
                 alt="Logo Abrisia" 
                 className="w-full h-full object-contain"
               />

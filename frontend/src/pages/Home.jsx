@@ -3,20 +3,26 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, CheckCircle, Star, Loader2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { approaches, processSteps } from '../data/mock';
+import { approaches, processSteps as defaultSteps } from '../data/mock';
 import * as Icons from 'lucide-react';
 import SEO from '../components/SEO';
+import useSiteSettings from '../hooks/useSiteSettings';
+
+const HERO_IMAGE = 'https://customer-assets.emergentagent.com/job_c939612f-c018-47c9-949a-bf666b73ec90/artifacts/s0baspap_Copie%20de%20Copie%20de%20Abrisia.jpg';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Home = () => {
   const navigate = useNavigate();
-  const [currentImageIndex, setCurrentImageIndex] = useState({});
+  const site = useSiteSettings();
+  const [rotationTick, setRotationTick] = useState(0);
+  const [categories, setCategories] = useState([]);
   const [inspirationProjects, setInspirationProjects] = useState([]);
   const [featuredKits, setFeaturedKits] = useState([]);
   const [homepageServices, setHomepageServices] = useState([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [testimonials, setTestimonials] = useState([]);
+  const [processSteps, setProcessSteps] = useState(defaultSteps);
 
   // Textes dynamiques de la page d'accueil
   const [homeTexts, setHomeTexts] = useState({
@@ -31,13 +37,15 @@ const Home = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [projRes, reviewsRes, kitsRes, servicesRes, testimonialsRes, pageContentRes] = await Promise.all([
+        const [projRes, reviewsRes, kitsRes, servicesRes, testimonialsRes, pageContentRes, stepsRes, categoriesRes] = await Promise.all([
           fetch(`${BACKEND_URL}/api/projects?home_only=true&limit=100`),
           fetch(`${BACKEND_URL}/api/reviews`),
           fetch(`${BACKEND_URL}/api/products?featured=true`),
-          fetch(`${BACKEND_URL}/api/content/homepage-services`),
+          fetch(`${BACKEND_URL}/api/homepage-services`),
           fetch(`${BACKEND_URL}/api/content/testimonials`),
-          fetch(`${BACKEND_URL}/api/content/pages/home`)
+          fetch(`${BACKEND_URL}/api/content/pages/home`),
+          fetch(`${BACKEND_URL}/api/content/process-steps`),
+          fetch(`${BACKEND_URL}/api/content/categories`)
         ]);
         const projData = await projRes.json();
         const reviewsData = await reviewsRes.json();
@@ -45,6 +53,12 @@ const Home = () => {
         const servicesData = await servicesRes.json();
         const testimonialsData = await testimonialsRes.json();
         const pageData = await pageContentRes.json();
+        const stepsData = await stepsRes.json();
+        const categoriesData = await categoriesRes.json();
+        // Catégories gérées dans l'admin (Catégories accueil) : nom, description, icône, ordre
+        if (categoriesData.success && categoriesData.data?.length > 0) setCategories(categoriesData.data);
+        // Étapes « Comment ça marche ? » modifiables dans l'admin
+        if (stepsData.success && stepsData.data?.length > 0) setProcessSteps(stepsData.data);
         if (projData.success) setInspirationProjects(projData.data || []);
         if (kitsData.success) setFeaturedKits(kitsData.data || []);
         if (servicesData.success) setHomepageServices(servicesData.data || []);
@@ -59,12 +73,13 @@ const Home = () => {
         }
         // Témoignages : priorité aux témoignages CMS, sinon reviews produit
         if (testimonialsData.success && testimonialsData.data?.length > 0) {
+          // Champs enregistrés par l'admin : client_name, project_type, client_location, comment
           setTestimonials(testimonialsData.data.map(r => ({
-            name: r.name,
-            project: r.role || r.location || 'Client',
-            text: r.content || r.text,
+            name: r.client_name || r.name,
+            project: [r.project_type, r.client_location].filter(Boolean).join(' · ') || 'Client',
+            text: r.comment || r.content || r.text,
             rating: r.rating || 5
-          })));
+          })).filter(t => t.name && t.text));
         } else if (reviewsData.success && reviewsData.data?.length > 0) {
           setTestimonials(reviewsData.data.map(r => ({
             name: r.client_name || r.name,
@@ -83,57 +98,40 @@ const Home = () => {
     // eslint-disable-next-line
   }, []);
 
-  // Rotation automatique des images par catégorie toutes les 5 secondes
+  // Rotation automatique des images de chaque catégorie toutes les 5 secondes
   useEffect(() => {
-    const interval = setInterval(() => {
-      const categories = getUniqueCategories();
-      const newIndexes = {};
-      
-      categories.forEach(category => {
-        const categoryProjects = inspirationProjects.filter(p => p.category === category);
-        const currentIndex = currentImageIndex[category] || 0;
-        newIndexes[category] = (currentIndex + 1) % categoryProjects.length;
-      });
-      
-      setCurrentImageIndex(newIndexes);
-    }, 5000);
-
+    const interval = setInterval(() => setRotationTick(t => t + 1), 5000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line
-  }, [currentImageIndex, inspirationProjects]);
+  }, []);
 
-  // Obtenir les catégories uniques
-  const getUniqueCategories = () => {
-    return [...new Set(inspirationProjects.map(p => p.category))];
+  // Comparaison souple : « Chalet » correspond à « Chalet, camp, cabane à pêche »
+  const normalize = (txt) => (txt || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  const sameCategory = (catName, projectCategory) => {
+    const a = normalize(catName);
+    const b = normalize(projectCategory);
+    return !!a && !!b && (a === b || a.includes(b) || b.includes(a));
   };
 
-  // Obtenir un projet par catégorie (avec rotation)
-  const getOneProjectPerCategory = () => {
-    const categories = getUniqueCategories();
-    return categories.map(category => {
-      const categoryProjects = inspirationProjects.filter(p => p.category === category);
-      const index = currentImageIndex[category] || 0;
-      return categoryProjects[index];
-    });
-  };
-
-  // Obtenir le nombre de projets par catégorie
-  const getProjectCountByCategory = (category) => {
-    return inspirationProjects.filter(p => p.category === category).length;
-  };
-
-  // Descriptions des catégories
-  const getCategoryDescription = (category) => {
-    const descriptions = {
-      "Maison unifamiliale": "Inspirations pour résidences familiales complètes",
-      "Chalet": "Idées pour refuges et chalets quatre saisons", 
-      "Mini-maison": "Concepts d'habitations compactes et optimisées",
-      "Extensions verrières solarium": "Inspirations d'agrandissements lumineux",
-      "Autres dessins (ébénisterie)": "Idées d'aménagements et mobilier personnalisé",
-      "Dessins techniques": "Plans de fabrication/construction avec dimensions précises, matériaux, détails constructifs pour entrepreneurs",
-      "Dessins architecturaux": "Plans de conception esthétique avec disposition des pièces, style, présentation visuelle pour clients et permis"
-    };
-    return descriptions[category] || "Inspirations pour vos projets";
+  // Cartes de la section « Inspirations par catégorie »
+  const getCategoryCards = () => {
+    if (categories.length > 0) {
+      return categories.map((cat) => {
+        const projects = inspirationProjects.filter(p => sameCategory(cat.name, p.category));
+        return {
+          key: cat.id || cat.name,
+          name: cat.name,
+          description: cat.description,
+          icon: cat.icon,
+          filter: projects[0]?.category || cat.name,
+          projects,
+        };
+      });
+    }
+    // Secours : catégories tirées des projets
+    return [...new Set(inspirationProjects.map(p => p.category))].map((name) => ({
+      key: name, name, description: '', icon: '', filter: name,
+      projects: inspirationProjects.filter(p => p.category === name),
+    }));
   };
 
   // Navigation vers catégorie spécifique
@@ -159,7 +157,7 @@ const Home = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://customer-assets.emergentagent.com/job_c939612f-c018-47c9-949a-bf666b73ec90/artifacts/s0baspap_Copie%20de%20Copie%20de%20Abrisia.jpg')`
+            backgroundImage: `url('${site.hero_image || HERO_IMAGE}')`
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50"></div>
@@ -286,7 +284,7 @@ const Home = () => {
                   </div>
                   <h3 className="text-xl font-semibold text-slate-800 mb-3">{service.name}</h3>
                   <p className="text-slate-600 leading-relaxed text-sm mb-4">{service.description}</p>
-                  <p className="text-lg font-semibold text-teal-800">{service.price}</p>
+                  {service.price && <p className="text-lg font-semibold text-teal-800">{service.price}</p>}
                 </CardContent>
               </Card>
             ))}
@@ -295,7 +293,7 @@ const Home = () => {
           <div className="text-center mt-12">
             <Link to="/devis">
               <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full">
-                Voir nos tarifs détaillés
+                Demander un devis gratuit
               </Button>
             </Link>
           </div>
@@ -378,39 +376,46 @@ const Home = () => {
 
           {/* Grille des catégories avec une image rotative par catégorie */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-            {getOneProjectPerCategory().map((project) => (
+            {getCategoryCards().map((card) => {
+              const project = card.projects.length ? card.projects[rotationTick % card.projects.length] : null;
+              return (
               <Card 
-                key={project.category} 
+                key={card.key} 
                 className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer bg-stone-50"
-                onClick={() => handleCategoryClick(project.category)}
+                onClick={() => handleCategoryClick(card.filter)}
               >
                 <div className="relative overflow-hidden h-48">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="bg-teal-800 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      {project.category}
-                    </span>
-                  </div>
-                  <div className="absolute bottom-4 right-4">
-                    <span className="bg-black/70 text-white px-2 py-1 rounded text-xs">
-                      {getProjectCountByCategory(project.category)} projets
-                    </span>
-                  </div>
+                  {project ? (
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-teal-50 to-stone-100 flex items-center justify-center text-6xl">
+                      {card.icon || '📁'}
+                    </div>
+                  )}
+                  {card.projects.length > 0 && (
+                    <div className="absolute bottom-4 right-4">
+                      <span className="bg-black/70 text-white px-2 py-1 rounded text-xs">
+                        {card.projects.length} projet{card.projects.length > 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  )}
                 </div>
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold text-slate-800 mb-2 group-hover:text-teal-800 transition-colors">
-                    {project.category}
+                    {card.icon && <span className="mr-2" aria-hidden="true">{card.icon}</span>}
+                    {card.name}
                   </h3>
-                  <p className="text-slate-600 text-sm leading-relaxed">
-                    {getCategoryDescription(project.category)}
-                  </p>
+                  {card.description && (
+                    <p className="text-slate-600 text-sm leading-relaxed">{card.description}</p>
+                  )}
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
           </div>
 
           <div className="text-center">
@@ -438,7 +443,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {processSteps.map((step, index) => (
-              <div key={step.id} className="text-center relative">
+              <div key={step.id || index} className="text-center relative">
                 {/* Connecteur */}
                 {index < processSteps.length - 1 && (
                   <div className="hidden lg:block absolute top-12 left-full w-full h-0.5 bg-stone-200 -z-10">
@@ -449,7 +454,7 @@ const Home = () => {
                 {/* Étape */}
                 <div className="bg-stone-50 p-8 rounded-2xl shadow-lg border border-stone-200 hover:shadow-xl transition-shadow">
                   <div className="w-16 h-16 bg-teal-800 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-xl font-bold">
-                    {step.id}
+                    {index + 1}
                   </div>
                   <h3 className="text-lg font-semibold text-slate-800 mb-4">{step.title}</h3>
                   <p className="text-slate-600 text-sm leading-relaxed">{step.description}</p>
