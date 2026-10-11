@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import SEO from '../components/SEO';
 import VideoEmbed from '../components/VideoEmbed';
+import { surfaceAvecPieds } from '../lib/surface';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 // Lien PayPal.me de l'entreprise (variable Vercel REACT_APP_PAYPAL_ME_URL, ex. https://paypal.me/MonCompte).
@@ -524,7 +525,7 @@ const Collection = () => {
                     ))}
                   </div>
                   <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                    {model.surfaceArea && <span className="flex items-center"><Ruler className="w-3 h-3 mr-1" />{model.surfaceArea}</span>}
+                    {model.surfaceArea && <span className="flex items-center"><Ruler className="w-3 h-3 mr-1" />{surfaceAvecPieds(model.surfaceArea)}</span>}
                     {model.bedrooms && <span className="flex items-center"><BedDouble className="w-3 h-3 mr-1" />{model.bedrooms} ch.</span>}
                     {model.bathrooms && <span className="flex items-center"><Bath className="w-3 h-3 mr-1" />{model.bathrooms} sdb</span>}
                     {model.floors && <span className="flex items-center"><Layers className="w-3 h-3 mr-1" />{model.floors} étage{model.floors > 1 ? 's' : ''}</span>}
@@ -541,6 +542,16 @@ const Collection = () => {
           </div>
         )}
       </div>
+
+      {/* Droits d'auteur : même texte dans la FAQ et l'assistant */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16" data-testid="collection-droits-auteur">
+        <div className="bg-white border border-stone-200 rounded-xl p-6">
+          <h2 className="text-xl font-bold text-slate-800 mb-2">Droits d'auteur et utilisation des plans</h2>
+          <p className="text-slate-600 leading-relaxed">
+            Les plans de la Collection ABRISIA, en PDF ou sur papier, sont protégés par la Loi sur le droit d'auteur. L'achat d'un plan vous permet de construire une (1) seule maison, pour vous-même. Il est interdit de revendre, copier, partager ou modifier les plans sans l'accord d'Abrisia Plan. Pour faire modifier un plan, ou pour construire un modèle plus d'une fois (entrepreneurs, professionnels de l'immobilier), écrivez-nous : nous vous proposerons une entente.
+          </p>
+        </div>
+      </section>
 
       {/* Model Detail Modal */}
       <Dialog open={!!selectedModel} onOpenChange={() => setSelectedModel(null)}>
@@ -616,7 +627,7 @@ const Collection = () => {
                     <div className="bg-gray-50 p-3 rounded-lg">
                       <Ruler className="w-5 h-5 mx-auto mb-1 text-teal-600" />
                       <p className="text-sm text-gray-500">Surface</p>
-                      <p className="font-semibold">{selectedModel.surfaceArea}</p>
+                      <p className="font-semibold">{surfaceAvecPieds(selectedModel.surfaceArea)}</p>
                     </div>
                   )}
                   {selectedModel.bedrooms && (

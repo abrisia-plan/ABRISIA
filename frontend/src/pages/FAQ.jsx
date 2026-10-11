@@ -12,7 +12,7 @@ const FAQS = [
   },
   {
     q: "Ai-je besoin d'un architecte pour faire les plans de ma maison ou de mon chalet ?",
-    a: "Pas toujours. Au Québec, l'article 16.1 de la Loi sur les architectes permet de faire préparer les plans de plusieurs types de bâtiments sans architecte, par exemple une maison unifamiliale, un chalet, une mini-maison, un garage ou un agrandissement de petite taille. Au-delà de ces limites, un architecte est requis. En cas de doute, écrivez-nous : nous vous dirons si votre projet est couvert.",
+    a: "Pas toujours. Au Québec, l'article 16.1 de la Loi sur les architectes permet de faire dessiner sans architecte : une maison isolée (y compris un chalet, une mini-maison ou une maison avec garage attaché) d'au plus 2 étages, 1 sous-sol et moins de 6 458 pi² (600 m²) de planchers au total ; une maison jumelée ou en rangée, ou un multilogement de 4 logements au plus, d'au plus 2 étages, 1 sous-sol et 3 229 pi² (300 m²) au total. Ces limites comptent après les travaux. Au-delà, un architecte est requis.",
   },
   {
     q: "Quels plans faut-il pour obtenir un permis de construction ?",
@@ -53,6 +53,10 @@ const FAQS = [
   {
     q: "Quelle est la différence entre un plan de la Collection et un plan sur mesure ?",
     a: "Les modèles de la Collection ABRISIA sont déjà dessinés : ils sont plus rapides à obtenir et plus abordables, et peuvent être personnalisés. Un plan sur mesure est conçu entièrement selon vos besoins, votre terrain et votre budget.",
+  },
+  {
+    q: "Puis-je construire un modèle de la Collection plusieurs fois ?",
+    a: "Les plans de la Collection ABRISIA, en PDF ou sur papier, sont protégés par la Loi sur le droit d'auteur. L'achat d'un plan vous permet de construire une (1) seule maison, pour vous-même. Il est interdit de revendre, copier, partager ou modifier les plans sans l'accord d'Abrisia Plan. Pour faire modifier un plan, ou pour construire un modèle plus d'une fois (entrepreneurs, professionnels de l'immobilier), écrivez-nous : nous vous proposerons une entente.",
   },
   {
     q: "Offrez-vous vos services aux entrepreneurs ?",

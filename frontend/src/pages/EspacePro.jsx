@@ -76,7 +76,7 @@ const EspacePro = () => {
   const advantages = [
     { icon: FileText, title: "Plans sur mesure", desc: "Plans architecturaux adaptés à vos projets de construction" },
     { icon: Users, title: "Partenariat dédié", desc: "Un dessinateur attitré qui connaît vos standards" },
-    { icon: Shield, title: "Conformité aux codes", desc: "Plans conformes au Code du bâtiment du Québec et du Canada" },
+    { icon: Shield, title: "Conformité aux codes", desc: "Plans conçus selon le Code de construction du Québec et le Code national du bâtiment" },
     { icon: Building2, title: "Volume avantageux", desc: `Tarif préférentiel de ${tarif.tarif_entrepreneur}${tarif.tarif_unite} pour les entrepreneurs réguliers` },
   ];
 
@@ -100,7 +100,7 @@ const EspacePro = () => {
           </h1>
           <p className="text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
             Vous êtes entrepreneur, constructeur ou promoteur immobilier ?
-            Abrisia dessine les plans de vos projets avec précision et conformité.
+            Abrisia dessine les plans de vos projets avec précision, selon les codes en vigueur.
           </p>
         </div>
       </section>
@@ -158,7 +158,7 @@ const EspacePro = () => {
               <ul className="space-y-3 text-slate-700">
                 {[
                   "Dessin de plans architecturaux complets",
-                  "Plans conformes au Code du bâtiment du Québec et du Canada",
+                  "Plans conçus selon le Code de construction du Québec et le Code national du bâtiment",
                   "Dessins techniques de fabrication",
                   "Plans de mini-maisons, chalets, maisons",
                   "Plans d'agrandissement et rénovation",
