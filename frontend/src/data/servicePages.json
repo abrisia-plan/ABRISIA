@@ -1,20 +1,23 @@
 [
   {
     "slug": "plan-de-maison",
-    "title": "Plan de maison sur mesure au Québec",
-    "description": "Plan de maison sur mesure au Québec : maison unifamiliale, plain-pied ou à étages, conçue selon votre terrain et votre budget, prête pour le permis. Dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean. Devis gratuit.",
-    "h1": "Plan de maison sur mesure",
+    "title": "Plan de maison, de chalet ou de camp au Québec",
+    "description": "Plan de maison unifamiliale, de chalet quatre saisons, de camp ou de cabane au Québec, de plain-pied ou à étages, dessiné selon votre terrain et vos désirs, pour votre permis. Dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean. Devis gratuit.",
+    "h1": "Plan de maison, de chalet ou de camp",
+    "resume": "Maison unifamiliale, chalet, camp ou cabane.",
     "intro": [
-      "Vous voulez construire votre maison ? Abrisia Plan conçoit et dessine les plans de votre maison unifamiliale, de plain-pied ou à étages, selon votre terrain, votre budget et votre façon de vivre.",
+      "Maison unifamiliale, chalet quatre saisons, camp en forêt ou cabane au bord de l'eau : Abrisia Plan conçoit et dessine vos plans, de plain-pied ou à étages, selon votre terrain, votre budget et votre façon de vivre.",
       "Nos plans sont conçus selon le Code de construction du Québec, le Code national du bâtiment du Canada et les règlements de votre municipalité, pour votre demande de permis."
     ],
     "contenu": [
-      "Plan d'implantation projeté, à partir de votre certificat de localisation",
-      "Plan de fondation",
-      "Plans de chaque étage, cotés",
-      "Élévations des quatre façades",
-      "Coupe du bâtiment et composition des murs, planchers et toit",
-      "Notes de construction et cartouche sur chaque feuille"
+      "Plan de fondation : une représentation de la fondation selon le type choisi (pieux, dalle ou fondation complète), pour vous aider à vous situer. Les mesures sont approximatives : c'est l'entrepreneur qui les détermine. L'emplacement des appareils de plomberie y est indiqué.",
+      "Vue en plan du rez-de-chaussée : les pièces, les murs extérieurs et intérieurs, les portes et les fenêtres (grandeurs indicatives, à confirmer avec le fabricant de votre choix), avec les appareils et le mobilier de base pour bien imaginer l'espace.",
+      "Autres étages, mezzanine et sous-sol aménagé : au besoin, présentés de la même façon.",
+      "Les 4 élévations : chaque façade, avec les niveaux des planchers, la hauteur des murs et de la fondation, et le toit.",
+      "Coupe de mur et coupe transversale : la composition des murs, des planchers et du toit.",
+      "Vue en plan du toit : la forme du toit vue de dessus.",
+      "Plan d'implantation projeté, à partir de votre certificat de localisation, avec les marges et, au bord de l'eau, la bande riveraine à respecter.",
+      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure."
     ],
     "faq": [
       [
@@ -28,39 +31,14 @@
       [
         "Puis-je partir d'un modèle existant ?",
         "Oui. Les modèles de la Collection ABRISIA sont déjà dessinés et peuvent être personnalisés."
-      ]
-    ],
-    "etapes": [
-      "Vous décrivez votre projet dans le formulaire de devis : vous pouvez joindre photos, croquis, mesures et plans existants.",
-      "Nous en discutons avec vous et préparons des croquis.",
-      "Nous réalisons les plans détaillés, à l'échelle.",
-      "Vous recevez vos plans en PDF, prêts à joindre à votre demande de permis."
-    ]
-  },
-  {
-    "slug": "plan-de-chalet",
-    "title": "Plan de chalet, camp et cabane",
-    "description": "Plan de chalet, de camp ou de cabane au Québec : chalet quatre saisons, camp de chasse ou cabane au bord de l'eau, dessiné selon votre terrain et prêt pour le permis. Saguenay–Lac-Saint-Jean et partout au Québec.",
-    "h1": "Plan de chalet, de camp ou de cabane",
-    "intro": [
-      "Chalet quatre saisons, camp en forêt, cabane au bord du lac Saint-Jean ou du fjord : Abrisia Plan dessine les plans de votre chalet selon votre terrain, son accès et l'usage que vous en ferez.",
-      "Avant de commencer, vérifiez auprès de votre municipalité ce qui est permis sur votre terrain (marges, hauteur, superficie) et les documents demandés pour le permis. Nos plans sont conçus selon le Code de construction du Québec et les règles que vous nous transmettez."
-    ],
-    "contenu": [
-      "Plan d'implantation projeté, à partir de votre certificat de localisation, avec les marges et la bande riveraine à respecter",
-      "Plan de fondation (pieux, dalle ou fondation complète)",
-      "Plans des étages et de la mezzanine",
-      "Élévations des façades",
-      "Coupe et composition des murs, planchers et toit"
-    ],
-    "faq": [
+      ],
       [
         "Mon chalet est au bord de l'eau. Y a-t-il des règles particulières ?",
         "Oui. Les municipalités imposent souvent une bande de protection riveraine et des marges particulières. Renseignez-vous auprès de la vôtre : nous en tenons compte dans le plan d'implantation."
       ],
       [
         "Faites-vous les plans de l'installation septique ?",
-        "Non. L'étude et l'installation septique relèvent d'un technologue ou d'un ingénieur. Nous pouvons coordonner nos plans avec les siens."
+        "Non. L'étude et l'installation septique relèvent d'un technologue ou d'un ingénieur."
       ],
       [
         "Pouvez-vous dessiner un petit camp ou une cabane ?",
@@ -76,20 +54,24 @@
   },
   {
     "slug": "plan-de-mini-maison",
-    "title": "Plan de mini-maison",
-    "description": "Plan de mini-maison au Québec : petite maison compacte et bien pensée, où chaque pied carré compte, dessinée selon votre terrain et les règles de votre municipalité. Devis gratuit.",
-    "h1": "Plan de mini-maison",
+    "title": "Plan de mini-maison et optimisation des espaces",
+    "description": "Plan de mini-maison au Québec, avec optimisation des espaces : rangements, mezzanine, circulation et mobilier pensés pour chaque pied carré, selon votre terrain et les règles de votre municipalité. Devis gratuit.",
+    "h1": "Plan de mini-maison et optimisation des espaces",
+    "resume": "Petite maison où chaque pied carré est optimisé.",
     "intro": [
       "Une mini-maison demande une conception précise : rangements, mezzanine, circulation, lumière. Abrisia Plan dessine des mini-maisons où chaque pied carré compte.",
       "Avant de commencer, vérifiez auprès de votre municipalité la superficie minimale permise : elle varie d'une ville à l'autre."
     ],
     "contenu": [
-      "Plan d'implantation projeté, à partir de votre certificat de localisation",
-      "Plan de fondation",
-      "Plan du rez-de-chaussée et de la mezzanine",
-      "Élévations des façades",
-      "Coupe et détails de construction",
-      "Aménagement intérieur et rangements"
+      "Plan de fondation : une représentation de la fondation selon le type choisi, pour vous aider à vous situer. Les mesures sont approximatives : c'est l'entrepreneur qui les détermine. L'emplacement des appareils de plomberie y est indiqué.",
+      "Vue en plan du rez-de-chaussée : les pièces, les murs extérieurs et intérieurs, les portes et les fenêtres (grandeurs indicatives, à confirmer avec le fabricant de votre choix), avec les appareils et le mobilier de base pour bien imaginer l'espace.",
+      "Mezzanine : au besoin, présentée de la même façon.",
+      "Les 4 élévations : chaque façade, avec les niveaux des planchers, la hauteur des murs et de la fondation, et le toit.",
+      "Coupe de mur et coupe transversale : la composition des murs, des planchers et du toit.",
+      "Vue en plan du toit : la forme du toit vue de dessus.",
+      "Optimisation des espaces : rangements, circulation et mobilier pensés pour tirer le meilleur de chaque pied carré.",
+      "Plan d'implantation projeté, à partir de votre certificat de localisation.",
+      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure."
     ],
     "faq": [
       [
@@ -113,21 +95,68 @@
     ]
   },
   {
+    "slug": "plan-de-plex",
+    "title": "Plan multilogement et à murs mitoyens",
+    "description": "Plan multilogement (duplex, triplex, quadruplex) et à murs mitoyens (maison jumelée, en rangée, garage attaché) au Québec, dessiné pour votre permis selon le Code de construction du Québec. Devis gratuit.",
+    "h1": "Plan multilogement et à murs mitoyens",
+    "resume": "Duplex à quadruplex, jumelé, en rangée ou garage attaché.",
+    "intro": [
+      "Multilogement jusqu'à 4 logements (duplex, triplex, quadruplex), maison jumelée ou en rangée, ou garage attaché à la maison : Abrisia Plan dessine les plans des bâtiments qui partagent un mur mitoyen.",
+      "Ces projets doivent respecter les limites de la Loi sur les architectes du Québec (nombre d'étages, de logements et superficie). Au-delà, un architecte est requis : nous vous le dirons dès le départ."
+    ],
+    "contenu": [
+      "Plan de fondation : une représentation de la fondation selon le type choisi, pour vous aider à vous situer. Les mesures sont approximatives : c'est l'entrepreneur qui les détermine. L'emplacement des appareils de plomberie y est indiqué.",
+      "Vue en plan de chaque logement et de chaque étage : les pièces, les murs extérieurs, intérieurs et mitoyens, les portes et les fenêtres (grandeurs indicatives, à confirmer avec le fabricant de votre choix), avec les appareils et le mobilier de base.",
+      "Les 4 élévations : chaque façade, avec les niveaux des planchers, la hauteur des murs et de la fondation, et le toit.",
+      "Coupe de mur et coupe transversale : la composition des murs, des planchers et du toit, et les séparations entre logements.",
+      "Vue en plan du toit : la forme du toit vue de dessus.",
+      "Plan d'implantation projeté, à partir de votre certificat de localisation, avec le stationnement.",
+      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure."
+    ],
+    "faq": [
+      [
+        "Peut-on transformer une maison en duplex ?",
+        "Souvent, oui, si le zonage le permet. Nous dessinons les plans de la transformation à partir de l'existant."
+      ],
+      [
+        "Les séparations entre logements ont-elles des exigences ?",
+        "Oui : le Code exige des séparations coupe-feu et une insonorisation entre les logements. Elles sont indiquées dans nos coupes."
+      ],
+      [
+        "Mon garage sera attaché à la maison. Est-ce différent ?",
+        "Oui : un garage attaché a des exigences supplémentaires, comme un mur étanche aux gaz d'échappement entre le garage et la maison. Nous les intégrons au plan."
+      ],
+      [
+        "Travaillez-vous avec des entrepreneurs ?",
+        "Oui. Notre Espace Pro offre la sous-traitance de dessin aux entrepreneurs en construction."
+      ]
+    ],
+    "etapes": [
+      "Vous décrivez votre projet dans le formulaire de devis : vous pouvez joindre photos, croquis, mesures et plans existants.",
+      "Nous en discutons avec vous et préparons des croquis.",
+      "Nous réalisons les plans détaillés, à l'échelle.",
+      "Vous recevez vos plans en PDF, prêts à joindre à votre demande de permis."
+    ]
+  },
+  {
     "slug": "plan-agrandissement-maison",
-    "title": "Plan d'agrandissement de maison",
+    "title": "Plan d'agrandissement, de verrière ou de solarium",
     "description": "Plan d'agrandissement de maison au Québec : ajout d'une pièce, d'un solarium ou d'une verrière, dessiné à partir de votre maison actuelle. Dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean. Devis gratuit.",
-    "h1": "Plan d'agrandissement de maison",
+    "h1": "Plan d'agrandissement, de verrière ou de solarium",
+    "resume": "Extension de plain-pied : pièce, verrière ou solarium.",
     "intro": [
       "Ajouter une pièce, un solarium ou une verrière : Abrisia Plan dessine votre agrandissement de plain-pied à partir de votre maison actuelle, pour qu'il s'y intègre bien. Les ajouts d'étage ne sont pas offerts.",
       "Un agrandissement demande de bien connaître l'existant. Selon le projet, vous nous transmettez les mesures et les photos, ou nous pouvons nous déplacer dans certains cas pour les prendre.",
       "Avant de commencer, vérifiez auprès de votre municipalité ce qui est permis sur votre terrain (marges, hauteur, superficie) et les documents demandés pour le permis."
     ],
     "contenu": [
-      "Relevé de la partie existante utile au projet",
-      "Plan d'implantation projeté, à partir de votre certificat de localisation, avec les marges",
-      "Plans de l'existant et de l'agrandissement",
-      "Élévations des façades touchées",
-      "Coupe et détails de raccordement à l'existant"
+      "Relevé de la partie existante utile au projet.",
+      "Plan de fondation de l'agrandissement : une représentation pour vous aider à vous situer. Les mesures sont approximatives : c'est l'entrepreneur qui les détermine.",
+      "Vue en plan de l'existant et de l'agrandissement : les pièces, les murs, les portes et les fenêtres (grandeurs indicatives, à confirmer avec le fabricant de votre choix), avec les appareils et le mobilier de base.",
+      "Élévations des façades touchées : avec les niveaux des planchers, la hauteur des murs et le toit.",
+      "Coupe et détails de raccordement à l'existant.",
+      "Plan d'implantation projeté, à partir de votre certificat de localisation, avec les marges.",
+      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure."
     ],
     "faq": [
       [
@@ -136,7 +165,7 @@
       ],
       [
         "Faut-il un ingénieur pour un agrandissement ?",
-        "Lorsque la structure l'exige (portées importantes, poutres, raccordement de toit), les calculs sont faits par un ingénieur, et les fermes de toit préfabriquées sont conçues par leur fabricant. Nous coordonnons nos plans avec eux."
+        "Lorsque la structure l'exige (portées importantes, poutres, raccordement de toit), les calculs sont faits par un ingénieur, et les fermes de toit préfabriquées sont conçues par leur fabricant. Si votre projet le demande, nous vous le disons dès le départ."
       ],
       [
         "Faites-vous les solariums et verrières ?",
@@ -164,19 +193,21 @@
   },
   {
     "slug": "plan-de-garage",
-    "title": "Plan de garage et d'abri",
-    "description": "Plan de garage détaché ou attaché, d'abri ou de remise au Québec, dessiné selon votre terrain et les règles de votre municipalité, prêt pour le permis. Devis gratuit.",
-    "h1": "Plan de garage, d'abri ou de remise",
+    "title": "Plan de garage détaché, d'abri ou de remise",
+    "description": "Plan de garage détaché, d'abri d'auto ou de remise au Québec, dessiné selon votre terrain et les règles de votre municipalité, pour votre permis. Devis gratuit.",
+    "h1": "Plan de garage détaché, d'abri ou de remise",
+    "resume": "Garage détaché, abri d'auto ou remise.",
     "intro": [
-      "Garage détaché, garage attaché à la maison, abri d'auto ou remise : Abrisia Plan dessine les plans demandés pour votre permis.",
+      "Garage détaché, abri d'auto ou remise : Abrisia Plan dessine les plans demandés pour votre permis. Pour un garage attaché à la maison, voyez nos plans à murs mitoyens.",
       "Chaque municipalité fixe ses propres règles (marges, hauteur, superficie) : informez-vous auprès de la vôtre, puis transmettez-nous ces règles. Nous en tenons compte dès le départ."
     ],
     "contenu": [
-      "Plan d'implantation projeté, à partir de votre certificat de localisation, avec les marges",
-      "Plan de fondation ou de dalle",
-      "Plan du garage (portes, fenêtres, dimensions)",
-      "Élévations des façades",
-      "Coupe et composition des murs et du toit"
+      "Plan de fondation ou de dalle : une représentation pour vous aider à vous situer. Les mesures sont approximatives : c'est l'entrepreneur qui les détermine.",
+      "Vue en plan du garage : les murs, la ou les portes de garage, les portes et les fenêtres (grandeurs indicatives, à confirmer avec le fabricant de votre choix).",
+      "Les 4 élévations : chaque façade, avec les niveaux des planchers, la hauteur des murs et de la fondation, et le toit.",
+      "Coupe de mur et coupe transversale : la composition des murs, des planchers et du toit.",
+      "Vue en plan du toit : la forme du toit vue de dessus.",
+      "Plan d'implantation projeté, à partir de votre certificat de localisation, avec les marges."
     ],
     "faq": [
       [
@@ -186,47 +217,6 @@
       [
         "Pouvez-vous ajouter un espace au-dessus du garage ?",
         "Oui, nous pouvons dessiner un grenier, un atelier ou une pièce à l'étage, si votre municipalité le permet."
-      ],
-      [
-        "Mon garage sera attaché à la maison. Est-ce différent ?",
-        "Oui : un garage attaché a des exigences supplémentaires, comme un mur étanche aux gaz d'échappement entre le garage et la maison. Nous les intégrons au plan."
-      ]
-    ],
-    "etapes": [
-      "Vous décrivez votre projet dans le formulaire de devis : vous pouvez joindre photos, croquis, mesures et plans existants.",
-      "Nous en discutons avec vous et préparons des croquis.",
-      "Nous réalisons les plans détaillés, à l'échelle.",
-      "Vous recevez vos plans en PDF, prêts à joindre à votre demande de permis."
-    ]
-  },
-  {
-    "slug": "plan-de-plex",
-    "title": "Plan de duplex, triplex et multilogement",
-    "description": "Plan de duplex, triplex ou quadruplex au Québec : habitation multifamiliale, jumelée ou en rangée, dessinée pour votre permis selon le Code de construction du Québec. Dessinatrice en bâtiment, devis gratuit.",
-    "h1": "Plan de duplex, triplex et quadruplex",
-    "intro": [
-      "Vous voulez construire ou transformer un immeuble à logements ? Abrisia Plan dessine les plans d'habitations multifamiliales (duplex, triplex, quadruplex) et d'habitations jumelées ou en rangée.",
-      "Ces projets doivent respecter les limites de la Loi sur les architectes du Québec (nombre d'étages, de logements et superficie). Au-delà, un architecte est requis : nous vous le dirons dès le départ."
-    ],
-    "contenu": [
-      "Plan d'implantation projeté, à partir de votre certificat de localisation, avec le stationnement",
-      "Plan de fondation",
-      "Plans de chaque logement et de chaque étage",
-      "Élévations des façades",
-      "Coupes et séparations entre logements"
-    ],
-    "faq": [
-      [
-        "Peut-on transformer une maison en duplex ?",
-        "Souvent, oui, si le zonage le permet. Nous dessinons les plans de la transformation à partir de l'existant."
-      ],
-      [
-        "Les séparations entre logements ont-elles des exigences ?",
-        "Oui : le Code exige des séparations coupe-feu et une insonorisation entre les logements. Elles sont indiquées dans nos coupes."
-      ],
-      [
-        "Travaillez-vous avec des entrepreneurs ?",
-        "Oui. Notre Espace Pro offre la sous-traitance de dessin aux entrepreneurs en construction."
       ]
     ],
     "etapes": [

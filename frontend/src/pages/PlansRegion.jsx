@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import SEO from '../components/SEO';
-import { FloorPlanDrawing } from '../components/PlanIllustrations';
 
 // Page locale : plans de maison au Saguenay–Lac-Saint-Jean.
 // Le même texte est repris dans seo/pages.js pour les robots : garder les deux semblables.
@@ -14,15 +13,19 @@ const VILLES = [
 ];
 
 const PROJETS = [
-  ['Maisons unifamiliales', 'Plans complets de maison neuve, selon votre terrain, votre budget et votre façon de vivre.'],
-  ['Chalets, camps et cabanes', 'Au bord du lac Saint-Jean, du fjord ou en forêt : plans adaptés à votre terrain et à votre usage.'],
-  ['Mini-maisons', "Des espaces compacts et bien pensés, où chaque pied carré compte."],
-  ['Agrandissements et garages', "Plans d'agrandissement, de garage, d'abri ou de solarium pour votre permis."],
+  ['Maisons, chalets et camps', 'Maison unifamiliale, chalet au bord du lac Saint-Jean ou du fjord, camp en forêt : plans selon votre terrain et vos désirs.'],
+  ['Mini-maisons', "Optimisation des espaces : chaque pied carré est pensé."],
+  ['Multilogement et murs mitoyens', "Duplex à quadruplex, maison jumelée ou en rangée, garage attaché."],
+  ['Agrandissements et garages', "Agrandissement, verrière ou solarium ; garage détaché, abri ou remise."],
 ];
 
 const CONTENU = [
-  "Plan d'implantation projeté, à partir de votre certificat de localisation", 'Plan de fondation', 'Plans des étages, cotés',
-  'Élévations des façades', 'Coupes de mur et détails de construction', 'Cartouche sur chaque feuille',
+  "Plan de fondation : une représentation, avec des mesures approximatives déterminées par l'entrepreneur",
+  "Vue en plan de chaque étage : pièces, murs, portes, fenêtres, appareils et mobilier de base",
+  "Les 4 élévations des façades",
+  "Coupe de mur et coupe transversale",
+  "Vue en plan du toit",
+  "Plan d'implantation projeté, à partir de votre certificat de localisation",
 ];
 
 const ETAPES = [
@@ -67,7 +70,7 @@ const PlansRegion = () => {
 
       <section className="py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div>
             <div className="space-y-4 text-slate-700 leading-relaxed">
               <p>
                 Abrisia Plan est établie au Saguenay–Lac-Saint-Jean. Nous préparons les plans de votre projet résidentiel,
@@ -78,7 +81,6 @@ const PlansRegion = () => {
                 La plupart des projets se font à distance, par courriel, téléphone ou texto. Dans certains cas, nous pouvons nous déplacer pour prendre des mesures.
               </p>
             </div>
-            <FloorPlanDrawing className="w-full max-w-sm mx-auto text-teal-800" />
           </div>
 
           <div>
@@ -120,7 +122,7 @@ const PlansRegion = () => {
 
           <div className="text-center bg-white border border-stone-200 rounded-xl p-8">
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Parlez-nous de votre projet</h2>
-            <p className="text-slate-600 mb-6">Le devis est gratuit et sans engagement.</p>
+            <p className="text-slate-600 mb-6">Le devis est gratuit : même si votre projet n'est pas encore décidé, demandez-le.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/devis" className="inline-block bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 rounded-full font-semibold">
                 Demander un devis gratuit

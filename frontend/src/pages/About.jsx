@@ -59,18 +59,18 @@ const About = () => {
     },
     {
       icon: <Layers className="w-6 h-6 text-teal-700" />,
-      title: "Plans de fondations et de planchers",
-      desc: "Aménagement intérieur détaillé et coté pour chaque niveau."
+      title: "Fondation et vues en plan",
+      desc: "Une représentation de la fondation (mesures approximatives, déterminées par l'entrepreneur), puis chaque étage avec les pièces, portes, fenêtres, appareils et mobilier de base."
     },
     {
       icon: <Eye className="w-6 h-6 text-teal-700" />,
       title: "Élévations des façades",
-      desc: "Représentation visuelle extérieure avec hauteurs et matériaux de revêtement."
+      desc: "Les 4 façades, avec les niveaux des planchers, la hauteur des murs et de la fondation, et le toit."
     },
     {
       icon: <PenTool className="w-6 h-6 text-teal-700" />,
-      title: "Coupes de mur et détails constructifs",
-      desc: "Spécifications de l'enveloppe conformes aux codes du bâtiment en vigueur."
+      title: "Coupes et vue du toit",
+      desc: "Coupe de mur et coupe transversale (composition des murs, des planchers et du toit), et vue en plan du toit."
     },
     {
       icon: <FileCheck className="w-6 h-6 text-teal-700" />,
@@ -97,8 +97,8 @@ const About = () => {
     },
     {
       icon: <Users className="w-8 h-8 text-teal-700" />,
-      title: "Collaboration simplifiée avec les professionnels",
-      desc: "Si un projet requiert l'intervention d'un ingénieur ou d'un architecte, Abrisia Plan prépare des fichiers techniques standardisés (CAO/DAO) qui s'intègrent parfaitement à leur flux de travail."
+      title: "Franchise sur ce que demande votre projet",
+      desc: "Si votre projet demande l'intervention d'un ingénieur ou d'un architecte, nous vous le disons dès le départ. Nos plans vous servent à faire vos démarches avec votre entrepreneur."
     }
   ];
 
@@ -224,15 +224,13 @@ const About = () => {
             </div>
             <div>
               <h2 className="text-2xl md:text-3xl font-bold mb-4" data-testid="collaboration-title">
-                Collaboration professionnelle et gestion des structures complexes
+                Et les structures complexes ?
               </h2>
               <p className="text-slate-300 leading-relaxed text-base">
-                Pour les projets d'envergure ou les éléments structuraux spécifiques qui dépassent les 
-                normes standards du Code du bâtiment (ex. : intégration de pieux de fondation, poutres 
-                d'acier de grande portée, colonnes de soutien complexes), <strong className="text-white">Abrisia Plan collabore 
-                directement avec des ingénieurs en structure</strong>. Nous concevons l'enveloppe globale de votre 
-                projet et intégrons fidèlement leurs calculs et plans scellés à votre dossier technique 
-                final pour garantir l'obtention de votre permis.
+                Abrisia Plan n'est pas ingénieure en structure. Si votre projet comporte des éléments qui
+                demandent l'intervention d'un ingénieur (par exemple des poutres d'acier de grande portée ou des
+                colonnes de soutien complexes), <strong className="text-white">nous vous le disons dès le départ</strong>.
+                Nos plans vous servent ensuite à faire vos démarches avec votre entrepreneur.
               </p>
             </div>
           </div>

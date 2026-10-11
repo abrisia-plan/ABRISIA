@@ -15,18 +15,17 @@
 - Au Québec, l'article 16.1 de la Loi sur les architectes permet de préparer sans architecte les plans de plusieurs types de bâtiments (maison unifamiliale, chalet, mini-maison, garage, petit agrandissement). Au-delà, un architecte est requis.
 
 ## Ce qui n'est pas inclus
-Calculs de structure et plans scellés (ingénieur partenaire au besoin), certificat de localisation (arpenteur-géomètre), étude de sol et installation septique, construction et surveillance de chantier.
+Calculs de structure et plans scellés (par un ingénieur : nous vous disons dès le départ si votre projet en demande un), certificat de localisation (arpenteur-géomètre), étude de sol et installation septique, construction et surveillance de chantier.
 
 ## Pages
 - [Accueil](https://abrisia-plan.ca/)
 - [Demander un devis gratuit](https://abrisia-plan.ca/devis)
 - [À propos d'ABRISIA et de sa fondatrice](https://abrisia-plan.ca/a-propos)
-- [Plan de maison sur mesure](https://abrisia-plan.ca/plan-de-maison)
-- [Plan de chalet, de camp ou de cabane](https://abrisia-plan.ca/plan-de-chalet)
-- [Plan de mini-maison](https://abrisia-plan.ca/plan-de-mini-maison)
-- [Plan d'agrandissement de maison](https://abrisia-plan.ca/plan-agrandissement-maison)
-- [Plan de garage, d'abri ou de remise](https://abrisia-plan.ca/plan-de-garage)
-- [Plan de duplex, triplex et quadruplex](https://abrisia-plan.ca/plan-de-plex)
+- [Plan de maison, de chalet ou de camp](https://abrisia-plan.ca/plan-de-maison)
+- [Plan de mini-maison et optimisation des espaces](https://abrisia-plan.ca/plan-de-mini-maison)
+- [Plan multilogement et à murs mitoyens](https://abrisia-plan.ca/plan-de-plex)
+- [Plan d'agrandissement, de verrière ou de solarium](https://abrisia-plan.ca/plan-agrandissement-maison)
+- [Plan de garage détaché, d'abri ou de remise](https://abrisia-plan.ca/plan-de-garage)
 - [Plans de maison au Saguenay–Lac-Saint-Jean](https://abrisia-plan.ca/plans-maison-saguenay-lac-saint-jean)
 - [Questions fréquentes](https://abrisia-plan.ca/faq)
 - [Collection de plans](https://abrisia-plan.ca/collection)

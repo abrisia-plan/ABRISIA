@@ -664,7 +664,7 @@ const Devis = () => {
           <div className="mt-12 text-center">
             <div className="flex items-center justify-center mb-6">
               <CheckCircle className="h-6 w-6 text-teal-600 mr-2" />
-              <span className="text-lg font-medium text-slate-700">Devis gratuit et sans engagement</span>
+              <span className="text-lg font-medium text-slate-700">Devis gratuit, même si votre projet n'est pas encore décidé</span>
             </div>
             <div className="max-w-3xl mx-auto space-y-4 text-slate-600">
               <p className="text-lg">

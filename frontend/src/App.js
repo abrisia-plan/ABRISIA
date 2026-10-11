@@ -53,6 +53,7 @@ function App() {
                 <Route path="/a-propos" element={<APropos />} />
                 <Route path="/carrieres" element={<Carrieres />} />
                 <Route path="/plans-maison-saguenay-lac-saint-jean" element={<PlansRegion />} />
+                <Route path="/plan-de-chalet" element={<Navigate to="/plan-de-maison" replace />} />
                 {SERVICE_PAGES.map((p) => (
                   <Route key={p.slug} path={`/${p.slug}`} element={<ServicePage slug={p.slug} />} />
                 ))}
