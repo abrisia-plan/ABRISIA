@@ -543,6 +543,16 @@ const Collection = () => {
         )}
       </div>
 
+      {/* Droits d'auteur : même texte dans la FAQ et l'assistant */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16" data-testid="collection-droits-auteur">
+        <div className="bg-white border border-stone-200 rounded-xl p-6">
+          <h2 className="text-xl font-bold text-slate-800 mb-2">Droits d'auteur et utilisation des plans</h2>
+          <p className="text-slate-600 leading-relaxed">
+            Les plans de la Collection ABRISIA, en PDF ou sur papier, sont protégés par la Loi sur le droit d'auteur. L'achat d'un plan vous permet de construire une (1) seule maison, pour vous-même. Il est interdit de revendre, copier, partager ou modifier les plans sans l'accord d'Abrisia Plan. Pour faire modifier un plan, ou pour construire un modèle plus d'une fois (entrepreneurs, professionnels de l'immobilier), écrivez-nous : nous vous proposerons une entente.
+          </p>
+        </div>
+      </section>
+
       {/* Model Detail Modal */}
       <Dialog open={!!selectedModel} onOpenChange={() => setSelectedModel(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">

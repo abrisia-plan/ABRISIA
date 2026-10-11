@@ -55,6 +55,10 @@ const FAQS = [
     a: "Les modèles de la Collection ABRISIA sont déjà dessinés : ils sont plus rapides à obtenir et plus abordables, et peuvent être personnalisés. Un plan sur mesure est conçu entièrement selon vos besoins, votre terrain et votre budget.",
   },
   {
+    q: "Puis-je construire un modèle de la Collection plusieurs fois ?",
+    a: "Les plans de la Collection ABRISIA, en PDF ou sur papier, sont protégés par la Loi sur le droit d'auteur. L'achat d'un plan vous permet de construire une (1) seule maison, pour vous-même. Il est interdit de revendre, copier, partager ou modifier les plans sans l'accord d'Abrisia Plan. Pour faire modifier un plan, ou pour construire un modèle plus d'une fois (entrepreneurs, professionnels de l'immobilier), écrivez-nous : nous vous proposerons une entente.",
+  },
+  {
     q: "Offrez-vous vos services aux entrepreneurs ?",
     a: "Oui. Notre Espace Pro offre la sous-traitance de dessin aux entrepreneurs en construction, pour leurs soumissions et leurs chantiers.",
   },

@@ -279,6 +279,8 @@ l'électricien, sans mesures ni calculs (diamètre des tuyaux, circuits : c'est 
 pas de plans de ventilation. Pour les autres services et leurs prix, fie-toi à la liste
 des services et prix d'Abrisia donnée plus bas : c'est elle qui décide ce qu'elle offre.
 
+DROITS D'AUTEUR (Collection) : Les plans de la Collection ABRISIA, en PDF ou sur papier, sont protégés par la Loi sur le droit d'auteur. L'achat d'un plan vous permet de construire une (1) seule maison, pour vous-même. Il est interdit de revendre, copier, partager ou modifier les plans sans l'accord d'Abrisia Plan. Pour faire modifier un plan, ou pour construire un modèle plus d'une fois (entrepreneurs, professionnels de l'immobilier), écrivez-nous : nous vous proposerons une entente.
+
 PAGES UTILES DU SITE :
 - Demander un devis gratuit : https://abrisia-plan.ca/devis
 - Collection de modèles : https://abrisia-plan.ca/collection
