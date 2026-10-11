@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Mail, Users } from 'lucide-react';
+import SERVICE_PAGES from '../data/servicePages.json';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -32,7 +33,7 @@ const Footer = () => {
   return (
     <footer className="bg-slate-800 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 bg-white">
@@ -79,11 +80,24 @@ const Footer = () => {
           </div>
 
           <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-teal-400">Nos plans</h3>
+            <ul className="space-y-2 text-slate-300">
+              {SERVICE_PAGES.map((p) => (
+                <li key={p.slug}>
+                  <Link to={`/${p.slug}`} onClick={scrollTop} className="hover:text-teal-400 transition-colors">
+                    {p.h1}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="space-y-4">
             <h3 className="text-lg font-semibold text-teal-400">Contact</h3>
             <div className="space-y-3 text-slate-300">
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-teal-400 flex-shrink-0" />
-                <span>Québec, Canada</span>
+                <span>Saguenay–Lac-Saint-Jean, Québec</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-teal-400 flex-shrink-0" />

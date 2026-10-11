@@ -21,6 +21,8 @@ import FAQ from "./pages/FAQ";
 import APropos from "./pages/APropos";
 import Carrieres from "./pages/Carrieres";
 import PlansRegion from "./pages/PlansRegion";
+import ServicePage from "./pages/ServicePage";
+import SERVICE_PAGES from "./data/servicePages.json";
 import MentionsLegales from "./pages/Legal/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/Legal/PolitiqueConfidentialite";
 import Login from "./pages/Admin/Login";
@@ -55,6 +57,9 @@ function App() {
                 <Route path="/a-propos" element={<APropos />} />
                 <Route path="/carrieres" element={<Carrieres />} />
                 <Route path="/plans-maison-saguenay-lac-saint-jean" element={<PlansRegion />} />
+                {SERVICE_PAGES.map((p) => (
+                  <Route key={p.slug} path={`/${p.slug}`} element={<ServicePage slug={p.slug} />} />
+                ))}
                 <Route path="/mentions-legales" element={<MentionsLegales />} />
                 <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
               </Routes>

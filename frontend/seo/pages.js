@@ -7,7 +7,24 @@
 const DEVIS = { href: '/devis', text: 'Demander un devis gratuit' };
 const CONTACT = { href: '/contact', text: 'Nous écrire' };
 
+const SERVICES = require('../src/data/servicePages.json');
+
+const servicePages = SERVICES.map((p) => ({
+  path: `/${p.slug}`,
+  title: `${p.title} | Abrisia Plan`,
+  description: p.description,
+  h1: p.h1,
+  sections: [
+    { p: p.intro },
+    { h2: 'Ce que comprennent les plans', list: p.contenu },
+    { h2: 'Comment ça se passe', list: p.etapes },
+    { h2: 'Questions fréquentes', list: p.faq.map(([q, a]) => `${q} ${a}`) },
+  ],
+  links: [DEVIS, ...SERVICES.filter((o) => o.slug !== p.slug).map((o) => ({ href: `/${o.slug}`, text: o.h1 }))],
+}));
+
 module.exports = [
+  ...servicePages,
   {
     path: '/',
     title: 'Abrisia Plan | Plans de maison, chalet et mini-maison au Québec',
@@ -17,7 +34,7 @@ module.exports = [
       { p: ["Abrisia Plan conçoit et dessine les plans de votre projet résidentiel : maison unifamiliale, chalet, camp, mini-maison, agrandissement, garage, solarium et meubles sur mesure.", "Établie au Saguenay–Lac-Saint-Jean, nous travaillons 100 % à distance, partout au Québec. Nos plans sont conçus selon le Code de construction du Québec et le Code national du bâtiment du Canada, et selon les règlements de votre municipalité, pour votre demande de permis."] },
       { h2: 'Comment pouvons-nous vous aider ?', list: ["Je réalise mon projet : plans sur mesure de maison, chalet ou agrandissement.", "Je suis entrepreneur : sous-traitance de dessin pour vos soumissions et chantiers (Espace Pro).", "Je veux un modèle prêt : plans de la Collection ABRISIA, personnalisables."] },
     ],
-    links: [DEVIS, { href: '/collection', text: 'Voir la Collection de plans' }, { href: '/plans-maison-saguenay-lac-saint-jean', text: 'Plans de maison au Saguenay–Lac-Saint-Jean' }, { href: '/faq', text: 'Questions fréquentes' }],
+    links: [DEVIS, ...SERVICES.map((o) => ({ href: `/${o.slug}`, text: o.h1 })), { href: '/collection', text: 'Voir la Collection de plans' }, { href: '/plans-maison-saguenay-lac-saint-jean', text: 'Plans de maison au Saguenay–Lac-Saint-Jean' }, { href: '/faq', text: 'Questions fréquentes' }],
   },
   {
     path: '/plans-maison-saguenay-lac-saint-jean',
