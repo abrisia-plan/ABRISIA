@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import SEO from '../components/SEO';
 import VideoEmbed from '../components/VideoEmbed';
+import { surfaceAvecPieds } from '../lib/surface';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 // Lien PayPal.me de l'entreprise (variable Vercel REACT_APP_PAYPAL_ME_URL, ex. https://paypal.me/MonCompte).
@@ -524,7 +525,7 @@ const Collection = () => {
                     ))}
                   </div>
                   <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                    {model.surfaceArea && <span className="flex items-center"><Ruler className="w-3 h-3 mr-1" />{model.surfaceArea}</span>}
+                    {model.surfaceArea && <span className="flex items-center"><Ruler className="w-3 h-3 mr-1" />{surfaceAvecPieds(model.surfaceArea)}</span>}
                     {model.bedrooms && <span className="flex items-center"><BedDouble className="w-3 h-3 mr-1" />{model.bedrooms} ch.</span>}
                     {model.bathrooms && <span className="flex items-center"><Bath className="w-3 h-3 mr-1" />{model.bathrooms} sdb</span>}
                     {model.floors && <span className="flex items-center"><Layers className="w-3 h-3 mr-1" />{model.floors} étage{model.floors > 1 ? 's' : ''}</span>}
@@ -616,7 +617,7 @@ const Collection = () => {
                     <div className="bg-gray-50 p-3 rounded-lg">
                       <Ruler className="w-5 h-5 mx-auto mb-1 text-teal-600" />
                       <p className="text-sm text-gray-500">Surface</p>
-                      <p className="font-semibold">{selectedModel.surfaceArea}</p>
+                      <p className="font-semibold">{surfaceAvecPieds(selectedModel.surfaceArea)}</p>
                     </div>
                   )}
                   {selectedModel.bedrooms && (
