@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Home, Maximize2, LayoutGrid, ChefHat, Armchair, Trees, Layers, Compass,
@@ -34,7 +34,30 @@ const Section = ({ eyebrow, title, children, className = '' }) => (
   </section>
 );
 
-const APropos = () => (
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+const HERO_DEFAULT = {
+  title: 'Chaque grand projet commence par une idée.',
+  text: 'Découvrez ABRISIA-PLAN, un studio indépendant de conception et de dessin de plans sur mesure, pour les particuliers et les entrepreneurs.',
+};
+
+const APropos = () => {
+  // Titre et introduction modifiables dans l'admin (Textes des pages → Autres pages)
+  const [hero, setHero] = useState(HERO_DEFAULT);
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/api/content/pages/about`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        const c = data?.content || {};
+        setHero({
+          title: c.hero_title?.value || HERO_DEFAULT.title,
+          text: c.hero_text?.value || HERO_DEFAULT.text,
+        });
+      })
+      .catch(() => {});
+  }, []);
+
+  return (
   <div className="min-h-screen pt-20 bg-stone-50" data-testid="a-propos-page">
     <SEO
       title="À propos : Noémie et le studio ABRISIA-PLAN"
@@ -48,11 +71,8 @@ const APropos = () => (
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 grid md:grid-cols-[1.2fr,1fr] gap-10 items-center">
         <div className="text-center md:text-left">
           <p className="text-teal-200 font-semibold tracking-widest uppercase text-sm mb-4">À propos</p>
-          <h1 className="text-4xl sm:text-6xl font-bold mb-6 leading-tight">Chaque grand projet commence par une idée.</h1>
-          <p className="text-xl text-teal-100 leading-relaxed mb-8">
-            Découvrez ABRISIA-PLAN, un studio indépendant de conception et de dessin de plans sur mesure,
-            pour les particuliers et les entrepreneurs.
-          </p>
+          <h1 className="text-4xl sm:text-6xl font-bold mb-6 leading-tight">{hero.title}</h1>
+          <p className="text-xl text-teal-100 leading-relaxed mb-8">{hero.text}</p>
           <a href="#qui-sommes-nous" className="inline-flex items-center gap-2 text-teal-100 hover:text-white font-medium">
             Découvrir notre histoire <ChevronDown className="w-5 h-5" />
           </a>
@@ -341,6 +361,7 @@ const APropos = () => (
       </div>
     </section>
   </div>
-);
+  );
+};
 
 export default APropos;

@@ -480,23 +480,46 @@ async def get_all_media(
 
 # ========== GESTION DU MENU DE NAVIGATION ==========
 
+# Toutes les pages qu'on peut mettre dans le menu. Celles absentes de la configuration
+# enregistrée y sont ajoutées (masquées, sauf « À propos »), pour pouvoir les afficher depuis l'admin.
+ALL_MENU_PAGES = [
+    {"name": "Accueil", "href": "/", "visible": True, "order": 0},
+    {"name": "Inspiration", "href": "/inspiration", "visible": True, "order": 1},
+    {"name": "Collection", "href": "/collection", "visible": True, "order": 2},
+    {"name": "Espace Pro", "href": "/espace-pro", "visible": True, "order": 3},
+    {"name": "À propos", "href": "/a-propos", "visible": True, "order": 4},
+    {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 5},
+    {"name": "Contact", "href": "/contact", "visible": True, "order": 6},
+    {"name": "Questions fréquentes", "href": "/faq", "visible": False, "order": 7},
+    {"name": "Plans de maison", "href": "/plan-de-maison", "visible": False, "order": 8},
+]
+
+
+def _merge_menu(pages: list) -> list:
+    """Configuration enregistrée + pages manquantes (masquées), triée par ordre."""
+    merged = [dict(p) for p in pages]
+    known = {p.get("href") for p in merged}
+    next_order = max([p.get("order", 0) for p in merged] or [0]) + 1
+    for page in ALL_MENU_PAGES:
+        if page["href"] not in known:
+            extra = dict(page)
+            # « À propos » est apparu plus tard dans le menu : visible par défaut
+            extra["visible"] = page["href"] == "/a-propos"
+            extra["order"] = next_order
+            next_order += 1
+            merged.append(extra)
+    merged.sort(key=lambda x: x.get("order", 99))
+    return merged
+
+
 @router.get("/navigation")
 async def get_navigation(current_user: dict = Depends(require_admin)):
     """Obtenir la configuration du menu de navigation"""
     try:
         db = get_database()
         nav = await db.site_settings.find_one({"key": "navigation"}, {"_id": 0})
-        if not nav:
-            default_pages = [
-                {"name": "Accueil", "href": "/", "visible": True, "order": 0},
-                {"name": "Inspiration", "href": "/inspiration", "visible": True, "order": 1},
-                {"name": "Collection", "href": "/collection", "visible": True, "order": 2},
-                {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 3},
-                {"name": "Contact", "href": "/contact", "visible": True, "order": 5},
-            ]
-            await db.site_settings.insert_one({"key": "navigation", "pages": default_pages})
-            return {"success": True, "pages": default_pages}
-        return {"success": True, "pages": _with_a_propos(nav.get("pages", []))}
+        pages = _merge_menu(nav.get("pages", [])) if nav else [dict(p) for p in ALL_MENU_PAGES]
+        return {"success": True, "pages": pages}
     except Exception as e:
         logger.error(f"Erreur navigation: {e}")
         raise HTTPException(status_code=500, detail="Erreur")
@@ -507,6 +530,10 @@ async def update_navigation(data: dict, current_user: dict = Depends(require_adm
     try:
         db = get_database()
         pages = data.get("pages", [])
+        # L'accueil reste toujours dans le menu
+        for p in pages:
+            if p.get("href") == "/":
+                p["visible"] = True
         await db.site_settings.update_one(
             {"key": "navigation"},
             {"$set": {"pages": pages}},
@@ -518,16 +545,6 @@ async def update_navigation(data: dict, current_user: dict = Depends(require_adm
         raise HTTPException(status_code=500, detail="Erreur")
 
 
-A_PROPOS_PAGE = {"name": "À propos", "href": "/a-propos", "visible": True, "order": 4.5}
-
-
-def _with_a_propos(pages: list) -> list:
-    """Ajoute « À propos » au menu s'il n'y est pas encore (on peut ensuite le masquer ou le déplacer)"""
-    if any(p.get("href") == "/a-propos" for p in pages):
-        return pages
-    return pages + [dict(A_PROPOS_PAGE)]
-
-
 # Route publique pour obtenir le menu (sans auth)
 public_router = APIRouter(prefix="/navigation", tags=["navigation"])
 
@@ -537,20 +554,8 @@ async def get_public_navigation():
     try:
         db = get_database()
         nav = await db.site_settings.find_one({"key": "navigation"}, {"_id": 0})
-        if not nav:
-            default_pages = [
-                {"name": "Accueil", "href": "/", "visible": True, "order": 0},
-                {"name": "Inspiration", "href": "/inspiration", "visible": True, "order": 1},
-                {"name": "Collection", "href": "/collection", "visible": True, "order": 2},
-                {"name": "Espace Pro", "href": "/espace-pro", "visible": True, "order": 3},
-                {"name": "À propos", "href": "/a-propos", "visible": True, "order": 4},
-                {"name": "Demander un devis", "href": "/devis", "visible": True, "order": 4.5},
-                {"name": "Contact", "href": "/contact", "visible": True, "order": 5},
-            ]
-            return {"success": True, "pages": default_pages}
-        visible = [p for p in _with_a_propos(nav.get("pages", [])) if p.get("visible", True)]
-        visible.sort(key=lambda x: x.get("order", 99))
-        return {"success": True, "pages": visible}
+        pages = _merge_menu(nav.get("pages", [])) if nav else [dict(p) for p in ALL_MENU_PAGES]
+        return {"success": True, "pages": [p for p in pages if p.get("visible", True)]}
     except Exception as e:
         return {"success": True, "pages": [
             {"name": "Accueil", "href": "/", "visible": True},

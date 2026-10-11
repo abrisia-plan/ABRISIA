@@ -274,10 +274,10 @@ DEFAULT_FORM_OPTIONS = {
         {"id": "3", "label": "Les deux (technique + visuel)", "description": "Plans de construction ET visualisations", "is_active": True, "order": 3},
     ],
     "contact_methods": [
-        {"id": "1", "label": "Appel téléphonique", "description": "Discussion directe pour répondre à vos questions", "is_active": True, "order": 1},
-        {"id": "2", "label": "Par courriel écrit", "description": "Devis détaillé par écrit avec documents joints", "is_active": True, "order": 2},
-        {"id": "3", "label": "Vidéoconférence", "description": "Présentation visuelle avec partage d'écran (Zoom, Teams, etc.)", "is_active": True, "order": 3},
-        {"id": "4", "label": "À votre convenance", "description": "Nous vous contacterons selon vos disponibilités", "is_active": True, "order": 4},
+        {"id": "1", "label": "Par téléphone", "description": "Un appel pour discuter de votre projet", "is_active": True, "order": 1},
+        {"id": "2", "label": "Par courriel", "description": "Une réponse écrite avec les documents utiles", "is_active": True, "order": 2},
+        {"id": "3", "label": "Par texto", "description": "Un message texte à votre numéro de téléphone", "is_active": True, "order": 3},
+        {"id": "4", "label": "Peu importe", "description": "Nous choisirons le moyen le plus pratique", "is_active": True, "order": 4},
     ],
     "architectural_styles": [
         {"id": "1", "label": "Moderne/Contemporain", "description": "", "is_active": True, "order": 1},
@@ -410,11 +410,18 @@ async def update_categories(categories: List[dict], current_user: dict = Depends
     try:
         db = get_database()
         
+        # Noms avant modification, pour renommer aussi la catégorie des projets
+        old_names = {c.get("id"): c.get("name") async for c in db.inspiration_categories.find({}, {"id": 1, "name": 1})}
+
         # Supprimer les anciennes
         await db.inspiration_categories.delete_many({})
         
         # Insérer les nouvelles
         for i, cat in enumerate(categories):
+            old_name = old_names.get(cat.get("id"))
+            new_name = (cat.get("name") or "").strip()
+            if old_name and new_name and old_name != new_name:
+                await db.projects.update_many({"category": old_name}, {"$set": {"category": new_name}})
             cat_data = {
                 "id": cat.get("id") or str(uuid.uuid4()),
                 "name": cat.get("name", ""),
@@ -792,13 +799,14 @@ async def delete_plan_option(option_id: str, current_user: dict = Depends(requir
 
 # ============ SERVICES ACCUEIL (Homepage Service Cards) ============
 
+# Prix laissés vides : les tarifs ne sont pas encore fixés (modifiables dans « Services accueil »).
 DEFAULT_HOMEPAGE_SERVICES = [
-    {"id": "mini-maisons", "name": "Mini-maisons", "description": "Habitations compactes sur fondations permanentes, optimisees pour le confort.", "price": "Plans a partir de 800$", "icon": "Home", "devis_category": "Mini-maison", "is_active": True, "order": 0},
-    {"id": "chalets", "name": "Chalets", "description": "Refuges quatre saisons, confortables ete comme hiver.", "price": "Plans a partir de 1200$", "icon": "Mountain", "devis_category": "Chalet", "is_active": True, "order": 1},
-    {"id": "maisons", "name": "Maisons residentielles", "description": "Maisons familiales sur fondations jusqu'a 600m2 de plancher total.", "price": "Plans a partir de 1500$", "icon": "Building", "devis_category": "Maison residentielle", "is_active": True, "order": 2},
-    {"id": "extensions", "name": "Extensions", "description": "Agrandissements harmonieux pour optimiser votre espace de vie.", "price": "Plans a partir de 600$", "icon": "PlusSquare", "devis_category": "Extension", "is_active": True, "order": 3},
-    {"id": "abris-garages", "name": "Abris et garages", "description": "Structures utilitaires sur fondations pour rangement et protection.", "price": "Plans a partir de 400$", "icon": "Shield", "devis_category": "Abris/garage", "is_active": True, "order": 4},
-    {"id": "ebenisterie", "name": "Ebenisterie sur mesure", "description": "Conception et plans pour meubles et amenagements personnalises.", "price": "Sur devis", "icon": "Ruler", "devis_category": "Ebenisterie", "is_active": True, "order": 5},
+    {"id": "mini-maisons", "name": "Mini-maisons", "description": "Habitations compactes sur fondations permanentes, optimisées pour le confort.", "price": "", "icon": "Home", "devis_category": "Mini-maison", "is_active": True, "order": 0},
+    {"id": "chalets", "name": "Chalets", "description": "Refuges quatre saisons, confortables été comme hiver.", "price": "", "icon": "Mountain", "devis_category": "Chalet", "is_active": True, "order": 1},
+    {"id": "maisons", "name": "Maisons résidentielles", "description": "Maisons familiales, de plain-pied ou à étages.", "price": "", "icon": "Building", "devis_category": "Maison residentielle", "is_active": True, "order": 2},
+    {"id": "extensions", "name": "Agrandissements", "description": "Agrandissements harmonieux pour optimiser votre espace de vie.", "price": "", "icon": "PlusSquare", "devis_category": "Extension", "is_active": True, "order": 3},
+    {"id": "abris-garages", "name": "Abris et garages", "description": "Structures utilitaires pour le rangement et la protection.", "price": "", "icon": "Shield", "devis_category": "Abris/garage", "is_active": True, "order": 4},
+    {"id": "ebenisterie", "name": "Ébénisterie sur mesure", "description": "Conception et plans de meubles et d'aménagements personnalisés.", "price": "", "icon": "Ruler", "devis_category": "Ebenisterie", "is_active": True, "order": 5},
 ]
 
 

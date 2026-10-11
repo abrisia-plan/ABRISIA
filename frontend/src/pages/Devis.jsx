@@ -15,12 +15,25 @@ import { devisService, handleApiError } from '../services/api';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Valeurs par défaut; les vraies limites viennent du serveur (/api/devis/limites)
-const CONTACT_PREFERENCES = [
-  { value: 'telephone', label: 'Par téléphone', help: 'Un appel pour discuter de votre projet' },
-  { value: 'courriel', label: 'Par courriel', help: 'Une réponse écrite avec les documents utiles' },
-  { value: 'texto', label: 'Par texto', help: 'Un message texte à votre numéro de téléphone' },
-  { value: 'peu-importe', label: 'Peu importe', help: 'Nous choisirons le moyen le plus pratique' },
-];
+// Choix du formulaire : modifiables dans l'admin (Formulaire devis). Ces listes servent
+// seulement si le serveur ne répond pas.
+const DEFAULT_FORM_OPTIONS = {
+  plan_types: [
+    { label: 'Plans techniques détaillés', description: 'Dimensions précises, détails construction, matériaux spécifiés' },
+    { label: 'Représentation visuelle/esthétique', description: 'Images 3D, croquis, visualisation de votre maison de rêve' },
+    { label: 'Les deux (technique + visuel)', description: 'Plans de construction ET visualisations' },
+  ],
+  contact_methods: [
+    { label: 'Par téléphone', description: 'Un appel pour discuter de votre projet' },
+    { label: 'Par courriel', description: 'Une réponse écrite avec les documents utiles' },
+    { label: 'Par texto', description: 'Un message texte à votre numéro de téléphone' },
+    { label: 'Peu importe', description: 'Nous choisirons le moyen le plus pratique' },
+  ],
+  architectural_styles: [
+    'Moderne/Contemporain', 'Traditionnel québécois', 'Rustique/Chalet',
+    'Minimaliste', 'Industriel', 'Scandinave', 'Autre (à préciser)',
+  ].map((label) => ({ label })),
+};
 
 const DEFAULT_LIMITS = { max_total_mb: 18, max_files: 10 };
 const formatSize = (bytes) => bytes < 1024 * 1024
@@ -57,6 +70,25 @@ const Devis = () => {
     fetch(`${BACKEND_URL}/api/devis/limites`)
       .then(res => (res.ok ? res.json() : null))
       .then(data => { if (data?.max_total_mb) setLimits(data); })
+      .catch(() => {});
+  }, []);
+
+  // Choix du formulaire (types de plans, moyens de contact, styles) venant de l'admin
+  const [formOptions, setFormOptions] = useState(DEFAULT_FORM_OPTIONS);
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/api/content/form-options`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (!data?.success || !data.data) return;
+        setFormOptions(prev => {
+          const next = { ...prev };
+          for (const key of Object.keys(prev)) {
+            const list = (data.data[key] || []).filter(o => o.label && o.is_active !== false);
+            if (list.length) next[key] = list;
+          }
+          return next;
+        });
+      })
       .catch(() => {});
   }, []);
 
@@ -470,48 +502,22 @@ const Devis = () => {
                     <div className="space-y-3">
                       <h4 className="font-medium text-slate-700">Que recherchez-vous principalement ?</h4>
                       <div className="space-y-2">
-                        <label className="flex items-start space-x-3 cursor-pointer">
-                          <input 
-                            type="radio" 
-                            name="representationType" 
-                            value="technique"
-                            checked={formData.representationType === 'technique'}
-                            onChange={handleInputChange}
-                            className="mt-1 text-teal-600 focus:ring-teal-500"
-                          />
-                          <div>
-                            <span className="text-sm font-medium text-slate-700">Plans techniques détaillés</span>
-                            <p className="text-xs text-slate-600">Dimensions précises, détails construction, matériaux spécifiés</p>
-                          </div>
-                        </label>
-                        <label className="flex items-start space-x-3 cursor-pointer">
-                          <input 
-                            type="radio" 
-                            name="representationType" 
-                            value="visuel"
-                            checked={formData.representationType === 'visuel'}
-                            onChange={handleInputChange}
-                            className="mt-1 text-teal-600 focus:ring-teal-500"
-                          />
-                          <div>
-                            <span className="text-sm font-medium text-slate-700">Représentation visuelle/esthétique</span>
-                            <p className="text-xs text-slate-600">Images 3D, croquis, visualisation de votre maison de rêve</p>
-                          </div>
-                        </label>
-                        <label className="flex items-start space-x-3 cursor-pointer">
-                          <input 
-                            type="radio" 
-                            name="representationType" 
-                            value="both"
-                            checked={formData.representationType === 'both'}
-                            onChange={handleInputChange}
-                            className="mt-1 text-teal-600 focus:ring-teal-500"
-                          />
-                          <div>
-                            <span className="text-sm font-medium text-slate-700">Les deux (technique + visuel)</span>
-                            <p className="text-xs text-slate-600">Plans de construction ET visualisations</p>
-                          </div>
-                        </label>
+                        {formOptions.plan_types.map((opt) => (
+                          <label key={opt.label} className="flex items-start space-x-3 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="representationType"
+                              value={opt.label}
+                              checked={formData.representationType === opt.label}
+                              onChange={handleInputChange}
+                              className="mt-1 text-teal-600 focus:ring-teal-500"
+                            />
+                            <div>
+                              <span className="text-sm font-medium text-slate-700">{opt.label}</span>
+                              {opt.description && <p className="text-xs text-slate-600">{opt.description}</p>}
+                            </div>
+                          </label>
+                        ))}
                       </div>
                     </div>
                   </div>
@@ -519,19 +525,19 @@ const Devis = () => {
                   <div className="border-t border-blue-200 pt-4">
                     <h4 className="font-medium text-slate-700 mb-3">Comment préférez-vous qu'on vous contacte ?</h4>
                     <div className="space-y-2">
-                      {CONTACT_PREFERENCES.map((opt) => (
-                        <label key={opt.value} className="flex items-start space-x-3 cursor-pointer">
+                      {formOptions.contact_methods.map((opt) => (
+                        <label key={opt.label} className="flex items-start space-x-3 cursor-pointer">
                           <input
                             type="radio"
                             name="contactPreference"
-                            value={opt.value}
-                            checked={formData.contactPreference === opt.value}
+                            value={opt.label}
+                            checked={formData.contactPreference === opt.label}
                             onChange={handleInputChange}
                             className="mt-1 text-teal-600 focus:ring-teal-500"
                           />
                           <div>
                             <span className="text-sm font-medium text-slate-700">{opt.label}</span>
-                            <p className="text-xs text-slate-600">{opt.help}</p>
+                            {opt.description && <p className="text-xs text-slate-600">{opt.description}</p>}
                           </div>
                         </label>
                       ))}
@@ -541,10 +547,7 @@ const Devis = () => {
                   <div className="border-t border-blue-200 pt-4">
                     <h4 className="font-medium text-slate-700 mb-2">Style architectural recherché</h4>
                     <div className="flex flex-wrap gap-2">
-                      {[
-                        'Moderne/Contemporain', 'Traditionnel québécois', 'Rustique/Chalet', 
-                        'Minimaliste', 'Industriel', 'Scandinave', 'Autre (à préciser)'
-                      ].map((style) => (
+                      {formOptions.architectural_styles.map(({ label: style }) => (
                         <label key={style} className="flex items-center space-x-2 cursor-pointer bg-white px-3 py-1 rounded border border-blue-200 hover:bg-blue-50">
                           <input
                             type="checkbox"

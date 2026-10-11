@@ -173,7 +173,7 @@ const AdminPanel = () => {
               onClick={() => setActiveTab('content')}
             >
               <DollarSign className="w-4 h-4 mr-2" />
-              Services & Prix
+              Textes des pages
             </Button>
             <Button 
               variant={activeTab === 'homepage-services' ? 'default' : 'ghost'}
@@ -545,9 +545,8 @@ const NavigationManager = () => {
     { name: 'Collection', href: '/collection' },
     { name: 'Espace Pro', href: '/espace-pro' },
     { name: 'Demander un devis', href: '/devis' },
-    { name: 'À propos', href: '/about' },
+    { name: 'À propos', href: '/a-propos' },
     { name: 'Contact', href: '/contact' },
-    { name: 'Feedback', href: '/feedback' },
   ];
 
   useEffect(() => {
@@ -562,12 +561,13 @@ const NavigationManager = () => {
       });
       const data = await res.json();
       if (data.success && data.pages) {
-        setPages(data.pages);
+        // L'accueil reste toujours visible
+        setPages(data.pages.map(p => ({ ...p, locked: p.href === '/' })));
       } else {
-        setPages(allPages.map((p, i) => ({ ...p, visible: p.href !== '/about', order: i })));
+        setPages(allPages.map((p, i) => ({ ...p, visible: true, order: i })));
       }
     } catch {
-      setPages(allPages.map((p, i) => ({ ...p, visible: p.href !== '/about', order: i })));
+      setPages(allPages.map((p, i) => ({ ...p, visible: true, order: i })));
     } finally {
       setLoading(false);
     }
@@ -608,9 +608,8 @@ const NavigationManager = () => {
         body: JSON.stringify({ pages })
       });
       const data = await res.json();
-      if (data.success) {
-        toast({ title: "Menu sauvegardé", description: "Les changements sont visibles sur le site" });
-      }
+      if (!data.success) throw new Error();
+      toast({ title: "Menu sauvegardé", description: "Les changements sont visibles sur le site" });
     } catch {
       toast({ title: "Erreur", description: "Impossible de sauvegarder", variant: "destructive" });
     } finally {

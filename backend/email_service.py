@@ -384,8 +384,8 @@ class EmailService:
                 'texto': 'Par texto',
                 'peu-importe': 'Peu importe',
             }
-            representation = representation_labels.get(devis_data.get('representation_type') or '', '')
-            contact_pref = contact_labels.get(devis_data.get('contact_preference') or '', '')
+            representation = representation_labels.get(devis_data.get('representation_type') or '', devis_data.get('representation_type') or '')
+            contact_pref = contact_labels.get(devis_data.get('contact_preference') or '', devis_data.get('contact_preference') or '')
             styles = ", ".join(devis_data.get('styles') or [])
 
             def row(label, value):
