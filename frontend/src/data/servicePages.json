@@ -13,12 +13,12 @@
       "Plan de fondation : une représentation de la fondation selon le type choisi (pieux, dalle ou fondation complète), pour vous aider à vous situer. Les mesures sont approximatives : c'est l'entrepreneur qui les détermine. L'emplacement des appareils de plomberie y est indiqué.",
       "Vue en plan du rez-de-chaussée : les pièces, les murs extérieurs et intérieurs, les portes et les fenêtres (grandeurs indicatives, à confirmer avec le fabricant de votre choix), avec les appareils et le mobilier de base pour bien imaginer l'espace.",
       "Autres étages, mezzanine et sous-sol aménagé : au besoin, présentés de la même façon.",
+      "Schémas électriques et de plomberie de base : l'emplacement des appareils, prises, interrupteurs et luminaires, pour guider votre électricien et votre plombier. Le diamètre des tuyaux et le calcul des circuits, c'est leur travail.",
       "Les 4 élévations : chaque façade, avec les niveaux des planchers, la hauteur des murs et de la fondation, et le toit.",
       "Coupe de mur et coupe transversale : la composition des murs, des planchers et du toit.",
       "Vue en plan du toit : la forme du toit vue de dessus.",
       "Plan d'implantation projeté, à partir de votre certificat de localisation, avec les marges et, au bord de l'eau, la bande riveraine à respecter.",
-      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure.",
-      "Au besoin, à un tarif à part : plans de base de plomberie et d'électricité (emplacement des appareils, prises, interrupteurs et luminaires), pour guider votre plombier et votre électricien, sans mesures ni calculs. La ventilation n'est pas offerte."
+      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure."
     ],
     "faq": [
       [
@@ -67,13 +67,13 @@
       "Plan de fondation : une représentation de la fondation selon le type choisi, pour vous aider à vous situer. Les mesures sont approximatives : c'est l'entrepreneur qui les détermine. L'emplacement des appareils de plomberie y est indiqué.",
       "Vue en plan du rez-de-chaussée : les pièces, les murs extérieurs et intérieurs, les portes et les fenêtres (grandeurs indicatives, à confirmer avec le fabricant de votre choix), avec les appareils et le mobilier de base pour bien imaginer l'espace.",
       "Mezzanine : au besoin, présentée de la même façon.",
+      "Schémas électriques et de plomberie de base : l'emplacement des appareils, prises, interrupteurs et luminaires, pour guider votre électricien et votre plombier. Le diamètre des tuyaux et le calcul des circuits, c'est leur travail.",
       "Les 4 élévations : chaque façade, avec les niveaux des planchers, la hauteur des murs et de la fondation, et le toit.",
       "Coupe de mur et coupe transversale : la composition des murs, des planchers et du toit.",
       "Vue en plan du toit : la forme du toit vue de dessus.",
       "Optimisation des espaces : rangements, circulation et mobilier pensés pour tirer le meilleur de chaque pied carré.",
       "Plan d'implantation projeté, à partir de votre certificat de localisation.",
-      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure.",
-      "Au besoin, à un tarif à part : plans de base de plomberie et d'électricité (emplacement des appareils, prises, interrupteurs et luminaires), pour guider votre plombier et votre électricien, sans mesures ni calculs. La ventilation n'est pas offerte."
+      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure."
     ],
     "faq": [
       [
@@ -109,12 +109,12 @@
     "contenu": [
       "Plan de fondation : une représentation de la fondation selon le type choisi, pour vous aider à vous situer. Les mesures sont approximatives : c'est l'entrepreneur qui les détermine. L'emplacement des appareils de plomberie y est indiqué.",
       "Vue en plan de chaque logement et de chaque étage : les pièces, les murs extérieurs, intérieurs et mitoyens, les portes et les fenêtres (grandeurs indicatives, à confirmer avec le fabricant de votre choix), avec les appareils et le mobilier de base.",
+      "Schémas électriques et de plomberie de base : l'emplacement des appareils, prises, interrupteurs et luminaires, pour guider votre électricien et votre plombier. Le diamètre des tuyaux et le calcul des circuits, c'est leur travail.",
       "Les 4 élévations : chaque façade, avec les niveaux des planchers, la hauteur des murs et de la fondation, et le toit.",
       "Coupe de mur et coupe transversale : la composition des murs, des planchers et du toit, et les séparations entre logements.",
       "Vue en plan du toit : la forme du toit vue de dessus.",
       "Plan d'implantation projeté, à partir de votre certificat de localisation, avec le stationnement.",
-      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure.",
-      "Au besoin, à un tarif à part : plans de base de plomberie et d'électricité (emplacement des appareils, prises, interrupteurs et luminaires), pour guider votre plombier et votre électricien, sans mesures ni calculs. La ventilation n'est pas offerte."
+      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure."
     ],
     "faq": [
       [
@@ -157,11 +157,11 @@
       "Relevé de la partie existante utile au projet.",
       "Plan de fondation de l'agrandissement : une représentation pour vous aider à vous situer. Les mesures sont approximatives : c'est l'entrepreneur qui les détermine.",
       "Vue en plan de l'existant et de l'agrandissement : les pièces, les murs, les portes et les fenêtres (grandeurs indicatives, à confirmer avec le fabricant de votre choix), avec les appareils et le mobilier de base.",
+      "Schémas électriques et de plomberie de base : l'emplacement des appareils, prises, interrupteurs et luminaires, pour guider votre électricien et votre plombier. Le diamètre des tuyaux et le calcul des circuits, c'est leur travail.",
       "Élévations des façades touchées : avec les niveaux des planchers, la hauteur des murs et le toit.",
       "Coupe et détails de raccordement à l'existant.",
       "Plan d'implantation projeté, à partir de votre certificat de localisation, avec les marges.",
-      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure.",
-      "Au besoin, à un tarif à part : plans de base de plomberie et d'électricité (emplacement des appareils, prises, interrupteurs et luminaires), pour guider votre plombier et votre électricien, sans mesures ni calculs. La ventilation n'est pas offerte."
+      "En option, sur demande et à un tarif à part : plus de précision dans vos pièces, comme la grandeur et l'emplacement exacts des meubles, ou les élévations intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure."
     ],
     "faq": [
       [
