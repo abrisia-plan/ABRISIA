@@ -83,7 +83,7 @@ const About = () => {
     {
       icon: <Globe className="w-8 h-8 text-teal-700" />,
       title: "Flexibilité et services 100 % à distance",
-      desc: "Plus besoin de vous déplacer. Que vous soyez au Saguenay–Lac-Saint-Jean ou ailleurs dans le monde, nous collaborons efficacement par visioconférence, courriel et partage d'écrans."
+      desc: "Plus besoin de vous déplacer. Que vous soyez au Saguenay–Lac-Saint-Jean ou ailleurs dans le monde, nous collaborons efficacement par téléphone, courriel ou texto."
     },
     {
       icon: <ShieldCheck className="w-8 h-8 text-teal-700" />,

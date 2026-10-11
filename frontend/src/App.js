@@ -10,11 +10,9 @@ import ChatBot from "./components/ChatBot";
 import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import Inspiration from "./pages/Inspiration";
-import Kit from "./pages/Kit";
 import Collection from "./pages/Collection";
 import EspacePro from "./pages/EspacePro";
 import Devis from "./pages/Devis";
-import Feedback from "./pages/Feedback";
 import Contact from "./pages/Contact";
 import About from "./pages/About";
 import FAQ from "./pages/FAQ";
@@ -26,8 +24,6 @@ import SERVICE_PAGES from "./data/servicePages.json";
 import MentionsLegales from "./pages/Legal/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/Legal/PolitiqueConfidentialite";
 import Login from "./pages/Admin/Login";
-import Dashboard from "./pages/Admin/Dashboard";
-import CMS from "./pages/Admin/CMS";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import { EmployeePortal } from "./pages/EmployeePortal";
 import Temoignage from "./pages/Temoignage";
@@ -50,7 +46,7 @@ function App() {
                 <Route path="/collection" element={<Collection />} />
                 <Route path="/espace-pro" element={<EspacePro />} />
                 <Route path="/devis" element={<Devis />} />
-                <Route path="/feedback" element={<Feedback />} />
+                <Route path="/feedback" element={<Navigate to="/temoignage" replace />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/faq" element={<FAQ />} />
@@ -72,7 +68,7 @@ function App() {
           {/* Routes admin sans Header/Footer */}
           <Route path="/admin" element={<Login />} />
           <Route path="/admin/dashboard" element={<Navigate to="/admin/panel" replace />} />
-          <Route path="/admin/cms" element={<CMS />} />
+          <Route path="/admin/cms" element={<Navigate to="/admin/panel" replace />} />
           <Route path="/admin/panel" element={<AdminPanel />} />
           <Route path="/temoignage" element={<Temoignage />} />
           
