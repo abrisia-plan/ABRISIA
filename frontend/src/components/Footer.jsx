@@ -45,7 +45,7 @@ const Footer = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <span className="text-2xl font-bold">ABRISIA PLAN</span>
+              <span className="text-3xl md:text-2xl font-bold whitespace-nowrap">ABRISIA PLAN</span>
             </div>
             <p className="text-slate-300 leading-relaxed">
               Service de plans architecturaux au Québec. Mini-maisons, chalets, maisons, extensions.
