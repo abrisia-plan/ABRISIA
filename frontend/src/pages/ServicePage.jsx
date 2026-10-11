@@ -67,6 +67,16 @@ const ServicePage = ({ slug }) => {
             </div>
           </div>
 
+          {page.mesures && (
+            <div className="bg-white border border-stone-200 rounded-xl p-6">
+              <h2 className="text-2xl font-bold text-slate-800 mb-2">Ce dont nous avons besoin</h2>
+              <p className="text-slate-600 mb-4">Joignez ces éléments à votre demande de devis (photos, PDF ou croquis) :</p>
+              <ul className="space-y-2 text-slate-700">
+                {page.mesures.map((m) => <li key={m} className="flex gap-2"><span className="text-teal-700">•</span>{m}</li>)}
+              </ul>
+            </div>
+          )}
+
           <div>
             <h2 className="text-2xl font-bold text-slate-800 mb-4">Questions fréquentes</h2>
             <div className="space-y-3">

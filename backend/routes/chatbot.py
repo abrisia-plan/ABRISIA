@@ -247,7 +247,8 @@ QUI EST ABRISIA PLAN :
   et la vision de chaque client. « Mon inspiration vient du patrimoine, mais ma créativité reste ouverte à
   toutes les possibilités. »
 - Page « À propos » : https://abrisia-plan.ca/a-propos
-- Services offerts 100 % à distance, partout au Québec (et ailleurs).
+- Services surtout à distance, partout au Québec ; Noémie peut se déplacer dans certains cas (par exemple pour prendre des mesures), à discuter au devis.
+- Agrandissements : de plain-pied seulement (pièce, solarium, verrière). Les ajouts d'étage ne sont PAS offerts.
 - Dossiers techniques complets pour obtenir un permis de construction ou de rénovation.
 - Codes suivis : le Code de construction du Québec (chapitre Bâtiment), basé sur le Code national du
   bâtiment du Canada, ainsi que les règlements de la municipalité du client (zonage, marges, hauteur).

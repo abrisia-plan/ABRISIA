@@ -266,7 +266,7 @@ const Home = () => {
             </h2>
             <p className="text-lg text-slate-600 max-w-4xl mx-auto leading-relaxed">
               Dossiers techniques complets, conformes aux codes de construction en vigueur.
-              <strong className="text-teal-800"> Services 100 % à distance, partout dans le monde.</strong>
+              <strong className="text-teal-800"> Services à distance partout au Québec, et sur place au besoin.</strong>
             </p>
           </div>
 

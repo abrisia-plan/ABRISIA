@@ -675,7 +675,7 @@ const Devis = () => {
                 incluant les plans nécessaires (fondation, architecture, etc.) selon vos besoins.
               </p>
               <p className="text-sm text-slate-500">
-                <strong>Spécialité :</strong> Habitations unifamiliales jusqu'à 600 m² (~6 458 pi²) — Services 100 % à distance
+                <strong>Spécialité :</strong> Habitations unifamiliales jusqu'à 600 m² (~6 458 pi²) — Services à distance, ou sur place au besoin
               </p>
             </div>
           </div>

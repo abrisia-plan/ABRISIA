@@ -44,7 +44,7 @@ const FAQS = [
   },
   {
     q: "Travaillez-vous à distance ? Dans quelles régions ?",
-    a: "Oui, tout se fait à distance, par téléphone, courriel ou texto. Nous sommes établis au Saguenay–Lac-Saint-Jean et travaillons partout au Québec.",
+    a: "Oui. La plupart des projets se font à distance, par téléphone, courriel ou texto, et nous pouvons nous déplacer dans certains cas. Nous sommes établis au Saguenay–Lac-Saint-Jean et travaillons partout au Québec.",
   },
   {
     q: "Combien coûtent des plans de maison ou de chalet ?",

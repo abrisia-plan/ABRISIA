@@ -17,6 +17,7 @@ const servicePages = SERVICES.map((p) => ({
   sections: [
     { p: p.intro },
     { h2: 'Ce que comprennent les plans', list: p.contenu },
+    ...(p.mesures ? [{ h2: 'Ce dont nous avons besoin', list: p.mesures }] : []),
     { h2: 'Comment ça se passe', list: p.etapes },
     { h2: 'Questions fréquentes', list: p.faq.map(([q, a]) => `${q} ${a}`) },
   ],
@@ -28,10 +29,10 @@ module.exports = [
   {
     path: '/',
     title: 'Abrisia Plan | Plans de maison, chalet et mini-maison au Québec',
-    description: "Abrisia Plan, dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean : plans de maisons, chalets, mini-maisons, agrandissements et garages pour votre permis de construction, partout au Québec. Devis gratuit, 100 % à distance.",
+    description: "Abrisia Plan, dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean : plans de maisons, chalets, mini-maisons, agrandissements et garages pour votre permis de construction, partout au Québec. Devis gratuit, à distance ou sur place au besoin.",
     h1: 'Plans de maison, chalet et mini-maison au Québec',
     sections: [
-      { p: ["Abrisia Plan conçoit et dessine les plans de votre projet résidentiel : maison unifamiliale, chalet, camp, mini-maison, agrandissement, garage, solarium et meubles sur mesure.", "Établie au Saguenay–Lac-Saint-Jean, nous travaillons 100 % à distance, partout au Québec. Nos plans sont conçus selon le Code de construction du Québec et le Code national du bâtiment du Canada, et selon les règlements de votre municipalité, pour votre demande de permis."] },
+      { p: ["Abrisia Plan conçoit et dessine les plans de votre projet résidentiel : maison unifamiliale, chalet, camp, mini-maison, agrandissement, garage, solarium et meubles sur mesure.", "Établie au Saguenay–Lac-Saint-Jean, nous travaillons surtout à distance, partout au Québec, et nous pouvons nous déplacer dans certains cas. Nos plans sont conçus selon le Code de construction du Québec et le Code national du bâtiment du Canada, et selon les règlements de votre municipalité, pour votre demande de permis."] },
       { h2: 'Comment pouvons-nous vous aider ?', list: ["Je réalise mon projet : plans sur mesure de maison, chalet ou agrandissement.", "Je suis entrepreneur : sous-traitance de dessin pour vos soumissions et chantiers (Espace Pro).", "Je veux un modèle prêt : plans de la Collection ABRISIA, personnalisables."] },
     ],
     links: [DEVIS, ...SERVICES.map((o) => ({ href: `/${o.slug}`, text: o.h1 })), { href: '/collection', text: 'Voir la Collection de plans' }, { href: '/plans-maison-saguenay-lac-saint-jean', text: 'Plans de maison au Saguenay–Lac-Saint-Jean' }, { href: '/faq', text: 'Questions fréquentes' }],
@@ -62,12 +63,12 @@ module.exports = [
   {
     path: '/about',
     title: 'Services de dessin en bâtiment | Abrisia Plan',
-    description: "Services professionnels de dessin en bâtiment et conception de plans : habitations unifamiliales, multifamiliales (duplex, triplex, quadruplex), jumelées, en rangée et bâtiments commerciaux légers. Établie au Saguenay–Lac-Saint-Jean, 100 % à distance.",
+    description: "Services professionnels de dessin en bâtiment et conception de plans : habitations unifamiliales, multifamiliales (duplex, triplex, quadruplex), jumelées, en rangée et bâtiments commerciaux légers. Établie au Saguenay–Lac-Saint-Jean, à distance (déplacement possible au besoin).",
     h1: 'Services de dessin en bâtiment',
     sections: [
       { h2: 'Types de bâtiments', list: ['Habitations unifamiliales isolées', 'Habitations multifamiliales : duplex, triplex, quadruplex', 'Habitations jumelées ou en rangée', 'Bâtiments commerciaux et industriels légers'] },
       { h2: 'Livrables', list: ["Plan d'implantation", 'Plans de fondations et de planchers', 'Élévations des façades', 'Coupes de mur et détails constructifs', 'Cartouche réglementaire'] },
-      { h2: 'Pourquoi Abrisia Plan', list: ['Services 100 % à distance', 'Conformité aux codes de construction et à la Loi sur les architectes du Québec', 'Approche personnalisée', 'Fichiers CAO/DAO pour les ingénieurs et architectes'] },
+      { h2: 'Pourquoi Abrisia Plan', list: ['Services à distance, déplacement au besoin', 'Conformité aux codes de construction et à la Loi sur les architectes du Québec', 'Approche personnalisée', 'Fichiers CAO/DAO pour les ingénieurs et architectes'] },
     ],
     links: [DEVIS],
   },

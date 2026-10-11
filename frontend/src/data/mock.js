@@ -10,8 +10,8 @@ export const approaches = [
   },
   {
     id: 2,
-    title: "100 % à distance",
-    description: "Téléphone, courriel ou texto : pas besoin de vous déplacer, où que vous soyez au Québec.",
+    title: "À distance, ou sur place au besoin",
+    description: "Téléphone, courriel ou texto, où que vous soyez au Québec. Déplacement possible dans certains cas pour prendre des mesures.",
     icon: "Globe"
   },
   {
@@ -53,7 +53,7 @@ export const faqItems = [
   {
     id: 1,
     question: "Offrez-vous des services à distance ?",
-    answer: "Oui. Tout se fait à distance, par téléphone, courriel ou texto. Vous pouvez joindre vos photos, croquis et plans à votre demande de devis."
+    answer: "Oui. La plupart des projets se font à distance, par téléphone, courriel ou texto, et nous pouvons nous déplacer dans certains cas. Vous pouvez joindre vos photos, croquis et plans à votre demande de devis."
   },
   {
     id: 2,

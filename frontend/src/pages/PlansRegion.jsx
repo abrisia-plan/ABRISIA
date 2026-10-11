@@ -75,7 +75,7 @@ const PlansRegion = () => {
                 de votre municipalité.
               </p>
               <p>
-                Tout peut se faire à distance, par courriel, téléphone ou texto : pas besoin de vous déplacer.
+                La plupart des projets se font à distance, par courriel, téléphone ou texto. Dans certains cas, nous pouvons nous déplacer pour prendre des mesures.
               </p>
             </div>
             <FloorPlanDrawing className="w-full max-w-sm mx-auto text-teal-800" />
