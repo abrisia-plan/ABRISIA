@@ -60,7 +60,6 @@ async def get_services():
         if not services:
             default_services = [
                 {"id": "plan-archi", "name": "Plans architecturaux", "description": "Plans de construction détaillés", "price": "600$", "category": "plans", "is_active": True, "order": 1},
-                {"id": "plan-elect", "name": "Plans électriques", "description": "Schémas électriques complets", "price": "400$", "category": "plans", "is_active": True, "order": 2},
                 {"id": "plan-3d", "name": "Modélisation 3D", "description": "Visualisation 3D de votre projet", "price": "500$", "category": "visuel", "is_active": True, "order": 3},
                 {"id": "croquis", "name": "Croquis préliminaires", "description": "Premiers dessins de concept", "price": "200$", "category": "croquis", "is_active": True, "order": 4},
                 {"id": "accompagnement", "name": "Accompagnement projet", "description": "Conseils et suivi personnalisé", "price": "Sur devis", "category": "service", "is_active": True, "order": 5},
@@ -697,9 +696,6 @@ DEFAULT_PLAN_OPTIONS = [
     {"id": "fondation", "name": "Plan de fondation", "price": "300$", "description": "", "category": "plans", "is_active": True, "order": 0},
     {"id": "architecture", "name": "Plan architectural complet", "price": "800$", "description": "", "category": "plans", "is_active": True, "order": 1},
     {"id": "extension", "name": "Plan d'extension/verrière", "price": "600$", "description": "", "category": "plans", "is_active": True, "order": 2},
-    {"id": "plomberie", "name": "Plan de plomberie (inclut évacuation)", "price": "400$", "description": "", "category": "plans", "is_active": True, "order": 3},
-    {"id": "electricite", "name": "Plan électrique", "price": "450$", "description": "", "category": "plans", "is_active": True, "order": 4},
-    {"id": "ventilation", "name": "Plan de ventilation", "price": "350$", "description": "", "category": "plans", "is_active": True, "order": 5},
     {"id": "mini-maison-complete", "name": "Mini-maison complète (plans + détails)", "price": "800$", "description": "Plans architecturaux et techniques pour mini-maison", "category": "projets", "is_active": True, "order": 6},
     {"id": "chalet-complet", "name": "Chalet complet (plans + détails)", "price": "1200$", "description": "Plans architecturaux et techniques pour chalet quatre saisons", "category": "projets", "is_active": True, "order": 7},
     {"id": "maison-complete", "name": "Maison résidentielle complète", "price": "1500$", "description": "Plans architecturaux et techniques pour maison familiale", "category": "projets", "is_active": True, "order": 8},

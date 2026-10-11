@@ -243,15 +243,13 @@ const About = () => {
             </div>
             <div>
               <h3 className="text-xl md:text-2xl font-bold mb-4" data-testid="amenagement-mecanique-title">
-                Aménagement mécanique fonctionnel
+                Emplacement des appareils
               </h3>
-              <p className="text-sm text-teal-400 font-medium mb-3">Plomberie et électricité</p>
               <p className="text-slate-300 leading-relaxed text-base">
-                Lors de la conception de vos plans intérieurs, nous positionnons de manière stratégique 
-                l'emplacement fonctionnel de vos appareils sanitaires, drains, panneaux électriques, prises 
-                et sorties de ventilation. Cette planification permet aux entrepreneurs spécialisés 
-                (plombiers, électriciens) de <strong className="text-white">comprendre immédiatement la distribution de l'espace</strong> et 
-                de planifier efficacement le passage de leurs réseaux techniques sur le chantier.
+                Sur la vue en plan, nous indiquons l'emplacement des appareils (salle de bain, cuisine, buanderie)
+                pour que vos entrepreneurs <strong className="text-white">comprennent tout de suite la distribution de l'espace</strong>.
+                Nous ne faisons pas de plans d'électricité, de plomberie ou de ventilation : ces réseaux sont
+                planifiés par vos entrepreneurs spécialisés.
               </p>
             </div>
           </div>

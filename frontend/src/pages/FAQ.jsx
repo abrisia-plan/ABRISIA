@@ -12,7 +12,7 @@ const FAQS = [
   },
   {
     q: "Ai-je besoin d'un architecte pour faire les plans de ma maison ou de mon chalet ?",
-    a: "Pas toujours. Au Québec, l'article 16.1 de la Loi sur les architectes permet de faire préparer les plans de plusieurs types de bâtiments sans architecte, par exemple une maison unifamiliale, un chalet, une mini-maison, un garage ou un agrandissement de petite taille. Au-delà de ces limites, un architecte est requis. En cas de doute, écrivez-nous : nous vous dirons si votre projet est couvert.",
+    a: "Pas toujours. Au Québec, l'article 16.1 de la Loi sur les architectes permet de faire dessiner sans architecte : une maison isolée (y compris un chalet, une mini-maison ou une maison avec garage attaché) d'au plus 2 étages, 1 sous-sol et moins de 600 m² (6 458 pi²) de planchers au total ; une maison jumelée ou en rangée, ou un multilogement de 4 logements au plus, d'au plus 2 étages, 1 sous-sol et 300 m² (3 229 pi²) au total. Ces limites comptent après les travaux. Au-delà, un architecte est requis.",
   },
   {
     q: "Quels plans faut-il pour obtenir un permis de construction ?",
