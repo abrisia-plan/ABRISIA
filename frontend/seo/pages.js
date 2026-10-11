@@ -70,7 +70,7 @@ module.exports = [
     sections: [
       { h2: 'Types de bâtiments', list: ['Habitations unifamiliales isolées', 'Habitations multifamiliales : duplex, triplex, quadruplex', 'Habitations jumelées ou en rangée', 'Bâtiments commerciaux et industriels légers'] },
       { h2: 'Livrables', list: ["Plan de fondation : une représentation, avec des mesures approximatives déterminées par l'entrepreneur", "Vue en plan de chaque étage : pièces, murs, portes, fenêtres, appareils et mobilier de base", "Les 4 élévations des façades", "Coupe de mur et coupe transversale", "Vue en plan du toit", "Plan d'implantation projeté, à partir de votre certificat de localisation"] },
-      { h2: 'Pourquoi Abrisia Plan', list: ['Services à distance, déplacement au besoin', 'Conformité aux codes de construction et à la Loi sur les architectes du Québec', 'Approche personnalisée', 'Des plans pour faire vos démarches avec votre entrepreneur'] },
+      { h2: 'Pourquoi Abrisia Plan', list: ['Services à distance, déplacement au besoin', 'Plans conçus selon les codes, dans les limites de la Loi sur les architectes du Québec', 'Approche personnalisée', 'Des plans pour faire vos démarches avec votre entrepreneur'] },
     ],
     links: [DEVIS],
   },

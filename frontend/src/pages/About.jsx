@@ -27,7 +27,7 @@ const About = () => {
       subtitle: "Duplex, Triplex, Quadruplex",
       details: [
         "Configuration : Maximum de 4 logements par bâtiment",
-        "Superficie brute totale des planchers : Moins de 300 m² (~3 229 pi²)",
+        "Superficie brute totale des planchers : 300 m² au plus (~3 229 pi²)",
         "Hauteur maximale : 2 étages au-dessus du sol et 1 étage de sous-sol"
       ]
     },
@@ -36,7 +36,7 @@ const About = () => {
       title: "Habitations jumelées ou en rangée",
       subtitle: "Unifamiliales jumelées / rangées",
       details: [
-        "Superficie brute totale des planchers : Moins de 300 m² par unité",
+        "Superficie brute totale des planchers : 300 m² au plus pour le bâtiment",
         "Hauteur maximale : 2 étages au-dessus du sol et 1 étage de sous-sol"
       ]
     },
@@ -45,7 +45,7 @@ const About = () => {
       title: "Bâtiments commerciaux et industriels légers",
       subtitle: "Commerces, bureaux, ateliers",
       details: [
-        "Superficie brute totale des planchers : Moins de 300 m²",
+        "Superficie brute totale des planchers : 300 m² au plus",
         "Hauteur maximale : 2 étages au-dessus du sol et 1 étage de sous-sol"
       ]
     }
@@ -87,8 +87,8 @@ const About = () => {
     },
     {
       icon: <ShieldCheck className="w-8 h-8 text-teal-700" />,
-      title: "Conformité réglementaire assurée",
-      desc: "Les plans sont conçus dans le respect le plus strict des codes de construction en vigueur et des limites de la Loi sur les architectes du Québec, vous assurant un dossier solide pour vos demandes de permis."
+      title: "Dans les limites de la loi",
+      desc: "Les plans sont conçus selon les codes de construction en vigueur, dans les limites de la Loi sur les architectes du Québec, pour vous aider dans vos démarches de permis."
     },
     {
       icon: <Heart className="w-8 h-8 text-teal-700" />,
@@ -134,9 +134,9 @@ const About = () => {
               ce qui nous permet de collaborer avec vous, où que vous soyez dans le monde.
             </p>
             <p>
-              Nous réalisons des <strong className="text-slate-900">dossiers techniques complets</strong>, optimisés 
-              et rigoureusement conformes aux exigences réglementaires afin de simplifier et d'accélérer 
-              l'obtention de vos <strong className="text-teal-800">permis de construction ou de rénovation</strong>.
+              Nous réalisons des <strong className="text-slate-900">plans clairs</strong>, conçus selon les codes
+              en vigueur, pour vous aider dans vos démarches de <strong className="text-teal-800">permis de construction
+              ou de rénovation</strong> avec votre municipalité et votre entrepreneur.
             </p>
           </div>
         </div>
@@ -147,13 +147,12 @@ const About = () => {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-4" data-testid="competences-title">
-              Nos champs de compétence autonomes
+              Ce que nous pouvons dessiner
             </h2>
             <p className="text-base md:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
-              Pour tous les projets situés dans la province de Québec, nos services s'inscrivent strictement 
-              dans le cadre de l'<strong>article 16.1 de la Loi sur les architectes du Québec</strong>. 
-              À ce titre, Abrisia Plan dispose du droit légal de concevoir, modifier et signer de manière 
-              autonome les plans techniques pour les catégories suivantes :
+              Au Québec, l'<strong>article 16.1 de la Loi sur les architectes</strong> permet de faire dessiner
+              sans architecte les plans des bâtiments suivants, dans ces limites (après les travaux). Au-delà,
+              un architecte est requis : nous vous le disons dès le départ.
             </p>
           </div>
 

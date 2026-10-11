@@ -16,7 +16,7 @@ export const approaches = [
   },
   {
     id: 3,
-    title: "Conformité assurée",
+    title: "Selon les codes",
     description: "Plans conçus selon le Code de construction du Québec et les règlements de votre municipalité, pour votre demande de permis.",
     icon: "ShieldCheck"
   }

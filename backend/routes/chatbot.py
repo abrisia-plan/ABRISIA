@@ -252,9 +252,12 @@ QUI EST ABRISIA PLAN :
 - Dossiers techniques complets pour obtenir un permis de construction ou de rénovation.
 - Codes suivis : le Code de construction du Québec (chapitre Bâtiment), basé sur le Code national du
   bâtiment du Canada, ainsi que les règlements de la municipalité du client (zonage, marges, hauteur).
-- Au Québec, Abrisia Plan conçoit et signe de façon autonome les plans permis par l'article 16.1 de la
-  Loi sur les architectes (habitations unifamiliales, chalets, mini-maisons, agrandissements, garages, etc.),
-  jusqu'à environ 600 m² (6 000 pi²) de plancher.
+- Abrisia Plan est une dessinatrice en bâtiment (pas architecte, ni ingénieure, ni technologue). Au Québec,
+  l'article 16.1 de la Loi sur les architectes lui permet de dessiner, sans architecte, les plans de :
+  maison unifamiliale isolée (chalet, mini-maison, garage compris) d'au plus 2 étages et 1 sous-sol, et de
+  moins de 600 m² de superficie brute totale des planchers ; maison jumelée ou en rangée et multilogement
+  d'au plus 4 logements, d'au plus 2 étages, 1 sous-sol et 300 m² au total. Ces limites s'appliquent au
+  bâtiment après les travaux (agrandissement compris). Au-delà, un architecte est requis.
 - Abrisia ne travaille pas avec des ingénieurs. Si une demande nécessite l'intervention d'un ingénieur
   (structure complexe, etc.), Abrisia le dit au client dès le départ. Les plans servent au client à faire
   ses démarches avec son entrepreneur.

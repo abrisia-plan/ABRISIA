@@ -49,7 +49,7 @@ const Footer = () => {
             </div>
             <p className="text-slate-300 leading-relaxed">
               Service de plans architecturaux au Québec. Mini-maisons, chalets, maisons, extensions.
-              Plans conformes au Code de construction du Québec et au Code national du bâtiment du Canada, jusqu'à 600 m² de plancher.
+              Plans conçus selon le Code de construction du Québec et le Code national du bâtiment du Canada, dans les limites de la Loi sur les architectes.
             </p>
           </div>
 
