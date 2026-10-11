@@ -21,7 +21,7 @@ const PROJETS = [
 ];
 
 const CONTENU = [
-  "Plan d'implantation sur le terrain", 'Plan de fondation', 'Plans des étages, cotés',
+  "Plan d'implantation projeté, à partir de votre certificat de localisation", 'Plan de fondation', 'Plans des étages, cotés',
   'Élévations des façades', 'Coupes de mur et détails de construction', 'Cartouche sur chaque feuille',
 ];
 

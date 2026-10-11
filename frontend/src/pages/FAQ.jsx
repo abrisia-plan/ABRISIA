@@ -16,7 +16,7 @@ const FAQS = [
   },
   {
     q: "Quels plans faut-il pour obtenir un permis de construction ?",
-    a: "Les exigences varient selon la municipalité, mais on demande habituellement un plan d'implantation sur le terrain, un plan de fondation, les plans des étages, les élévations des façades et une coupe du bâtiment montrant la composition des murs, des planchers et du toit. Informez-vous auprès de votre municipalité des documents demandés : nous préparons les plans en conséquence.",
+    a: "Les exigences varient selon la municipalité, mais on demande habituellement un plan d'implantation (que nous dessinons à partir de votre certificat de localisation), un plan de fondation, les plans des étages, les élévations des façades et une coupe du bâtiment montrant la composition des murs, des planchers et du toit. Informez-vous auprès de votre municipalité des documents demandés : nous préparons les plans en conséquence. Certaines municipalités exigent aussi un certificat d'implantation signé par un arpenteur-géomètre : ce document relève de l'arpenteur, pas de nous.",
   },
   {
     q: "Quels codes et normes vos plans respectent-ils ?",

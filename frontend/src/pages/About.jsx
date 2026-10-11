@@ -54,8 +54,8 @@ const About = () => {
   const livrables = [
     {
       icon: <MapPin className="w-6 h-6 text-teal-700" />,
-      title: "Plan d'implantation",
-      desc: "Positionnement stratégique du bâtiment selon les règles d'urbanisme."
+      title: "Plan d'implantation projeté",
+      desc: "Position prévue du bâtiment sur le terrain, dessinée à partir de votre certificat de localisation."
     },
     {
       icon: <Layers className="w-6 h-6 text-teal-700" />,
