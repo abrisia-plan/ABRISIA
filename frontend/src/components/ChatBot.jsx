@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Message d'accueil de l'assistant
-const SALUTATION = "Bonjour ! Vous avez un projet de maison, de chalet ou d'agrandissement ? Posez-moi vos questions sur nos plans.";
+const SALUTATION = "Bonjour et bienvenue chez ABRISIA Plan ! 🏡\n\nJe suis Assistant ABRISIA, votre assistant virtuel.\n\nQue vous souhaitiez construire une maison, un chalet ou un garage, je suis ici pour répondre à vos questions, vous présenter les options disponibles et vous aider à donner forme à votre projet.\n\nComment puis-je vous aider aujourd'hui ?";
 // Une conversation sans activité depuis 24 h est remplacée par une nouvelle
 const DUREE_CONVERSATION_MS = 24 * 60 * 60 * 1000;
 
@@ -186,7 +186,7 @@ const ChatBot = () => {
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5" />
               <div>
-                <p className="font-semibold text-sm leading-tight">Assistant Abrisia</p>
+                <p className="font-semibold text-sm leading-tight">Assistant ABRISIA</p>
                 <p className="text-xs text-teal-200">En ligne</p>
               </div>
             </div>
