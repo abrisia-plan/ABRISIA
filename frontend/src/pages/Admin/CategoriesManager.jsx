@@ -92,6 +92,14 @@ const CategoriesManager = () => {
   };
 
   const saveCategories = async () => {
+    if (categories.some(c => !(c.name || '').trim())) {
+      toast({
+        title: "Une catégorie n'a pas de nom",
+        description: "Écrivez son nom ou supprimez-la avec la poubelle avant de sauvegarder.",
+        variant: "destructive"
+      });
+      return;
+    }
     try {
       setSaving(true);
       const token = localStorage.getItem('authToken');
