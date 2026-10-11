@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Home, TreePine, House, Expand, Warehouse, Building2, MapPin, ArrowRight } from 'lucide-react';
 import SEO from '../components/SEO';
-import { FloorPlanDrawing } from '../components/PlanIllustrations';
 import SERVICE_PAGES from '../data/servicePages.json';
 
 // Une page par type de plan (maison, chalet, mini-maison...).
@@ -74,11 +73,8 @@ const ServicePage = ({ slug }) => {
 
       <section className="py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
-            <div className="space-y-4 text-slate-700 leading-relaxed">
-              {page.intro.map((t) => <p key={t}>{t}</p>)}
-            </div>
-            <FloorPlanDrawing className="w-full max-w-sm mx-auto text-teal-800" />
+          <div className="space-y-4 text-slate-700 leading-relaxed text-lg">
+            {page.intro.map((t) => <p key={t}>{t}</p>)}
           </div>
 
           <div>

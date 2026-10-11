@@ -24,7 +24,7 @@ const FAQS = [
   },
   {
     q: "Que contient un plan de fondation ?",
-    a: "Le plan de fondation est une représentation de la fondation selon le type choisi, pour vous aider à vous situer. Nous ne sommes pas le constructeur : les mesures sont approximatives et c'est l'entrepreneur qui les détermine. Sur une dalle, l'emplacement des appareils de plomberie y est indiqué.",
+    a: "Le plan de fondation est une représentation de la fondation selon le type choisi, pour vous aider à vous situer. Nous ne sommes pas le constructeur : les mesures sont approximatives et c'est l'entrepreneur qui les détermine. L'emplacement des appareils de plomberie y est indiqué.",
   },
   {
     q: "À quoi ressemblent les plans que je vais recevoir ?",

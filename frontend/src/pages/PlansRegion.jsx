@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import SEO from '../components/SEO';
-import { FloorPlanDrawing } from '../components/PlanIllustrations';
 
 // Page locale : plans de maison au Saguenay–Lac-Saint-Jean.
 // Le même texte est repris dans seo/pages.js pour les robots : garder les deux semblables.
@@ -71,7 +70,7 @@ const PlansRegion = () => {
 
       <section className="py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div>
             <div className="space-y-4 text-slate-700 leading-relaxed">
               <p>
                 Abrisia Plan est établie au Saguenay–Lac-Saint-Jean. Nous préparons les plans de votre projet résidentiel,
@@ -82,7 +81,6 @@ const PlansRegion = () => {
                 La plupart des projets se font à distance, par courriel, téléphone ou texto. Dans certains cas, nous pouvons nous déplacer pour prendre des mesures.
               </p>
             </div>
-            <FloorPlanDrawing className="w-full max-w-sm mx-auto text-teal-800" />
           </div>
 
           <div>

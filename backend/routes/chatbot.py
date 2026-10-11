@@ -40,7 +40,7 @@ def fallback_answer(message: str) -> str:
 DEFAULT_PLAN_CONTENTS = {
     "fondation": "Représentation de la fondation selon le type choisi, pour aider le client à se situer. Abrisia "
                  "n'est pas le constructeur : les mesures sont approximatives et c'est l'entrepreneur qui les "
-                 "détermine. Sur une dalle, l'emplacement des appareils de plomberie est indiqué.",
+                 "détermine. L'emplacement des appareils de plomberie y est indiqué.",
     "architecture": "Vue en plan de chaque étage et du sous-sol aménagé au besoin (pièces, murs, portes, fenêtres, "
                     "appareils et mobilier de base ; grandeurs de fenêtres indicatives, à confirmer avec le fabricant), "
                     "les 4 élévations (niveaux des planchers, hauteur des murs et de la fondation, toit), coupe de mur "
@@ -303,7 +303,7 @@ LE MÉTIER DE DESSINATRICE EN BÂTIMENT (explique-le simplement quand on te le d
   planchers et toits (couches de matériaux, isolation, pare-vapeur, etc.).
 - Feuilles habituelles selon le projet : plan d'implantation projeté (dessiné à partir du certificat de
   localisation du client ; le certificat d'implantation signé relève d'un arpenteur-géomètre), plan de fondation (une représentation ; mesures approximatives,
-  déterminées par l'entrepreneur, car Abrisia n'est pas le constructeur ; appareils de plomberie indiqués sur une dalle), vue en plan de chaque étage et du sous-sol aménagé
+  déterminées par l'entrepreneur, car Abrisia n'est pas le constructeur ; emplacement des appareils de plomberie indiqué), vue en plan de chaque étage et du sous-sol aménagé
   au besoin (pièces, murs, portes, fenêtres, appareils et mobilier de base ; grandeurs de fenêtres indicatives, à
   confirmer avec le fabricant), les 4 élévations, coupe de mur et coupe transversale, vue en plan du toit. En option, sur demande : élévations
   intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure.
