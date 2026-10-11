@@ -19,7 +19,9 @@ import {
   LayoutDashboard,
   DollarSign,
   Navigation,
-  Mail
+  Mail,
+  Menu,
+  X
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import { devisService, authService, handleApiError } from '../../services/api';
@@ -48,6 +50,9 @@ const AdminPanel = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('projects');
+  // Sur téléphone, la liste des sections est repliée sous un bouton
+  const [menuOuvert, setMenuOuvert] = useState(false);
+  useEffect(() => { setMenuOuvert(false); }, [activeTab]);
   // Les demandes reçues arrivent par courriel (et dans Zoho) : ici, seulement des copies de sauvegarde
   const [showBackups, setShowBackups] = useState(false);
 
@@ -103,19 +108,19 @@ const AdminPanel = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 sticky top-0 z-40">
-        <div className="flex items-center justify-between">
+      <header className="bg-white border-b border-gray-200 px-3 md:px-6 py-3 md:py-4 sticky top-0 z-40">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center space-x-4">
             <div className="w-10 h-10 bg-teal-800 rounded-full flex items-center justify-center">
               <HomeIcon className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-slate-800">ABRISIA PLAN</h1>
+              <h1 className="text-xl md:text-2xl font-bold text-slate-800">ABRISIA PLAN</h1>
               <p className="text-sm text-slate-600">Panneau d'administration</p>
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-wrap items-center gap-2 md:gap-4">
             <Button 
               variant="outline" 
               onClick={() => navigate('/')}
@@ -124,7 +129,7 @@ const AdminPanel = () => {
               <HomeIcon className="w-4 h-4 mr-2" />
               Voir le site
             </Button>
-            <span className="text-slate-700">Bienvenue, {user.name}</span>
+            <span className="hidden md:inline text-slate-700">Bienvenue, {user.name}</span>
             <Button variant="outline" onClick={handleLogout} className="border-red-300 text-red-700 hover:bg-red-50">
               <LogOut className="w-4 h-4 mr-2" />
               Déconnexion
@@ -133,9 +138,17 @@ const AdminPanel = () => {
         </div>
       </header>
 
-      <div className="flex">
+      <div className="md:flex">
+        {/* Bouton des sections (téléphone seulement) */}
+        <div className="md:hidden bg-white border-b border-gray-200 px-3 py-2">
+          <Button variant="outline" className="w-full justify-center" onClick={() => setMenuOuvert(!menuOuvert)}>
+            {menuOuvert ? <X className="w-4 h-4 mr-2" /> : <Menu className="w-4 h-4 mr-2" />}
+            {menuOuvert ? 'Fermer la liste' : 'Choisir une section'}
+          </Button>
+        </div>
+
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-73px)] p-4">
+        <aside className={`${menuOuvert ? 'block' : 'hidden'} md:block w-full md:w-64 md:shrink-0 bg-white border-b md:border-b-0 md:border-r border-gray-200 md:min-h-[calc(100vh-73px)] p-4`}>
           <nav className="space-y-2">
             <Button 
               variant={activeTab === 'projects' ? 'default' : 'ghost'}
@@ -296,7 +309,7 @@ const AdminPanel = () => {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 min-w-0 p-3 md:p-6">
           {loading && activeTab === 'dashboard' ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-8 h-8 animate-spin text-foret" />
