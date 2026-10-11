@@ -10,10 +10,17 @@ from database import get_database
 from auth import require_admin
 from bson import ObjectId
 import file_storage
+from video_links import clean_videos, invalid_videos
 import logging
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["projects"])
+
+
+def _check_videos(urls):
+    bad = invalid_videos(urls)
+    if bad:
+        raise HTTPException(status_code=400, detail=f"Ce lien n'est pas une vidéo YouTube ou Vimeo : {bad[0]}")
 
 # Configuration upload
 UPLOAD_DIR = Path("/tmp/uploads")
@@ -55,6 +62,7 @@ async def get_public_projects(
                 "category": project["category"],
                 "image": project["image"],
                 "galleryImages": project.get("gallery_images", []),
+                "videos": project.get("videos", []),
                 "description": project["description"],
                 "details": project["details"],
                 "dimensions": project["dimensions"],
@@ -96,6 +104,7 @@ async def get_all_projects(
                 "category": project["category"],
                 "image": project["image"],
                 "galleryImages": project.get("gallery_images", []),
+                "videos": project.get("videos", []),
                 "description": project["description"],
                 "details": project["details"],
                 "dimensions": project["dimensions"],
@@ -126,12 +135,14 @@ async def create_project(
     """Créer un nouveau projet"""
     try:
         db = get_database()
+        _check_videos(project_data.videos)
         
         project_doc = {
             "title": project_data.title,
             "category": project_data.category,
             "image": project_data.image,
             "gallery_images": [g for g in project_data.gallery_images if g],
+            "videos": clean_videos(project_data.videos),
             "description": project_data.description,
             "details": project_data.details,
             "dimensions": project_data.dimensions,
@@ -150,6 +161,8 @@ async def create_project(
             message=f"Projet '{project_data.title}' créé avec succès"
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Erreur création projet: {e}")
         raise HTTPException(
@@ -179,6 +192,9 @@ async def update_project(
             update_fields["category"] = update_data.category
         if update_data.image is not None:
             update_fields["image"] = update_data.image
+        if update_data.videos is not None:
+            _check_videos(update_data.videos)
+            update_fields["videos"] = clean_videos(update_data.videos)
         if update_data.gallery_images is not None:
             update_fields["gallery_images"] = [g for g in update_data.gallery_images if g]
         if update_data.description is not None:

@@ -25,7 +25,7 @@ const KitsManager = () => {
   const [formData, setFormData] = useState({
     name: '', description: '', dimensions: '', surface_sqft: '',
     width_ft: '', depth_ft: '', floors: '1', rooms: '',
-    includes: [''], price: '', main_image: '', gallery_images: [],
+    includes: [''], price: '', main_image: '', gallery_images: [], videos: [],
     designer_name: '', plan_file_url: '', plan_file_name: '',
     materials_list_enabled: false, materials_list_price: '', materials_list_file_url: '', materials_list_file_name: '',
     model_number: '', style: '', foundation_type: '', has_garage: null,
@@ -71,7 +71,7 @@ const KitsManager = () => {
   const defaultFormData = {
     name: '', description: '', dimensions: '', surface_sqft: '',
     width_ft: '', depth_ft: '', floors: '1', rooms: '',
-    includes: [''], price: '', main_image: '', gallery_images: [],
+    includes: [''], price: '', main_image: '', gallery_images: [], videos: [],
     designer_name: '', plan_file_url: '', plan_file_name: '',
     materials_list_enabled: false, materials_list_price: '200', materials_list_file_url: '', materials_list_file_name: '',
     model_number: '', style: '', foundation_type: '', has_garage: null,
@@ -99,6 +99,7 @@ const KitsManager = () => {
         price: kitData.price?.toString() || '',
         main_image: kitData.mainImage || '',
         gallery_images: kitData.galleryImages || [],
+        videos: kitData.videos || [],
         designer_name: kitData.designerName || '',
         plan_file_url: kitData.planFileUrl || '',
         plan_file_name: kitData.planFileName || '',
@@ -253,6 +254,7 @@ const KitsManager = () => {
         category: 'Collection', price: parseFloat(formData.price),
         main_image: formData.main_image,
         gallery_images: formData.gallery_images.filter(g => g),
+        videos: formData.videos,
         surface_area: surfaceDisplay, dimensions: formData.dimensions,
         rooms: formData.rooms,
         includes: formData.includes.filter(i => i.trim() !== ''),

@@ -15,6 +15,7 @@ import {
   ArrowRight, Check, Loader2, SlidersHorizontal, Paintbrush, CreditCard, ExternalLink
 } from 'lucide-react';
 import SEO from '../components/SEO';
+import VideoEmbed from '../components/VideoEmbed';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -501,14 +502,14 @@ const Collection = () => {
                       <>
                         <button
                           onClick={() => setGalleryIndex(i => (i - 1 + allImages.length) % allImages.length)}
-                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                           data-testid="gallery-prev"
                         >
                           <ChevronUp className="w-4 h-4 -rotate-90" />
                         </button>
                         <button
                           onClick={() => setGalleryIndex(i => (i + 1) % allImages.length)}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white w-8 h-8 rounded-full flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                           data-testid="gallery-next"
                         >
                           <ChevronDown className="w-4 h-4 -rotate-90" />
@@ -538,6 +539,10 @@ const Collection = () => {
                     </div>
                   )}
                 </div>
+
+                {(selectedModel.videos || []).map((url, i) => (
+                  <VideoEmbed key={`${i}-${url}`} url={url} title={`${selectedModel.name} — vidéo ${i + 1}`} />
+                ))}
 
                 {/* Caractéristiques */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
