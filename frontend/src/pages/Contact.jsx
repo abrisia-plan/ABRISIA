@@ -240,7 +240,7 @@ const Contact = () => {
                           <Textarea name="message" value={cvData.message} onChange={handleCvChange} placeholder="Votre expérience, compétences..." rows={3} className="bg-white border-stone-300" data-testid="cv-message" />
                         </div>
                         <div className="space-y-1.5">
-                          <Label>CV (PDF) *</Label>
+                          <Label>CV (PDF, DOC ou DOCX, 10 Mo maximum) *</Label>
                           <div className="border-2 border-dashed border-stone-300 rounded-lg p-5 text-center hover:border-teal-500 transition-colors cursor-pointer"
                             onClick={() => document.getElementById('cv-upload').click()}>
                             <input id="cv-upload" type="file" accept=".pdf,.doc,.docx" className="hidden"

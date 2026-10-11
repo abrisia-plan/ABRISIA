@@ -65,6 +65,11 @@ const Footer = () => {
                   Questions fréquentes
                 </Link>
               </li>
+              <li>
+                <Link to="/carrieres" onClick={scrollTop} className="hover:text-teal-400 transition-colors">
+                  Carrières : envoyer un CV
+                </Link>
+              </li>
             </ul>
           </div>
 

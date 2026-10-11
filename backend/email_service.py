@@ -300,25 +300,25 @@ class EmailService:
             logger.error(f"❌ Erreur envoi notification admin: {str(e)}")
             return False
 
-    def send_candidature_notification(self, candidature_data):
-        """Envoie notification de nouvelle candidature à l'admin"""
+    def send_candidature_notification(self, candidature_data, attachments=None):
+        """Envoie la candidature (avec le CV en pièce jointe) à l'adresse de l'entreprise"""
         try:
+            esc = lambda key, default='': html.escape(str(candidature_data.get(key) or default))
             subject = f"Nouvelle candidature - {candidature_data.get('nom', 'Candidat')}"
+            message = esc('message').replace('\n', '<br>')
             body = f"""
                 <h2 style="color: #0f766e; margin: 0 0 16px 0;">Nouvelle candidature</h2>
                 <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">{_now_qc().strftime('%d/%m/%Y à %H:%M')}</p>
                 <table style="width: 100%; margin-bottom: 20px;">
-                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{candidature_data.get('nom', '')}</td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{candidature_data.get('email', '')}" style="color: #0f766e;">{candidature_data.get('email', '')}</a></td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{candidature_data.get('telephone', 'Non fourni')}</td></tr>
-                    <tr><td style="padding: 6px 0; font-weight: bold;">CV :</td><td>{candidature_data.get('cv_filename', 'Fichier joint')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold; width: 30%;">Nom :</td><td>{esc('nom')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Courriel :</td><td><a href="mailto:{esc('email')}" style="color: #0f766e;">{esc('email')}</a></td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">Téléphone :</td><td>{esc('telephone', 'Non fourni')}</td></tr>
+                    <tr><td style="padding: 6px 0; font-weight: bold;">CV :</td><td>{esc('cv_filename', 'Fichier joint')} (en pièce jointe)</td></tr>
                 </table>
-                {f'<div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;"><p style="margin: 0;">{candidature_data.get("message")}</p></div>' if candidature_data.get('message') else ''}
-                <div style="text-align: center; margin: 24px 0;">
-                    <a href="{self.app_url}/admin" style="display: inline-block; background: #0f766e; color: white; padding: 12px 25px; border-radius: 8px; text-decoration: none; font-weight: bold;">Voir dans l'admin</a>
-                </div>
+                {f'<div style="background: #f8f9fa; border-radius: 8px; padding: 15px; border-left: 4px solid #0f766e;"><p style="margin: 0;">{message}</p></div>' if message else ''}
             """
-            return self._send_email(self.sender_email, subject, self._wrap_email(body))
+            recipient = os.getenv('ADMIN_EMAIL', 'abrisia0plan@gmail.com')
+            return self._send_email(recipient, subject, self._wrap_email(body), attachments)
         except Exception as e:
             logger.error(f"Erreur envoi notification candidature: {str(e)}")
             return False

@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, HTTPException, Depends, status
 from typing import List, Optional
 from datetime import datetime
@@ -622,6 +623,10 @@ async def approve_employee(
 from fastapi import UploadFile, File, Form
 import base64
 
+CV_EXTENSIONS = {".pdf", ".doc", ".docx"}
+CV_MAX_MB = 10
+
+
 @router.post("/candidature")
 async def submit_candidature(
     nom: str = Form(...),
@@ -630,14 +635,34 @@ async def submit_candidature(
     message: str = Form(""),
     cv: UploadFile = File(...)
 ):
-    """Soumettre une candidature avec CV"""
+    """Soumettre une candidature avec CV.
+
+    Le CV est envoyé par courriel (pièce jointe) à l'adresse de l'entreprise.
+    Il n'est gardé dans la base de données que si le courriel n'a pas pu partir,
+    pour ne jamais perdre une candidature.
+    """
+    ext = os.path.splitext(cv.filename or "")[1].lower()
+    if ext not in CV_EXTENSIONS:
+        raise HTTPException(status_code=400, detail="Le CV doit être un fichier PDF, DOC ou DOCX.")
+    cv_content = await cv.read()
+    if not cv_content:
+        raise HTTPException(status_code=400, detail="Le fichier du CV est vide.")
+    if len(cv_content) > CV_MAX_MB * 1024 * 1024:
+        raise HTTPException(status_code=400, detail=f"Le CV dépasse {CV_MAX_MB} Mo.")
+
     try:
         db = get_database()
-        
-        # Lire le fichier CV
-        cv_content = await cv.read()
-        cv_base64 = base64.b64encode(cv_content).decode('utf-8')
-        
+        from email_service import email_service
+
+        sent = False
+        try:
+            sent = email_service.send_candidature_notification(
+                {"nom": nom, "email": email, "telephone": telephone, "message": message, "cv_filename": cv.filename},
+                attachments=[(cv.filename, cv_content)],
+            )
+        except Exception as email_err:
+            logger.warning(f"Courriel de candidature non envoyé: {email_err}")
+
         candidature = {
             "nom": nom,
             "email": email,
@@ -645,27 +670,16 @@ async def submit_candidature(
             "message": message,
             "cv_filename": cv.filename,
             "cv_content_type": cv.content_type,
-            "cv_base64": cv_base64,
             "cv_size": len(cv_content),
+            "cv_sent_by_email": bool(sent),
             "status": "nouvelle",
             "created_at": datetime.utcnow().isoformat(),
         }
-        
-        result = await db.candidatures.insert_one(candidature)
-        
-        # Envoyer notification par courriel
-        try:
-            from email_service import email_service
-            email_service.send_candidature_notification({
-                "nom": nom,
-                "email": email,
-                "telephone": telephone,
-                "message": message,
-                "cv_filename": cv.filename
-            })
-        except Exception as email_err:
-            logger.warning(f"Email notification failed: {email_err}")
-        
+        if not sent:
+            # Filet de sécurité : le courriel a échoué, on garde le CV pour l'admin
+            candidature["cv_base64"] = base64.b64encode(cv_content).decode("utf-8")
+
+        await db.candidatures.insert_one(candidature)
         return {"success": True, "message": "Candidature envoyée avec succès"}
     except Exception as e:
         logger.error(f"Erreur candidature: {e}")
@@ -689,6 +703,8 @@ async def get_candidatures(current_user: dict = Depends(require_admin)):
                 "cv_size": c.get("cv_size", 0),
                 "status": c.get("status", "nouvelle"),
                 "created_at": c.get("created_at"),
+                "has_cv": bool(c.get("cv_base64")),
+                "cv_sent_by_email": c.get("cv_sent_by_email", False),
             })
         return {"success": True, "data": candidatures, "total": len(candidatures)}
     except Exception as e:
@@ -706,6 +722,8 @@ async def download_cv(candidature_id: str, current_user: dict = Depends(require_
         if not c:
             raise HTTPException(status_code=404, detail="Candidature non trouvée")
         
+        if not c.get("cv_base64"):
+            raise HTTPException(status_code=404, detail="Ce CV a été envoyé par courriel")
         cv_bytes = base64.b64decode(c["cv_base64"])
         return Response(
             content=cv_bytes,
