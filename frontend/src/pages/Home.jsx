@@ -59,12 +59,13 @@ const Home = () => {
         }
         // Témoignages : priorité aux témoignages CMS, sinon reviews produit
         if (testimonialsData.success && testimonialsData.data?.length > 0) {
+          // Champs enregistrés par l'admin : client_name, project_type, client_location, comment
           setTestimonials(testimonialsData.data.map(r => ({
-            name: r.name,
-            project: r.role || r.location || 'Client',
-            text: r.content || r.text,
+            name: r.client_name || r.name,
+            project: [r.project_type, r.client_location].filter(Boolean).join(' · ') || 'Client',
+            text: r.comment || r.content || r.text,
             rating: r.rating || 5
-          })));
+          })).filter(t => t.name && t.text));
         } else if (reviewsData.success && reviewsData.data?.length > 0) {
           setTestimonials(reviewsData.data.map(r => ({
             name: r.client_name || r.name,

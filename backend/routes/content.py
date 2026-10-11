@@ -435,35 +435,7 @@ async def update_categories(categories: List[dict], current_user: dict = Depends
 
 # ============ TÉMOIGNAGES ============
 
-DEFAULT_TESTIMONIALS = [
-    {
-        "id": "1",
-        "client_name": "Marie Tremblay",
-        "client_location": "Saguenay, QC",
-        "project_type": "Mini-maison",
-        "rating": 5,
-        "comment": "Service exceptionnel ! Les plans étaient exactement ce que nous voulions. Très professionnel et à l'écoute.",
-        "is_visible": True
-    },
-    {
-        "id": "2", 
-        "client_name": "Jean-Pierre Gagnon",
-        "client_location": "Chicoutimi, QC",
-        "project_type": "Chalet",
-        "rating": 5,
-        "comment": "Travail impeccable, les délais ont été respectés et le résultat est magnifique !",
-        "is_visible": True
-    },
-    {
-        "id": "3",
-        "client_name": "Sophie Lavoie",
-        "client_location": "Alma, QC", 
-        "project_type": "Extension",
-        "rating": 4,
-        "comment": "Très satisfaite des plans pour notre solarium. Communication claire tout au long du projet.",
-        "is_visible": True
-    }
-]
+# Pas de témoignages par défaut : on n'affiche que de vrais avis de clients.
 
 @router.get("/content/testimonials")
 async def get_visible_testimonials():
@@ -471,10 +443,7 @@ async def get_visible_testimonials():
     try:
         db = get_database()
         testimonials = await db.testimonials.find({"is_visible": True}).to_list(length=20)
-        
-        if not testimonials:
-            return {"success": True, "data": DEFAULT_TESTIMONIALS}
-        
+
         return {"success": True, "data": serialize_docs(testimonials)}
     except Exception as e:
         logger.error(f"❌ Erreur récupération témoignages: {e}")
@@ -485,11 +454,8 @@ async def get_all_testimonials_admin(current_user: dict = Depends(require_admin)
     """Obtenir tous les témoignages pour l'admin"""
     try:
         db = get_database()
-        testimonials = await db.testimonials.find().to_list(length=100)
-        
-        if not testimonials:
-            return {"success": True, "data": DEFAULT_TESTIMONIALS}
-        
+        testimonials = await db.testimonials.find().sort("created_at", -1).to_list(length=100)
+
         return {"success": True, "data": serialize_docs(testimonials)}
     except Exception as e:
         logger.error(f"❌ Erreur récupération témoignages admin: {e}")
@@ -527,29 +493,22 @@ async def update_testimonial(testimonial_id: str, testimonial: dict, current_use
     try:
         db = get_database()
         
-        update_data = {
-            "client_name": testimonial.get("client_name"),
-            "client_location": testimonial.get("client_location"),
-            "project_type": testimonial.get("project_type"),
-            "rating": testimonial.get("rating"),
-            "comment": testimonial.get("comment"),
-            "is_visible": testimonial.get("is_visible"),
-            "updated_at": datetime.utcnow()
-        }
-        
+        # Seuls les champs envoyés sont modifiés (ex. masquer sans effacer le texte)
+        fields = ("client_name", "client_location", "project_type", "rating", "comment", "is_visible")
+        update_data = {k: testimonial[k] for k in fields if k in testimonial}
+        update_data["updated_at"] = datetime.utcnow()
+
         result = await db.testimonials.update_one(
             {"id": testimonial_id},
             {"$set": update_data}
         )
-        
-        if result.modified_count == 0:
-            # Essayer de mettre à jour un témoignage par défaut
-            update_data["id"] = testimonial_id
-            update_data["created_at"] = datetime.utcnow()
-            await db.testimonials.insert_one(update_data)
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Témoignage introuvable")
         
         logger.info(f"✅ Témoignage modifié: {testimonial_id}")
         return {"success": True, "message": "Témoignage modifié"}
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"❌ Erreur modification témoignage: {e}")
         raise HTTPException(status_code=500, detail=str(e))
