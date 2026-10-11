@@ -23,9 +23,10 @@ const ProjectsManager = () => {
   const [editingProject, setEditingProject] = useState(null);
   const [filterCategory, setFilterCategory] = useState('Tous');
   const [formData, setFormData] = useState({
-    title: '', category: '', image: '', description: '',
+    title: '', category: '', image: '', gallery_images: [], description: '',
     details: [''], dimensions: '', is_visible: true, show_on_home: false
   });
+  const [uploading, setUploading] = useState(false);
 
   const categories = [
     'Maison unifamiliale', 'Chalet', 'Mini-maison',
@@ -48,7 +49,7 @@ const ProjectsManager = () => {
   const openAddModal = () => {
     setEditingProject(null);
     setFormData({
-      title: '', category: categories[0], image: '', description: '',
+      title: '', category: categories[0], image: '', gallery_images: [], description: '',
       details: [''], dimensions: '', is_visible: true, show_on_home: false
     });
     setIsModalOpen(true);
@@ -58,7 +59,8 @@ const ProjectsManager = () => {
     setEditingProject(project);
     setFormData({
       title: project.title, category: project.category,
-      image: project.image, description: project.description,
+      image: project.image, gallery_images: project.galleryImages || [],
+      description: project.description,
       details: project.details || [''], dimensions: project.dimensions,
       is_visible: project.isVisible !== false,
       show_on_home: project.showOnHome || false
@@ -85,18 +87,50 @@ const ProjectsManager = () => {
     setFormData(prev => ({ ...prev, details: newDetails.length ? newDetails : [''] }));
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    try {
-      const response = await projectService.uploadImage(file);
-      if (response.success) {
-        handleInputChange('image', response.imageUrl);
-        toast({ title: "Image uploadee" });
+  // Plusieurs photos peuvent être choisies d'un coup.
+  // La première devient la photo principale si elle est vide, les autres vont dans la galerie.
+  const handleImageUpload = async (e, toGallery = false) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setUploading(true);
+    const urls = [];
+    for (const file of files) {
+      try {
+        const response = await projectService.uploadImage(file);
+        if (response.success) urls.push(response.imageUrl);
+      } catch (error) {
+        toast({ title: `Erreur : ${file.name}`, description: handleApiError(error), variant: "destructive" });
       }
-    } catch (error) {
-      toast({ title: "Erreur", description: handleApiError(error), variant: "destructive" });
     }
+    if (urls.length) {
+      setFormData(prev => {
+        if (!toGallery) {
+          const [first, ...rest] = urls;
+          return { ...prev, image: first, gallery_images: [...prev.gallery_images, ...rest] };
+        }
+        const rest = [...urls];
+        const main = prev.image || rest.shift();
+        return { ...prev, image: main, gallery_images: [...prev.gallery_images, ...rest] };
+      });
+      toast({ title: urls.length > 1 ? `${urls.length} photos ajoutées` : 'Photo ajoutée' });
+    }
+    setUploading(false);
+    if (e.target) e.target.value = '';
+  };
+
+  const removeGalleryImage = (index) => {
+    setFormData(prev => ({ ...prev, gallery_images: prev.gallery_images.filter((_, i) => i !== index) }));
+  };
+
+  // Échange une photo de la galerie avec la photo principale
+  const makeMainImage = (index) => {
+    setFormData(prev => {
+      const gallery = [...prev.gallery_images];
+      const chosen = gallery[index];
+      if (prev.image) gallery[index] = prev.image;
+      else gallery.splice(index, 1);
+      return { ...prev, image: chosen, gallery_images: gallery };
+    });
   };
 
   const handleSubmit = async () => {
@@ -288,9 +322,37 @@ const ProjectsManager = () => {
                 <Button type="button" variant="outline" onClick={() => document.getElementById('image-upload').click()}>
                   <Upload className="w-4 h-4" />
                 </Button>
-                <input id="image-upload" type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                <input id="image-upload" type="file" accept="image/*" className="hidden" onChange={(e) => handleImageUpload(e, false)} />
               </div>
               {formData.image && <img src={formData.image} alt="Apercu" className="mt-2 h-32 w-full object-cover rounded-lg" onError={(e) => e.target.style.display = 'none'} />}
+            </div>
+            <div>
+              <Label>Autres photos (optionnel)</Label>
+              <p className="text-xs text-gray-500 mt-1">
+                Vous pouvez choisir plusieurs photos d'un coup. Touchez « Principale » pour mettre une photo en premier.
+              </p>
+              <div className="mt-2 grid grid-cols-3 sm:grid-cols-4 gap-2">
+                {formData.gallery_images.map((img, index) => (
+                  <div key={`gallery-${index}-${img.slice(-12)}`} className="relative">
+                    <img src={img} alt={`Photo ${index + 2}`} className="w-full h-20 object-cover rounded-lg" />
+                    <Button type="button" variant="destructive" size="icon" className="absolute -top-2 -right-2 w-6 h-6"
+                      onClick={() => removeGalleryImage(index)} aria-label="Retirer la photo">
+                      <X className="w-3 h-3" />
+                    </Button>
+                    <button type="button" onClick={() => makeMainImage(index)}
+                      className="absolute bottom-1 left-1 right-1 text-[10px] bg-white/90 text-teal-800 rounded px-1 py-0.5 font-medium">
+                      Principale
+                    </button>
+                  </div>
+                ))}
+                <label htmlFor="project-gallery-upload"
+                  className="border-2 border-dashed border-gray-300 rounded-lg h-20 flex flex-col items-center justify-center cursor-pointer hover:border-teal-500 text-xs text-gray-500">
+                  {uploading ? <Loader2 className="w-6 h-6 animate-spin text-teal-600" /> : <Plus className="w-6 h-6 text-gray-400" />}
+                  Ajouter
+                </label>
+              </div>
+              <input id="project-gallery-upload" type="file" accept="image/*" multiple className="hidden"
+                onChange={(e) => handleImageUpload(e, true)} />
             </div>
             <div>
               <Label>Description</Label>

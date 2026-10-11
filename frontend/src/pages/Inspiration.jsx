@@ -4,7 +4,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Eye, ArrowRight, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { Eye, ArrowRight, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Images, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '../hooks/use-toast';
 import { faqItems } from '../data/mock';
@@ -17,6 +17,7 @@ const Inspiration = () => {
   const [searchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState('Tous');
   const [selectedProject, setSelectedProject] = useState(null);
+  const [photoIndex, setPhotoIndex] = useState(0);
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [projects, setProjects] = useState([]);
   const [categories, setCategories] = useState(['Tous']);
@@ -69,8 +70,14 @@ const Inspiration = () => {
   };
 
   const openProjectModal = (project) => {
+    setPhotoIndex(0);
     setSelectedProject(project);
   };
+
+  const photosOf = (project) =>
+    project ? [project.image, ...(project.galleryImages || [])].filter(Boolean) : [];
+  const photos = photosOf(selectedProject);
+  const showPhoto = (i) => setPhotoIndex((i + photos.length) % photos.length);
 
   const closeProjectModal = () => {
     setSelectedProject(null);
@@ -147,6 +154,11 @@ const Inspiration = () => {
                         {project.category}
                       </Badge>
                     </div>
+                    {photosOf(project).length > 1 && (
+                      <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+                        <Images className="w-3.5 h-3.5" /> {photosOf(project).length} photos
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                       <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
@@ -168,18 +180,46 @@ const Inspiration = () => {
 
       {/* Modal projet */}
       <Dialog open={!!selectedProject} onOpenChange={closeProjectModal}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           {selectedProject && (
             <>
               <DialogHeader>
                 <DialogTitle className="text-2xl">{selectedProject.title}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
-                <img
-                  src={selectedProject.image}
-                  alt={selectedProject.title}
-                  className="w-full h-64 object-cover rounded-lg"
-                />
+                <div className="relative">
+                  <img
+                    src={photos[photoIndex]}
+                    alt={`${selectedProject.title} — photo ${photoIndex + 1}`}
+                    className="w-full h-64 sm:h-96 object-cover rounded-lg"
+                  />
+                  {photos.length > 1 && (
+                    <>
+                      <button type="button" onClick={() => showPhoto(photoIndex - 1)} aria-label="Photo précédente"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow">
+                        <ChevronLeft className="w-5 h-5 text-slate-800" />
+                      </button>
+                      <button type="button" onClick={() => showPhoto(photoIndex + 1)} aria-label="Photo suivante"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2 shadow">
+                        <ChevronRight className="w-5 h-5 text-slate-800" />
+                      </button>
+                      <span className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+                        {photoIndex + 1} / {photos.length}
+                      </span>
+                    </>
+                  )}
+                </div>
+                {photos.length > 1 && (
+                  <div className="flex gap-2 overflow-x-auto pb-1">
+                    {photos.map((src, i) => (
+                      <button key={`${i}-${src.slice(-12)}`} type="button" onClick={() => setPhotoIndex(i)}
+                        aria-label={`Voir la photo ${i + 1}`}
+                        className={`flex-shrink-0 w-16 h-12 rounded overflow-hidden border-2 ${i === photoIndex ? 'border-teal-600' : 'border-transparent hover:border-gray-300'}`}>
+                        <img src={src} alt="" className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <Badge className="bg-teal-800 text-white">{selectedProject.category}</Badge>
                   {selectedProject.dimensions && (
