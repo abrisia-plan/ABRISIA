@@ -80,7 +80,7 @@ module.exports = [
     description: "Dessinatrice en bâtiment au Québec : faut-il un architecte, quels plans pour un permis, codes suivis, contenu d'un plan de fondation, prix et déroulement d'un projet.",
     h1: 'Questions fréquentes',
     sections: [
-      { list: ["Qu'est-ce qu'une dessinatrice en bâtiment ?", "Ai-je besoin d'un architecte pour faire les plans de ma maison ou de mon chalet ?", 'Quels plans faut-il pour obtenir un permis de construction ?', 'Quels codes et normes vos plans respectent-ils ?', 'Que contient un plan de fondation ?', 'Combien coûtent des plans de maison ou de chalet ?'] },
+      { list: ["Qu'est-ce qu'une dessinatrice en bâtiment ?", "Ai-je besoin d'un architecte pour faire les plans de ma maison ou de mon chalet ?", 'Quels plans faut-il pour obtenir un permis de construction ?', 'Quels codes et normes vos plans respectent-ils ?', 'Que contient un plan de fondation ?', 'Combien coûtent des plans de maison ou de chalet ?', 'Offrez-vous vos services en anglais ?'] },
     ],
     links: [DEVIS, CONTACT],
   },

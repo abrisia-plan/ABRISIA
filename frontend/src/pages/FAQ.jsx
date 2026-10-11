@@ -43,6 +43,10 @@ const FAQS = [
     a: "1. Vous nous décrivez votre projet dans le formulaire de devis (vous pouvez joindre photos, croquis et plans). 2. Nous discutons avec vous, préparons des croquis et un devis. 3. Nous réalisons les plans détaillés. 4. Vous recevez vos plans en PDF, prêts à joindre à votre demande de permis.",
   },
   {
+    q: "Offrez-vous vos services en anglais ?",
+    a: "Nos services sont offerts en français. Noémie comprend l'anglais : si vous préférez écrire en anglais, elle peut correspondre avec vous par courriel.",
+  },
+  {
     q: "Travaillez-vous à distance ? Dans quelles régions ?",
     a: "Oui. La plupart des projets se font à distance, par téléphone, courriel ou texto, et nous pouvons nous déplacer dans certains cas. Nous sommes établis au Saguenay–Lac-Saint-Jean et travaillons partout au Québec.",
   },

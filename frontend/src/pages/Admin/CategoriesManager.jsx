@@ -184,7 +184,7 @@ const CategoriesManager = () => {
                   : 'bg-gray-50 border-gray-200 opacity-60'
               }`}
             >
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap md:flex-nowrap items-center gap-3 md:gap-4">
                 <div className="cursor-move text-gray-400">
                   <GripVertical className="w-5 h-5" />
                 </div>
@@ -209,7 +209,7 @@ const CategoriesManager = () => {
                 </div>
                 
                 {/* Nom et description */}
-                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="w-full md:w-auto md:flex-1 order-last md:order-none grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>
                     <Label className="text-xs text-gray-500">Nom de la catégorie</Label>
                     <Input
@@ -231,7 +231,7 @@ const CategoriesManager = () => {
                 </div>
                 
                 {/* Actions */}
-                <div className="flex items-center gap-3">
+                <div className="ml-auto md:ml-0 flex items-center gap-3">
                   <Button
                     size="sm"
                     variant={category.is_visible ? "default" : "outline"}

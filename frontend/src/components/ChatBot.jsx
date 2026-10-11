@@ -1,8 +1,31 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageCircle, X, Send, Loader2, Bot, User } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, User, RotateCcw } from 'lucide-react';
 import { Button } from './ui/button';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Message d'accueil de l'assistant
+const SALUTATION = "Bonjour et bienvenue chez ABRISIA Plan ! 🏡\n\nJe suis Assistant ABRISIA, votre assistant virtuel.\n\nQue vous souhaitiez construire une maison, un chalet ou un garage, je suis ici pour répondre à vos questions, vous présenter les options disponibles et vous aider à donner forme à votre projet.\n\nComment puis-je vous aider aujourd'hui ?";
+// Une conversation sans activité depuis 24 h est remplacée par une nouvelle
+const DUREE_CONVERSATION_MS = 24 * 60 * 60 * 1000;
+
+const nouvelleSession = () => {
+  const id = 'chat-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+  try {
+    localStorage.setItem('abrisia_chat_session', id);
+    localStorage.setItem('abrisia_chat_activite', String(Date.now()));
+  } catch {}
+  return id;
+};
+
+const sessionExistante = () => {
+  try {
+    const id = localStorage.getItem('abrisia_chat_session');
+    const derniere = Number(localStorage.getItem('abrisia_chat_activite') || 0);
+    if (id && Date.now() - derniere < DUREE_CONVERSATION_MS) return id;
+  } catch {}
+  return nouvelleSession();
+};
 
 // Met en gras les mots entourés de ** (ex. **plan de maison**)
 const boldify = (text, key) => text.split(/\*\*([^*]+)\*\*/g).map((part, i) => (
@@ -26,14 +49,12 @@ const ChatBot = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  const [sessionId] = useState(() => {
-    let id = localStorage.getItem('abrisia_chat_session');
-    if (!id) {
-      id = 'chat-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('abrisia_chat_session', id);
-    }
-    return id;
-  });
+  const [sessionId, setSessionId] = useState(sessionExistante);
+
+  const recommencer = () => {
+    setSessionId(nouvelleSession());
+    setMessages([{ role: 'assistant', content: SALUTATION }]);
+  };
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -61,16 +82,10 @@ const ChatBot = () => {
       if (data.success && data.data?.length > 0) {
         setMessages(data.data.map(m => ({ role: m.role, content: m.content })));
       } else {
-        setMessages([{
-          role: 'assistant',
-          content: 'Bonjour ! Je suis l\'assistant Abrisia. Comment puis-je vous aider avec votre projet de plans architecturaux ?'
-        }]);
+        setMessages([{ role: 'assistant', content: SALUTATION }]);
       }
     } catch {
-      setMessages([{
-        role: 'assistant',
-        content: 'Bonjour ! Je suis l\'assistant Abrisia. Comment puis-je vous aider ?'
-      }]);
+      setMessages([{ role: 'assistant', content: SALUTATION }]);
     }
   };
 
@@ -78,6 +93,7 @@ const ChatBot = () => {
     const text = input.trim();
     if (!text || isLoading) return;
 
+    try { localStorage.setItem('abrisia_chat_activite', String(Date.now())); } catch {}
     const userMsg = { role: 'user', content: text };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
@@ -170,10 +186,20 @@ const ChatBot = () => {
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5" />
               <div>
-                <p className="font-semibold text-sm leading-tight">Assistant Abrisia</p>
+                <p className="font-semibold text-sm leading-tight">Assistant ABRISIA</p>
                 <p className="text-xs text-teal-200">En ligne</p>
               </div>
             </div>
+            <div className="flex items-center gap-3">
+            <button
+              onClick={recommencer}
+              className="text-white/80 hover:text-white transition-colors"
+              title="Nouvelle conversation"
+              aria-label="Nouvelle conversation"
+              data-testid="chatbot-reset-btn"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
             <button
               onClick={() => setIsOpen(false)}
               className="text-white/80 hover:text-white transition-colors"
@@ -181,6 +207,7 @@ const ChatBot = () => {
             >
               <X className="w-5 h-5" />
             </button>
+            </div>
           </div>
 
           {/* Messages */}
