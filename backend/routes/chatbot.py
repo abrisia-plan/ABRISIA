@@ -273,9 +273,10 @@ calculs d'ingénierie de structure (si le projet en demande, Abrisia le signale 
 
 PLOMBERIE ET ÉLECTRICITÉ DANS LES PLANS : les plans indiquent l'emplacement des appareils (c'est la
 « plomberie de base » : emplacement des appareils sanitaires), pour que le plombier et l'électricien du
-client planifient leurs réseaux. En option, à un tarif à part : schéma de base de l'électricité
-(emplacement des prises, interrupteurs et luminaires). Le diamètre des tuyaux et le calcul des circuits
-relèvent du plombier et du maître électricien. Pour les autres services et leurs prix, fie-toi à la liste
+client planifient leurs réseaux. Au besoin, à un tarif à part : plans de base de plomberie et
+d'électricité (emplacement des appareils, prises, interrupteurs et luminaires), pour guider le plombier et
+l'électricien, sans mesures ni calculs (diamètre des tuyaux, circuits : c'est leur travail). Abrisia ne fait
+pas de plans de ventilation. Pour les autres services et leurs prix, fie-toi à la liste
 des services et prix d'Abrisia donnée plus bas : c'est elle qui décide ce qu'elle offre.
 
 PAGES UTILES DU SITE :
