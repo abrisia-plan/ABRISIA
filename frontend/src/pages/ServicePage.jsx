@@ -1,12 +1,38 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { Home, TreePine, House, Expand, Warehouse, Building2, MapPin, ArrowRight } from 'lucide-react';
 import SEO from '../components/SEO';
 import { FloorPlanDrawing } from '../components/PlanIllustrations';
 import SERVICE_PAGES from '../data/servicePages.json';
 
 // Une page par type de plan (maison, chalet, mini-maison...).
 // Le contenu vient de data/servicePages.json, aussi lu par scripts/prerender-seo.js.
+
+const ICONES = {
+  'plan-de-maison': Home,
+  'plan-de-chalet': TreePine,
+  'plan-de-mini-maison': House,
+  'plan-agrandissement-maison': Expand,
+  'plan-de-garage': Warehouse,
+  'plan-de-plex': Building2,
+};
+
+const CartePlan = ({ to, Icone, titre, resume }) => (
+  <Link
+    to={to}
+    className="group flex items-start gap-4 h-full bg-white border border-stone-200 rounded-xl p-4 hover:border-teal-600 hover:shadow-md transition"
+  >
+    <span className="shrink-0 w-11 h-11 rounded-lg bg-teal-50 text-teal-800 flex items-center justify-center">
+      <Icone className="w-5 h-5" />
+    </span>
+    <span className="flex-1 min-w-0">
+      <span className="block font-semibold text-slate-800 group-hover:text-teal-800">{titre}</span>
+      <span className="block text-sm text-slate-600 mt-1">{resume}</span>
+    </span>
+    <ArrowRight className="shrink-0 w-4 h-4 mt-1 text-teal-700 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transition" />
+  </Link>
+);
 
 const ServicePage = ({ slug }) => {
   const page = SERVICE_PAGES.find((p) => p.slug === slug);
@@ -39,7 +65,7 @@ const ServicePage = ({ slug }) => {
       <section className="py-16 bg-gradient-to-r from-teal-800 to-teal-900 text-white">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{page.h1}</h1>
-          <p className="text-lg text-teal-100">Dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean, partout au Québec à distance.</p>
+          <p className="text-lg text-teal-100">Dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean, partout au Québec, à distance ou sur place au besoin.</p>
         </div>
       </section>
 
@@ -106,19 +132,20 @@ const ServicePage = ({ slug }) => {
           </div>
 
           <nav>
-            <h2 className="text-lg font-semibold text-slate-800 mb-3">Nos autres plans</h2>
-            <ul className="flex flex-wrap gap-2">
+            <h2 className="text-2xl font-bold text-slate-800 mb-4">Nos autres plans</h2>
+            <ul className="grid sm:grid-cols-2 gap-3">
               {autres.map((p) => (
                 <li key={p.slug}>
-                  <Link to={`/${p.slug}`} className="inline-block bg-white border border-stone-200 rounded-full px-3 py-1 text-sm text-teal-800 hover:border-teal-600">
-                    {p.h1}
-                  </Link>
+                  <CartePlan to={`/${p.slug}`} Icone={ICONES[p.slug] || Home} titre={p.h1} resume={p.resume} />
                 </li>
               ))}
               <li>
-                <Link to="/plans-maison-saguenay-lac-saint-jean" className="inline-block bg-white border border-stone-200 rounded-full px-3 py-1 text-sm text-teal-800 hover:border-teal-600">
-                  Plans de maison au Saguenay–Lac-Saint-Jean
-                </Link>
+                <CartePlan
+                  to="/plans-maison-saguenay-lac-saint-jean"
+                  Icone={MapPin}
+                  titre="Plans de maison au Saguenay–Lac-Saint-Jean"
+                  resume="Une dessinatrice en bâtiment de la région."
+                />
               </li>
             </ul>
           </nav>
