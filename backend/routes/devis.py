@@ -21,6 +21,18 @@ logger = logging.getLogger(__name__)
 router = APIRouter(tags=["devis"])
 
 
+# Codes utilisés par l'assistant du site -> libellés lisibles
+CONTACT_PREF_LABELS = {
+    "telephone": "Par téléphone", "courriel": "Par courriel",
+    "texto": "Par texto", "peu-importe": "Peu importe",
+}
+
+
+def contact_preference_label(value: str) -> str:
+    value = (value or "").strip()
+    return CONTACT_PREF_LABELS.get(value, value)
+
+
 async def _create_zoho_lead_from_devis(devis_doc: dict):
     """Créer un lead Zoho en arrière-plan pour chaque devis"""
     try:
@@ -28,6 +40,7 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
         first_name = devis_doc.get("prenom", "") or devis_doc.get("nom", "").split(" ", 1)[0] or "Visiteur"
         last_name = devis_doc.get("nom", "") or first_name
 
+        contact_pref = contact_preference_label(devis_doc.get("contact_preference"))
         zoho_record = {
             "First_Name": first_name,
             "Last_Name": last_name,
@@ -35,20 +48,26 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
             "Phone": devis_doc.get("telephone", ""),
             "Company": "Visiteur site web",
             "Lead_Source": "Devis par l'assistant du site" if devis_doc.get("source") == "chatbot" else "Demande de devis",
-            "Description": f"Type: {devis_doc.get('project_type') or 'N/A'}\n"
+            "Description": f"MODE DE COMMUNICATION PRÉFÉRÉ : {contact_pref or 'non précisé'}\n\n"
+                           f"Type: {devis_doc.get('project_type') or 'N/A'}\n"
                            f"Plans: {', '.join(devis_doc.get('plans_noms') or devis_doc.get('plans_choisis', []))}\n"
-                           f"Contact préféré: {devis_doc.get('contact_preference') or 'N/A'}\n"
                            f"Style: {', '.join(devis_doc.get('styles') or []) or 'N/A'}\n"
                            + (f"Calculateur: {devis_doc['calculateur']['surface']} pi² ~ {devis_doc['calculateur']['estimation']} $\n" if devis_doc.get('calculateur') else "")
                            + 
                            f"Notes: {devis_doc.get('notes', '')}"
                            + "".join(f"\nFichier reçu par courriel : {f['filename']}" for f in devis_doc.get('fichiers', [])),
         }
+        # Champ dédié dans Zoho (à créer dans Zoho, puis indiquer son nom d'API
+        # dans la variable ZOHO_CONTACT_PREF_FIELD sur Render, ex. Mode_de_communication)
+        pref_field = os.getenv("ZOHO_CONTACT_PREF_FIELD", "").strip()
+        if pref_field and contact_pref:
+            zoho_record[pref_field] = contact_pref
         data = {
             "first_name": first_name,
             "last_name": last_name,
             "email": devis_doc.get("email", ""),
             "phone": devis_doc.get("telephone", ""),
+            "contact_preference": contact_pref,
         }
         await save_lead("devis", data, zoho_record)
     except Exception as e:
