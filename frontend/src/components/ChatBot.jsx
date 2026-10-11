@@ -4,13 +4,18 @@ import { Button } from './ui/button';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Met en gras les mots entourés de ** (ex. **plan de maison**)
+const boldify = (text, key) => text.split(/\*\*([^*]+)\*\*/g).map((part, i) => (
+  i % 2 === 1 ? <strong key={`${key}-${i}`}>{part}</strong> : part
+));
+
 // Rend les adresses web cliquables dans les réponses de l'assistant
 const linkify = (text) => text.split(/(https?:\/\/[^\s]+)/g).map((part, i) => (
   /^https?:\/\//.test(part) ? (
     <a key={i} href={part.replace(/[.,;:!?)]+$/, '')} className="text-teal-700 underline break-all">
       {part}
     </a>
-  ) : part
+  ) : boldify(part, i)
 ));
 
 const ChatBot = () => {
