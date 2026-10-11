@@ -46,7 +46,7 @@ const Header = () => {
                 className="w-full h-full object-contain"
               />
             </div>
-            <span className="text-2xl font-bold text-slate-800 group-hover:text-teal-700 transition-colors">
+            <span className="text-3xl font-bold text-slate-800 group-hover:text-teal-700 transition-colors">
               ABRISIA
             </span>
           </Link>
