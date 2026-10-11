@@ -539,24 +539,32 @@ DEFAULT_LEGAL_PAGES = {
     "mentions-legales": {
         "title": "Mentions légales",
         "content": """
-# Mentions légales
-
-## Éditeur du site
-**Abrisia Plan**
-Service de dessin de plans architecturaux
-Saguenay, Québec, Canada
-
-## Contact
-Pour toute question, veuillez nous contacter via le formulaire de contact du site.
+## Propriétaire du site
+**Nom commercial :** Abrisia Plan
+**Domaine :** abrisia-plan.ca
+**Activité :** dessin en bâtiment et conception de plans résidentiels
+**Localisation :** Saguenay–Lac-Saint-Jean, Québec, Canada
+**Courriel :** abrisia0plan@gmail.com
 
 ## Hébergement
-Ce site est hébergé par Emergent.
+Le site est hébergé par Vercel (pages du site) et Render (serveur), et les données sont conservées chez MongoDB Atlas.
 
 ## Propriété intellectuelle
-L'ensemble du contenu de ce site (textes, images, vidéos, logos) est protégé par le droit d'auteur. Toute reproduction, même partielle, est interdite sans autorisation préalable.
+L'ensemble du contenu de ce site (textes, images, plans, logos, design) est la propriété d'Abrisia Plan ou de ses partenaires. Toute reproduction, totale ou partielle, est interdite sans autorisation écrite préalable.
 
-## Responsabilité
-Les informations fournies sur ce site le sont à titre indicatif. Abrisia Plan ne saurait être tenu responsable des erreurs ou omissions.
+## Nature des services
+Abrisia Plan offre un service de dessin en bâtiment. Les plans fournis sont des documents de conception destinés notamment à la demande de permis de construction. Abrisia Plan n'est pas une firme d'ingénieurs ni un bureau d'architectes ; lorsque la loi l'exige, l'intervention d'un ingénieur ou d'un architecte est requise.
+
+## Limitation de responsabilité
+Abrisia Plan prépare les plans selon les informations transmises par le client. Le client est responsable de vérifier la conformité de son projet avec les règlements municipaux applicables à son terrain.
+L'obtention du permis de construction relève du client ; l'approbation des plans par la municipalité n'est pas garantie.
+
+## Paiements et remboursements
+Les plans numériques étant livrés électroniquement, aucun remboursement n'est accordé après la livraison des fichiers, sauf en cas d'erreur attribuable à Abrisia Plan.
+Pour les projets sur devis, les modalités de paiement sont précisées dans le devis accepté par le client.
+
+## Loi applicable
+Les présentes mentions légales sont régies par les lois du Québec et les lois fédérales du Canada qui s'y appliquent.
 """
     },
     "politique-confidentialite": {
