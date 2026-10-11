@@ -22,6 +22,7 @@ const KitFormModal = ({
   onImageUpload,
   onFileUpload,
   onRemoveGalleryImage,
+  onMakeMainImage,
   onSubmit,
   saving,
   uploading,
@@ -504,25 +505,39 @@ const KitFormModal = ({
 
             {/* Images supplémentaires */}
             <div>
-              <Label className="font-semibold">Images supplémentaires (optionnel)</Label>
-              <div className="mt-2 grid grid-cols-4 gap-2">
+              <Label className="font-semibold">Photos supplémentaires (optionnel)</Label>
+              <p className="text-xs text-gray-500 mt-1">
+                Vous pouvez choisir plusieurs photos d'un coup. Touchez « Principale » pour mettre une photo en premier.
+              </p>
+              <div className="mt-2 grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {formData.gallery_images.map((img, index) => (
-                  <div key={`gallery-${img.slice(-12)}`} className="relative">
+                  <div key={`gallery-${index}-${img.slice(-12)}`} className="relative">
                     <img src={img} alt={`Galerie ${index + 1}`} className="w-full h-20 object-cover rounded-lg" />
                     <Button
                       type="button" variant="destructive" size="icon"
                       className="absolute -top-2 -right-2 w-6 h-6"
                       onClick={() => onRemoveGalleryImage(index)}
+                      aria-label="Retirer la photo"
                     >
                       <X className="w-3 h-3" />
                     </Button>
+                    {onMakeMainImage && (
+                      <button
+                        type="button"
+                        onClick={() => onMakeMainImage(index)}
+                        className="absolute bottom-1 left-1 right-1 text-[10px] bg-white/90 text-teal-800 rounded px-1 py-0.5 font-medium"
+                      >
+                        Principale
+                      </button>
+                    )}
                   </div>
                 ))}
                 <label 
                   htmlFor="gallery-upload-input"
-                  className="border-2 border-dashed border-gray-300 rounded-lg h-20 flex items-center justify-center cursor-pointer hover:border-teal-500"
+                  className="border-2 border-dashed border-gray-300 rounded-lg h-20 flex flex-col items-center justify-center cursor-pointer hover:border-teal-500 text-xs text-gray-500"
                 >
-                  <Plus className="w-6 h-6 text-gray-400" />
+                  {uploading ? <Loader2 className="w-6 h-6 animate-spin text-teal-600" /> : <Plus className="w-6 h-6 text-gray-400" />}
+                  Ajouter
                 </label>
               </div>
               <input
@@ -530,6 +545,7 @@ const KitFormModal = ({
                 ref={galleryImageRef}
                 type="file"
                 accept="image/*"
+                multiple
                 className="hidden"
                 onChange={(e) => onImageUpload(e, true)}
               />

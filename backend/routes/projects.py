@@ -54,6 +54,7 @@ async def get_public_projects(
                 "title": project["title"],
                 "category": project["category"],
                 "image": project["image"],
+                "galleryImages": project.get("gallery_images", []),
                 "description": project["description"],
                 "details": project["details"],
                 "dimensions": project["dimensions"],
@@ -94,6 +95,7 @@ async def get_all_projects(
                 "title": project["title"],
                 "category": project["category"],
                 "image": project["image"],
+                "galleryImages": project.get("gallery_images", []),
                 "description": project["description"],
                 "details": project["details"],
                 "dimensions": project["dimensions"],
@@ -129,6 +131,7 @@ async def create_project(
             "title": project_data.title,
             "category": project_data.category,
             "image": project_data.image,
+            "gallery_images": [g for g in project_data.gallery_images if g],
             "description": project_data.description,
             "details": project_data.details,
             "dimensions": project_data.dimensions,
@@ -176,6 +179,8 @@ async def update_project(
             update_fields["category"] = update_data.category
         if update_data.image is not None:
             update_fields["image"] = update_data.image
+        if update_data.gallery_images is not None:
+            update_fields["gallery_images"] = [g for g in update_data.gallery_images if g]
         if update_data.description is not None:
             update_fields["description"] = update_data.description
         if update_data.details is not None:

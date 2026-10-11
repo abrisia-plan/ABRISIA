@@ -142,44 +142,49 @@ const KitsManager = () => {
     setFormData(prev => ({ ...prev, includes: newIncludes.length ? newIncludes : [''] }));
   };
 
-  const handleImageUpload = async (e, isGallery = false) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
+  const uploadOneImage = async (file) => {
+    const formDataUpload = new FormData();
+    formDataUpload.append('file', file);
+    const token = localStorage.getItem('authToken');
+    const response = await fetch(`${BACKEND_URL}/api/admin/upload-image`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: formDataUpload
+    });
+    const data = await response.json();
+    if (!data.success || !data.imageUrl) throw new Error(data.detail || 'Erreur upload');
+    return data.imageUrl;
+  };
 
-    try {
-      const formDataUpload = new FormData();
-      formDataUpload.append('file', file);
-      const token = localStorage.getItem('authToken');
-      const response = await fetch(`${BACKEND_URL}/api/admin/upload-image`, {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: formDataUpload
-      });
-      const data = await response.json();
-      
-      if (data.success && data.imageUrl) {
-        let finalImageUrl = data.imageUrl;
-        if (finalImageUrl.startsWith('/uploads/') || finalImageUrl.includes('localhost')) {
-          const filename = finalImageUrl.split('/uploads/').pop();
-          finalImageUrl = `/uploads/${filename}`;
-        }
-        
-        if (isGallery) {
-          setFormData(prev => ({ ...prev, gallery_images: [...prev.gallery_images, finalImageUrl] }));
-        } else {
-          handleInputChange('main_image', finalImageUrl);
-        }
-        toast({ title: "Image uploadée", description: "L'image a été uploadée avec succès" });
-      } else {
-        throw new Error(data.detail || 'Erreur upload');
+  // Plusieurs photos peuvent être choisies d'un coup.
+  // Si l'image principale est vide, la première photo choisie la remplace.
+  const handleImageUpload = async (e, isGallery = false) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setUploading(true);
+    const urls = [];
+    const failed = [];
+    for (const file of files) {
+      try {
+        urls.push(await uploadOneImage(file));
+      } catch (error) {
+        failed.push(file.name);
       }
-    } catch (error) {
-      toast({ title: "Erreur", description: "Impossible d'uploader l'image: " + error.message, variant: "destructive" });
-    } finally {
-      setUploading(false);
-      if (e.target) e.target.value = '';
     }
+    if (urls.length) {
+      setFormData(prev => {
+        if (!isGallery) return { ...prev, main_image: urls[0] };
+        const rest = [...urls];
+        const main = prev.main_image || rest.shift();
+        return { ...prev, main_image: main, gallery_images: [...prev.gallery_images, ...rest] };
+      });
+      toast({ title: urls.length > 1 ? `${urls.length} photos ajoutées` : 'Photo ajoutée' });
+    }
+    if (failed.length) {
+      toast({ title: "Erreur", description: `Impossible d'ajouter : ${failed.join(', ')}`, variant: "destructive" });
+    }
+    setUploading(false);
+    if (e.target) e.target.value = '';
   };
 
   const handleFileUpload = async (e, fileType) => {
@@ -219,6 +224,17 @@ const KitsManager = () => {
 
   const removeGalleryImage = (index) => {
     setFormData(prev => ({ ...prev, gallery_images: prev.gallery_images.filter((_, i) => i !== index) }));
+  };
+
+  // Échange une photo supplémentaire avec l'image principale
+  const makeMainImage = (index) => {
+    setFormData(prev => {
+      const gallery = [...prev.gallery_images];
+      const chosen = gallery[index];
+      if (prev.main_image) gallery[index] = prev.main_image;
+      else gallery.splice(index, 1);
+      return { ...prev, main_image: chosen, gallery_images: gallery };
+    });
   };
 
   const handleSubmit = async () => {
@@ -406,6 +422,7 @@ const KitsManager = () => {
         onImageUpload={handleImageUpload}
         onFileUpload={handleFileUpload}
         onRemoveGalleryImage={removeGalleryImage}
+        onMakeMainImage={makeMainImage}
         onSubmit={handleSubmit}
         saving={saving}
         uploading={uploading}

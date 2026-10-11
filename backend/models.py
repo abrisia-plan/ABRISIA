@@ -661,6 +661,7 @@ class Project(BaseDocument):
     title: str
     category: str
     image: str
+    gallery_images: List[str] = []
     description: str
     details: List[str]
     dimensions: str
@@ -671,6 +672,7 @@ class ProjectCreate(BaseModel):
     title: str
     category: str
     image: str
+    gallery_images: List[str] = []
     description: str
     details: List[str]
     dimensions: str
@@ -681,6 +683,7 @@ class ProjectUpdate(BaseModel):
     title: Optional[str] = None
     category: Optional[str] = None
     image: Optional[str] = None
+    gallery_images: Optional[List[str]] = None
     description: Optional[str] = None
     details: Optional[List[str]] = None
     dimensions: Optional[str] = None
