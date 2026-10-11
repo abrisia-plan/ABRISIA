@@ -117,13 +117,13 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-slate-700 mt-8 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-center">
+        <div className="border-t border-slate-700 mt-8 pt-8 pb-16 md:pb-0">
+          <div className="flex flex-col items-center text-center space-y-4">
+            <div>
               <p className="text-slate-400">&copy; {new Date().getFullYear()} Abrisia Plan. Tous droits réservés.</p>
               <p className="text-slate-400 text-sm mt-1">Services offerts en français.</p>
             </div>
-            <div className="flex space-x-6 text-sm text-slate-400">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-400">
               <Link to="/mentions-legales" onClick={scrollTop} className="hover:text-teal-400 transition-colors">
                 Mentions légales
               </Link>
