@@ -70,7 +70,7 @@ const Login = () => {
       <div className="w-full max-w-sm space-y-6">
         {/* Logo et titre */}
         <div className="text-center">
-          <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-2 border-stone-200 bg-white">
+          <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden mx-auto mb-4 border-2 border-stone-200 bg-white">
             <img 
               src="/logo-abrisia.jpg" 
               alt="Logo Abrisia" 
