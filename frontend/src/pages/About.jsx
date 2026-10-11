@@ -248,9 +248,7 @@ const About = () => {
               <p className="text-slate-300 leading-relaxed text-base">
                 Sur la vue en plan, nous indiquons l'emplacement des appareils (salle de bain, cuisine, buanderie)
                 pour que votre plombier et votre électricien <strong className="text-white">comprennent tout de suite la distribution de l'espace</strong>
-                et planifient leurs réseaux. En option, à un tarif à part, nous ajoutons un schéma de base de
-                l'électricité (emplacement des prises, interrupteurs et luminaires). Le diamètre des tuyaux et le
-                calcul des circuits restent le travail de votre plombier et de votre électricien.
+                et planifient leurs réseaux.
               </p>
             </div>
           </div>
