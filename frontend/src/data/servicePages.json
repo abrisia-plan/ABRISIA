@@ -23,7 +23,7 @@
     "faq": [
       [
         "Ai-je besoin d'un architecte pour le plan de ma maison ?",
-        "Pas pour une maison unifamiliale isolée d'au plus 2 étages et 1 sous-sol, et de moins de 600 m² (environ 6 458 pi²) de superficie brute totale des planchers : l'article 16.1 de la Loi sur les architectes du Québec permet alors de faire préparer ses plans sans architecte. Au-delà, un architecte est requis : nous vous le disons dès le départ."
+        "Pas pour une maison unifamiliale isolée d'au plus 2 étages et 1 sous-sol, et de moins de 6 458 pi² (600 m²) de superficie brute totale des planchers : l'article 16.1 de la Loi sur les architectes du Québec permet alors de faire préparer ses plans sans architecte. Au-delà, un architecte est requis : nous vous le disons dès le départ."
       ],
       [
         "Je n'ai qu'une idée ou un croquis. Est-ce suffisant ?",
@@ -104,7 +104,7 @@
     "resume": "Duplex à quadruplex, jumelé, en rangée ou garage attaché.",
     "intro": [
       "Multilogement jusqu'à 4 logements (duplex, triplex, quadruplex), maison jumelée ou en rangée, ou garage attaché à la maison : Abrisia Plan dessine les plans des bâtiments qui partagent un mur mitoyen.",
-      "Ces projets doivent respecter les limites de l'article 16.1 de la Loi sur les architectes du Québec : au plus 4 logements, 2 étages, 1 sous-sol et 300 m² (environ 3 229 pi²) de superficie brute totale des planchers, après les travaux. Au-delà, un architecte est requis : nous vous le dirons dès le départ. Une maison isolée avec garage attaché suit plutôt la limite des maisons isolées : au plus 2 étages, 1 sous-sol et moins de 600 m² (environ 6 458 pi²)."
+      "Ces projets doivent respecter les limites de l'article 16.1 de la Loi sur les architectes du Québec : au plus 4 logements, 2 étages, 1 sous-sol et 3 229 pi² (300 m²) de superficie brute totale des planchers, après les travaux. Au-delà, un architecte est requis : nous vous le dirons dès le départ. Une maison isolée avec garage attaché suit plutôt la limite des maisons isolées : au plus 2 étages, 1 sous-sol et moins de 6 458 pi² (600 m²)."
     ],
     "contenu": [
       "Plan de fondation : une représentation de la fondation selon le type choisi, pour vous aider à vous situer. Les mesures sont approximatives : c'est l'entrepreneur qui les détermine. L'emplacement des appareils de plomberie y est indiqué.",
@@ -151,7 +151,7 @@
       "Ajouter une pièce, un solarium ou une verrière : Abrisia Plan dessine votre agrandissement de plain-pied à partir de votre maison actuelle, pour qu'il s'y intègre bien. Les ajouts d'étage ne sont pas offerts.",
       "Un agrandissement demande de bien connaître l'existant. Selon le projet, vous nous transmettez les mesures et les photos, ou nous pouvons nous déplacer dans certains cas pour les prendre.",
       "Avant de commencer, vérifiez auprès de votre municipalité ce qui est permis sur votre terrain (marges, hauteur, superficie) et les documents demandés pour le permis.",
-      "Les limites de la Loi sur les architectes s'appliquent à la maison après l'agrandissement : pour une maison isolée, au plus 2 étages, 1 sous-sol et moins de 600 m² (environ 6 458 pi²) de superficie brute totale des planchers."
+      "Les limites de la Loi sur les architectes s'appliquent à la maison après l'agrandissement : pour une maison isolée, au plus 2 étages, 1 sous-sol et moins de 6 458 pi² (600 m²) de superficie brute totale des planchers."
     ],
     "contenu": [
       "Relevé de la partie existante utile au projet.",

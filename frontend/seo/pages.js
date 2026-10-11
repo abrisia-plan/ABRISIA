@@ -18,7 +18,7 @@ const servicePages = SERVICES.map((p) => ({
     { p: p.intro },
     { h2: 'Ce que comprennent les plans', list: p.contenu },
     // Même phrase que NOTE_PLANS dans src/pages/ServicePage.jsx
-    { p: ["Nos plans représentent votre projet pour vous aider à le visualiser et à vous situer selon vos désirs. Nous ne sommes pas le constructeur : les détails de construction sont déterminés par votre entrepreneur."] },
+    { p: ["Nos plans représentent votre projet pour vous aider à le visualiser et à vous situer selon vos désirs. Nous ne sommes pas le constructeur : les détails de construction sont déterminés par votre entrepreneur. Nos plans sont dessinés en mesures impériales (pieds et pouces)."] },
     ...(p.mesures ? [{ h2: 'Ce dont nous avons besoin', list: p.mesures }] : []),
     { h2: 'Comment ça se passe', list: p.etapes },
     { h2: 'Questions fréquentes', list: p.faq.map(([q, a]) => `${q} ${a}`) },

@@ -9,7 +9,7 @@ import SERVICE_PAGES from '../data/servicePages.json';
 // Le contenu vient de data/servicePages.json, aussi lu par scripts/prerender-seo.js.
 
 const NOTE_PLANS =
-  "Nos plans représentent votre projet pour vous aider à le visualiser et à vous situer selon vos désirs. Nous ne sommes pas le constructeur : les détails de construction sont déterminés par votre entrepreneur.";
+  "Nos plans représentent votre projet pour vous aider à le visualiser et à vous situer selon vos désirs. Nous ne sommes pas le constructeur : les détails de construction sont déterminés par votre entrepreneur. Nos plans sont dessinés en mesures impériales (pieds et pouces).";
 
 const ICONES = {
   'plan-de-maison': Home,
