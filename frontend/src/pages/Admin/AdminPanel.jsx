@@ -47,7 +47,9 @@ const AdminPanel = () => {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('projects');
+  // Les demandes reçues arrivent par courriel (et dans Zoho) : ici, seulement des copies de sauvegarde
+  const [showBackups, setShowBackups] = useState(false);
 
   useEffect(() => {
     // Vérifier l'authentification
@@ -135,14 +137,6 @@ const AdminPanel = () => {
         {/* Sidebar */}
         <aside className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-73px)] p-4">
           <nav className="space-y-2">
-            <Button 
-              variant={activeTab === 'dashboard' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'dashboard' ? 'bg-foret' : ''}`}
-              onClick={() => setActiveTab('dashboard')}
-            >
-              <LayoutDashboard className="w-4 h-4 mr-2" />
-              Tableau de bord
-            </Button>
             <Button 
               variant={activeTab === 'projects' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'projects' ? 'bg-foret' : ''}`}
@@ -232,7 +226,37 @@ const AdminPanel = () => {
               Menu du site
             </Button>
 
+            <Button 
+              variant={activeTab === 'assistant' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'assistant' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('assistant')}
+            >
+              <MessageSquare className="w-4 h-4 mr-2" />
+              Assistant du site
+            </Button>
+
             <div className="border-t border-gray-200 my-3"></div>
+            <button
+              type="button"
+              onClick={() => setShowBackups(v => !v)}
+              className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-gray-700"
+            >
+              Copies de sauvegarde
+              <span>{showBackups ? '▲' : '▼'}</span>
+            </button>
+            {showBackups && (
+              <div className="space-y-2">
+                <p className="px-3 text-xs text-gray-500">
+                  Tout arrive déjà dans votre courriel (et dans Zoho). Ces listes ne servent qu'en cas de besoin.
+                </p>
+            <Button 
+              variant={activeTab === 'dashboard' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'dashboard' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('dashboard')}
+            >
+              <LayoutDashboard className="w-4 h-4 mr-2" />
+              Tableau de bord
+            </Button>
             
             <Button 
               variant={activeTab === 'kit-orders' ? 'default' : 'ghost'}
@@ -259,14 +283,6 @@ const AdminPanel = () => {
               Messages et Zoho
             </Button>
             <Button 
-              variant={activeTab === 'assistant' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'assistant' ? 'bg-foret' : ''}`}
-              onClick={() => setActiveTab('assistant')}
-            >
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Assistant du site
-            </Button>
-            <Button 
               variant={activeTab === 'candidatures' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'candidatures' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('candidatures')}
@@ -274,6 +290,8 @@ const AdminPanel = () => {
               <FileText className="w-4 h-4 mr-2" />
               Candidatures CV
             </Button>
+              </div>
+            )}
           </nav>
         </aside>
 
