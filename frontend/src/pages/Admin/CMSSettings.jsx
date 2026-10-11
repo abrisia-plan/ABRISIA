@@ -3,18 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { Textarea } from '../../components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
 import { 
   Upload, 
   Image as ImageIcon, 
   Settings, 
-  Palette,
-  Type,
   Save,
   Loader2,
-  RefreshCw,
-  Eye
+  RefreshCw
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import { cmsService, projectService, handleApiError } from '../../services/api';
@@ -123,14 +119,6 @@ const CMSSettings = () => {
     }
   };
 
-  const presetColors = [
-    { name: 'Teal', primary: '#0f766e', secondary: '#f59e0b', accent: '#10b981' },
-    { name: 'Bleu', primary: '#1e40af', secondary: '#f97316', accent: '#06b6d4' },
-    { name: 'Vert', primary: '#166534', secondary: '#eab308', accent: '#22c55e' },
-    { name: 'Rouge', primary: '#991b1b', secondary: '#ca8a04', accent: '#f87171' },
-    { name: 'Violet', primary: '#6b21a8', secondary: '#f59e0b', accent: '#a855f7' },
-    { name: 'Gris', primary: '#374151', secondary: '#f59e0b', accent: '#6b7280' },
-  ];
 
   if (loading) {
     return (
@@ -144,8 +132,8 @@ const CMSSettings = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Design & Contenu</h2>
-          <p className="text-gray-600 mt-1">Personnalisez l'apparence de votre site comme sur Canva</p>
+          <h2 className="text-2xl font-bold text-gray-900">Design & Images</h2>
+          <p className="text-gray-600 mt-1">Le logo, la grande image de la page d'accueil et vos coordonnées affichées sur le site.</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={loadSettings}>
@@ -167,22 +155,14 @@ const CMSSettings = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="branding" className="flex items-center gap-2">
             <ImageIcon className="w-4 h-4" />
-            Logo & Images
-          </TabsTrigger>
-          <TabsTrigger value="colors" className="flex items-center gap-2">
-            <Palette className="w-4 h-4" />
-            Couleurs
-          </TabsTrigger>
-          <TabsTrigger value="content" className="flex items-center gap-2">
-            <Type className="w-4 h-4" />
-            Textes
+            Logo et image d'accueil
           </TabsTrigger>
           <TabsTrigger value="contact" className="flex items-center gap-2">
             <Settings className="w-4 h-4" />
-            Contact & SEO
+            Coordonnées
           </TabsTrigger>
         </TabsList>
 
@@ -335,202 +315,6 @@ const CMSSettings = () => {
           )}
         </TabsContent>
 
-        {/* Onglet Couleurs */}
-        <TabsContent value="colors" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Palette className="w-5 h-5" />
-                Thèmes prédéfinis
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {presetColors.map((preset) => (
-                  <Button
-                    key={preset.name}
-                    variant="outline"
-                    className="h-auto p-4 flex flex-col items-center gap-2"
-                    onClick={() => {
-                      handleChange('primary_color', preset.primary);
-                      handleChange('secondary_color', preset.secondary);
-                      handleChange('accent_color', preset.accent);
-                      toast({
-                        title: `Thème ${preset.name} appliqué`,
-                        description: "N'oubliez pas de sauvegarder"
-                      });
-                    }}
-                  >
-                    <div className="flex gap-1">
-                      <div className="w-6 h-6 rounded-full" style={{ backgroundColor: preset.primary }} />
-                      <div className="w-6 h-6 rounded-full" style={{ backgroundColor: preset.secondary }} />
-                      <div className="w-6 h-6 rounded-full" style={{ backgroundColor: preset.accent }} />
-                    </div>
-                    <span className="text-xs">{preset.name}</span>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Couleurs personnalisées</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div>
-                  <Label>Couleur principale</Label>
-                  <div className="flex gap-2 mt-2">
-                    <Input
-                      type="color"
-                      value={settings.primary_color}
-                      onChange={(e) => handleChange('primary_color', e.target.value)}
-                      className="w-16 h-10 p-1 cursor-pointer"
-                    />
-                    <Input
-                      value={settings.primary_color}
-                      onChange={(e) => handleChange('primary_color', e.target.value)}
-                      placeholder="#0f766e"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">Boutons, liens, titres</p>
-                </div>
-                
-                <div>
-                  <Label>Couleur secondaire</Label>
-                  <div className="flex gap-2 mt-2">
-                    <Input
-                      type="color"
-                      value={settings.secondary_color}
-                      onChange={(e) => handleChange('secondary_color', e.target.value)}
-                      className="w-16 h-10 p-1 cursor-pointer"
-                    />
-                    <Input
-                      value={settings.secondary_color}
-                      onChange={(e) => handleChange('secondary_color', e.target.value)}
-                      placeholder="#f59e0b"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">Accents, badges</p>
-                </div>
-                
-                <div>
-                  <Label>Couleur d'accent</Label>
-                  <div className="flex gap-2 mt-2">
-                    <Input
-                      type="color"
-                      value={settings.accent_color}
-                      onChange={(e) => handleChange('accent_color', e.target.value)}
-                      className="w-16 h-10 p-1 cursor-pointer"
-                    />
-                    <Input
-                      value={settings.accent_color}
-                      onChange={(e) => handleChange('accent_color', e.target.value)}
-                      placeholder="#10b981"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">Succès, validation</p>
-                </div>
-                
-                <div>
-                  <Label>Couleur de fond</Label>
-                  <div className="flex gap-2 mt-2">
-                    <Input
-                      type="color"
-                      value={settings.background_color}
-                      onChange={(e) => handleChange('background_color', e.target.value)}
-                      className="w-16 h-10 p-1 cursor-pointer"
-                    />
-                    <Input
-                      value={settings.background_color}
-                      onChange={(e) => handleChange('background_color', e.target.value)}
-                      placeholder="#fefbf4"
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">Arrière-plan du site</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Prévisualisation */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Eye className="w-5 h-5" />
-                Prévisualisation
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div 
-                className="p-6 rounded-lg"
-                style={{ backgroundColor: settings.background_color }}
-              >
-                <h3 
-                  className="text-2xl font-bold mb-4"
-                  style={{ color: settings.primary_color }}
-                >
-                  Titre exemple
-                </h3>
-                <p className="text-gray-700 mb-4">
-                  Ceci est un texte de démonstration pour voir l'effet des couleurs.
-                </p>
-                <div className="flex gap-2">
-                  <button
-                    className="px-4 py-2 rounded-lg text-white"
-                    style={{ backgroundColor: settings.primary_color }}
-                  >
-                    Bouton principal
-                  </button>
-                  <button
-                    className="px-4 py-2 rounded-lg text-white"
-                    style={{ backgroundColor: settings.secondary_color }}
-                  >
-                    Bouton secondaire
-                  </button>
-                  <span
-                    className="px-3 py-1 rounded-full text-white text-sm"
-                    style={{ backgroundColor: settings.accent_color }}
-                  >
-                    Badge
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Onglet Textes */}
-        <TabsContent value="content" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Informations du site</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="site_name">Nom du site</Label>
-                <Input
-                  id="site_name"
-                  value={settings.site_name}
-                  onChange={(e) => handleChange('site_name', e.target.value)}
-                  placeholder="Abrisia Plan"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="slogan">Slogan</Label>
-                <Input
-                  id="slogan"
-                  value={settings.slogan}
-                  onChange={(e) => handleChange('slogan', e.target.value)}
-                  placeholder="Des espaces sur mesure, une vie à votre rythme"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         {/* Onglet Contact & SEO */}
         <TabsContent value="contact" className="space-y-6">
           <Card>
@@ -582,43 +366,6 @@ const CMSSettings = () => {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>SEO (Référencement)</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="meta_title">Titre SEO</Label>
-                <Input
-                  id="meta_title"
-                  value={settings.meta_title}
-                  onChange={(e) => handleChange('meta_title', e.target.value)}
-                  placeholder="Abrisia Plan - Plans sur mesure Saguenay QC"
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="meta_description">Description SEO</Label>
-                <Textarea
-                  id="meta_description"
-                  value={settings.meta_description}
-                  onChange={(e) => handleChange('meta_description', e.target.value)}
-                  placeholder="Description de votre site pour Google..."
-                  rows={3}
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="meta_keywords">Mots-clés</Label>
-                <Input
-                  id="meta_keywords"
-                  value={settings.meta_keywords}
-                  onChange={(e) => handleChange('meta_keywords', e.target.value)}
-                  placeholder="plans maison, architecte, mini-maison, chalet"
-                />
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
       </Tabs>
     </div>

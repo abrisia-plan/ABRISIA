@@ -6,11 +6,15 @@ import { Card, CardContent } from '../components/ui/card';
 import { approaches, processSteps as defaultSteps } from '../data/mock';
 import * as Icons from 'lucide-react';
 import SEO from '../components/SEO';
+import useSiteSettings from '../hooks/useSiteSettings';
+
+const HERO_IMAGE = 'https://customer-assets.emergentagent.com/job_c939612f-c018-47c9-949a-bf666b73ec90/artifacts/s0baspap_Copie%20de%20Copie%20de%20Abrisia.jpg';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Home = () => {
   const navigate = useNavigate();
+  const site = useSiteSettings();
   const [rotationTick, setRotationTick] = useState(0);
   const [categories, setCategories] = useState([]);
   const [inspirationProjects, setInspirationProjects] = useState([]);
@@ -153,7 +157,7 @@ const Home = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('https://customer-assets.emergentagent.com/job_c939612f-c018-47c9-949a-bf666b73ec90/artifacts/s0baspap_Copie%20de%20Copie%20de%20Abrisia.jpg')`
+            backgroundImage: `url('${site.hero_image || HERO_IMAGE}')`
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50"></div>

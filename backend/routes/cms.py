@@ -163,35 +163,56 @@ async def update_content(
 
 # ========== PARAMÈTRES DU SITE ==========
 
+HERO_IMAGE_DEFAULT = "https://customer-assets.emergentagent.com/job_c939612f-c018-47c9-949a-bf666b73ec90/artifacts/s0baspap_Copie%20de%20Copie%20de%20Abrisia.jpg"
+OLD_DEFAULT_HERO = "https://images.unsplash.com/photo-1629740053362-220a869d7cc1"
+OLD_DEFAULT_HOURS = "Lundi-Vendredi 8h-18h, Weekends sur rendez-vous"
+SITE_KEY = {"key": "site"}
+# Champs que le site public peut lire (rien de secret)
+PUBLIC_SETTINGS = ("logo_url", "hero_image", "contact_email", "contact_phone",
+                   "contact_address", "business_hours", "facebook_url", "instagram_url", "linkedin_url")
+
+
+async def _load_site_settings(db):
+    """Fiche des paramètres du site. site_settings contient aussi le menu, les tarifs
+    et les notes de l'assistant : on cible toujours la fiche {"key": "site"}."""
+    settings = await db.site_settings.find_one(SITE_KEY)
+    if not settings:
+        # Ancienne fiche sans clé (créée avant) : on la marque
+        legacy = await db.site_settings.find_one({"key": {"$exists": False}, "site_name": {"$exists": True}})
+        if legacy:
+            await db.site_settings.update_one({"_id": legacy["_id"]}, {"$set": SITE_KEY})
+            settings = await db.site_settings.find_one({"_id": legacy["_id"]})
+    if settings and str(settings.get("hero_image") or "").startswith(OLD_DEFAULT_HERO):
+        # L'ancienne image par défaut n'a jamais été celle du site
+        settings["hero_image"] = HERO_IMAGE_DEFAULT
+    if settings and settings.get("business_hours") == OLD_DEFAULT_HOURS:
+        # Anciennes heures par défaut, jamais affichées : la page Contact garde les siennes
+        settings["business_hours"] = ""
+    return settings
+
+
 @router.get("/settings")
 async def get_site_settings(current_user: dict = Depends(require_admin)):
     """Obtenir les paramètres du site"""
     try:
         db = get_database()
         
-        settings = await db.site_settings.find_one({})
+        settings = await _load_site_settings(db)
         
         if not settings:
             # Créer les paramètres par défaut
             default_settings = {
+                **SITE_KEY,
                 "site_name": "Abrisia Plan",
-                "slogan": "Des espaces sur mesure, une vie à votre rythme",
-                "hero_image": "https://images.unsplash.com/photo-1629740053362-220a869d7cc1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Nzd8MHwxfHNlYXJjaHwzfHxmam9yZCUyMGxhbmRzY2FwZXxlbnwwfHx8fDE3NTUwNjA0NTl8MA&ixlib=rb-4.1.0&q=85",
-                "logo_url": None,
-                "primary_color": "#0f766e",
-                "secondary_color": "#f59e0b", 
-                "accent_color": "#10b981",
-                "background_color": "#fefbf4",
+                "hero_image": HERO_IMAGE_DEFAULT,
+                "logo_url": "/logo-abrisia.jpg",
                 "contact_email": "abrisia0plan@gmail.com",
                 "contact_phone": "",
-                "contact_address": "Saguenay, QC, Canada",
-                "business_hours": "Lundi-Vendredi 8h-18h, Weekends sur rendez-vous",
+                "contact_address": "Saguenay–Lac-Saint-Jean, Québec",
+                "business_hours": "",
                 "facebook_url": None,
                 "instagram_url": None,
                 "linkedin_url": None,
-                "meta_title": "Abrisia Plan - Plans sur mesure Saguenay QC",
-                "meta_description": "Spécialiste en plans architecturaux sur mesure au Saguenay. Mini-maisons, chalets, extensions - Des espaces adaptés à votre rythme.",
-                "meta_keywords": "plans maison, architecte saguenay, mini-maison, chalet, construction quebec",
                 "created_at": datetime.utcnow(),
                 "updated_at": datetime.utcnow()
             }
@@ -202,8 +223,8 @@ async def get_site_settings(current_user: dict = Depends(require_admin)):
         # Formater la réponse
         formatted_settings = {
             "id": str(settings["_id"]),
-            **{k: v for k, v in settings.items() if k not in ["_id", "created_at", "updated_at"]},
-            "updatedAt": settings["updated_at"].isoformat()
+            **{k: v for k, v in settings.items() if k not in ["_id", "created_at", "updated_at", "key"]},
+            "updatedAt": settings["updated_at"].isoformat() if settings.get("updated_at") else None
         }
         
         return {
@@ -234,9 +255,10 @@ async def update_site_settings(
             if value is not None:
                 update_fields[field] = value
         
-        # Mettre à jour les paramètres existants ou créer si ils n'existent pas
+        # Mettre à jour la fiche du site (jamais celle du menu ou des tarifs)
+        await _load_site_settings(db)  # marque une ancienne fiche si besoin
         result = await db.site_settings.update_one(
-            {},
+            SITE_KEY,
             {"$set": update_fields},
             upsert=True
         )
@@ -547,6 +569,19 @@ async def update_navigation(data: dict, current_user: dict = Depends(require_adm
 
 # Route publique pour obtenir le menu (sans auth)
 public_router = APIRouter(prefix="/navigation", tags=["navigation"])
+site_public_router = APIRouter(tags=["site"])
+
+
+@site_public_router.get("/site-settings")
+async def get_public_site_settings():
+    """Logo, image d'accueil et coordonnées choisis dans l'admin (Design & Images)"""
+    try:
+        db = get_database()
+        settings = await _load_site_settings(db) or {}
+        return {"success": True, "settings": {k: settings.get(k) for k in PUBLIC_SETTINGS if settings.get(k)}}
+    except Exception as e:
+        logger.error(f"Erreur paramètres publics: {e}")
+        return {"success": True, "settings": {}}
 
 @public_router.get("/menu")
 async def get_public_navigation():

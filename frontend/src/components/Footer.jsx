@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Mail, Users } from 'lucide-react';
+import { MapPin, Mail, Phone, Users } from 'lucide-react';
 import SERVICE_PAGES from '../data/servicePages.json';
+import useSiteSettings from '../hooks/useSiteSettings';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -14,6 +15,7 @@ const defaultFooterNav = [
 ];
 
 const Footer = () => {
+  const site = useSiteSettings();
   const [navigation, setNavigation] = useState(defaultFooterNav);
 
   useEffect(() => {
@@ -38,7 +40,7 @@ const Footer = () => {
             <div className="flex items-center space-x-3">
               <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 bg-white">
                 <img 
-                  src="/logo-abrisia.jpg" 
+                  src={site.logo_url || "/logo-abrisia.jpg"} 
                   alt="Logo Abrisia" 
                   className="w-full h-full object-contain"
                 />
@@ -97,14 +99,20 @@ const Footer = () => {
             <div className="space-y-3 text-slate-300">
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-teal-400 flex-shrink-0" />
-                <span>Saguenay–Lac-Saint-Jean, Québec</span>
+                <span>{site.contact_address || 'Saguenay–Lac-Saint-Jean, Québec'}</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-teal-400 flex-shrink-0" />
-                <a href="mailto:abrisia0plan@gmail.com" className="hover:text-teal-400 transition-colors">
-                  abrisia0plan@gmail.com
+                <a href={`mailto:${site.contact_email || 'abrisia0plan@gmail.com'}`} className="hover:text-teal-400 transition-colors">
+                  {site.contact_email || 'abrisia0plan@gmail.com'}
                 </a>
               </div>
+              {site.contact_phone && (
+                <div className="flex items-center space-x-3">
+                  <Phone className="w-5 h-5 text-teal-400 flex-shrink-0" />
+                  <a href={`tel:${site.contact_phone}`} className="hover:text-teal-400 transition-colors">{site.contact_phone}</a>
+                </div>
+              )}
             </div>
           </div>
         </div>
