@@ -58,7 +58,7 @@ export const faqItems = [
   {
     id: 2,
     question: "Jusqu'à quelle taille de maison pouvez-vous dessiner ?",
-    answer: "Pour une habitation unifamiliale isolée, nous pouvons concevoir des plans pour une superficie brute totale de moins de 600 m² (~6 458 pi²), sur 2 étages plus 1 sous-sol, conformément à l'article 16.1 de la Loi sur les architectes du Québec."
+    answer: "Pour une habitation unifamiliale isolée, nous pouvons concevoir des plans pour une superficie brute totale de moins de 600 m² (environ 6 458 pi²), sur 2 étages plus 1 sous-sol, conformément à l'article 16.1 de la Loi sur les architectes du Québec."
   },
   {
     id: 3,

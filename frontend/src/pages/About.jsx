@@ -17,7 +17,7 @@ const About = () => {
       title: "Habitations unifamiliales isolées",
       subtitle: "Maisons détachées",
       details: [
-        "Superficie brute totale des planchers : Moins de 600 m² (~6 458 pi²)",
+        "Superficie brute totale des planchers : Moins de 600 m² (environ 6 458 pi²)",
         "Hauteur maximale : 2 étages au-dessus du sol et 1 étage de sous-sol"
       ]
     },
@@ -27,7 +27,7 @@ const About = () => {
       subtitle: "Duplex, Triplex, Quadruplex",
       details: [
         "Configuration : Maximum de 4 logements par bâtiment",
-        "Superficie brute totale des planchers : 300 m² (3 229 pi²) au plus (~3 229 pi²)",
+        "Superficie brute totale des planchers : 300 m² (environ 3 229 pi²) au plus (environ 3 229 pi²)",
         "Hauteur maximale : 2 étages au-dessus du sol et 1 étage de sous-sol"
       ]
     },
@@ -36,7 +36,7 @@ const About = () => {
       title: "Habitations jumelées ou en rangée",
       subtitle: "Unifamiliales jumelées / rangées",
       details: [
-        "Superficie brute totale des planchers : 300 m² (3 229 pi²) au plus pour le bâtiment",
+        "Superficie brute totale des planchers : 300 m² (environ 3 229 pi²) au plus pour le bâtiment",
         "Hauteur maximale : 2 étages au-dessus du sol et 1 étage de sous-sol"
       ]
     },
@@ -45,7 +45,7 @@ const About = () => {
       title: "Bâtiments commerciaux et industriels légers",
       subtitle: "Commerces, bureaux, ateliers",
       details: [
-        "Superficie brute totale des planchers : 300 m² (3 229 pi²) au plus",
+        "Superficie brute totale des planchers : 300 m² (environ 3 229 pi²) au plus",
         "Hauteur maximale : 2 étages au-dessus du sol et 1 étage de sous-sol"
       ]
     }

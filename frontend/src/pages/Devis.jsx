@@ -581,7 +581,7 @@ const Devis = () => {
                     onChange={handleInputChange}
                     rows={8}
                     className="border-stone-300 focus:border-teal-500"
-                    placeholder="Exemple : Mini-maison 35 m² (377 pi²) sur fondations béton, style scandinave moderne. Bois local, isolation supérieure, chauffage géothermique. Terrain plat avec pente douce vers sud, services municipaux à 50m. Budget construction 180000$, plans requis pour printemps 2027. Inspiration : grandes fenêtres, toit cathédrale, foyer central..."
+                    placeholder="Exemple : Mini-maison 35 m² (environ 377 pi²) sur fondations béton, style scandinave moderne. Bois local, isolation supérieure, chauffage géothermique. Terrain plat avec pente douce vers sud, services municipaux à 50m. Budget construction 180000$, plans requis pour printemps 2027. Inspiration : grandes fenêtres, toit cathédrale, foyer central..."
                   />
                 </div>
 
@@ -675,7 +675,7 @@ const Devis = () => {
                 incluant les plans nécessaires (fondation, architecture, etc.) selon vos besoins.
               </p>
               <p className="text-sm text-slate-500">
-                <strong>Spécialité :</strong> Habitations unifamiliales de moins de 600 m² (~6 458 pi²) — Services à distance, ou sur place au besoin
+                <strong>Spécialité :</strong> Habitations unifamiliales de moins de 600 m² (environ 6 458 pi²) — Services à distance, ou sur place au besoin
               </p>
             </div>
           </div>
