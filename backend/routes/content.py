@@ -607,6 +607,9 @@ Nous conservons vos renseignements le temps nécessaire pour traiter votre deman
 ## Témoins (cookies)
 Ce site utilise des témoins pour son bon fonctionnement. Vous pouvez les désactiver dans les paramètres de votre navigateur.
 
+## Statistiques de visite
+Nous mesurons la fréquentation du site de façon anonyme (pages vues, provenance des visites, type d'appareil, pays), sans témoin et sans vous identifier. Ces statistiques servent uniquement à améliorer le site.
+
 ## Vos droits
 Vous pouvez en tout temps demander d'accéder à vos renseignements, de les corriger ou de les supprimer, ou retirer votre consentement. Écrivez à abrisia0plan@gmail.com : nous vous répondrons dans un délai de 30 jours.
 
