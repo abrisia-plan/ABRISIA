@@ -52,7 +52,7 @@
             #splash { display: none; }
             .avec-splash #splash { display: flex; position: fixed; inset: 0; z-index: 9999; align-items: center; justify-content: center; background: #0d4f4f; transition: opacity .45s ease; }
             #splash.cache { opacity: 0; pointer-events: none; }
-            #splash img { width: 132px; height: 132px; border-radius: 50%; background: #fff; box-shadow: 0 8px 30px rgba(0,0,0,.25); animation: splash-entree .6s ease-out both; }
+            #splash img { width: min(56vw, 240px); height: min(56vw, 240px); object-fit: contain; border-radius: 50%; background: #fff; box-shadow: 0 8px 30px rgba(0,0,0,.25); animation: splash-entree .6s ease-out both; }
             @keyframes splash-entree { from { opacity: 0; transform: scale(.85); } to { opacity: 1; transform: scale(1); } }
             @media (prefers-reduced-motion: reduce) { #splash img { animation: none; } #splash { transition: none; } }
         </style>
@@ -66,7 +66,7 @@
             <p>Dessin en bâtiment et conception de plans résidentiels, à distance ou sur place, depuis le Saguenay–Lac-Saint-Jean. Plans conçus selon le Code de construction du Québec et le Code national du bâtiment du Canada, pour votre permis.</p>
             <p>Activez JavaScript pour utiliser le site, ou écrivez-nous à abrisia0plan@gmail.com.</p>
         </noscript>
-        <div id="splash" aria-hidden="true"><img src="/logo-splash.jpg" alt="" width="132" height="132" /></div>
+        <div id="splash" aria-hidden="true"><img src="/logo-splash.jpg" alt="" width="240" height="240" /></div>
         <div id="root"></div>
         <!--
       This HTML file is a template.
