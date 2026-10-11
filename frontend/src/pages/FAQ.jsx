@@ -24,7 +24,7 @@ const FAQS = [
   },
   {
     q: "Que contient un plan de fondation ?",
-    a: "Un plan de fondation montre les murs de fondation avec toutes leurs dimensions, leur épaisseur, les semelles, les colonnes ou piliers, les ouvertures (portes et fenêtres de sous-sol), la dalle, le drain de fondation et une coupe type avec l'isolation. Lorsque la structure l'exige, les calculs sont faits par un ingénieur partenaire.",
+    a: "Le plan de fondation représente la forme et le type de fondation, avec des mesures approximatives que l'entrepreneur confirmera. Sur une dalle, l'emplacement des appareils de plomberie y est indiqué.",
   },
   {
     q: "À quoi ressemblent les plans que je vais recevoir ?",
@@ -48,7 +48,7 @@ const FAQS = [
   },
   {
     q: "Combien coûtent des plans de maison ou de chalet ?",
-    a: "Le prix dépend de la superficie, du nombre d'étages, de la complexité et des plans requis. Le devis est gratuit et sans engagement : décrivez votre projet dans le formulaire de devis et nous vous répondons rapidement.",
+    a: "Le prix dépend de la superficie, du nombre d'étages, de la complexité et des plans requis. Le devis est gratuit, même si votre projet n'est pas encore décidé : décrivez votre projet dans le formulaire de devis et nous vous répondons rapidement.",
   },
   {
     q: "Quelle est la différence entre un plan de la Collection et un plan sur mesure ?",

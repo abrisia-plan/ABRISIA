@@ -21,8 +21,12 @@ const PROJETS = [
 ];
 
 const CONTENU = [
-  "Plan d'implantation projeté, à partir de votre certificat de localisation", 'Plan de fondation', 'Plans des étages, cotés',
-  'Élévations des façades', 'Coupes de mur et détails de construction', 'Cartouche sur chaque feuille',
+  "Plan de fondation, avec des mesures approximatives que l'entrepreneur confirmera",
+  "Vue en plan de chaque étage : pièces, murs, portes, fenêtres, appareils et mobilier de base",
+  "Les 4 élévations des façades",
+  "Coupe de mur et coupe transversale",
+  "Vue en plan du toit",
+  "Plan d'implantation projeté, à partir de votre certificat de localisation",
 ];
 
 const ETAPES = [
@@ -120,7 +124,7 @@ const PlansRegion = () => {
 
           <div className="text-center bg-white border border-stone-200 rounded-xl p-8">
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Parlez-nous de votre projet</h2>
-            <p className="text-slate-600 mb-6">Le devis est gratuit et sans engagement.</p>
+            <p className="text-slate-600 mb-6">Le devis est gratuit : même si votre projet n'est pas encore décidé, demandez-le.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/devis" className="inline-block bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 rounded-full font-semibold">
                 Demander un devis gratuit

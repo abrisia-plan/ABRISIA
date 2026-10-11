@@ -78,19 +78,30 @@ const ServicePage = ({ slug }) => {
             <FloorPlanDrawing className="w-full max-w-sm mx-auto text-teal-800" />
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-4">Ce que comprennent les plans</h2>
-              <ul className="space-y-2 text-slate-700">
-                {page.contenu.map((c) => <li key={c} className="flex gap-2"><span className="text-teal-700">•</span>{c}</li>)}
-              </ul>
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-4">Comment ça se passe</h2>
-              <ol className="space-y-2 text-slate-700 list-decimal list-inside">
-                {page.etapes.map((e) => <li key={e}>{e}</li>)}
-              </ol>
-            </div>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800 mb-4">Ce que comprennent les plans</h2>
+            <ul className="space-y-3 text-slate-700">
+              {page.contenu.map((c) => {
+                const i = c.indexOf(' : ');
+                return (
+                  <li key={c} className="flex gap-3 bg-white border border-stone-200 rounded-lg p-4">
+                    <span className="text-teal-700 font-bold">•</span>
+                    <span>
+                      {i > 0 ? (
+                        <><strong className="text-slate-800">{c.slice(0, i)}</strong> : {c.slice(i + 3)}</>
+                      ) : c}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800 mb-4">Comment ça se passe</h2>
+            <ol className="space-y-2 text-slate-700 list-decimal list-inside">
+              {page.etapes.map((e) => <li key={e}>{e}</li>)}
+            </ol>
           </div>
 
           {page.mesures && (
@@ -120,7 +131,7 @@ const ServicePage = ({ slug }) => {
 
           <div className="text-center bg-white border border-stone-200 rounded-xl p-8">
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Parlez-nous de votre projet</h2>
-            <p className="text-slate-600 mb-6">Le devis est gratuit et sans engagement.</p>
+            <p className="text-slate-600 mb-6">Le devis est gratuit : même si votre projet n'est pas encore décidé, demandez-le.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/devis" className="inline-block bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 rounded-full font-semibold">
                 Demander un devis gratuit

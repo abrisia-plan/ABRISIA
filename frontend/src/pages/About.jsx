@@ -59,18 +59,18 @@ const About = () => {
     },
     {
       icon: <Layers className="w-6 h-6 text-teal-700" />,
-      title: "Plans de fondations et de planchers",
-      desc: "Aménagement intérieur détaillé et coté pour chaque niveau."
+      title: "Fondation et vues en plan",
+      desc: "Fondation avec des mesures approximatives confirmées par l'entrepreneur, puis chaque étage avec les pièces, portes, fenêtres, appareils et mobilier de base."
     },
     {
       icon: <Eye className="w-6 h-6 text-teal-700" />,
       title: "Élévations des façades",
-      desc: "Représentation visuelle extérieure avec hauteurs et matériaux de revêtement."
+      desc: "Les 4 façades, avec les niveaux des planchers, la hauteur des murs et de la fondation, et le toit."
     },
     {
       icon: <PenTool className="w-6 h-6 text-teal-700" />,
-      title: "Coupes de mur et détails constructifs",
-      desc: "Spécifications de l'enveloppe conformes aux codes du bâtiment en vigueur."
+      title: "Coupes et vue du toit",
+      desc: "Coupe de mur et coupe transversale (composition des murs, des planchers et du toit), et vue en plan du toit."
     },
     {
       icon: <FileCheck className="w-6 h-6 text-teal-700" />,

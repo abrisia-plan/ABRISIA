@@ -45,7 +45,7 @@ module.exports = [
     sections: [
       { p: ["Abrisia Plan est un studio de dessin en bâtiment établi au Saguenay–Lac-Saint-Jean. Nous préparons les plans de maisons, chalets, camps, mini-maisons, agrandissements et garages de la région, prêts pour la demande de permis à votre municipalité."] },
       { h2: 'Où travaillons-nous ?', p: ["Partout au Saguenay–Lac-Saint-Jean : Saguenay (Chicoutimi, Jonquière, La Baie), Alma, Roberval, Saint-Félicien, Dolbeau-Mistassini, Saint-Honoré, Saint-Fulgence, L'Anse-Saint-Jean, Métabetchouan–Lac-à-la-Croix, Desbiens, Saint-Prime, Normandin et les environs, ainsi qu'ailleurs au Québec, à distance."] },
-      { h2: 'Ce que contiennent nos plans', list: ["Plan d'implantation projeté, à partir de votre certificat de localisation", 'Plan de fondation', 'Plans des étages, cotés', 'Élévations des façades', 'Coupes de mur et détails de construction', 'Cartouche sur chaque feuille'] },
+      { h2: 'Ce que contiennent nos plans', list: ["Plan de fondation, avec des mesures approximatives que l'entrepreneur confirmera", "Vue en plan de chaque étage : pièces, murs, portes, fenêtres, appareils et mobilier de base", "Les 4 élévations des façades", "Coupe de mur et coupe transversale", "Vue en plan du toit", "Plan d'implantation projeté, à partir de votre certificat de localisation"] },
       { h2: 'Comment ça se passe', list: ['Vous décrivez votre projet dans le formulaire de devis (photos, croquis et plans acceptés).', 'Nous en discutons et préparons des croquis.', 'Nous réalisons les plans détaillés.', 'Vous recevez vos plans en PDF, prêts pour votre demande de permis.'] },
     ],
     links: [DEVIS, CONTACT, { href: '/faq', text: 'Questions fréquentes' }],
@@ -67,7 +67,7 @@ module.exports = [
     h1: 'Services de dessin en bâtiment',
     sections: [
       { h2: 'Types de bâtiments', list: ['Habitations unifamiliales isolées', 'Habitations multifamiliales : duplex, triplex, quadruplex', 'Habitations jumelées ou en rangée', 'Bâtiments commerciaux et industriels légers'] },
-      { h2: 'Livrables', list: ["Plan d'implantation projeté, à partir de votre certificat de localisation", 'Plans de fondations et de planchers', 'Élévations des façades', 'Coupes de mur et détails constructifs', 'Cartouche réglementaire'] },
+      { h2: 'Livrables', list: ["Plan de fondation, avec des mesures approximatives que l'entrepreneur confirmera", "Vue en plan de chaque étage : pièces, murs, portes, fenêtres, appareils et mobilier de base", "Les 4 élévations des façades", "Coupe de mur et coupe transversale", "Vue en plan du toit", "Plan d'implantation projeté, à partir de votre certificat de localisation"] },
       { h2: 'Pourquoi Abrisia Plan', list: ['Services à distance, déplacement au besoin', 'Conformité aux codes de construction et à la Loi sur les architectes du Québec', 'Approche personnalisée', 'Fichiers CAO/DAO pour les ingénieurs et architectes'] },
     ],
     links: [DEVIS],
@@ -103,7 +103,7 @@ module.exports = [
     title: 'Demander un devis | Abrisia Plan',
     description: 'Demandez un devis gratuit pour vos plans. Plans de mini-maison, chalet, maison unifamiliale, extension ou rénovation au Québec. Joignez photos, croquis et plans.',
     h1: 'Demander un devis gratuit',
-    sections: [{ p: ['Décrivez votre projet, joignez vos photos, croquis ou plans, et indiquez comment vous préférez être contacté. Le devis est gratuit et sans engagement.'] }],
+    sections: [{ p: ['Décrivez votre projet, joignez vos photos, croquis ou plans, et indiquez comment vous préférez être contacté. Le devis est gratuit, même si votre projet n\'est pas encore décidé.'] }],
     links: [CONTACT],
   },
   {

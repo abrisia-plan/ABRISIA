@@ -349,7 +349,7 @@ const APropos = () => {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl sm:text-4xl font-bold mb-4">Vous avez un projet en tête ?</h2>
         <p className="text-lg text-teal-100 mb-8">
-          Une pièce, une maison ou un meuble : parlons-en. Le devis est gratuit et sans engagement.
+          Une pièce, une maison ou un meuble : parlons-en. Le devis est gratuit, même si votre projet n'est pas encore décidé.
         </p>
         <Link
           to="/devis"

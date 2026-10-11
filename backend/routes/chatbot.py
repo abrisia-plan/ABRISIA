@@ -30,7 +30,7 @@ def fallback_answer(message: str) -> str:
     if any(w in text for w in ("entrepreneur", "pro", "sous-traitance", "sous traitance")):
         return f"Pour les entrepreneurs, consultez notre Espace Pro : {SITE_URL}/espace-pro"
     if any(w in text for w in ("prix", "coût", "cout", "combien", "tarif", "devis", "soumission", "plan")):
-        return f"Chaque projet est unique : demandez un devis gratuit et sans engagement, nous vous répondons sous 24 h : {SITE_URL}/devis"
+        return f"Chaque projet est unique : demandez un devis gratuit (même si votre projet n'est pas encore décidé), nous vous répondons sous 24 h : {SITE_URL}/devis"
     return ("Bonjour ! Je suis l'assistant d'Abrisia Plan. Pour un projet de plans (maison, chalet, mini-maison, "
             f"agrandissement, meuble sur mesure), demandez un devis gratuit : {SITE_URL}/devis, "
             f"ou écrivez-nous : {SITE_URL}/contact")
@@ -38,13 +38,12 @@ def fallback_answer(message: str) -> str:
 
 # Contenu habituel de chaque plan (utilisé si le champ « contenu » est vide dans l'admin)
 DEFAULT_PLAN_CONTENTS = {
-    "fondation": "Vue de dessus des murs de fondation avec toutes les cotes, épaisseur des murs, semelles (largeur et "
-                 "épaisseur), colonnes ou piliers et leurs semelles, ouvertures (portes, fenêtres de sous-sol), dalle, "
-                 "drain de fondation, coupe type de la fondation avec l'isolation. Si la structure le demande, les "
-                 "calculs sont faits par un ingénieur partenaire.",
-    "architecture": "Plans de chaque étage cotés (pièces, murs, portes, fenêtres, escaliers), élévations des façades, "
-                    "coupe du bâtiment et coupes de murs (composition des murs, planchers et toit), plan de toiture, "
-                    "détails de construction et tableau des portes et fenêtres : le dossier demandé pour le permis.",
+    "fondation": "Représentation de la forme et du type de fondation, avec des mesures approximatives que "
+                 "l'entrepreneur confirmera. Sur une dalle, l'emplacement des appareils de plomberie est indiqué.",
+    "architecture": "Vue en plan de chaque étage et du sous-sol aménagé au besoin (pièces, murs, portes, fenêtres, "
+                    "appareils et mobilier de base ; grandeurs de fenêtres indicatives, à confirmer avec le fabricant), "
+                    "les 4 élévations (niveaux des planchers, hauteur des murs et de la fondation, toit), coupe de mur "
+                    "et coupe transversale, et vue en plan du toit.",
     "extension": "Plans de l'existant et de l'agrandissement, élévations, coupe et détails du raccordement entre "
                  "l'ancien et le nouveau bâtiment (fondation, murs, toiture).",
     "plomberie": "Emplacement des appareils sanitaires (toilettes, lavabos, douche, bain, chauffe-eau, laveuse), "
@@ -302,8 +301,10 @@ LE MÉTIER DE DESSINATRICE EN BÂTIMENT (explique-le simplement quand on te le d
 - On y trouve les cotes (dimensions), les notes de construction, les légendes et la composition des murs,
   planchers et toits (couches de matériaux, isolation, pare-vapeur, etc.).
 - Feuilles habituelles selon le projet : plan d'implantation projeté (dessiné à partir du certificat de
-  localisation du client ; le certificat d'implantation signé relève d'un arpenteur-géomètre), fondation, plans d'étages, élévations des façades, coupes, détails, plan de toiture,
-  tableau des portes et fenêtres.
+  localisation du client ; le certificat d'implantation signé relève d'un arpenteur-géomètre), plan de fondation (mesures approximatives, confirmées par
+  l'entrepreneur ; appareils de plomberie indiqués sur une dalle), vue en plan de chaque étage et du sous-sol aménagé
+  au besoin (pièces, murs, portes, fenêtres, appareils et mobilier de base ; grandeurs de fenêtres indicatives, à
+  confirmer avec le fabricant), les 4 élévations, coupe de mur et coupe transversale, vue en plan du toit.
 
 OÙ COMMENCE ET OÙ S'ARRÊTE LE TRAVAIL D'ABRISIA :
 - Commence : rencontre (à distance, ou sur place au besoin) pour comprendre le besoin, collecte des infos (mesures, photos,
