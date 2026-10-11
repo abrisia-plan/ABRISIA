@@ -13,6 +13,7 @@ from auth import require_admin, get_current_user
 from bson import ObjectId
 from email_service import email_service
 from video_links import clean_videos, invalid_videos
+from sales_tax import compute_taxes
 import logging
 
 logger = logging.getLogger(__name__)
@@ -579,9 +580,9 @@ async def create_kit_order(order_data: KitOrderCreate):
             materials_price = kit.get("materials_list_price", 0) or 0
         
         subtotal = base_price + materials_price
-        tax_rate = 14.975  # TPS+TVQ Québec
-        tax_amount = round(subtotal * tax_rate / 100, 2)
-        total_amount = round(subtotal + tax_amount, 2)
+        taxes = compute_taxes(subtotal)  # TPS+TVQ, si l'entreprise les perçoit
+        tax_amount = taxes["tax_amount"]
+        total_amount = taxes["total"]
         
         # Générer numéro de commande
         order_count = await db.kit_orders.count_documents({})

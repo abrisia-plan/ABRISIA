@@ -18,6 +18,9 @@ import SEO from '../components/SEO';
 import VideoEmbed from '../components/VideoEmbed';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+// Lien PayPal.me de l'entreprise (variable Vercel REACT_APP_PAYPAL_ME_URL, ex. https://paypal.me/MonCompte).
+// Sans lien vérifié, le bouton PayPal n'est pas affiché.
+const PAYPAL_ME_URL = process.env.REACT_APP_PAYPAL_ME_URL || '';
 
 const Collection = () => {
   const { toast } = useToast();
@@ -66,6 +69,30 @@ const Collection = () => {
     loadOptions();
     loadCart();
   }, []);
+
+  // Retour de la page de paiement : on vérifie le paiement auprès du serveur
+  const [paidOrder, setPaidOrder] = useState(null);
+  useEffect(() => {
+    const payment = searchParams.get('payment');
+    const orderId = searchParams.get('order_id');
+    if (payment === 'cancel') {
+      toast({ title: "Paiement annulé", description: "Votre panier est toujours là si vous voulez réessayer." });
+      return;
+    }
+    if (payment !== 'success' || !orderId) return;
+    fetch(`${BACKEND_URL}/api/payments/verify-payment/${orderId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.status === 'paid') {
+          setPaidOrder(data.order);
+          loadCart();
+        } else {
+          toast({ title: "Paiement en cours de vérification", description: "Vous recevrez une confirmation par courriel dès qu'il sera confirmé." });
+        }
+      })
+      .catch(() => {});
+    // eslint-disable-next-line
+  }, [searchParams]);
 
   const loadModels = useCallback(async (filterParams = {}) => {
     try {
@@ -215,12 +242,12 @@ const Collection = () => {
     }
     setCheckoutLoading(true);
     try {
-      const firstItem = cart.items[0];
+      // Tout le panier est payé : le serveur recalcule les prix (variantes, options, taxes)
       const res = await fetch(`${BACKEND_URL}/api/payments/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          kit_id: firstItem.product_id,
+          cart_session_id: cartSessionId,
           customer_name: checkoutForm.name,
           customer_email: checkoutForm.email,
           customer_phone: checkoutForm.phone,
@@ -236,7 +263,7 @@ const Collection = () => {
         throw new Error(data.detail || 'Erreur Stripe');
       }
     } catch (err) {
-      toast({ title: "Erreur paiement", description: "Impossible de démarrer le paiement Stripe", variant: "destructive" });
+      toast({ title: "Erreur paiement", description: err.message || "Impossible de démarrer le paiement", variant: "destructive" });
     } finally {
       setCheckoutLoading(false);
     }
@@ -262,7 +289,7 @@ const Collection = () => {
     }).catch(() => {});
     // Redirect to PayPal.me
     const amount = cart.total.toFixed(2);
-    window.open(`https://paypal.me/Abrisia/${amount}CAD`, '_blank');
+    window.open(`${PAYPAL_ME_URL.replace(/\/$/, '')}/${amount}CAD`, '_blank');
     toast({ title: "Redirection PayPal", description: "Complétez le paiement dans l'onglet PayPal." });
   };
 
@@ -724,14 +751,18 @@ const Collection = () => {
                     <span className="text-gray-500">Sous-total</span>
                     <span>{formatPrice(cart.subtotal)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">TPS (5%)</span>
-                    <span>{formatPrice(cart.tps)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">TVQ (9,975%)</span>
-                    <span>{formatPrice(cart.tvq)}</span>
-                  </div>
+                  {cart.tps > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">TPS (5%)</span>
+                      <span>{formatPrice(cart.tps)}</span>
+                    </div>
+                  )}
+                  {cart.tvq > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500">TVQ (9,975%)</span>
+                      <span>{formatPrice(cart.tvq)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between font-bold text-lg pt-2 border-t">
                     <span>Total</span>
                     <span className="text-teal-700">{formatPrice(cart.total)}</span>
@@ -895,24 +926,43 @@ const Collection = () => {
                 <span className="bg-gray-100 px-2 py-0.5 rounded">Apple Pay</span>
                 <span className="text-gray-300">via Stripe</span>
               </div>
-              <div className="relative flex items-center justify-center my-1">
-                <div className="border-t border-gray-200 flex-1" />
-                <span className="px-3 text-xs text-gray-400">ou</span>
-                <div className="border-t border-gray-200 flex-1" />
-              </div>
-              <Button
-                className="w-full bg-[#0070BA] hover:bg-[#005ea6] text-white"
-                onClick={payWithPaypal}
-                data-testid="pay-paypal-btn"
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Payer avec PayPal
-              </Button>
+              {PAYPAL_ME_URL && (
+                <>
+                  <div className="relative flex items-center justify-center my-1">
+                    <div className="border-t border-gray-200 flex-1" />
+                    <span className="px-3 text-xs text-gray-400">ou</span>
+                    <div className="border-t border-gray-200 flex-1" />
+                  </div>
+                  <Button
+                    className="w-full bg-[#0070BA] hover:bg-[#005ea6] text-white"
+                    onClick={payWithPaypal}
+                    data-testid="pay-paypal-btn"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Payer avec PayPal
+                  </Button>
+                </>
+              )}
             </div>
             <p className="text-xs text-gray-400 text-center">
               Paiement sécurisé. Google Pay et Apple Pay s'affichent automatiquement si disponibles. Vos fichiers seront envoyés par courriel après confirmation.
             </p>
           </div>
+        </DialogContent>
+      </Dialog>
+      {/* Confirmation après paiement */}
+      <Dialog open={!!paidOrder} onOpenChange={() => setPaidOrder(null)}>
+        <DialogContent className="max-w-md text-center">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Merci pour votre achat !</DialogTitle>
+          </DialogHeader>
+          {paidOrder && (
+            <div className="space-y-3 text-slate-700">
+              <p>Votre paiement est confirmé (commande {paidOrder.orderNumber}).</p>
+              <p>{paidOrder.kitName}</p>
+              <p>Une confirmation a été envoyée à <strong>{paidOrder.customerEmail}</strong>. Vos fichiers vous seront envoyés par courriel.</p>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
