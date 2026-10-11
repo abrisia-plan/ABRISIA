@@ -17,6 +17,8 @@ const servicePages = SERVICES.map((p) => ({
   sections: [
     { p: p.intro },
     { h2: 'Ce que comprennent les plans', list: p.contenu },
+    // Même phrase que NOTE_PLANS dans src/pages/ServicePage.jsx
+    { p: ["Nos plans représentent votre projet pour vous aider à le visualiser et à vous situer selon vos désirs. Nous ne sommes pas le constructeur : les détails de construction sont déterminés par votre entrepreneur."] },
     ...(p.mesures ? [{ h2: 'Ce dont nous avons besoin', list: p.mesures }] : []),
     { h2: 'Comment ça se passe', list: p.etapes },
     { h2: 'Questions fréquentes', list: p.faq.map(([q, a]) => `${q} ${a}`) },
@@ -45,7 +47,7 @@ module.exports = [
     sections: [
       { p: ["Abrisia Plan est un studio de dessin en bâtiment établi au Saguenay–Lac-Saint-Jean. Nous préparons les plans de maisons, chalets, camps, mini-maisons, agrandissements et garages de la région, prêts pour la demande de permis à votre municipalité."] },
       { h2: 'Où travaillons-nous ?', p: ["Partout au Saguenay–Lac-Saint-Jean : Saguenay (Chicoutimi, Jonquière, La Baie), Alma, Roberval, Saint-Félicien, Dolbeau-Mistassini, Saint-Honoré, Saint-Fulgence, L'Anse-Saint-Jean, Métabetchouan–Lac-à-la-Croix, Desbiens, Saint-Prime, Normandin et les environs, ainsi qu'ailleurs au Québec, à distance."] },
-      { h2: 'Ce que contiennent nos plans', list: ["Plan de fondation, avec des mesures approximatives que l'entrepreneur confirmera", "Vue en plan de chaque étage : pièces, murs, portes, fenêtres, appareils et mobilier de base", "Les 4 élévations des façades", "Coupe de mur et coupe transversale", "Vue en plan du toit", "Plan d'implantation projeté, à partir de votre certificat de localisation"] },
+      { h2: 'Ce que contiennent nos plans', list: ["Plan de fondation : une représentation, avec des mesures approximatives déterminées par l'entrepreneur", "Vue en plan de chaque étage : pièces, murs, portes, fenêtres, appareils et mobilier de base", "Les 4 élévations des façades", "Coupe de mur et coupe transversale", "Vue en plan du toit", "Plan d'implantation projeté, à partir de votre certificat de localisation"] },
       { h2: 'Comment ça se passe', list: ['Vous décrivez votre projet dans le formulaire de devis (photos, croquis et plans acceptés).', 'Nous en discutons et préparons des croquis.', 'Nous réalisons les plans détaillés.', 'Vous recevez vos plans en PDF, prêts pour votre demande de permis.'] },
     ],
     links: [DEVIS, CONTACT, { href: '/faq', text: 'Questions fréquentes' }],
@@ -67,7 +69,7 @@ module.exports = [
     h1: 'Services de dessin en bâtiment',
     sections: [
       { h2: 'Types de bâtiments', list: ['Habitations unifamiliales isolées', 'Habitations multifamiliales : duplex, triplex, quadruplex', 'Habitations jumelées ou en rangée', 'Bâtiments commerciaux et industriels légers'] },
-      { h2: 'Livrables', list: ["Plan de fondation, avec des mesures approximatives que l'entrepreneur confirmera", "Vue en plan de chaque étage : pièces, murs, portes, fenêtres, appareils et mobilier de base", "Les 4 élévations des façades", "Coupe de mur et coupe transversale", "Vue en plan du toit", "Plan d'implantation projeté, à partir de votre certificat de localisation"] },
+      { h2: 'Livrables', list: ["Plan de fondation : une représentation, avec des mesures approximatives déterminées par l'entrepreneur", "Vue en plan de chaque étage : pièces, murs, portes, fenêtres, appareils et mobilier de base", "Les 4 élévations des façades", "Coupe de mur et coupe transversale", "Vue en plan du toit", "Plan d'implantation projeté, à partir de votre certificat de localisation"] },
       { h2: 'Pourquoi Abrisia Plan', list: ['Services à distance, déplacement au besoin', 'Conformité aux codes de construction et à la Loi sur les architectes du Québec', 'Approche personnalisée', 'Fichiers CAO/DAO pour les ingénieurs et architectes'] },
     ],
     links: [DEVIS],

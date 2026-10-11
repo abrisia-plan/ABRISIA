@@ -60,7 +60,7 @@ const About = () => {
     {
       icon: <Layers className="w-6 h-6 text-teal-700" />,
       title: "Fondation et vues en plan",
-      desc: "Fondation avec des mesures approximatives confirmées par l'entrepreneur, puis chaque étage avec les pièces, portes, fenêtres, appareils et mobilier de base."
+      desc: "Une représentation de la fondation (mesures approximatives, déterminées par l'entrepreneur), puis chaque étage avec les pièces, portes, fenêtres, appareils et mobilier de base."
     },
     {
       icon: <Eye className="w-6 h-6 text-teal-700" />,

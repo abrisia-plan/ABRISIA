@@ -9,6 +9,9 @@ import SERVICE_PAGES from '../data/servicePages.json';
 // Une page par type de plan (maison, chalet, mini-maison...).
 // Le contenu vient de data/servicePages.json, aussi lu par scripts/prerender-seo.js.
 
+const NOTE_PLANS =
+  "Nos plans représentent votre projet pour vous aider à le visualiser et à vous situer selon vos désirs. Nous ne sommes pas le constructeur : les détails de construction sont déterminés par votre entrepreneur.";
+
 const ICONES = {
   'plan-de-maison': Home,
   'plan-de-chalet': TreePine,
@@ -79,7 +82,9 @@ const ServicePage = ({ slug }) => {
           </div>
 
           <div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-4">Ce que comprennent les plans</h2>
+            <h2 className="text-2xl font-bold text-slate-800 mb-2">Ce que comprennent les plans</h2>
+            {/* Même phrase dans seo/pages.js (pré-rendu) */}
+            <p className="text-slate-600 mb-4">{NOTE_PLANS}</p>
             <ul className="space-y-3 text-slate-700">
               {page.contenu.map((c) => {
                 const i = c.indexOf(' : ');

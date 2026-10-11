@@ -21,7 +21,7 @@ const PROJETS = [
 ];
 
 const CONTENU = [
-  "Plan de fondation, avec des mesures approximatives que l'entrepreneur confirmera",
+  "Plan de fondation : une représentation, avec des mesures approximatives déterminées par l'entrepreneur",
   "Vue en plan de chaque étage : pièces, murs, portes, fenêtres, appareils et mobilier de base",
   "Les 4 élévations des façades",
   "Coupe de mur et coupe transversale",

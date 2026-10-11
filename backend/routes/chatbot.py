@@ -38,8 +38,9 @@ def fallback_answer(message: str) -> str:
 
 # Contenu habituel de chaque plan (utilisé si le champ « contenu » est vide dans l'admin)
 DEFAULT_PLAN_CONTENTS = {
-    "fondation": "Représentation de la forme et du type de fondation, avec des mesures approximatives que "
-                 "l'entrepreneur confirmera. Sur une dalle, l'emplacement des appareils de plomberie est indiqué.",
+    "fondation": "Représentation de la fondation selon le type choisi, pour aider le client à se situer. Abrisia "
+                 "n'est pas le constructeur : les mesures sont approximatives et c'est l'entrepreneur qui les "
+                 "détermine. Sur une dalle, l'emplacement des appareils de plomberie est indiqué.",
     "architecture": "Vue en plan de chaque étage et du sous-sol aménagé au besoin (pièces, murs, portes, fenêtres, "
                     "appareils et mobilier de base ; grandeurs de fenêtres indicatives, à confirmer avec le fabricant), "
                     "les 4 élévations (niveaux des planchers, hauteur des murs et de la fondation, toit), coupe de mur "
@@ -301,10 +302,11 @@ LE MÉTIER DE DESSINATRICE EN BÂTIMENT (explique-le simplement quand on te le d
 - On y trouve les cotes (dimensions), les notes de construction, les légendes et la composition des murs,
   planchers et toits (couches de matériaux, isolation, pare-vapeur, etc.).
 - Feuilles habituelles selon le projet : plan d'implantation projeté (dessiné à partir du certificat de
-  localisation du client ; le certificat d'implantation signé relève d'un arpenteur-géomètre), plan de fondation (mesures approximatives, confirmées par
-  l'entrepreneur ; appareils de plomberie indiqués sur une dalle), vue en plan de chaque étage et du sous-sol aménagé
+  localisation du client ; le certificat d'implantation signé relève d'un arpenteur-géomètre), plan de fondation (une représentation ; mesures approximatives,
+  déterminées par l'entrepreneur, car Abrisia n'est pas le constructeur ; appareils de plomberie indiqués sur une dalle), vue en plan de chaque étage et du sous-sol aménagé
   au besoin (pièces, murs, portes, fenêtres, appareils et mobilier de base ; grandeurs de fenêtres indicatives, à
-  confirmer avec le fabricant), les 4 élévations, coupe de mur et coupe transversale, vue en plan du toit.
+  confirmer avec le fabricant), les 4 élévations, coupe de mur et coupe transversale, vue en plan du toit. En option, sur demande : élévations
+  intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure.
 
 OÙ COMMENCE ET OÙ S'ARRÊTE LE TRAVAIL D'ABRISIA :
 - Commence : rencontre (à distance, ou sur place au besoin) pour comprendre le besoin, collecte des infos (mesures, photos,
