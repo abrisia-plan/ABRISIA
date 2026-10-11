@@ -13,10 +13,10 @@ const VILLES = [
 ];
 
 const PROJETS = [
-  ['Maisons unifamiliales', 'Plans complets de maison neuve, selon votre terrain, votre budget et votre façon de vivre.'],
-  ['Chalets, camps et cabanes', 'Au bord du lac Saint-Jean, du fjord ou en forêt : plans adaptés à votre terrain et à votre usage.'],
-  ['Mini-maisons', "Des espaces compacts et bien pensés, où chaque pied carré compte."],
-  ['Agrandissements et garages', "Plans d'agrandissement, de garage, d'abri ou de solarium pour votre permis."],
+  ['Maisons, chalets et camps', 'Maison unifamiliale, chalet au bord du lac Saint-Jean ou du fjord, camp en forêt : plans selon votre terrain et vos désirs.'],
+  ['Mini-maisons', "Optimisation des espaces : chaque pied carré est pensé."],
+  ['Multilogement et murs mitoyens', "Duplex à quadruplex, maison jumelée ou en rangée, garage attaché."],
+  ['Agrandissements et garages', "Agrandissement, verrière ou solarium ; garage détaché, abri ou remise."],
 ];
 
 const CONTENU = [

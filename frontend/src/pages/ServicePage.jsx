@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Home, TreePine, House, Expand, Warehouse, Building2, MapPin, ArrowRight } from 'lucide-react';
+import { Home, House, Expand, Warehouse, Building2, MapPin, ArrowRight } from 'lucide-react';
 import SEO from '../components/SEO';
 import SERVICE_PAGES from '../data/servicePages.json';
 
@@ -13,7 +13,6 @@ const NOTE_PLANS =
 
 const ICONES = {
   'plan-de-maison': Home,
-  'plan-de-chalet': TreePine,
   'plan-de-mini-maison': House,
   'plan-agrandissement-maison': Expand,
   'plan-de-garage': Warehouse,
