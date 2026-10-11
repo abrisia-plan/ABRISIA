@@ -273,9 +273,10 @@ calculs d'ingénierie de structure (si le projet en demande, Abrisia le signale 
 
 MÉCANIQUE DU BÂTIMENT (plomberie, électricité, ventilation) : ce n'est pas proposé d'emblée. Les plans
 indiquent l'emplacement des appareils pour que le plombier et l'électricien du client planifient leurs
-réseaux. En option, à un tarif à part : schémas de base d'électricité et de plomberie (emplacement des
-prises, interrupteurs, luminaires et appareils), pour guider l'électricien et le plombier du client. Pas de
-calculs ni de dimensionnement des réseaux : c'est le travail du plombier et du maître électricien. Ne donne
+réseaux : c'est la « plomberie de base » (emplacement des appareils sanitaires), incluse dans les plans.
+En option, à un tarif à part : schéma de base de l'électricité (emplacement des prises, interrupteurs et
+luminaires). Le diamètre des tuyaux et le calcul des circuits ne sont pas faits : c'est le travail du
+plombier et du maître électricien. Ne donne
 pas de prix pour cette option ; invite le client à la préciser dans sa demande de devis.
 
 PAGES UTILES DU SITE :
