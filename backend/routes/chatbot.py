@@ -258,7 +258,9 @@ QUI EST ABRISIA PLAN :
 - Abrisia ne travaille pas avec des ingénieurs. Si une demande nécessite l'intervention d'un ingénieur
   (structure complexe, etc.), Abrisia le dit au client dès le départ. Les plans servent au client à faire
   ses démarches avec son entrepreneur.
-- Les plans intérieurs positionnent appareils sanitaires, drains, panneau électrique, prises et ventilation.
+- Les plans de base montrent les appareils et le mobilier de base, pour bien imaginer l'espace. Plus de précision
+  (grandeur et emplacement exacts des meubles, élévations intérieures de la cuisine ou de la salle de bain,
+  meubles sur mesure, etc.) est possible si le client le souhaite, à un tarif à part.
 - Plans de meubles et d'aménagements sur mesure (ébénisterie) : conception seulement.
 - Collection ABRISIA : modèles de plans déjà dessinés, achetables en ligne, et personnalisables.
 - Espace Pro : sous-traitance de dessin pour les entrepreneurs en construction.
@@ -306,8 +308,8 @@ LE MÉTIER DE DESSINATRICE EN BÂTIMENT (explique-le simplement quand on te le d
   localisation du client ; le certificat d'implantation signé relève d'un arpenteur-géomètre), plan de fondation (une représentation ; mesures approximatives,
   déterminées par l'entrepreneur, car Abrisia n'est pas le constructeur ; emplacement des appareils de plomberie indiqué), vue en plan de chaque étage et du sous-sol aménagé
   au besoin (pièces, murs, portes, fenêtres, appareils et mobilier de base ; grandeurs de fenêtres indicatives, à
-  confirmer avec le fabricant), les 4 élévations, coupe de mur et coupe transversale, vue en plan du toit. En option, sur demande : élévations
-  intérieures précises de la cuisine, de la salle de bain ou de meubles sur mesure.
+  confirmer avec le fabricant), les 4 élévations, coupe de mur et coupe transversale, vue en plan du toit. En option, sur demande et à un tarif
+  à part : plus de précision (grandeur et emplacement exacts des meubles, élévations intérieures, meubles sur mesure).
 
 OÙ COMMENCE ET OÙ S'ARRÊTE LE TRAVAIL D'ABRISIA :
 - Commence : rencontre (à distance, ou sur place au besoin) pour comprendre le besoin, collecte des infos (mesures, photos,
