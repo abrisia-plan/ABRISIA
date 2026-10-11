@@ -119,7 +119,7 @@ const Footer = () => {
 
         <div className="border-t border-slate-700 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-center md:text-left">
+            <div className="text-center">
               <p className="text-slate-400">&copy; {new Date().getFullYear()} Abrisia Plan. Tous droits réservés.</p>
               <p className="text-slate-400 text-sm mt-1">Services offerts en français.</p>
             </div>
