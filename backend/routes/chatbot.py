@@ -11,7 +11,10 @@ import uuid
 import json
 import re
 import asyncio
+import time
 from starlette.concurrency import run_in_threadpool
+from google import genai
+from google.genai import types
 
 logger = logging.getLogger(__name__)
 router = APIRouter(tags=["chatbot"])
@@ -31,6 +34,8 @@ GEMINI_TIMEOUT_TOTAL = 40
 # Claude (Anthropic), facultatif : si la clé est présente, il prend le relais quand Gemini est surchargé
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
 ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-haiku-5-5")
+# Un seul client Gemini pour tout le serveur (le créer à chaque message ralentissait la réponse)
+_gemini = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 
 SITE_URL = os.environ.get("APP_URL", "https://abrisia-plan.ca").rstrip("/")
 
@@ -221,6 +226,17 @@ async def build_site_knowledge(db) -> str:
     return "\n\n".join(parts)
 
 
+# Les infos du site changent rarement : on les garde 5 minutes au lieu de relire la base à chaque message
+_knowledge_cache = {"text": "", "until": 0.0}
+
+
+async def site_knowledge(db) -> str:
+    if time.monotonic() > _knowledge_cache["until"]:
+        _knowledge_cache["text"] = await build_site_knowledge(db)
+        _knowledge_cache["until"] = time.monotonic() + 300
+    return _knowledge_cache["text"]
+
+
 async def _ask_claude(history: list, message: str, system: str, timeout: float) -> str:
     """Deuxième fournisseur (Anthropic), indépendant de Google : utilisé quand Gemini est surchargé."""
     import httpx
@@ -242,33 +258,41 @@ async def _ask_claude(history: list, message: str, system: str, timeout: float) 
     return "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text").strip()
 
 
-async def ask_gemini(history: list, message: str, knowledge: str = "") -> str:
-    """Essaie Gemini, puis les modèles de secours et Claude, sans dépasser le temps total."""
-    from google import genai
-    from google.genai import types
+_reflexion_courte = {"ok": True}
 
+
+def _gemini_config(model: str, system: str):
+    extra = {}
+    if model.startswith("gemini-3") and _reflexion_courte["ok"]:
+        # Réflexion courte : l'assistant répond vite, ses réponses sont simples
+        extra["thinking_config"] = types.ThinkingConfig(thinking_level=types.ThinkingLevel.LOW)
+    return types.GenerateContentConfig(
+        system_instruction=system,
+        # Assez de place pour que la réponse ne soit jamais coupée au milieu d'une phrase
+        max_output_tokens=2048,
+        temperature=0.3,
+        **extra,
+    )
+
+
+async def stream_ai(history: list, message: str, knowledge: str = ""):
+    """Envoie la réponse morceau par morceau, dès qu'elle s'écrit.
+    Essaie Gemini, puis Claude et les modèles de secours, sans dépasser le temps total."""
     system = SYSTEM_PROMPT + ("\n\nINFORMATIONS À JOUR DU SITE :\n" + knowledge if knowledge else "")
-    client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
     contents = [
         types.Content(role="user" if m.get("role") == "user" else "model", parts=[types.Part(text=m.get("content", ""))])
         for m in history
     ]
     contents.append(types.Content(role="user", parts=[types.Part(text=message)]))
-    config = types.GenerateContentConfig(
-        system_instruction=system,
-        # Assez de place pour que la réponse ne soit jamais coupée au milieu d'une phrase
-        max_output_tokens=2048,
-        temperature=0.3,
-    )
 
     # Un seul essai par modèle : quand Google est surchargé, réessayer le même modèle ne sert à rien.
     # Claude passe juste après le modèle principal, car il ne dépend pas des serveurs de Google.
     essais = []
-    if client:
+    if _gemini:
         essais.append(("gemini", GEMINI_MODEL))
     if ANTHROPIC_API_KEY:
         essais.append(("claude", ANTHROPIC_MODEL))
-    if client:
+    if _gemini:
         essais += [("gemini", m) for m in GEMINI_BACKUP_MODELS if m != GEMINI_MODEL]
 
     loop = asyncio.get_running_loop()
@@ -279,32 +303,45 @@ async def ask_gemini(history: list, message: str, knowledge: str = "") -> str:
         if remaining < 3:
             break
         timeout = min(GEMINI_TIMEOUT_PER_TRY, remaining)
+        envoye = False
         try:
             if fournisseur == "claude":
                 text = await asyncio.wait_for(_ask_claude(history, message, system, timeout), timeout=timeout)
+                if text:
+                    envoye = True
+                    yield text
             else:
-                response = await asyncio.wait_for(
-                    client.aio.models.generate_content(model=model, contents=contents, config=config),
+                stream = await asyncio.wait_for(
+                    _gemini.aio.models.generate_content_stream(
+                        model=model, contents=contents, config=_gemini_config(model, system)),
                     timeout=timeout,
                 )
-                text = (response.text or "").strip()
-                # Si la réponse a quand même été coupée, on s'arrête à la dernière phrase complète
-                try:
-                    coupe = "MAX_TOKENS" in str(response.candidates[0].finish_reason)
-                except Exception:
-                    coupe = False
-                if coupe and text:
-                    cut = max(text.rfind(". "), text.rfind("! "), text.rfind("? "), text.rfind(".\n"))
-                    if cut > 40:
-                        text = text[: cut + 1]
-            if text:
+                morceaux = stream.__aiter__()
+                while True:
+                    # Le premier morceau doit arriver dans le délai ; ensuite, la suite arrive vite
+                    try:
+                        chunk = await asyncio.wait_for(
+                            morceaux.__anext__(), timeout=20 if envoye else max(1, deadline - loop.time()))
+                    except StopAsyncIteration:
+                        break
+                    text = chunk.text or ""
+                    if text:
+                        envoye = True
+                        yield text
+            if envoye:
                 if attempt:
                     logger.info(f"Chatbot : réponse obtenue avec {model} (essai {attempt + 1})")
-                return text
+                return
         except Exception as e:
-            last_error = e
             raison = "délai dépassé" if isinstance(e, asyncio.TimeoutError) else str(e)[:200]
+            if envoye:
+                # Le visiteur a déjà une partie de la réponse : on s'arrête là plutôt que de recommencer
+                logger.warning(f"Chatbot : réponse de {model} interrompue : {raison}")
+                return
+            last_error = e
             logger.warning(f"Chatbot : essai {attempt + 1} avec {model} raté : {raison}")
+            if "thinking" in str(e).lower() and _reflexion_courte["ok"]:
+                _reflexion_courte["ok"] = False  # Modèle qui refuse le réglage : on ne l'envoie plus
     raise last_error or RuntimeError("Aucune réponse de l'IA")
 
 SYSTEM_PROMPT = """Tu es « Assistant ABRISIA », l'assistant virtuel d'ABRISIA Plan (abrisia-plan.ca).
@@ -581,21 +618,41 @@ async def chat(data: ChatMessage):
         "created_at": datetime.now(timezone.utc),
     })
 
+    def sse(text: str) -> str:
+        return f"data: {json.dumps(text)}\n\n"
+
     async def event_generator():
-        answer = ""
-        if GEMINI_API_KEY or ANTHROPIC_API_KEY:
+        full, shown = "", 0
+        if _gemini or ANTHROPIC_API_KEY:
             try:
-                answer = await ask_gemini(history, message, await build_site_knowledge(db))
+                async for piece in stream_ai(history, message, await site_knowledge(db)):
+                    full += piece
+                    if not shown:
+                        full = full.lstrip()
+                    # Tout ce qui suit « [[ » est la fiche cachée : le visiteur ne la voit jamais
+                    fin = full.find("[[")
+                    if fin < 0:
+                        fin = len(full) - 1 if full.endswith("[") else len(full)
+                    if fin > shown:
+                        yield sse(full[shown:fin])
+                        shown = fin
             except Exception as e:
-                logger.error(f"Erreur chatbot (Gemini): {e}")
-        if not answer:
+                logger.error(f"Erreur chatbot (IA): {e}")
+
+        answer, fiche = extract_fiche(full.strip())
+        if not answer and not shown:
             answer = fallback_answer(message)
-            if GEMINI_API_KEY or ANTHROPIC_API_KEY:
+            if _gemini or ANTHROPIC_API_KEY:
                 # L'IA est surchargée : on le dit franchement plutôt que de répondre à côté
                 answer = ("Désolé, je suis très sollicité en ce moment et je n'ai pas pu bien répondre à votre "
                           "question. Pouvez-vous la reposer dans quelques secondes ?\n\n" + answer)
+        # Ce qui n'a pas encore été montré (« [[ » qui n'était pas une fiche, ou réponse de secours)
+        if len(answer) > shown:
+            reste = answer[shown:]
+            for i in range(0, len(reste), 20):
+                yield sse(reste[i:i + 20])
+        yield "data: [DONE]\n\n"
 
-        answer, fiche = extract_fiche(answer)
         if fiche:
             try:
                 if fiche.get("type") == "devis":
@@ -610,11 +667,6 @@ async def chat(data: ChatMessage):
                     await save_chat_contact(fiche, session_id)
             except Exception as e:
                 logger.error(f"Fiche du chatbot non enregistrée: {e}")
-
-        # Envoi par petits morceaux pour l'effet « en train d'écrire »
-        for i in range(0, len(answer), 20):
-            yield f"data: {json.dumps(answer[i:i + 20])}\n\n"
-        yield "data: [DONE]\n\n"
 
         await db.chat_messages.insert_one({
             "session_id": session_id,
@@ -648,6 +700,7 @@ async def update_chatbot_notes(data: ChatbotNotes, current_user: dict = Depends(
         {"$set": {"text": data.text[:20000], "updated_at": datetime.utcnow()}},
         upsert=True,
     )
+    _knowledge_cache["until"] = 0.0  # l'assistant voit les nouvelles précisions tout de suite
     return {"success": True}
 
 

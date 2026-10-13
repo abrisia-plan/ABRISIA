@@ -18,7 +18,8 @@ async def connect_to_mongo():
         mongo_url = os.environ.get('MONGO_URL')
         db_name = os.environ.get('DB_NAME', 'abrisia_plan')
         
-        logger.info(f"Connexion à MongoDB: {mongo_url}")
+        # Jamais l'adresse complète dans les journaux : elle contient le mot de passe
+        logger.info(f"Connexion à MongoDB (base {db_name})")
         db.client = AsyncIOMotorClient(mongo_url)
         db.database = db.client[db_name]
         
