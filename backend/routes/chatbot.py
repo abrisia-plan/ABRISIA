@@ -26,8 +26,11 @@ GEMINI_BACKUP_MODELS = [
     ).split(",") if m.strip()
 ]
 # Temps maximum par essai, et temps total avant de donner la réponse de secours
-GEMINI_TIMEOUT_PER_TRY = 15
-GEMINI_TIMEOUT_TOTAL = 35
+GEMINI_TIMEOUT_PER_TRY = 12
+GEMINI_TIMEOUT_TOTAL = 40
+# Claude (Anthropic), facultatif : si la clé est présente, il prend le relais quand Gemini est surchargé
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-haiku-5-5")
 
 SITE_URL = os.environ.get("APP_URL", "https://abrisia-plan.ca").rstrip("/")
 
@@ -218,68 +221,91 @@ async def build_site_knowledge(db) -> str:
     return "\n\n".join(parts)
 
 
-def _is_temporary(error: Exception) -> bool:
-    """Erreurs passagères de Google (surcharge, limite, délai) : ça vaut la peine de réessayer."""
-    text = str(error)
-    return isinstance(error, asyncio.TimeoutError) or any(
-        code in text for code in ("503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED", "500", "INTERNAL", "overloaded"))
+async def _ask_claude(history: list, message: str, system: str, timeout: float) -> str:
+    """Deuxième fournisseur (Anthropic), indépendant de Google : utilisé quand Gemini est surchargé."""
+    import httpx
+    messages = [{"role": "user" if m.get("role") == "user" else "assistant", "content": m.get("content", "")}
+                for m in history if m.get("content")]
+    # L'API exige que la conversation commence par l'utilisateur
+    while messages and messages[0]["role"] != "user":
+        messages.pop(0)
+    messages.append({"role": "user", "content": message})
+    async with httpx.AsyncClient(timeout=timeout) as http:
+        r = await http.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={"x-api-key": ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01"},
+            json={"model": ANTHROPIC_MODEL, "max_tokens": 2048, "temperature": 0.3,
+                  "system": system, "messages": messages},
+        )
+    r.raise_for_status()
+    data = r.json()
+    return "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text").strip()
 
 
 async def ask_gemini(history: list, message: str, knowledge: str = "") -> str:
-    """Essaie le modèle principal, puis les modèles de secours, sans dépasser le temps total."""
+    """Essaie Gemini, puis les modèles de secours et Claude, sans dépasser le temps total."""
     from google import genai
     from google.genai import types
 
-    client = genai.Client(api_key=GEMINI_API_KEY)
+    system = SYSTEM_PROMPT + ("\n\nINFORMATIONS À JOUR DU SITE :\n" + knowledge if knowledge else "")
+    client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
     contents = [
         types.Content(role="user" if m.get("role") == "user" else "model", parts=[types.Part(text=m.get("content", ""))])
         for m in history
     ]
     contents.append(types.Content(role="user", parts=[types.Part(text=message)]))
     config = types.GenerateContentConfig(
-        system_instruction=SYSTEM_PROMPT + ("\n\nINFORMATIONS À JOUR DU SITE :\n" + knowledge if knowledge else ""),
+        system_instruction=system,
         # Assez de place pour que la réponse ne soit jamais coupée au milieu d'une phrase
         max_output_tokens=2048,
         temperature=0.3,
     )
 
-    # Principal, encore le principal (souvent la surcharge ne dure qu'une seconde), puis les secours
-    models = [GEMINI_MODEL, GEMINI_MODEL] + [m for m in GEMINI_BACKUP_MODELS if m != GEMINI_MODEL]
+    # Un seul essai par modèle : quand Google est surchargé, réessayer le même modèle ne sert à rien.
+    # Claude passe juste après le modèle principal, car il ne dépend pas des serveurs de Google.
+    essais = []
+    if client:
+        essais.append(("gemini", GEMINI_MODEL))
+    if ANTHROPIC_API_KEY:
+        essais.append(("claude", ANTHROPIC_MODEL))
+    if client:
+        essais += [("gemini", m) for m in GEMINI_BACKUP_MODELS if m != GEMINI_MODEL]
+
     loop = asyncio.get_running_loop()
     deadline = loop.time() + GEMINI_TIMEOUT_TOTAL
     last_error = None
-    response = None
-    for attempt, model in enumerate(models):
+    for attempt, (fournisseur, model) in enumerate(essais):
         remaining = deadline - loop.time()
         if remaining < 3:
             break
+        timeout = min(GEMINI_TIMEOUT_PER_TRY, remaining)
         try:
-            response = await asyncio.wait_for(
-                client.aio.models.generate_content(model=model, contents=contents, config=config),
-                timeout=min(GEMINI_TIMEOUT_PER_TRY, remaining),
-            )
-            if attempt:
-                logger.info(f"Chatbot : réponse obtenue avec {model} (essai {attempt + 1})")
-            break
+            if fournisseur == "claude":
+                text = await asyncio.wait_for(_ask_claude(history, message, system, timeout), timeout=timeout)
+            else:
+                response = await asyncio.wait_for(
+                    client.aio.models.generate_content(model=model, contents=contents, config=config),
+                    timeout=timeout,
+                )
+                text = (response.text or "").strip()
+                # Si la réponse a quand même été coupée, on s'arrête à la dernière phrase complète
+                try:
+                    coupe = "MAX_TOKENS" in str(response.candidates[0].finish_reason)
+                except Exception:
+                    coupe = False
+                if coupe and text:
+                    cut = max(text.rfind(". "), text.rfind("! "), text.rfind("? "), text.rfind(".\n"))
+                    if cut > 40:
+                        text = text[: cut + 1]
+            if text:
+                if attempt:
+                    logger.info(f"Chatbot : réponse obtenue avec {model} (essai {attempt + 1})")
+                return text
         except Exception as e:
             last_error = e
-            logger.warning(f"Chatbot : essai {attempt + 1} avec {model} raté : {str(e)[:200]}")
-            if not _is_temporary(e) and "404" not in str(e) and "NOT_FOUND" not in str(e):
-                break  # Erreur permanente (ex. clé invalide) : inutile de réessayer
-            await asyncio.sleep(min(1.0 + attempt, max(0, deadline - loop.time() - 3)))
-    if response is None:
-        raise last_error or RuntimeError("Aucune réponse de Gemini")
-    text = (response.text or "").strip()
-    # Si la réponse a quand même été coupée, on s'arrête à la dernière phrase complète
-    try:
-        coupe = "MAX_TOKENS" in str(response.candidates[0].finish_reason)
-    except Exception:
-        coupe = False
-    if coupe and text:
-        cut = max(text.rfind(". "), text.rfind("! "), text.rfind("? "), text.rfind(".\n"))
-        if cut > 40:
-            text = text[: cut + 1]
-    return text
+            raison = "délai dépassé" if isinstance(e, asyncio.TimeoutError) else str(e)[:200]
+            logger.warning(f"Chatbot : essai {attempt + 1} avec {model} raté : {raison}")
+    raise last_error or RuntimeError("Aucune réponse de l'IA")
 
 SYSTEM_PROMPT = """Tu es « Assistant ABRISIA », l'assistant virtuel d'ABRISIA Plan (abrisia-plan.ca).
 Rôle : accueillir, informer et accompagner les clients qui ont un projet de maison, de chalet, de garage ou
@@ -557,14 +583,14 @@ async def chat(data: ChatMessage):
 
     async def event_generator():
         answer = ""
-        if GEMINI_API_KEY:
+        if GEMINI_API_KEY or ANTHROPIC_API_KEY:
             try:
                 answer = await ask_gemini(history, message, await build_site_knowledge(db))
             except Exception as e:
                 logger.error(f"Erreur chatbot (Gemini): {e}")
         if not answer:
             answer = fallback_answer(message)
-            if GEMINI_API_KEY:
+            if GEMINI_API_KEY or ANTHROPIC_API_KEY:
                 # L'IA est surchargée : on le dit franchement plutôt que de répondre à côté
                 answer = ("Désolé, je suis très sollicité en ce moment et je n'ai pas pu bien répondre à votre "
                           "question. Pouvez-vous la reposer dans quelques secondes ?\n\n" + answer)
