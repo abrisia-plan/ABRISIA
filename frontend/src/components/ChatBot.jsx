@@ -102,11 +102,16 @@ const ChatBot = () => {
     // Add placeholder for assistant
     setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
 
+    // Le serveur abandonne après ~35 s ; on ne fait jamais attendre plus d'une minute
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 60000);
+
     try {
       const response = await fetch(`${BACKEND_URL}/api/chatbot/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text, session_id: sessionId }),
+        signal: controller.signal,
       });
 
       if (!response.ok || !response.body) throw new Error('Erreur serveur');
@@ -150,7 +155,9 @@ const ChatBot = () => {
         return updated;
       });
     } finally {
+      clearTimeout(timer);
       setIsLoading(false);
+      inputRef.current?.focus();
     }
   };
 
@@ -231,7 +238,7 @@ const ChatBot = () => {
                 >
                   {(msg.content && <span className="whitespace-pre-wrap">{linkify(msg.content)}</span>) || (
                     <span className="flex items-center gap-1 text-gray-400">
-                      <Loader2 className="w-3 h-3 animate-spin" /> ...
+                      <Loader2 className="w-3 h-3 animate-spin" /> L'assistant réfléchit...
                     </span>
                   )}
                 </div>
@@ -256,7 +263,6 @@ const ChatBot = () => {
                 onKeyDown={handleKeyDown}
                 placeholder="Posez votre question..."
                 className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                disabled={isLoading}
                 data-testid="chatbot-input"
               />
               <Button

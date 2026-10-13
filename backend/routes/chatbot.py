@@ -10,6 +10,7 @@ import logging
 import uuid
 import json
 import re
+import asyncio
 from starlette.concurrency import run_in_threadpool
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,15 @@ router = APIRouter(tags=["chatbot"])
 # Google Gemini (forfait gratuit). Sans clé, l'assistant donne des réponses simples.
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+# Modèles de secours, essayés dans l'ordre quand le premier est surchargé (erreur 503)
+GEMINI_BACKUP_MODELS = [
+    m.strip() for m in os.environ.get(
+        "GEMINI_BACKUP_MODELS", "gemini-flash-latest,gemini-flash-lite-latest"
+    ).split(",") if m.strip()
+]
+# Temps maximum par essai, et temps total avant de donner la réponse de secours
+GEMINI_TIMEOUT_PER_TRY = 15
+GEMINI_TIMEOUT_TOTAL = 35
 
 SITE_URL = os.environ.get("APP_URL", "https://abrisia-plan.ca").rstrip("/")
 
@@ -208,7 +218,15 @@ async def build_site_knowledge(db) -> str:
     return "\n\n".join(parts)
 
 
+def _is_temporary(error: Exception) -> bool:
+    """Erreurs passagères de Google (surcharge, limite, délai) : ça vaut la peine de réessayer."""
+    text = str(error)
+    return isinstance(error, asyncio.TimeoutError) or any(
+        code in text for code in ("503", "UNAVAILABLE", "429", "RESOURCE_EXHAUSTED", "500", "INTERNAL", "overloaded"))
+
+
 async def ask_gemini(history: list, message: str, knowledge: str = "") -> str:
+    """Essaie le modèle principal, puis les modèles de secours, sans dépasser le temps total."""
     from google import genai
     from google.genai import types
 
@@ -218,16 +236,39 @@ async def ask_gemini(history: list, message: str, knowledge: str = "") -> str:
         for m in history
     ]
     contents.append(types.Content(role="user", parts=[types.Part(text=message)]))
-    response = await client.aio.models.generate_content(
-        model=GEMINI_MODEL,
-        contents=contents,
-        config=types.GenerateContentConfig(
-            system_instruction=SYSTEM_PROMPT + ("\n\nINFORMATIONS À JOUR DU SITE :\n" + knowledge if knowledge else ""),
-            # Assez de place pour que la réponse ne soit jamais coupée au milieu d'une phrase
-            max_output_tokens=2048,
-            temperature=0.3,
-        ),
+    config = types.GenerateContentConfig(
+        system_instruction=SYSTEM_PROMPT + ("\n\nINFORMATIONS À JOUR DU SITE :\n" + knowledge if knowledge else ""),
+        # Assez de place pour que la réponse ne soit jamais coupée au milieu d'une phrase
+        max_output_tokens=2048,
+        temperature=0.3,
     )
+
+    # Principal, encore le principal (souvent la surcharge ne dure qu'une seconde), puis les secours
+    models = [GEMINI_MODEL, GEMINI_MODEL] + [m for m in GEMINI_BACKUP_MODELS if m != GEMINI_MODEL]
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + GEMINI_TIMEOUT_TOTAL
+    last_error = None
+    response = None
+    for attempt, model in enumerate(models):
+        remaining = deadline - loop.time()
+        if remaining < 3:
+            break
+        try:
+            response = await asyncio.wait_for(
+                client.aio.models.generate_content(model=model, contents=contents, config=config),
+                timeout=min(GEMINI_TIMEOUT_PER_TRY, remaining),
+            )
+            if attempt:
+                logger.info(f"Chatbot : réponse obtenue avec {model} (essai {attempt + 1})")
+            break
+        except Exception as e:
+            last_error = e
+            logger.warning(f"Chatbot : essai {attempt + 1} avec {model} raté : {str(e)[:200]}")
+            if not _is_temporary(e) and "404" not in str(e) and "NOT_FOUND" not in str(e):
+                break  # Erreur permanente (ex. clé invalide) : inutile de réessayer
+            await asyncio.sleep(min(1.0 + attempt, max(0, deadline - loop.time() - 3)))
+    if response is None:
+        raise last_error or RuntimeError("Aucune réponse de Gemini")
     text = (response.text or "").strip()
     # Si la réponse a quand même été coupée, on s'arrête à la dernière phrase complète
     try:
@@ -523,6 +564,10 @@ async def chat(data: ChatMessage):
                 logger.error(f"Erreur chatbot (Gemini): {e}")
         if not answer:
             answer = fallback_answer(message)
+            if GEMINI_API_KEY:
+                # L'IA est surchargée : on le dit franchement plutôt que de répondre à côté
+                answer = ("Désolé, je suis très sollicité en ce moment et je n'ai pas pu bien répondre à votre "
+                          "question. Pouvez-vous la reposer dans quelques secondes ?\n\n" + answer)
 
         answer, fiche = extract_fiche(answer)
         if fiche:
