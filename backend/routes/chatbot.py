@@ -25,11 +25,12 @@ GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
 # Modèles de secours, essayés dans l'ordre quand le premier est surchargé (erreur 503)
 GEMINI_BACKUP_MODELS = [
     m.strip() for m in os.environ.get(
-        "GEMINI_BACKUP_MODELS", "gemini-flash-latest,gemini-flash-lite-latest"
+        "GEMINI_BACKUP_MODELS", "gemini-flash-lite-latest,gemini-flash-latest"
     ).split(",") if m.strip()
 ]
 # Temps maximum par essai, et temps total avant de donner la réponse de secours
-GEMINI_TIMEOUT_PER_TRY = 12
+# (court : quand Google est surchargé, le modèle « lite » répond souvent en moins d'une seconde)
+GEMINI_TIMEOUT_PER_TRY = 7
 GEMINI_TIMEOUT_TOTAL = 40
 # Claude (Anthropic), facultatif : si la clé est présente, il prend le relais quand Gemini est surchargé
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
