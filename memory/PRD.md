@@ -27,12 +27,41 @@ Site web pour Abrisia Plan - entreprise de **dessin en bâtiment et conception d
 - Sécurité : JWT 256-bit, routes admin protégées, rate limiting
 
 ## Identifiants
-- Admin: admin@abrisia-plan.ca / admin123
+- Admin : admin@abrisia-plan.ca (mot de passe gardé hors du dépôt — ne jamais l'écrire ici)
 
 ## Intégrations
-- Gmail SMTP, Stripe, PayPal, Emergent Object Storage, Emergent LLM Key (chatbot), Zoho CRM (fallback MongoDB)
+- Courriel (Gmail SMTP / Resend), Stripe, PayPal.me, stockage de fichiers, chatbot IA (Gemini + secours Claude), Zoho CRM (fallback MongoDB)
+- Zoho CRM : **branché** (clés sur Render : ZOHO_CLIENT_ID, ZOHO_CLIENT_SECRET, ZOHO_REFRESH_TOKEN). Fiches créées pour devis, contact, Espace Pro, commandes Collection, chatbot. Suivi dans Admin → Messages et Zoho.
+- Serveur (Render) : https://abrisia-plan-ca.onrender.com — site public (Vercel) : https://abrisia-plan.ca
 
-## Tâches restantes
-- (P1) Zoho CRM : en attente de clés API valides
-- (P2) Interface Admin pour Zoho Credentials
-- (P3) Affinement section Inspiration
+## Déjà en place (ne pas refaire)
+- Inspiration : bouton 👁 afficher/masquer par projet + option « page d'accueil » (Admin → Projets)
+- Collection : visible/masqué + ⭐ « en vedette » sur l'accueil (Admin → Collection) ; fichiers de plans privés
+- Panier : ajout, TPS/TVQ, commande. Sans clé Stripe → « Envoyer ma commande » (facture envoyée à la main)
+
+## À faire — liste de la propriétaire (mise à jour 2026-10-13)
+
+### 1. Paiement en ligne (EN COURS)
+- [ ] Stripe : activer le compte (entreprise + compte bancaire)
+- [ ] Stripe : mettre STRIPE_SECRET_KEY et STRIPE_PUBLISHABLE_KEY (clés live) sur Render
+- [ ] Stripe : webhook `https://abrisia-plan-ca.onrender.com/api/payments/webhook`, événement `checkout.session.completed`, puis STRIPE_WEBHOOK_SECRET sur Render
+- [ ] Stripe : virements en « Manuel » si on veut garder l'argent dans Stripe (garder un coussin de 200-500 $, virer le reste à la banque)
+- [ ] Tester un vrai achat sur /collection, puis le rembourser
+- [ ] PayPal : mettre REACT_APP_PAYPAL_ME_URL (ex. https://paypal.me/...) sur Vercel
+
+### 2. Sécurité
+- [ ] Changer le mot de passe admin s'il est encore celui par défaut
+
+### 3. Contenu du site
+- [ ] Vérifier dans l'admin que les boutons 👁 / ⭐ fonctionnent (Inspiration et Collection) ; noter tout bogue
+- [ ] Choisir et mettre en ligne les projets Inspiration et modèles Collection voulus
+- [ ] Peaufiner la section Inspiration
+
+### 4. Argent et administration
+- [ ] Ouvrir un compte bancaire d'entreprise séparé pour Abrisia
+- [ ] Voir un comptable (TPS/TVQ, impôts, statut)
+
+### 5. Attirer des clients (après le paiement)
+- [ ] Fiche Google Business Profile
+- [ ] Référencement Google (SEO) par région du Québec
+- [ ] Demander des avis aux clients
