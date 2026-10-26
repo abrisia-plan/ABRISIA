@@ -468,7 +468,9 @@ const Devis = () => {
                             )}
                           </div>
                         </div>
-                        <span className="text-teal-800 font-semibold ml-4"></span>
+                        {plan.price && (
+                          <span className="text-teal-800 font-semibold ml-4 whitespace-nowrap">{plan.price}</span>
+                        )}
                       </div>
                     ))}
                   </div>
