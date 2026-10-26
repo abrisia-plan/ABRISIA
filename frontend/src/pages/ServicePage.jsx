@@ -14,6 +14,7 @@ const NOTE_PLANS =
 const ICONES = {
   'plan-de-maison': Home,
   'plan-de-mini-maison': House,
+  'plan-mini-maison-dans-la-cour': House,
   'plan-agrandissement-maison': Expand,
   'plan-de-garage': Warehouse,
   'plan-de-plex': Building2,

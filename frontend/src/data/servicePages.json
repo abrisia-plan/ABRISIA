@@ -61,6 +61,7 @@
     "resume": "Petite maison où chaque pied carré est optimisé.",
     "intro": [
       "Une mini-maison demande une conception précise : rangements, mezzanine, circulation, lumière. Abrisia Plan dessine des mini-maisons où chaque pied carré compte.",
+      "Cette page couvre la mini-maison sur son propre terrain : vous choisissez la grandeur, la fondation et les espaces, selon le règlement de votre municipalité. Vous voulez plutôt ajouter une petite maison dans la cour d'une maison existante ? Voyez notre page Mini-maison dans la cour (UHA).",
       "Avant de commencer, vérifiez auprès de votre municipalité la superficie minimale permise : elle varie d'une ville à l'autre."
     ],
     "contenu": [
@@ -81,6 +82,10 @@
         "Cela dépend de son règlement de zonage (superficie minimale, dimensions). Vérifiez-le auprès de votre municipalité avant d'acheter un terrain."
       ],
       [
+        "Quelle différence avec une mini-maison dans la cour (UHA) ?",
+        "Une UHA est une deuxième petite maison ajoutée sur un terrain où il y a déjà une maison. Elle suit des règles strictes (à Saguenay : 100 m² ou 1 076 pi² au sol au maximum, sans sous-sol, 5 m ou 16 pi 5 po de haut au maximum). Une mini-maison sur son propre terrain n'a pas ces limites : elle peut être plus grande, avoir un sous-sol ou une mezzanine plus haute, selon le zonage de votre municipalité."
+      ],
+      [
         "Faites-vous des meubles sur mesure pour une mini-maison ?",
         "Oui, nous dessinons aussi des meubles et rangements sur mesure, très utiles dans les petits espaces."
       ],
@@ -93,6 +98,50 @@
       "Vous décrivez votre projet dans le formulaire de devis : vous pouvez joindre photos, croquis, mesures et plans existants.",
       "Nous en discutons avec vous et préparons des croquis.",
       "Nous réalisons les plans détaillés, à l'échelle.",
+      "Vous recevez vos plans en PDF, prêts à joindre à votre demande de permis."
+    ]
+  },
+  {
+    "slug": "plan-mini-maison-dans-la-cour",
+    "title": "Plan de mini-maison dans la cour (UHA) à Saguenay et au Québec",
+    "description": "Plan d'unité d'habitation accessoire (UHA) : une petite maison dans votre cour, conforme aux règles de votre ville. À Saguenay : 100 m² (1 076 pi²) maximum, sans sous-sol, 5 m (16 pi 5 po) de haut. Plans prêts pour le permis. Devis gratuit.",
+    "h1": "Plan de mini-maison dans la cour (UHA)",
+    "resume": "Petite maison ajoutée sur votre terrain, conforme aux règles UHA.",
+    "intro": [
+      "Une unité d'habitation accessoire (UHA) est une deuxième petite maison construite dans la cour d'un terrain où il y a déjà une maison. Pour loger un parent, un enfant devenu grand, ou la louer au mois.",
+      "Ce type de mini-maison a ses propres règles, fixées par chaque ville. Abrisia Plan dessine des UHA qui respectent ces règles dès le départ, pour que votre demande de permis passe du premier coup. Si vous voulez plus grand ou plus libre, voyez notre page Plan de mini-maison."
+    ],
+    "contenu": [
+      "Règles de Saguenay (règlement VS-RU-2026-70, depuis juin 2026) : une seule UHA par terrain, sur un terrain avec une maison unifamiliale, à l'intérieur du périmètre urbain.",
+      "Superficie au sol de 100 m² au maximum (1 076 pi²), aucun sous-sol, hauteur de 5 m au maximum (16 pi 5 po) et jamais plus haute que la maison principale.",
+      "En cour latérale ou arrière, à au moins 0,6 m (2 pi) de la ligne de terrain et 1 m (3 pi 3 po) de la maison. Toit plat ou à un seul versant interdit, sauf si la maison a ce type de toit.",
+      "Elle peut se brancher sur l'eau et l'égout de la maison, et aucune case de stationnement de plus n'est exigée.",
+      "Transformation d'un garage ou d'une remise existante en UHA : nous dessinons aussi ce type de projet.",
+      "Vos plans comprennent : plan d'implantation à partir de votre certificat de localisation, plan de fondation, vue en plan, mezzanine au besoin, les 4 élévations, coupe de mur et coupe transversale, vue du toit, et schémas électriques et de plomberie de base.",
+      "Ailleurs au Québec : chaque ville fixe ses propres règles pour les UHA. Nous vérifions celles de votre municipalité avant de dessiner."
+    ],
+    "faq": [
+      [
+        "Puis-je construire une mini-maison dans ma cour à Saguenay ?",
+        "Oui, depuis juin 2026, si votre terrain a une maison unifamiliale et se trouve dans le périmètre urbain. Une seule UHA par terrain, et un permis de la Ville est nécessaire, avec des plans."
+      ],
+      [
+        "Puis-je louer mon UHA sur Airbnb ?",
+        "Selon ce qui a été annoncé, la location de courte durée (Airbnb) est interdite pour les UHA à Saguenay. La location au mois est possible. Confirmez avec la Ville avant de commencer."
+      ],
+      [
+        "Et si je veux plus grand que 100 m² (1 076 pi²) ?",
+        "Ce n'est plus une UHA. Il faut alors une mini-maison ou une maison sur son propre terrain, selon le zonage. Voyez notre page Plan de mini-maison."
+      ],
+      [
+        "Ma ville permet-elle les UHA ?",
+        "Chaque municipalité décide si elle les permet et à quelles conditions. Nous vérifions le règlement de votre ville au début du projet."
+      ]
+    ],
+    "etapes": [
+      "Vous décrivez votre projet dans le formulaire de devis et joignez votre certificat de localisation et des photos de votre terrain.",
+      "Nous vérifions les règles UHA de votre ville et préparons des croquis.",
+      "Nous réalisons les plans détaillés, à l'échelle, conformes à ces règles.",
       "Vous recevez vos plans en PDF, prêts à joindre à votre demande de permis."
     ]
   },
