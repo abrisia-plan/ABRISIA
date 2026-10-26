@@ -28,7 +28,7 @@ const FAQS = [
   },
   {
     q: "À quoi ressemblent les plans que je vais recevoir ?",
-    a: "Vous recevez un ensemble de feuilles en PDF, prêtes à imprimer, dessinées à l'échelle. Chaque feuille comporte un cartouche (projet, adresse, titre, échelle, date et révisions), les dimensions, les notes de construction et la composition des murs, planchers et toits.",
+    a: "Vous recevez un ensemble de feuilles en PDF, dessinées à l'échelle. Si vous voulez des copies papier, faites-les imprimer dans un centre de reprographie ou une imprimerie qui fait du grand format. Chaque feuille comporte un cartouche (projet, adresse, titre, échelle, date et révisions), les dimensions, les notes de construction et la composition des murs, planchers et toits.",
   },
   {
     q: "Qu'est-ce qui n'est pas inclus dans vos services ?",

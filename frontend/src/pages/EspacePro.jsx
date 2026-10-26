@@ -142,7 +142,7 @@ const EspacePro = () => {
               ["Plan préliminaire pour vos soumissions", "Un plan simple, à l'échelle, pour chiffrer un projet et le présenter à votre client avant qu'il signe. Si le projet se confirme, on le complète."],
               ["Vos modèles, adaptés à chaque client", "Vous avez un modèle qui se vend bien ? Nous l'ajustons pour chaque nouveau terrain ou chaque demande du client, sans repartir de zéro."],
               ["Modifications de plans existants", "Un plan acheté ailleurs, un ancien projet ou un modèle de la Collection ABRISIA : nous l'adaptons à votre chantier et aux règles de la municipalité."],
-              ["Plans prêts pour le permis", "Implantation, fondation, vues en plan, élévations, coupes et mécanique du bâtiment, livrés en PDF, prêts à imprimer ou à envoyer à la municipalité."],
+              ["Plans prêts pour le permis", "Implantation, fondation, vues en plan, élévations, coupes et mécanique du bâtiment, livrés en PDF. Pour des copies papier, vous les faites imprimer dans un centre de reprographie ou une imprimerie (grand format)."],
               ["Mini-maisons, UHA, camps et chalets", "Nous connaissons les règles des mini-maisons dans la cour (UHA), des camps sur terre publique et des chalets de villégiature."],
             ].map(([titre, texte]) => (
               <div key={titre} className="bg-white rounded-xl p-6 border border-stone-200">
