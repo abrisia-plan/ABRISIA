@@ -10,6 +10,7 @@ import { useToast } from '../hooks/use-toast';
 import { faqItems } from '../data/mock';
 import SEO from '../components/SEO';
 import VideoEmbed from '../components/VideoEmbed';
+import CardSlideshow from '../components/CardSlideshow';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -145,11 +146,7 @@ const Inspiration = () => {
                   data-testid={`project-card-${project.id}`}
                 >
                   <div className="relative overflow-hidden h-56">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+                    <CardSlideshow images={photosOf(project)} alt={project.title} />
                     <div className="absolute top-4 left-4">
                       <Badge className="bg-teal-800 text-white hover:bg-teal-900">
                         {project.category}
@@ -165,7 +162,7 @@ const Inspiration = () => {
                         <PlayCircle className="w-3.5 h-3.5" /> Vidéo
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center pointer-events-none">
                       <Eye className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                   </div>

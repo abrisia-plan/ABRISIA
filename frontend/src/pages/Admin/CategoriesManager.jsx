@@ -11,9 +11,11 @@ import {
   GripVertical,
   Eye,
   EyeOff,
-  FolderOpen
+  FolderOpen,
+  ImagePlus
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
+import { projectService, resolveImageUrl } from '../../services/api';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -208,6 +210,33 @@ const CategoriesManager = () => {
                   </select>
                 </div>
                 
+                {/* Photo de la catégorie (affichée sur l'accueil quand la catégorie n'a pas encore de projet) */}
+                <label className="relative w-20 h-14 shrink-0 border rounded-lg bg-stone-50 overflow-hidden cursor-pointer flex items-center justify-center" title="Choisir une photo pour cette catégorie">
+                  {category.image ? (
+                    <img src={resolveImageUrl(category.image)} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="flex flex-col items-center text-[10px] text-gray-500"><ImagePlus className="w-4 h-4" />Photo</span>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      try {
+                        const res = await projectService.uploadImage(file);
+                        if (res.success) {
+                          handleChange(index, 'image', res.imageUrl);
+                          toast({ title: "Photo ajoutée", description: "Cliquez sur Sauvegarder pour l'enregistrer" });
+                        }
+                      } catch {
+                        toast({ title: "Erreur", description: "Photo non téléversée", variant: "destructive" });
+                      }
+                    }}
+                  />
+                </label>
+
                 {/* Nom et description */}
                 <div className="w-full md:w-auto md:flex-1 order-last md:order-none grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div>

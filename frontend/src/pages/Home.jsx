@@ -6,6 +6,8 @@ import { Card, CardContent } from '../components/ui/card';
 import { approaches, processSteps as defaultSteps } from '../data/mock';
 import * as Icons from 'lucide-react';
 import SEO from '../components/SEO';
+import CardSlideshow from '../components/CardSlideshow';
+import { resolveImageUrl } from '../services/api';
 import useSiteSettings from '../hooks/useSiteSettings';
 
 const HERO_IMAGE = 'https://customer-assets.emergentagent.com/job_c939612f-c018-47c9-949a-bf666b73ec90/artifacts/s0baspap_Copie%20de%20Copie%20de%20Abrisia.jpg';
@@ -122,6 +124,7 @@ const Home = () => {
           name: cat.name,
           description: cat.description,
           icon: cat.icon,
+          image: cat.image,
           filter: projects[0]?.category || cat.name,
           projects,
         };
@@ -316,7 +319,10 @@ const Home = () => {
             {featuredKits.map((kit) => (
               <Card key={kit.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 border-stone-200 cursor-pointer group" onClick={() => navigate('/collection')}>
                 <div className="relative overflow-hidden h-56">
-                  <img src={kit.mainImage || kit.image} alt={kit.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <CardSlideshow
+                    images={[kit.mainImage || kit.image, ...(kit.galleryImages || [])].filter(Boolean).map(resolveImageUrl)}
+                    alt={kit.name}
+                  />
                 </div>
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold text-slate-800 mb-2 group-hover:text-teal-800 transition-colors">{kit.name}</h3>
@@ -391,9 +397,18 @@ const Home = () => {
                       alt={project.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
+                  ) : card.image ? (
+                    <img
+                      src={resolveImageUrl(card.image)}
+                      alt={card.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-teal-50 to-stone-100 flex items-center justify-center text-6xl">
-                      {card.icon || '📁'}
+                    <div className="w-full h-full bg-gradient-to-br from-teal-800 via-teal-700 to-stone-500 flex items-end p-5 relative overflow-hidden">
+                      <svg viewBox="0 0 200 120" className="absolute right-3 top-3 w-32 h-20 text-white/15" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true">
+                        <path d="M20 110 V60 L70 20 L120 60 V110 Z" /><path d="M120 110 V70 L155 45 L190 70 V110" /><path d="M58 110 V80 H82 V110" />
+                      </svg>
+                      <span className="relative text-white text-lg font-semibold leading-tight">{card.name}</span>
                     </div>
                   )}
                   {card.projects.length > 0 && (

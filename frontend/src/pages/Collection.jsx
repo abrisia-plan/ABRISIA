@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import SEO from '../components/SEO';
 import VideoEmbed from '../components/VideoEmbed';
+import CardSlideshow from '../components/CardSlideshow';
 import { surfaceAvecPieds } from '../lib/surface';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -501,11 +502,10 @@ const Collection = () => {
               >
                 <div className="relative h-56 bg-gray-100 overflow-hidden">
                   {model.mainImage ? (
-                    <img
-                      src={resolveImageUrl(model.mainImage)}
+                    <CardSlideshow
+                      images={[model.mainImage, ...(model.galleryImages || [])].filter(Boolean).map(resolveImageUrl)}
                       alt={model.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800'; }}
+                      onError={(e) => { e.target.style.display = 'none'; }}
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">

@@ -427,6 +427,7 @@ async def update_categories(categories: List[dict], current_user: dict = Depends
                 "name": cat.get("name", ""),
                 "description": cat.get("description", ""),
                 "icon": cat.get("icon", "📁"),
+                "image": cat.get("image", ""),
                 "is_visible": cat.get("is_visible", True),
                 "order": i + 1,
                 "updated_at": datetime.utcnow()
