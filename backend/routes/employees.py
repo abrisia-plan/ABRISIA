@@ -637,9 +637,8 @@ async def submit_candidature(
 ):
     """Soumettre une candidature avec CV.
 
-    Le CV est envoyé par courriel (pièce jointe) à l'adresse de l'entreprise.
-    Il n'est gardé dans la base de données que si le courriel n'a pas pu partir,
-    pour ne jamais perdre une candidature.
+    Le CV est envoyé par courriel (pièce jointe) à l'adresse de l'entreprise,
+    et il est aussi gardé dans la base de données pour l'ouvrir depuis l'admin.
     """
     ext = os.path.splitext(cv.filename or "")[1].lower()
     if ext not in CV_EXTENSIONS:
@@ -675,9 +674,8 @@ async def submit_candidature(
             "status": "nouvelle",
             "created_at": datetime.utcnow().isoformat(),
         }
-        if not sent:
-            # Filet de sécurité : le courriel a échoué, on garde le CV pour l'admin
-            candidature["cv_base64"] = base64.b64encode(cv_content).decode("utf-8")
+        # Toujours garder le CV pour pouvoir l'ouvrir depuis l'admin (10 Mo max)
+        candidature["cv_base64"] = base64.b64encode(cv_content).decode("utf-8")
 
         await db.candidatures.insert_one(candidature)
         return {"success": True, "message": "Candidature envoyée avec succès"}
@@ -728,7 +726,7 @@ async def download_cv(candidature_id: str, current_user: dict = Depends(require_
         return Response(
             content=cv_bytes,
             media_type=c.get("cv_content_type", "application/pdf"),
-            headers={"Content-Disposition": f'attachment; filename="{c.get("cv_filename", "cv.pdf")}"'}
+            headers={"Content-Disposition": f'inline; filename="{c.get("cv_filename", "cv.pdf")}"'}
         )
     except HTTPException:
         raise

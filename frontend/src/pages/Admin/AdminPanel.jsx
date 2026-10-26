@@ -604,29 +604,34 @@ const NavigationManager = () => {
     }
   };
 
+  // Chaque clic (Visible/Masqué, monter, descendre) est enregistré tout de suite.
   const togglePage = (href) => {
-    setPages(prev => prev.map(p => 
+    const newPages = pages.map(p =>
       p.href === href && !p.locked ? { ...p, visible: !p.visible } : p
-    ));
+    );
+    setPages(newPages);
+    saveNavigation(newPages);
   };
 
   const moveUp = (index) => {
     if (index <= 0) return;
-    const newPages = [...pages];
+    const newPages = pages.map(p => ({ ...p }));
     [newPages[index - 1], newPages[index]] = [newPages[index], newPages[index - 1]];
     newPages.forEach((p, i) => p.order = i);
     setPages(newPages);
+    saveNavigation(newPages);
   };
 
   const moveDown = (index) => {
     if (index >= pages.length - 1) return;
-    const newPages = [...pages];
+    const newPages = pages.map(p => ({ ...p }));
     [newPages[index], newPages[index + 1]] = [newPages[index + 1], newPages[index]];
     newPages.forEach((p, i) => p.order = i);
     setPages(newPages);
+    saveNavigation(newPages);
   };
 
-  const saveNavigation = async () => {
+  const saveNavigation = async (pagesToSave = pages) => {
     try {
       setSaving(true);
       const token = localStorage.getItem('authToken');
@@ -636,11 +641,11 @@ const NavigationManager = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}` 
         },
-        body: JSON.stringify({ pages })
+        body: JSON.stringify({ pages: pagesToSave.map(({ locked, ...p }) => p) })
       });
       const data = await res.json();
       if (!data.success) throw new Error();
-      toast({ title: "Menu sauvegardé", description: "Les changements sont visibles sur le site" });
+      toast({ title: "Menu enregistré", description: "Rechargez le site (Ctrl + F5) pour voir le changement" });
     } catch {
       toast({ title: "Erreur", description: "Impossible de sauvegarder", variant: "destructive" });
     } finally {
@@ -694,7 +699,7 @@ const NavigationManager = () => {
       </Card>
 
       <Button 
-        onClick={saveNavigation}
+        onClick={() => saveNavigation()}
         disabled={saving}
         className="bg-foret hover:bg-bois"
         data-testid="save-navigation-button"

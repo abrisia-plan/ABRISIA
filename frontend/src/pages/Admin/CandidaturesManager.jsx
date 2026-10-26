@@ -48,21 +48,43 @@ const CandidaturesManager = () => {
     }
   };
 
-  // Le CV exige la connexion admin : on le télécharge avec le jeton puis on l'ouvre
-  const downloadCV = async (candidature) => {
+  const STATUTS = ['nouvelle', 'lue', 'retenue', 'refusée'];
+
+  const setStatus = async (candidature, status) => {
+    setCandidatures(prev => prev.map(c => c.id === candidature.id ? { ...c, status } : c));
+    try {
+      await fetch(`${BACKEND_URL}/api/employees/admin/candidatures/${candidature.id}/status`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+    } catch (err) {
+      toast({ title: "Erreur", description: "Statut non enregistré", variant: "destructive" });
+    }
+  };
+
+  // Le CV exige la connexion admin : on le récupère avec le jeton puis on l'ouvre ou on le télécharge
+  const openCV = async (candidature, download = false) => {
+    const win = download ? null : window.open('', '_blank');
     try {
       const res = await fetch(`${BACKEND_URL}/api/employees/admin/candidatures/${candidature.id}/cv`, {
         headers: { 'Authorization': `Bearer ${getToken()}` }
       });
       if (!res.ok) throw new Error();
       const url = URL.createObjectURL(await res.blob());
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = candidature.cv_filename || 'cv.pdf';
-      link.click();
-      setTimeout(() => URL.revokeObjectURL(url), 10000);
+      if (win) {
+        win.location.href = url;
+      } else {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = candidature.cv_filename || 'cv.pdf';
+        link.click();
+      }
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      if ((candidature.status || 'nouvelle') === 'nouvelle') setStatus(candidature, 'lue');
     } catch (err) {
-      toast({ title: "Erreur", description: "Impossible de télécharger le CV", variant: "destructive" });
+      if (win) win.close();
+      toast({ title: "Erreur", description: "Impossible d'ouvrir le CV", variant: "destructive" });
     }
   };
 
@@ -128,7 +150,7 @@ const CandidaturesManager = () => {
                     </div>
 
                     {c.message && (
-                      <div className="bg-stone-50 rounded-lg p-3 text-sm text-slate-600 border-l-3 border-teal-500">
+                      <div className="bg-stone-50 rounded-lg p-3 text-sm text-slate-600 border-l-4 border-teal-500 whitespace-pre-wrap">
                         {c.message}
                       </div>
                     )}
@@ -138,20 +160,31 @@ const CandidaturesManager = () => {
                         <FileText className="w-3 h-3 mr-1" />
                         {c.cv_filename || 'CV joint'}
                       </Badge>
-                      <Badge className={c.status === 'nouvelle' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'}>
-                        {c.status || 'Nouvelle'}
-                      </Badge>
+                      <select
+                        value={c.status || 'nouvelle'}
+                        onChange={(e) => setStatus(c, e.target.value)}
+                        className={`text-xs rounded-full px-2 py-1 border ${(c.status || 'nouvelle') === 'nouvelle' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-slate-50 text-slate-600 border-slate-200'}`}
+                        title="Changer le statut"
+                        data-testid={`status-${c.id}`}
+                      >
+                        {STATUTS.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
+                      </select>
                     </div>
                   </div>
 
                   <div className="flex gap-2 ml-4">
                     {c.cv_sent_by_email && !c.has_cv && (
-                      <span className="text-xs text-slate-500 self-center">CV envoyé par courriel</span>
+                      <span className="text-xs text-slate-500 self-center max-w-[10rem]">Ce CV est seulement dans votre boîte courriel (reçu avant la mise à jour)</span>
                     )}
                     {c.has_cv && (
-                      <Button size="sm" variant="outline" onClick={() => downloadCV(c)} className="border-teal-300 text-teal-700" data-testid={`download-cv-${c.id}`}>
-                        <Download className="w-4 h-4 mr-1" /> Télécharger le CV
-                      </Button>
+                      <>
+                        <Button size="sm" className="bg-teal-700 hover:bg-teal-800" onClick={() => openCV(c)} data-testid={`open-cv-${c.id}`}>
+                          <FileText className="w-4 h-4 mr-1" /> Ouvrir le CV
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => openCV(c, true)} className="border-teal-300 text-teal-700" data-testid={`download-cv-${c.id}`}>
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      </>
                     )}
                     <Button size="sm" variant="ghost" className="text-red-500 hover:bg-red-50" onClick={() => deleteCandidature(c.id)}>
                       <Trash2 className="w-4 h-4" />
