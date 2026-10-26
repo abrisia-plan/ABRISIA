@@ -190,14 +190,14 @@ async def build_site_knowledge(db) -> str:
         if plans:
             lines = []
             for p in plans:
-                line = f"- {p.get('name')} : à partir de {p.get('price', 'sur devis')}"
+                line = f"- {p.get('name')} : {p.get('price') or 'sur devis'}"
                 if p.get('description'):
                     line += f" ({p['description']})"
                 contenu = p.get('contenu') or DEFAULT_PLAN_CONTENTS.get(p.get('id'))
                 if contenu:
                     line += f"\n  Contenu : {contenu}"
                 lines.append(line)
-            parts.append("PLANS OFFERTS, PRIX « À PARTIR DE » ET CE QU'ILS CONTIENNENT :\n" + "\n".join(lines))
+            parts.append("SERVICES DU FORMULAIRE DE DEVIS, PRIX (fourchette ou prix fixe) ET CE QU'ILS CONTIENNENT :\n" + "\n".join(lines))
 
         rates_doc = await db.site_settings.find_one({"key": "calculator_rates"})
         from routes.content import DEFAULT_CALCULATOR_RATES
@@ -485,7 +485,32 @@ des services et prix d'Abrisia donnée plus bas : c'est elle qui décide ce qu'e
 
 DROITS D'AUTEUR (Collection) : Les plans de la Collection ABRISIA, livrés en PDF, sont protégés par la Loi sur le droit d'auteur. L'achat d'un plan vous permet de construire une (1) seule maison, pour vous-même. Il est interdit de revendre, copier, partager ou modifier les plans sans l'accord d'Abrisia Plan. Pour faire modifier un plan, ou pour construire un modèle plus d'une fois (entrepreneurs, professionnels de l'immobilier), écrivez-nous : nous vous proposerons une entente.
 
+L'OFFRE D'ABRISIA EN BREF (à jour, octobre 2026) :
+- Projets complets : mini-maison, mini-maison dans la cour (UHA), chalet, maison unifamiliale, extension ou
+  verrière. Inclus : plans de base, plan d'implantation, optimisation de l'espace et aménagement du mobilier,
+  mécanique du bâtiment (plomberie, chauffage, électricité). En option : calculs de matériaux, meubles sur mesure.
+- Les prix sont des fourchettes (ex. 1 000 $ à 8 000 $) : le prix exact dépend du projet et est confirmé au devis.
+  Minimum de 1 000 $ pour un projet complet, car même une petite maison demande beaucoup de travail
+  d'optimisation. Le calculateur du formulaire utilise le tarif au pi² listé plus bas, avec ce minimum.
+- Services à part, pour un projet sans plans complets (rénovation, sous-sol) : plan de fondation, plan de
+  plomberie, plan d'électricité.
+- Mini-maison ou UHA : une « mini-maison » est seule sur son propre terrain ; une UHA (unité d'habitation
+  accessoire) est une 2e petite maison dans la cour d'un terrain qui a déjà une maison. Explique la différence
+  quand quelqu'un parle de mini-maison, et demande s'il y a déjà une maison sur le terrain.
+- Camp de chasse démontable et cabane à pêche : prix sur devis. Sur terre publique, un camp permanent exige un
+  bail du gouvernement ; Abrisia dessine des camps démontables. Les règles des cabanes changent selon le
+  village de pêche.
+- Modification d'un plan existant : sur devis.
+- Livraison : les plans sont livrés en PDF seulement. Abrisia n'imprime pas. Pour des copies papier, le client
+  les fait imprimer dans un centre de reprographie ou une imprimerie (grand format).
+- Mesures : donne toujours les deux unités, métriques et impériales (ex. 100 m² / 1 076 pi²).
+- Entrepreneurs : programme entrepreneur dans l'Espace Pro (dossiers en priorité, plan préliminaire pour les
+  soumissions, modèles adaptés à chaque client, modifications de plans). Modalités établies avec chaque
+  entrepreneur : ne promets aucun prix ni délai précis.
+
 PAGES UTILES DU SITE :
+- Mini-maison dans la cour (UHA) : https://abrisia-plan.ca/plan-mini-maison-dans-la-cour
+- Mini-maison : https://abrisia-plan.ca/plan-de-mini-maison
 - Formulaire de devis : https://abrisia-plan.ca/devis
 - Collection de modèles : https://abrisia-plan.ca/collection
 - Espace Pro (entrepreneurs) : https://abrisia-plan.ca/espace-pro
