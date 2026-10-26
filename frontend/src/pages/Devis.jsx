@@ -283,7 +283,7 @@ const Devis = () => {
     <div className="min-h-screen pt-20 bg-gradient-to-b from-amber-50 to-stone-50">
       <SEO 
         title="Demander un devis"
-        description="Demandez un devis gratuit pour vos plans architecturaux. Plans de mini-maison, chalet, maison unifamiliale, extension ou rénovation au Québec."
+        description="Demandez un devis pour vos plans. Plans de mini-maison, chalet, maison unifamiliale, extension ou rénovation au Québec."
         path="/devis"
       />
       {/* Hero Section */}
@@ -446,8 +446,21 @@ const Devis = () => {
                   <p className="text-sm text-slate-600 italic">
                     <strong>Estimation préliminaire seulement</strong> — Le montant affiché sert à donner un ordre de grandeur. Le prix final sera établi après l'analyse du projet et confirmé dans un devis personnalisé.
                   </p>
+                  {[
+                    ['plans', 'Plans techniques'],
+                    ['projets', 'Projets complets'],
+                    ['services', 'Services'],
+                    ['__autres', 'Autres'],
+                  ].map(([cat, titre]) => {
+                    const known = ['plans', 'projets', 'services'];
+                    const items = planOptions.filter((p) =>
+                      cat === '__autres' ? !known.includes(p.category) : p.category === cat);
+                    if (items.length === 0) return null;
+                    return (
+                  <div key={cat} className="space-y-3">
+                  <h4 className="text-sm font-semibold uppercase tracking-wide text-teal-800 border-b border-stone-200 pb-1 mt-4">{titre}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {planOptions.map((plan) => (
+                    {items.map((plan) => (
                       <div key={plan.id} className="flex items-center justify-between p-4 border border-stone-300 rounded-lg hover:bg-amber-50 transition-colors">
                         <div className="flex items-center space-x-3 flex-1">
                           <Checkbox
@@ -476,6 +489,9 @@ const Devis = () => {
                       </div>
                     ))}
                   </div>
+                  </div>
+                    );
+                  })}
                   
                   {/* Total estimé */}
                   {calcEstimate && (
@@ -668,7 +684,7 @@ const Devis = () => {
           <div className="mt-12 text-center">
             <div className="flex items-center justify-center mb-6">
               <CheckCircle className="h-6 w-6 text-teal-600 mr-2" />
-              <span className="text-lg font-medium text-slate-700">Devis gratuit, même si votre projet n'est pas encore décidé</span>
+              <span className="text-lg font-medium text-slate-700">Même si votre projet n'est pas encore décidé, décrivez-le-nous</span>
             </div>
             <div className="max-w-3xl mx-auto space-y-4 text-slate-600">
               <p className="text-lg">

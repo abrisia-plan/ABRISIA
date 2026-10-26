@@ -293,7 +293,7 @@ const Home = () => {
           <div className="text-center mt-12">
             <Link to="/devis">
               <Button size="lg" className="bg-teal-800 hover:bg-teal-900 text-white px-8 py-4 text-lg font-semibold rounded-full">
-                Demander un devis gratuit
+                Demander un devis
               </Button>
             </Link>
           </div>
@@ -509,7 +509,7 @@ const Home = () => {
             Un projet en tête ?
           </h2>
           <p className="text-xl text-teal-100 mb-10 leading-relaxed">
-            Parlons-en ! Consultation gratuite pour donner vie à vos idées.
+            Parlons-en ! Donnons vie à vos idées.
           </p>
           <Link to="/devis">
             <Button size="lg" variant="secondary" className="bg-white text-teal-800 hover:bg-teal-50 px-12 py-4 text-xl font-semibold rounded-full transform hover:scale-105 transition-all duration-300">

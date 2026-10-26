@@ -132,10 +132,10 @@ const ServicePage = ({ slug }) => {
 
           <div className="text-center bg-white border border-stone-200 rounded-xl p-8">
             <h2 className="text-2xl font-bold text-slate-800 mb-2">Parlez-nous de votre projet</h2>
-            <p className="text-slate-600 mb-6">Le devis est gratuit : même si votre projet n'est pas encore décidé, demandez-le.</p>
+            <p className="text-slate-600 mb-6">Même si votre projet n'est pas encore décidé, décrivez-le-nous.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/devis" className="inline-block bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 rounded-full font-semibold">
-                Demander un devis gratuit
+                Demander un devis
               </Link>
               <Link to="/collection" className="inline-block border border-teal-800 text-teal-800 hover:bg-teal-50 px-6 py-3 rounded-full font-semibold">
                 Voir la Collection de plans

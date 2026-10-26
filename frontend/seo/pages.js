@@ -4,7 +4,7 @@
 // Le site normal (React) remplace ce contenu dès qu'il démarre.
 // Garder ces textes fidèles à ce qui est réellement affiché sur les pages.
 
-const DEVIS = { href: '/devis', text: 'Demander un devis gratuit' };
+const DEVIS = { href: '/devis', text: 'Demander un devis' };
 const CONTACT = { href: '/contact', text: 'Nous écrire' };
 
 const SERVICES = require('../src/data/servicePages.json');
@@ -31,7 +31,7 @@ module.exports = [
   {
     path: '/',
     title: 'Abrisia Plan | Plans de maison, chalet et mini-maison au Québec',
-    description: "Abrisia Plan, dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean : plans de maisons, chalets, mini-maisons, agrandissements et garages pour votre permis de construction, partout au Québec. Devis gratuit, à distance ou sur place au besoin.",
+    description: "Abrisia Plan, dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean : plans de maisons, chalets, mini-maisons, agrandissements et garages pour votre permis de construction, partout au Québec. À distance ou sur place au besoin.",
     h1: 'Plans de maison, chalet et mini-maison au Québec',
     sections: [
       { p: ["Abrisia Plan conçoit et dessine les plans de votre projet résidentiel : maison unifamiliale, chalet, camp, mini-maison, agrandissement, garage, solarium et meubles sur mesure.", "Établie au Saguenay–Lac-Saint-Jean, nous travaillons surtout à distance, partout au Québec, et nous pouvons nous déplacer dans certains cas. Nos plans sont conçus selon le Code de construction du Québec et le Code national du bâtiment du Canada, et selon les règlements de votre municipalité, pour votre demande de permis."] },
@@ -103,9 +103,9 @@ module.exports = [
   {
     path: '/devis',
     title: 'Demander un devis | Abrisia Plan',
-    description: 'Demandez un devis gratuit pour vos plans. Plans de mini-maison, chalet, maison unifamiliale, extension ou rénovation au Québec. Joignez photos, croquis et plans.',
-    h1: 'Demander un devis gratuit',
-    sections: [{ p: ['Décrivez votre projet, joignez vos photos, croquis ou plans, et indiquez comment vous préférez être contacté. Le devis est gratuit, même si votre projet n\'est pas encore décidé.'] }],
+    description: 'Demandez un devis pour vos plans. Plans de mini-maison, chalet, maison unifamiliale, extension ou rénovation au Québec. Joignez photos, croquis et plans.',
+    h1: 'Demander un devis',
+    sections: [{ p: ['Décrivez votre projet, joignez vos photos, croquis ou plans, et indiquez comment vous préférez être contacté. Même si votre projet n\'est pas encore décidé, décrivez-le-nous.'] }],
     links: [CONTACT],
   },
   {

@@ -52,7 +52,7 @@ const FAQS = [
   },
   {
     q: "Combien coûtent des plans de maison ou de chalet ?",
-    a: "Le prix dépend de la superficie, du nombre d'étages, de la complexité et des plans requis. Le devis est gratuit, même si votre projet n'est pas encore décidé : décrivez votre projet dans le formulaire de devis et nous vous répondons rapidement.",
+    a: "Le prix dépend de la superficie, du nombre d'étages, de la complexité et des plans requis. Même si votre projet n'est pas encore décidé, décrivez votre projet dans le formulaire de devis et nous vous répondons rapidement.",
   },
   {
     q: "Quelle est la différence entre un plan de la Collection et un plan sur mesure ?",
@@ -115,7 +115,7 @@ const FAQ = () => {
             <p className="text-slate-700 mb-4">Vous ne trouvez pas votre réponse ?</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/devis" className="inline-block bg-teal-800 hover:bg-teal-900 text-white px-6 py-3 rounded-full font-semibold">
-                Demander un devis gratuit
+                Demander un devis
               </Link>
               <Link to="/contact" className="inline-block border border-teal-800 text-teal-800 hover:bg-teal-50 px-6 py-3 rounded-full font-semibold">
                 Nous écrire

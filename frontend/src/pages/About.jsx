@@ -287,7 +287,7 @@ const About = () => {
             Un projet en tête ?
           </h2>
           <p className="text-base md:text-lg text-teal-100 mb-10 leading-relaxed">
-            Parlons-en ! Consultation gratuite pour donner vie à vos idées.
+            Parlons-en ! Donnons vie à vos idées.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/devis">
