@@ -453,7 +453,7 @@ const KitFormModal = ({
 
             {/* Image principale */}
             <div>
-              <Label className="font-semibold">Image principale *</Label>
+              <Label className="font-semibold">Image du dessus *</Label>
               <div className="mt-2">
                 {formData.main_image ? (
                   <div className="relative">

@@ -333,7 +333,7 @@ const ProjectsManager = () => {
               </select>
             </div>
             <div>
-              <Label>Image *</Label>
+              <Label>Image du dessus *</Label>
               <div className="flex gap-2">
                 <Input value={formData.image} onChange={(e) => handleInputChange('image', e.target.value)} placeholder="URL de l'image ou upload" />
                 <Button type="button" variant="outline" onClick={() => document.getElementById('image-upload').click()}>
