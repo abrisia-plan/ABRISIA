@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Users } from 'lucide-react';
 import { Button } from './ui/button';
 import useSiteSettings from '../hooks/useSiteSettings';
+import { enregistrerVisite } from '../lib/visits';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -22,6 +23,7 @@ const Header = () => {
   const site = useSiteSettings();
 
   useEffect(() => {
+    enregistrerVisite(window.location.pathname);
     fetch(`${BACKEND_URL}/api/navigation/menu`)
       .then(res => res.json())
       .then(data => {

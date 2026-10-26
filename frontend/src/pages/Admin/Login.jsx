@@ -7,6 +7,7 @@ import { Label } from '../../components/ui/label';
 import { Lock, Mail, ArrowLeft, Loader2 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import { authService, handleApiError } from '../../services/api';
+import { marquerAppareilAdmin } from '../../lib/visits';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ const Login = () => {
       if (response.success) {
         const user = response.user;
         localStorage.setItem('authToken', response.token);
+        marquerAppareilAdmin();
         localStorage.setItem('adminUser', JSON.stringify(user));
         
         toast({

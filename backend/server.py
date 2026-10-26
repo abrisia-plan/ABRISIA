@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 # Imports des modules
 from database import connect_to_mongo, close_mongo_connection, get_database
-from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, collection, chatbot, zoho, pro_contact, fichiers, contact
+from routes import auth, devis, designers, projects, cms, ecommerce, employees, reviews, content, payments, collection, chatbot, zoho, pro_contact, fichiers, contact, stats
 
 # Lifespan manager pour la DB
 @asynccontextmanager
@@ -103,6 +103,9 @@ api_router.include_router(contact.router)
 
 # Routes contact entrepreneur (Espace Pro)
 api_router.include_router(pro_contact.router)
+
+# Tableau de bord, visiteurs et rapports annuels
+api_router.include_router(stats.router)
 
 # Inclure le router principal dans l'app
 app.include_router(api_router)

@@ -42,6 +42,7 @@ import DevisManager from './DevisManager';
 import ChatbotNotesManager from './ChatbotNotesManager';
 import HomepageServicesManager from './HomepageServicesManager';
 import CalculatorRatesManager from './CalculatorRatesManager';
+import { marquerAppareilAdmin } from '../../lib/visits';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ const AdminPanel = () => {
   const [user, setUser] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('projects');
+  const [activeTab, setActiveTab] = useState('dashboard');
   // Sur téléphone, la liste des sections est repliée sous un bouton
   const [menuOuvert, setMenuOuvert] = useState(false);
   useEffect(() => { setMenuOuvert(false); }, [activeTab]);
@@ -150,6 +151,23 @@ const AdminPanel = () => {
         {/* Sidebar */}
         <aside className={`${menuOuvert ? 'block' : 'hidden'} md:block w-full md:w-64 md:shrink-0 bg-white border-b md:border-b-0 md:border-r border-gray-200 md:min-h-[calc(100vh-73px)] p-4`}>
           <nav className="space-y-2">
+            <Button 
+              variant={activeTab === 'dashboard' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'dashboard' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('dashboard')}
+            >
+              <LayoutDashboard className="w-4 h-4 mr-2" />
+              Tableau de bord
+            </Button>
+            <Button 
+              variant={activeTab === 'reports' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'reports' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('reports')}
+            >
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Rapports
+            </Button>
+            <div className="border-t border-gray-100 my-2" />
             <Button 
               variant={activeTab === 'projects' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'projects' ? 'bg-foret' : ''}`}
@@ -263,15 +281,6 @@ const AdminPanel = () => {
                   Tout arrive déjà dans votre courriel (et dans Zoho). Ces listes ne servent qu'en cas de besoin.
                 </p>
             <Button 
-              variant={activeTab === 'dashboard' ? 'default' : 'ghost'}
-              className={`w-full justify-start ${activeTab === 'dashboard' ? 'bg-foret' : ''}`}
-              onClick={() => setActiveTab('dashboard')}
-            >
-              <LayoutDashboard className="w-4 h-4 mr-2" />
-              Tableau de bord
-            </Button>
-            
-            <Button 
               variant={activeTab === 'kit-orders' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'kit-orders' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('kit-orders')}
@@ -317,7 +326,10 @@ const AdminPanel = () => {
           ) : (
             <>
               {activeTab === 'dashboard' && (
-                <DashboardTab stats={stats} />
+                <DashboardTab onOpen={setActiveTab} />
+              )}
+              {activeTab === 'reports' && (
+                <ReportsTab />
               )}
               
               {activeTab === 'projects' && (
@@ -394,165 +406,128 @@ const AdminPanel = () => {
 // Composant Dashboard avec graphiques
 const DASHBOARD_URL = process.env.REACT_APP_BACKEND_URL;
 
-const DashboardTab = ({ stats }) => {
-  const [orders, setOrders] = useState([]);
-  const [devisStats, setDevisStats] = useState([]);
+const authHeaders = () => ({ 'Authorization': `Bearer ${localStorage.getItem('authToken')}` });
+
+// Tableau de bord : seulement l'essentiel du mois. Les tests de la propriétaire ne sont pas comptés.
+const DashboardTab = ({ onOpen }) => {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    loadDashboardData();
+    marquerAppareilAdmin();
+    fetch(`${DASHBOARD_URL}/api/admin/dashboard`, { headers: authHeaders() })
+      .then((r) => r.json())
+      .then((d) => (d.success ? setData(d) : setError(true)))
+      .catch(() => setError(true));
   }, []);
 
-  const loadDashboardData = async () => {
-    const token = localStorage.getItem('authToken');
-    try {
-      const [ordersRes, devisRes] = await Promise.all([
-        fetch(`${DASHBOARD_URL}/api/admin/kit-orders`, { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch(`${DASHBOARD_URL}/api/admin/devis`, { headers: { 'Authorization': `Bearer ${token}` } }),
-      ]);
-      const ordersData = await ordersRes.json();
-      const devisData = await devisRes.json();
-      if (ordersData.success) setOrders(ordersData.data || []);
-      if (devisData.success) setDevisStats(devisData.data || []);
-    } catch (error) { console.error('Erreur chargement dashboard:', error); }
-  };
+  if (error) {
+    return <p className="text-slate-500">Le tableau de bord n'a pas pu se charger. Le serveur se réveille peut-être : réessayez dans une minute.</p>;
+  }
+  if (!data) {
+    return <div className="flex justify-center py-10"><Loader2 className="w-8 h-8 animate-spin text-foret" /></div>;
+  }
 
-  // Calcul des graphiques par mois (6 derniers mois)
-  const getMonthlyData = (items, dateField) => {
-    const months = [];
-    const now = new Date();
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const label = d.toLocaleString('fr-CA', { month: 'short' });
-      const year = d.getFullYear();
-      const month = d.getMonth();
-      const count = items.filter(item => {
-        const itemDate = new Date(item[dateField] || item.created_at);
-        return itemDate.getFullYear() === year && itemDate.getMonth() === month;
-      }).length;
-      months.push({ label, count });
-    }
-    return months;
-  };
-
-  const ordersMonthly = getMonthlyData(orders, 'created_at');
-  const devisMonthly = getMonthlyData(devisStats, 'created_at');
-  const maxOrders = Math.max(...ordersMonthly.map(m => m.count), 1);
-  const maxDevis = Math.max(...devisMonthly.map(m => m.count), 1);
-
-  const totalRevenue = orders.filter(o => o.status === 'paid' || o.status === 'completed')
-    .reduce((sum, o) => sum + (o.total_amount || 0), 0);
+  const Tuile = ({ titre, valeur, detail, Icone, couleur, onClick }) => (
+    <Card className={`border-stone-200 ${onClick ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`} onClick={onClick}>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-slate-600">{titre}</p>
+            <p className={`text-3xl font-bold ${couleur}`}>{valeur}</p>
+            {detail && <p className="text-xs text-slate-500 mt-1">{detail}</p>}
+          </div>
+          <Icone className={`w-8 h-8 ${couleur}`} />
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-900">Tableau de bord</h2>
-        <p className="text-gray-600 mt-1">Vue d'ensemble de votre activité</p>
+        <p className="text-gray-600 mt-1">Ce mois-ci : {data.mois}</p>
       </div>
 
-      {/* Stats cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="border-stone-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Demandes de devis</p>
-                <p className="text-3xl font-bold text-slate-900">{stats?.total_devis || devisStats.length}</p>
-              </div>
-              <FileText className="w-8 h-8 text-foret" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-teal-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Commandes Collection</p>
-                <p className="text-3xl font-bold text-teal-700">{orders.length}</p>
-              </div>
-              <ShoppingCart className="w-8 h-8 text-teal-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-green-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Revenus Collection</p>
-                <p className="text-3xl font-bold text-green-700">{totalRevenue.toFixed(0)} $</p>
-              </div>
-              <DollarSign className="w-8 h-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-yellow-200">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Devis en attente</p>
-                <p className="text-3xl font-bold text-yellow-600">{stats?.pending_devis || 0}</p>
-              </div>
-              <BarChart3 className="w-8 h-8 text-yellow-600" />
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Tuile titre="Demandes de devis" valeur={data.devis_mois} detail={`${data.devis_attente} en attente au total`}
+          Icone={FileText} couleur="text-amber-600" onClick={() => onOpen('devis')} />
+        <Tuile titre="Commandes Collection" valeur={data.commandes_mois} detail={`${data.commandes_annee} depuis janvier ${data.annee}`}
+          Icone={ShoppingCart} couleur="text-teal-700" onClick={() => onOpen('kit-orders')} />
+        <Tuile titre="Revenus Collection" valeur={`${Math.round(data.revenus_annee)} $`} detail={`Commandes payées en ${data.annee}`}
+          Icone={DollarSign} couleur="text-green-700" />
+        <Tuile titre="Visiteurs" valeur={data.visiteurs_mois} detail={`${data.visiteurs_jour} aujourd'hui`}
+          Icone={Users} couleur="text-slate-700" />
       </div>
 
-      {/* Graphiques */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><ShoppingCart className="w-5 h-5 text-teal-600" /> Commandes Collection</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-end gap-2 h-40">
-              {ordersMonthly.map((m) => (
-                <div key={m.label} className="flex-1 flex flex-col items-center gap-1">
-                  <span className="text-xs font-bold text-slate-700">{m.count}</span>
-                  <div
-                    className="w-full bg-teal-500 rounded-t-md transition-all"
-                    style={{ height: `${Math.max((m.count / maxOrders) * 120, 4)}px` }}
-                  />
-                  <span className="text-xs text-slate-500">{m.label}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      <p className="text-xs text-slate-500">
+        Vos propres visites ne sont pas comptées (cet appareil est reconnu dès que vous vous connectez à l'admin),
+        ni les devis et commandes faits avec vos courriels de test : {data.courriels_test.join(', ')}.
+        Les visiteurs sont comptés depuis le 26 octobre 2026. Pour l'historique d'une année, voyez la section Rapports.
+      </p>
+    </div>
+  );
+};
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2"><FileText className="w-5 h-5 text-amber-600" /> Demandes de devis</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-end gap-2 h-40">
-              {devisMonthly.map((m) => (
-                <div key={m.label} className="flex-1 flex flex-col items-center gap-1">
-                  <span className="text-xs font-bold text-slate-700">{m.count}</span>
-                  <div
-                    className="w-full bg-amber-500 rounded-t-md transition-all"
-                    style={{ height: `${Math.max((m.count / maxDevis) * 120, 4)}px` }}
-                  />
-                  <span className="text-xs text-slate-500">{m.label}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+// Rapports annuels en Excel (résumé par mois, liste des devis, liste des commandes)
+const ReportsTab = () => {
+  const [years, setYears] = useState([new Date().getFullYear()]);
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [busy, setBusy] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetch(`${DASHBOARD_URL}/api/admin/dashboard`, { headers: authHeaders() })
+      .then((r) => r.json())
+      .then((d) => { if (d.success && d.annees?.length) setYears(d.annees); })
+      .catch(() => {});
+  }, []);
+
+  const telecharger = async () => {
+    setBusy(true);
+    try {
+      const res = await fetch(`${DASHBOARD_URL}/api/admin/reports/${year}`, { headers: authHeaders() });
+      if (!res.ok) throw new Error();
+      const url = URL.createObjectURL(await res.blob());
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Abrisia-rapport-${year}.xlsx`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } catch {
+      toast({ title: "Erreur", description: "Le rapport n'a pas pu être créé. Réessayez dans une minute.", variant: "destructive" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6 max-w-2xl">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900">Rapports</h2>
+        <p className="text-gray-600 mt-1">Téléchargez le rapport d'une année en Excel, pour vos totaux, vos impôts ou votre comptable.</p>
       </div>
-
-      {/* Actions rapides */}
       <Card>
-        <CardHeader>
-          <CardTitle>Aide & Support</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm text-gray-600">
-          <p>• <strong>Projets</strong> : Ajoutez des réalisations dans la page Inspiration</p>
-          <p>• <strong>Collection</strong> : Créez des modèles pré-dessinés à vendre</p>
-          <p>• <strong>Design</strong> : Modifiez le logo, les couleurs et images du site</p>
-          <p>• <strong>Tarifs</strong> : Ajustez les tarifs du calculateur de devis</p>
+        <CardContent className="p-6 space-y-4">
+          <div className="flex flex-wrap items-end gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Année</label>
+              <select value={year} onChange={(e) => setYear(Number(e.target.value))} className="border rounded-md px-3 py-2 bg-white">
+                {years.map((y) => <option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+            <Button onClick={telecharger} disabled={busy} className="bg-foret hover:bg-bois">
+              {busy ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FileText className="w-4 h-4 mr-2" />}
+              Télécharger le rapport Excel
+            </Button>
+          </div>
+          <ul className="text-sm text-slate-600 list-disc pl-5 space-y-1">
+            <li><strong>Résumé</strong> : devis, commandes, revenus payés et visiteurs, mois par mois.</li>
+            <li><strong>Devis</strong> : chaque demande avec le client, les services choisis et le statut.</li>
+            <li><strong>Commandes</strong> : chaque vente de la Collection avec les montants et les taxes.</li>
+          </ul>
+          <p className="text-xs text-slate-500">Vos devis et commandes de test ne sont pas inclus. Pour un PDF, ouvrez le fichier dans Excel puis Fichier &gt; Enregistrer sous &gt; PDF.</p>
         </CardContent>
       </Card>
     </div>
