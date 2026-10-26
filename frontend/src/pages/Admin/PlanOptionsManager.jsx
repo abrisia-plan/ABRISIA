@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../componen
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import {
   DollarSign, Plus, Edit, Trash2, Save, X, Loader2,
-  Eye, EyeOff, GripVertical
+  Eye, EyeOff, GripVertical, ChevronUp, ChevronDown
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 
@@ -105,6 +105,38 @@ const PlanOptionsManager = () => {
     }
   };
 
+  // Monter ou descendre une option dans sa catégorie.
+  // On renumérote toute la liste (0, 1, 2...) et on enregistre seulement celles qui changent.
+  const handleMove = async (option, direction) => {
+    const sorted = [...options].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    const sameCat = sorted.filter((o) => o.category === option.category);
+    const pos = sameCat.findIndex((o) => o.id === option.id);
+    const neighbor = sameCat[pos + direction];
+    if (!neighbor) return;
+    const i = sorted.findIndex((o) => o.id === option.id);
+    const j = sorted.findIndex((o) => o.id === neighbor.id);
+    [sorted[i], sorted[j]] = [sorted[j], sorted[i]];
+    const changed = sorted
+      .map((o, idx) => ({ ...o, order: idx }))
+      .filter((o) => options.find((x) => x.id === o.id)?.order !== o.order);
+    setOptions(sorted.map((o, idx) => ({ ...o, order: idx })));
+    try {
+      setSaving(true);
+      await Promise.all(changed.map((o) =>
+        fetch(`${BACKEND_URL}/api/admin/plan-options/${o.id}`, {
+          method: 'PUT',
+          headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ order: o.order })
+        })
+      ));
+    } catch (err) {
+      toast({ title: "Erreur", description: "L'ordre n'a pas pu être enregistré", variant: "destructive" });
+      loadOptions();
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleToggleActive = async (option) => {
     await handleSave({ ...option, is_active: !option.is_active });
   };
@@ -129,10 +161,11 @@ const PlanOptionsManager = () => {
     );
   }
 
+  const sortedOptions = [...options].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   const groupedOptions = {
-    plans: options.filter(o => o.category === 'plans'),
-    projets: options.filter(o => o.category === 'projets'),
-    services: options.filter(o => o.category === 'services'),
+    plans: sortedOptions.filter(o => o.category === 'plans'),
+    projets: sortedOptions.filter(o => o.category === 'projets'),
+    services: sortedOptions.filter(o => o.category === 'services'),
   };
 
   return (
@@ -154,7 +187,7 @@ const PlanOptionsManager = () => {
             <span className="text-sm text-slate-400">({catOptions.length})</span>
           </h3>
           <div className="space-y-2">
-            {catOptions.map((option) => (
+            {catOptions.map((option, index) => (
               <Card key={option.id} className={`border ${!option.is_active ? 'opacity-50 border-dashed' : 'border-stone-200'}`} data-testid={`plan-option-${option.id}`}>
                 <CardContent className="p-4">
                   {editingOption?.id === option.id ? (
@@ -219,6 +252,16 @@ const PlanOptionsManager = () => {
                   ) : (
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
+                        <div className="flex flex-col">
+                          <button type="button" onClick={() => handleMove(option, -1)} disabled={saving || index === 0}
+                            title="Monter" className="p-0.5 rounded hover:bg-stone-100 disabled:opacity-25" data-testid={`move-up-${option.id}`}>
+                            <ChevronUp className="w-4 h-4 text-slate-600" />
+                          </button>
+                          <button type="button" onClick={() => handleMove(option, 1)} disabled={saving || index === catOptions.length - 1}
+                            title="Descendre" className="p-0.5 rounded hover:bg-stone-100 disabled:opacity-25" data-testid={`move-down-${option.id}`}>
+                            <ChevronDown className="w-4 h-4 text-slate-600" />
+                          </button>
+                        </div>
                         <div>
                           <span className="font-medium text-slate-800">{option.name}</span>
                           {option.description && (
