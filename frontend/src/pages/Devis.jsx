@@ -149,7 +149,9 @@ const Devis = () => {
     const f = parseInt(calcFloors) || 1;
     const surface = w * d * f;
     if (surface === 0) return null;
-    const price = Math.round(surface * baseRate);
+    // Prix minimum d'un projet complet : les petits projets demandent autant de travail
+    // (optimisation de l'espace, mobilier, mécanique du bâtiment).
+    const price = Math.max(1000, Math.round(surface * baseRate));
     return { surface: Math.round(surface), price, rate: baseRate };
   }, [calcWidth, calcDepth, calcFloors, baseRate]);
 
@@ -439,7 +441,7 @@ const Devis = () => {
                       </div>
                     )}
 
-                    <p className="text-xs text-slate-400">* Prix indicatif avant taxes. Le devis final sera ajusté selon la complexité du projet.</p>
+                    <p className="text-xs text-slate-400">* Prix indicatif avant taxes, minimum 1 000 $ pour un projet complet. Le devis final sera ajusté selon la complexité du projet.</p>
                   </div>
                   <p className="text-sm text-slate-600 italic">
                     <strong>Estimation préliminaire seulement</strong> — Le montant affiché sert à donner un ordre de grandeur. Le prix final sera établi après l'analyse du projet et confirmé dans un devis personnalisé.
