@@ -127,6 +127,37 @@ const EspacePro = () => {
         </div>
       </section>
 
+      {/* Programme entrepreneur : l'offre Abrisia */}
+      <section className="py-16 bg-stone-50" data-testid="programme-entrepreneur">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-slate-800 text-center mb-3">
+            Le programme entrepreneur Abrisia
+          </h2>
+          <p className="text-slate-600 text-center max-w-2xl mx-auto mb-10">
+            Pour les entrepreneurs et constructeurs qui ont des projets réguliers au Saguenay–Lac-Saint-Jean et ailleurs au Québec.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {[
+              ["Vos dossiers passent en priorité", "Vos demandes sont traitées avant les nouvelles demandes de particuliers, pour respecter vos échéanciers de chantier."],
+              ["Plan préliminaire pour vos soumissions", "Un plan simple, à l'échelle, pour chiffrer un projet et le présenter à votre client avant qu'il signe. Si le projet se confirme, on le complète."],
+              ["Vos modèles, adaptés à chaque client", "Vous avez un modèle qui se vend bien ? Nous l'ajustons pour chaque nouveau terrain ou chaque demande du client, sans repartir de zéro."],
+              ["Modifications de plans existants", "Un plan acheté ailleurs, un ancien projet ou un modèle de la Collection ABRISIA : nous l'adaptons à votre chantier et aux règles de la municipalité."],
+              ["Plans prêts pour le permis", "Implantation, fondation, vues en plan, élévations, coupes et mécanique du bâtiment, livrés en PDF. Copies papier sur demande."],
+              ["Mini-maisons, UHA, camps et chalets", "Nous connaissons les règles des mini-maisons dans la cour (UHA), des camps sur terre publique et des chalets de villégiature."],
+            ].map(([titre, texte]) => (
+              <div key={titre} className="bg-white rounded-xl p-6 border border-stone-200">
+                <h3 className="font-semibold text-slate-800 mb-2 flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-teal-600 mt-0.5 flex-shrink-0" />
+                  {titre}
+                </h3>
+                <p className="text-sm text-slate-600">{texte}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-slate-400 text-center mt-6">Les modalités sont établies avec chaque entrepreneur selon le volume et le type de projets.</p>
+        </div>
+      </section>
+
       {/* Tarif Pro */}
       <section className="py-12 bg-gradient-to-r from-teal-700 to-teal-800 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
