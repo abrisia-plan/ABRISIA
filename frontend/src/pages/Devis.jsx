@@ -302,6 +302,11 @@ const Devis = () => {
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="shadow-xl border-stone-200 bg-white">
+            <CardHeader className="bg-white border-b border-stone-200">
+              <CardTitle className="text-2xl text-slate-800 text-center">
+                Tableau de demande de devis
+              </CardTitle>
+            </CardHeader>
             <CardContent className="p-8">
               <form onSubmit={handleSubmit} className="space-y-8">
                 
