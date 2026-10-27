@@ -118,10 +118,8 @@ const Home = () => {
   const getCategoryCards = () => {
     if (categories.length > 0) {
       return categories.map((cat) => {
-        // Les projets cochés « Accueil » d'abord ; sinon, n'importe quel projet visible de la catégorie
-        const all = inspirationProjects.filter(p => sameCategory(cat.name, p.category));
-        const marked = all.filter(p => p.showOnHome);
-        const projects = marked.length ? marked : all;
+        // Toutes les inspirations visibles de la catégorie défilent toutes seules (5 chalets = 5 images)
+        const projects = inspirationProjects.filter(p => sameCategory(cat.name, p.category));
         return {
           key: cat.id || cat.name,
           name: cat.name,
