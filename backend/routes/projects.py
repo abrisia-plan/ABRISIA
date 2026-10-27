@@ -66,6 +66,7 @@ async def get_public_projects(
                 "description": project["description"],
                 "details": project["details"],
                 "dimensions": project["dimensions"],
+                "showOnHome": project.get("show_on_home", False),
                 "createdAt": project["created_at"].isoformat()
             })
         
