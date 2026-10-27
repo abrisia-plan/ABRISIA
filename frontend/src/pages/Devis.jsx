@@ -302,11 +302,6 @@ const Devis = () => {
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Card className="shadow-xl border-stone-200 bg-white">
-            <CardHeader className="bg-gradient-to-r from-amber-50 to-stone-50 border-b border-stone-200">
-              <CardTitle className="text-2xl text-slate-800 text-center">
-                Tableau de demande de devis
-              </CardTitle>
-            </CardHeader>
             <CardContent className="p-8">
               <form onSubmit={handleSubmit} className="space-y-8">
                 
@@ -377,7 +372,7 @@ const Devis = () => {
                 {/* Plans désirés - Cases à cocher */}
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold text-slate-800 border-b border-stone-200 pb-2">
-                    Cochez les plans dont vous avez besoin (prix à partir de)
+                    Cochez les services qui vous intéressent
                   </h3>
 
                   {/* Calculateur de prix préliminaire */}
