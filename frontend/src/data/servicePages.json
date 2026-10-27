@@ -1,12 +1,12 @@
 [
   {
     "slug": "plan-de-maison",
-    "title": "Plan de maison, de chalet ou de camp au Québec",
-    "description": "Plan de maison unifamiliale, de chalet quatre saisons, de camp ou de cabane au Québec, de plain-pied ou à étages, dessiné selon votre terrain et vos désirs, pour votre permis. Dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean.",
-    "h1": "Plan de maison, de chalet ou de camp",
-    "resume": "Maison unifamiliale, chalet, camp ou cabane.",
+    "title": "Plan de maison ou de chalet au Québec",
+    "description": "Plan de maison unifamiliale ou de chalet quatre saisons au Québec, de plain-pied ou à étages, dessiné selon votre terrain et vos désirs, pour votre permis. Dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean.",
+    "h1": "Plan de maison ou de chalet",
+    "resume": "Maison unifamiliale ou chalet quatre saisons.",
     "intro": [
-      "Maison unifamiliale, chalet quatre saisons, camp en forêt ou cabane au bord de l'eau : Abrisia Plan conçoit et dessine vos plans, de plain-pied ou à étages, selon votre terrain, votre budget et votre façon de vivre.",
+      "Maison unifamiliale ou chalet quatre saisons : Abrisia Plan conçoit et dessine vos plans, de plain-pied ou à étages, selon votre terrain, votre budget et votre façon de vivre. Pour un camp de chasse démontable ou une cabane à pêche, voyez notre page Camps et cabanes à pêche.",
       "Nos plans sont conçus selon le Code de construction du Québec, le Code national du bâtiment du Canada et les règlements de votre municipalité, pour votre demande de permis."
     ],
     "contenu": [
@@ -40,10 +40,6 @@
       [
         "Faites-vous les plans de l'installation septique ?",
         "Non. L'étude et l'installation septique relèvent d'un technologue ou d'un ingénieur."
-      ],
-      [
-        "Pouvez-vous dessiner un petit camp ou une cabane ?",
-        "Oui, quelle que soit la taille : un petit camp a lui aussi souvent besoin de plans pour le permis."
       ]
     ],
     "etapes": [
@@ -51,6 +47,45 @@
       "Nous en discutons avec vous et préparons des croquis.",
       "Nous réalisons les plans détaillés, à l'échelle.",
       "Vous recevez vos plans en PDF, prêts à joindre à votre demande de permis."
+    ]
+  },
+  {
+    "slug": "plan-camp-et-cabane-a-peche",
+    "title": "Plan de camp de chasse démontable et de cabane à pêche",
+    "description": "Plans de camp de chasse démontable et de cabane à pêche au Québec, conformes aux règles du territoire public et des villages de pêche. Dessinatrice en bâtiment au Saguenay–Lac-Saint-Jean.",
+    "h1": "Camps de chasse démontables et cabanes à pêche",
+    "resume": "Camps démontables et cabanes à pêche légères.",
+    "intro": [
+      "Un camp de chasse ou une cabane à pêche, ce n'est pas une maison : ces petits bâtiments ont leurs propres règles. Abrisia Plan dessine des camps démontables, sans fondation permanente, et des cabanes à pêche légères et transportables.",
+      "Nous tenons compte des règles du territoire public, de votre municipalité ou de votre village de pêche, et de vos besoins : couchettes, chauffage, rangement."
+    ],
+    "contenu": [
+      "Camp de chasse démontable : assemblé par sections, facile à monter et à défaire, sans fondation permanente.",
+      "Sur le territoire public, sans bail, une installation doit être démontable et retirée après l'activité (7 mois par année au maximum). Un camp qui reste en place exige un bail du gouvernement (abri sommaire de 30 m² ou 323 pi² au maximum, remise de 6 m² ou 65 pi², sans eau ni électricité du réseau).",
+      "Sur un terrain privé, c'est le règlement de votre municipalité qui s'applique : un permis est presque toujours demandé.",
+      "Cabane à pêche : légère, conforme au poids et aux dimensions du village de pêche. Exemple à Saguenay : 4 229 kg (9 323 lb) au maximum. Exemple à Hébertville : 120 pi² (11,1 m²) et 13,7 pi (4,2 m) de haut au maximum.",
+      "Matériaux permis (pas de toile, de carton ni de polyéthylène à Saguenay) et emplacements prévus pour le détecteur de fumée, le détecteur de monoxyde de carbone, l'extincteur et la cheminée.",
+      "Vous recevez vos plans en PDF : vue en plan, élévations, coupe et liste des sections à assembler."
+    ],
+    "faq": [
+      [
+        "Ai-je besoin d'un permis pour mon camp ?",
+        "Sur un terrain privé, presque toujours : vérifiez auprès de votre municipalité. Sur le territoire public, un camp qui reste en place exige un bail du gouvernement ; une installation démontable retirée après l'activité n'en demande pas."
+      ],
+      [
+        "Les règles des cabanes à pêche sont-elles partout pareilles ?",
+        "Non. Chaque ville ou comité de pêche fixe ses règles : poids, dimensions, matériaux, sécurité. Dites-nous où vous pêchez et nous en tenons compte."
+      ],
+      [
+        "Puis-je construire mon camp moi-même ?",
+        "Oui. Nos plans indiquent les sections à assembler, pour vous ou votre entrepreneur."
+      ]
+    ],
+    "etapes": [
+      "Vous décrivez votre camp ou votre cabane dans le formulaire de devis : endroit, grandeur, nombre de couchettes.",
+      "Nous vérifions avec vous les règles qui s'appliquent et préparons des croquis.",
+      "Nous réalisons les plans détaillés, à l'échelle.",
+      "Vous recevez vos plans en PDF."
     ]
   },
   {

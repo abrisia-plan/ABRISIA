@@ -308,30 +308,6 @@ const APropos = () => {
       <p className="text-xl font-semibold text-teal-800">Voir grand. Commencer quelque part. Avancer à son rythme.</p>
     </Section>
 
-    {/* Une idée aujourd'hui, un projet demain : 3 étapes reliées */}
-    <section className="py-14 sm:py-20 bg-teal-50">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-12">Une idée aujourd'hui, un projet demain</h2>
-        <ol className="relative grid sm:grid-cols-3 gap-10 sm:gap-6">
-          <div className="hidden sm:block absolute top-8 left-[16.6%] right-[16.6%] border-t-2 border-dashed border-teal-300" aria-hidden="true" />
-          {[
-            { icon: Lightbulb, title: 'Imaginer', text: 'Vous nous partagez votre idée, vos besoins et vos inspirations.' },
-            { icon: Ruler, title: 'Concevoir', text: 'Nous dessinons des plans clairs et précis, pensés pour votre réalité.' },
-            { icon: Hammer, title: 'Réaliser à son rythme', text: 'Vous réalisez votre projet en une fois ou par étapes, avec les professionnels de votre choix.' },
-          ].map(({ icon: Icon, title, text }, i) => (
-            <li key={title} className="relative flex flex-col items-center">
-              <div className="w-16 h-16 rounded-full bg-teal-800 text-white flex items-center justify-center shadow-md ring-8 ring-teal-50">
-                <Icon className="w-7 h-7" />
-              </div>
-              <p className="mt-4 text-sm font-semibold text-teal-700">Étape {i + 1}</p>
-              <h3 className="text-xl font-bold text-slate-900 mt-1">{title}</h3>
-              <p className="mt-2 text-slate-700 max-w-xs">{text}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
-    </section>
-
     {/* 6. Vision */}
     <Section eyebrow="Tournée vers l'avenir" title="Une entreprise qui grandit avec ses clients" className="bg-white">
       <p>
