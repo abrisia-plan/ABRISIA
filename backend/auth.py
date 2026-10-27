@@ -59,6 +59,8 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         
         if not user:
             raise HTTPException(status_code=401, detail="Utilisateur non trouvé")
+        if not user.get("is_active", True):
+            raise HTTPException(status_code=401, detail="Compte désactivé")
         
         return {
             "id": str(user["_id"]),
@@ -70,6 +72,12 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
     except Exception as e:
         logger.error(f"Erreur authentification: {e}")
         raise HTTPException(status_code=401, detail="Non autorisé")
+
+async def require_editor(current_user: dict = Depends(get_current_user)):
+    """Admin ou collaboratrice (rôle « editor ») : gestion des inspirations seulement"""
+    if current_user.get("role") not in ("admin", "editor"):
+        raise HTTPException(status_code=403, detail="Accès refusé")
+    return current_user
 
 async def require_admin(current_user: dict = Depends(get_current_user)):
     """Middleware pour les routes admin seulement"""

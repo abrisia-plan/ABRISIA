@@ -4,7 +4,7 @@ from datetime import datetime
 from pydantic import BaseModel
 import uuid
 from database import get_database
-from auth import require_admin
+from auth import require_admin, require_editor
 import logging
 
 logger = logging.getLogger(__name__)
@@ -390,7 +390,7 @@ async def get_visible_categories():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/admin/content/categories")
-async def get_all_categories_admin(current_user: dict = Depends(require_admin)):
+async def get_all_categories_admin(current_user: dict = Depends(require_editor)):
     """Obtenir toutes les catégories pour l'admin"""
     try:
         db = get_database()

@@ -44,7 +44,7 @@ const Login = () => {
           description: `Bienvenue ${user.name}`,
         });
         
-        if (user.role === 'admin') {
+        if (user.role === 'admin' || user.role === 'editor') {
           navigate('/admin/panel');
         } else {
           localStorage.setItem('employeeToken', response.token);

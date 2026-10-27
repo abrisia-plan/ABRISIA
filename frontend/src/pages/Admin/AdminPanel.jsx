@@ -43,6 +43,7 @@ import ChatbotNotesManager from './ChatbotNotesManager';
 import HomepageServicesManager from './HomepageServicesManager';
 import CalculatorRatesManager from './CalculatorRatesManager';
 import { marquerAppareilAdmin } from '../../lib/visits';
+import TeamManager from './TeamManager';
 
 const AdminPanel = () => {
   const navigate = useNavigate();
@@ -67,7 +68,14 @@ const AdminPanel = () => {
       return;
     }
     
-    setUser(JSON.parse(adminUser));
+    const parsed = JSON.parse(adminUser);
+    setUser(parsed);
+    // Collaboratrice : seulement les inspirations
+    if (parsed.role === 'editor') {
+      setActiveTab('projects');
+      setLoading(false);
+      return;
+    }
     loadStats();
   }, [navigate]);
 
@@ -150,6 +158,15 @@ const AdminPanel = () => {
 
         {/* Sidebar */}
         <aside className={`${menuOuvert ? 'block' : 'hidden'} md:block w-full md:w-64 md:shrink-0 bg-white border-b md:border-b-0 md:border-r border-gray-200 md:min-h-[calc(100vh-73px)] p-4`}>
+          {user?.role === 'editor' ? (
+          <nav className="space-y-2">
+            <Button variant="default" className="w-full justify-start bg-foret" onClick={() => setActiveTab('projects')}>
+              <ImageIcon className="w-4 h-4 mr-2" />
+              Projets (Inspiration)
+            </Button>
+            <p className="px-3 pt-2 text-xs text-gray-500">Ajoutez vos inspirations : elles sont publiées tout de suite.</p>
+          </nav>
+          ) : (
           <nav className="space-y-2">
             <Button 
               variant={activeTab === 'dashboard' ? 'default' : 'ghost'}
@@ -265,6 +282,14 @@ const AdminPanel = () => {
               <MessageSquare className="w-4 h-4 mr-2" />
               Assistant du site
             </Button>
+            <Button 
+              variant={activeTab === 'team' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'team' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('team')}
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Équipe
+            </Button>
 
             <div className="border-t border-gray-200 my-3"></div>
             <button
@@ -315,6 +340,7 @@ const AdminPanel = () => {
               </div>
             )}
           </nav>
+          )}
         </aside>
 
         {/* Main Content */}
@@ -386,6 +412,9 @@ const AdminPanel = () => {
               
               {activeTab === 'assistant' && (
                 <ChatbotNotesManager />
+              )}
+              {activeTab === 'team' && user?.role !== 'editor' && (
+                <TeamManager />
               )}
               
               {activeTab === 'candidatures' && (

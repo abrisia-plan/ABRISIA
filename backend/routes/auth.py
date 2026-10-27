@@ -367,3 +367,59 @@ async def delete_user(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Erreur lors de la suppression de l'utilisateur"
         )
+
+# ========== ÉQUIPE : COLLABORATRICES (rôle « editor ») ==========
+# Une collaboratrice se connecte à l'admin et ne voit que les inspirations (Projets).
+
+@router.get("/admin/editors")
+async def list_editors(current_user: dict = Depends(require_admin)):
+    db = get_database()
+    editors = []
+    async for u in db.users.find({"role": "editor"}).sort("created_at", 1):
+        editors.append({"id": str(u["_id"]), "name": u.get("name"), "email": u.get("email"),
+                        "is_active": u.get("is_active", True)})
+    return {"success": True, "data": editors}
+
+
+@router.post("/admin/editors")
+async def create_editor(data: dict, current_user: dict = Depends(require_admin)):
+    name = (data.get("name") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+    if not name or "@" not in email:
+        raise HTTPException(status_code=400, detail="Nom et courriel requis")
+    if len(password) < 8:
+        raise HTTPException(status_code=400, detail="Le mot de passe doit avoir au moins 8 caractères")
+    db = get_database()
+    if await db.users.find_one({"email": email}):
+        raise HTTPException(status_code=400, detail="Ce courriel a déjà un compte")
+    await db.users.insert_one({
+        "name": name, "email": email, "password": get_password_hash(password),
+        "role": "editor", "is_active": True, "is_approved": True,
+        "created_at": datetime.utcnow(), "updated_at": datetime.utcnow(),
+    })
+    logger.info(f"✅ Compte collaboratrice créé pour {email} par {current_user['name']}")
+    return {"success": True, "message": f"Compte créé pour {name}"}
+
+
+@router.put("/admin/editors/{user_id}")
+async def update_editor(user_id: str, data: dict, current_user: dict = Depends(require_admin)):
+    db = get_database()
+    fields = {"updated_at": datetime.utcnow()}
+    if "is_active" in data:
+        fields["is_active"] = bool(data["is_active"])
+    if data.get("password"):
+        if len(data["password"]) < 8:
+            raise HTTPException(status_code=400, detail="Le mot de passe doit avoir au moins 8 caractères")
+        fields["password"] = get_password_hash(data["password"])
+    result = await db.users.update_one({"_id": ObjectId(user_id), "role": "editor"}, {"$set": fields})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Compte introuvable")
+    return {"success": True}
+
+
+@router.delete("/admin/editors/{user_id}")
+async def delete_editor(user_id: str, current_user: dict = Depends(require_admin)):
+    db = get_database()
+    await db.users.delete_one({"_id": ObjectId(user_id), "role": "editor"})
+    return {"success": True}

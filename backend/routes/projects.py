@@ -7,7 +7,7 @@ import shutil
 from pathlib import Path
 from models import Project, ProjectCreate, ProjectUpdate, SuccessResponse, ListResponse
 from database import get_database
-from auth import require_admin
+from auth import require_admin, require_editor
 from bson import ObjectId
 import file_storage
 from video_links import clean_videos, invalid_videos
@@ -87,7 +87,7 @@ async def get_public_projects(
 
 @router.get("/admin/projects", response_model=ListResponse)
 async def get_all_projects(
-    current_user: dict = Depends(require_admin),
+    current_user: dict = Depends(require_editor),
     include_hidden: bool = True
 ):
     """Obtenir tous les projets (admin)"""
@@ -131,7 +131,7 @@ async def get_all_projects(
 @router.post("/admin/projects", response_model=SuccessResponse)
 async def create_project(
     project_data: ProjectCreate,
-    current_user: dict = Depends(require_admin)
+    current_user: dict = Depends(require_editor)
 ):
     """Créer un nouveau projet"""
     try:
@@ -175,7 +175,7 @@ async def create_project(
 async def update_project(
     project_id: str,
     update_data: ProjectUpdate,
-    current_user: dict = Depends(require_admin)
+    current_user: dict = Depends(require_editor)
 ):
     """Mettre à jour un projet"""
     try:
@@ -236,7 +236,7 @@ async def update_project(
 @router.delete("/admin/projects/{project_id}", response_model=SuccessResponse)
 async def delete_project(
     project_id: str,
-    current_user: dict = Depends(require_admin)
+    current_user: dict = Depends(require_editor)
 ):
     """Supprimer un projet"""
     try:
@@ -296,7 +296,7 @@ async def _admin_upload(file: UploadFile, allowed: set, public: bool, folder: st
 @router.post("/admin/upload-image")
 async def upload_image(
     file: UploadFile = File(...),
-    current_user: dict = Depends(require_admin)
+    current_user: dict = Depends(require_editor)
 ):
     """Upload d'une image PUBLIQUE (photos du site, projets, collection)"""
     try:
