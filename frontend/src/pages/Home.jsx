@@ -382,7 +382,7 @@ const Home = () => {
 
           {/* Grille des catégories avec une image rotative par catégorie */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-            {getCategoryCards().map((card) => {
+            {getCategoryCards().filter((card) => card.projects.length > 0).map((card) => {
               const project = card.projects.length ? card.projects[rotationTick % card.projects.length] : null;
               return (
               <Card 
