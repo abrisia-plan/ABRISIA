@@ -40,7 +40,7 @@ const Home = () => {
     const loadData = async () => {
       try {
         const [projRes, reviewsRes, kitsRes, servicesRes, testimonialsRes, pageContentRes, stepsRes, categoriesRes] = await Promise.all([
-          fetch(`${BACKEND_URL}/api/projects?limit=100`),
+          fetch(`${BACKEND_URL}/api/projects?home_only=true&limit=100`),
           fetch(`${BACKEND_URL}/api/reviews`),
           fetch(`${BACKEND_URL}/api/products?featured=true`),
           fetch(`${BACKEND_URL}/api/homepage-services`),
@@ -118,7 +118,6 @@ const Home = () => {
   const getCategoryCards = () => {
     if (categories.length > 0) {
       return categories.map((cat) => {
-        // Toutes les inspirations visibles de la catégorie défilent toutes seules (5 chalets = 5 images)
         const projects = inspirationProjects.filter(p => sameCategory(cat.name, p.category));
         return {
           key: cat.id || cat.name,
