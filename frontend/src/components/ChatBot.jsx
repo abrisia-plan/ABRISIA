@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Message d'accueil de l'assistant
-const SALUTATION = "Bonjour et bienvenue chez ABRISIA Plan ! 🏡\n\nJe suis Assistant ABRISIA, votre assistant virtuel.\n\nQue vous souhaitiez construire une maison, un chalet ou un garage, je suis ici pour répondre à vos questions, vous présenter les options disponibles et vous aider à donner forme à votre projet.\n\nComment puis-je vous aider aujourd'hui ?";
+const SALUTATION = "Bonjour ! 🏡 Je suis l'assistant d'ABRISIA Plan.\n\nUne question sur vos plans, nos services ou nos prix ? Écrivez-moi, je vous réponds tout de suite.";
 // Une conversation sans activité depuis 24 h est remplacée par une nouvelle
 const DUREE_CONVERSATION_MS = 24 * 60 * 60 * 1000;
 
@@ -60,9 +60,33 @@ const ChatBot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
+  // Avec seulement le message d'accueil, on reste en haut pour le lire au complet
   useEffect(() => {
-    scrollToBottom();
+    if (messages.length > 1) scrollToBottom();
   }, [messages, scrollToBottom]);
+
+  // Bouton qui attire l'attention : pastille « 1 » et petit sautillement tant que le chat n'a pas été ouvert
+  const [dejaOuvert, setDejaOuvert] = useState(() => {
+    try { return sessionStorage.getItem('abrisia_chat_vu') === '1'; } catch { return false; }
+  });
+  const [sautille, setSautille] = useState(false);
+  const [bulle, setBulle] = useState(false);
+  useEffect(() => {
+    if (dejaOuvert) return undefined;
+    const t1 = setTimeout(() => setBulle(true), 4000);
+    const anim = setInterval(() => {
+      setSautille(true);
+      setTimeout(() => setSautille(false), 2000);
+    }, 8000);
+    return () => { clearTimeout(t1); clearInterval(anim); };
+  }, [dejaOuvert]);
+  useEffect(() => {
+    if (isOpen && !dejaOuvert) {
+      setDejaOuvert(true);
+      setBulle(false);
+      try { sessionStorage.setItem('abrisia_chat_vu', '1'); } catch { /* navigation privée */ }
+    }
+  }, [isOpen, dejaOuvert]);
 
   // Load history when chat opens
   useEffect(() => {
@@ -171,21 +195,36 @@ const ChatBot = () => {
   return (
     <>
       {/* Floating button */}
+      {!isOpen && bulle && !dejaOuvert && (
+        <div className="fixed bottom-24 right-6 z-50 max-w-[220px] bg-white border border-gray-200 shadow-lg rounded-2xl rounded-br-sm px-4 py-3 text-sm text-slate-700">
+          <button
+            onClick={() => setBulle(false)}
+            className="absolute -top-2 -left-2 w-5 h-5 rounded-full bg-gray-200 text-gray-600 text-xs flex items-center justify-center"
+            aria-label="Fermer"
+          >×</button>
+          <button onClick={() => setIsOpen(true)} className="text-left">
+            Bonjour ! 👋 Une question sur votre projet ?
+          </button>
+        </div>
+      )}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-teal-700 hover:bg-teal-800 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110"
+          className={`fixed bottom-6 right-6 z-50 w-14 h-14 bg-teal-700 hover:bg-teal-800 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 ${sautille ? 'animate-bounce' : ''}`}
           data-testid="chatbot-toggle-btn"
           aria-label="Ouvrir le chat"
         >
           <MessageCircle className="w-6 h-6" />
+          {!dejaOuvert && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center ring-2 ring-white">1</span>
+          )}
         </button>
       )}
 
       {/* Chat window */}
       {isOpen && (
         <div
-          className="fixed bottom-4 right-4 z-50 w-[360px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-2rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
+          className="fixed bottom-4 right-4 z-50 w-[360px] max-w-[calc(100vw-2rem)] h-[480px] max-h-[calc(100vh-6rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
           data-testid="chatbot-window"
         >
           {/* Header */}
