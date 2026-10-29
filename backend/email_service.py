@@ -366,6 +366,90 @@ class EmailService:
             logger.error(f"❌ Erreur envoi notification temoignage: {str(e)}")
             return False
         
+    def client_link(self, devis_data, etape: str) -> str:
+        """Lien personnel du client vers une étape de son dossier (questionnaire, vérification)."""
+        if not devis_data.get('_id') or not devis_data.get('client_token'):
+            return ''
+        return f"{self.app_url}/suivi/{devis_data['_id']}/{etape}?t={devis_data['client_token']}"
+
+    def _suivi_block(self, devis_data, etape, titre, texte, bouton, guides):
+        """Encadré du courriel client : bouton vers son lien personnel et guides PDF."""
+        link = self.client_link(devis_data, etape)
+        button = (f'<p style="margin: 12px 0;"><a href="{html.escape(link)}" style="display: inline-block; background: #0f766e; color: #ffffff; '
+                  f'text-decoration: none; padding: 10px 18px; border-radius: 999px; font-weight: bold;">{bouton}</a></p>') if link else ''
+        guide_links = "".join(
+            f'<p style="margin: 0 0 4px 0;">📄 <a href="{self.app_url}/guides/{fichier}" style="color: #0f766e;">{nom}</a></p>'
+            for nom, fichier in guides
+        )
+        return f"""
+                <div style="background: #f0fdfa; border-left: 4px solid #0f766e; border-radius: 6px; padding: 14px 16px; margin: 20px 0;">
+                    <p style="margin: 0 0 6px 0;"><strong>{titre}</strong></p>
+                    {f'<p style="margin: 0;">{texte}</p>' if link else ''}
+                    {button}
+                    <p style="margin: 10px 0 6px 0;"><strong>Nos guides, au besoin :</strong></p>
+                    {guide_links}
+                </div>"""
+
+    def send_verification_request(self, devis_data):
+        """Après le dépôt de 50 % : lien de ce qu'il faut vérifier avant le début des dessins"""
+        try:
+            to = (devis_data.get('email') or '').strip()
+            if not to:
+                return False
+            prenom = html.escape(str(devis_data.get('prenom') or '')) or 'bonjour'
+            body = f"""
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Merci pour votre dépôt !</h2>
+                <p>Bonjour {prenom},</p>
+                <p>Nous avons bien reçu votre dépôt de 50 %. Votre projet est maintenant dans notre horaire.</p>
+                <p>Avant de commencer vos dessins, prenez quelques minutes pour confirmer les points de la liste ci-dessous
+                et nous envoyer les documents que vous avez. Ça nous évite de redessiner plus tard, et à vous, des frais et des délais.</p>
+                {self._suivi_block(devis_data, 'verification',
+                    'À vérifier avant le début des dessins',
+                    'Cochez ce qui est fait et joignez vos documents (règles de la municipalité, certificat de localisation, photos, croquis).',
+                    'Ouvrir ma liste de vérification',
+                    [('À vérifier avant le début des dessins (PDF)', 'guide-verification-avant-dessins.pdf'),
+                     ('Guide des appareils (forfaits sur mesure)', 'guide-des-appareils.pdf'),
+                     ('Comment faire un croquis de votre projet', 'guide-faire-un-croquis.pdf')])}
+                <p>Une question ? Répondez simplement à ce courriel.</p>
+                <p style="margin-top: 24px;">À bientôt,<br><strong>Abrisia Plan</strong></p>
+            """
+            return self._send_email(to, "Votre dépôt est reçu : à vérifier avant le début des dessins – Abrisia Plan", self._wrap_email(body))
+        except Exception as e:
+            logger.error(f"Erreur courriel de vérification: {str(e)}")
+            return False
+
+    def send_suivi_notification(self, devis_data, titre, reponses, fichiers, attachments=None):
+        """Courriel à Abrisia quand un client répond par son lien personnel"""
+        try:
+            recipient_email = os.getenv('ADMIN_EMAIL', 'abrisia0plan@gmail.com')
+            client = html.escape(f"{devis_data.get('prenom', '')} {devis_data.get('nom', '')}".strip() or 'Client')
+            rows, section = "", None
+            for item in reponses:
+                if item.get('section') and item['section'] != section:
+                    section = item['section']
+                    rows += f'<tr><td colspan="2" style="padding: 10px 0 4px 0; font-weight: bold; color: #0f766e;">{html.escape(section)}</td></tr>'
+                rows += (f'<tr><td style="padding: 6px 0; font-weight: bold; width: 45%; vertical-align: top;">{html.escape(item["question"])} :</td>'
+                         f'<td>{html.escape(item["reponse"])}</td></tr>')
+            files_html = "".join(
+                f'<li>{html.escape(f["filename"])} <span style="color: #64748b; font-size: 12px;">({_format_size(f["size"])})</span></li>'
+                for f in fichiers
+            )
+            body = f"""
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">{html.escape(titre)} reçu</h2>
+                <p><strong>{client}</strong> ({html.escape(devis_data.get('email') or '')}) a répondu par son lien personnel.
+                Les réponses sont aussi dans l'admin, dans sa demande de devis.</p>
+                {f'<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">{rows}</table>' if rows else ''}
+                {f'<h3 style="color: #0f766e;">Fichiers ({len(fichiers)}) en pièces jointes</h3><ul>{files_html}</ul>' if fichiers else ''}
+            """
+            subject = f"{titre} - {client} - {_now_qc().strftime('%d/%m/%Y')}"
+            sent = self._send_email(recipient_email, subject, self._wrap_email(body), attachments)
+            if not sent and attachments:
+                sent = self._send_email(recipient_email, subject, self._wrap_email(body), attachments)
+            return sent
+        except Exception as e:
+            logger.error(f"Erreur courriel de suivi: {str(e)}")
+            return False
+
     def send_devis_confirmation_to_client(self, devis_data):
         """Accusé de réception envoyé au client après sa demande de devis"""
         try:
@@ -394,6 +478,13 @@ class EmailService:
                 Nous l'étudions et nous vous contacterons rapidement pour en discuter{' (' + pref.lower() + ')' if pref and pref.lower() != 'peu importe' else ''}.</p>
                 {f'<ul style="color: #334155; line-height: 1.8;">{lignes}</ul>' if lignes else ''}
                 <p>Vous avez oublié un détail ou un fichier ? Répondez simplement à ce courriel.</p>
+                {self._suivi_block(devis_data, 'questionnaire',
+                    'Avant votre soumission : le questionnaire de votre projet',
+                    'Répondez à ce que vous savez déjà et joignez vos photos, croquis, certificat de localisation, PDF ou DWG, directement depuis votre téléphone. Vos réponses s\'ajoutent à votre demande.',
+                    'Remplir mon questionnaire',
+                    [('Préparer votre projet avant de faire faire vos plans', 'guide-preparer-son-projet.pdf'),
+                     ('Comment faire un croquis de votre projet', 'guide-faire-un-croquis.pdf'),
+                     ('Votre permis de construction au Québec, étape par étape', 'guide-permis-de-construction.pdf')])}
                 <p style="margin-top: 24px;">À bientôt,<br><strong>Abrisia Plan</strong></p>
             """
             return self._send_email(to, "Nous avons bien reçu votre demande de devis – Abrisia Plan", self._wrap_email(body))
@@ -444,6 +535,20 @@ class EmailService:
                     </table>
                 """
 
+            questionnaire_section = ""
+            questionnaire = devis_data.get('questionnaire') or []
+            if questionnaire:
+                rows, section = "", None
+                for item in questionnaire:
+                    if item.get('section') and item['section'] != section:
+                        section = item['section']
+                        rows += f'<tr><td colspan="2" style="padding: 10px 0 4px 0; font-weight: bold; color: #0f766e;">{html.escape(section)}</td></tr>'
+                    rows += row(html.escape(item['question']), html.escape(item['reponse']))
+                questionnaire_section = f"""
+                    <h3 style="color: #0f766e; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Questionnaire du projet</h3>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">{rows}</table>
+                """
+
             subject = f"Nouveau devis - {devis_data.get('prenom', '')} {devis_data.get('nom', 'Client')} - {_now_qc().strftime('%d/%m/%Y')}"
 
             notes_section = ""
@@ -491,6 +596,7 @@ class EmailService:
                 </table>
 
                 {calc_section}
+                {questionnaire_section}
                 {notes_section}
                 {fichiers_section}
 

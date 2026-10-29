@@ -85,6 +85,39 @@ const DevisDetailModal = ({
               </div>
             )}
 
+            {selectedDevis.questionnaire?.length > 0 && (
+              <div className="mb-3">
+                <span className="text-gray-600 text-sm">Questionnaire du projet :</span>
+                <dl className="mt-1 space-y-1 text-sm">
+                  {selectedDevis.questionnaire.map((item, i) => (
+                    <div key={`${item.question}-${i}`} className="grid grid-cols-1 sm:grid-cols-2 gap-x-3">
+                      <dt className="text-gray-600">{item.question}</dt>
+                      <dd className="text-gray-800 font-medium">{item.reponse}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            )}
+
+            {selectedDevis.verification?.length > 0 && (
+              <div className="mb-3">
+                <span className="text-gray-600 text-sm">Vérification avant les dessins :</span>
+                <dl className="mt-1 space-y-1 text-sm">
+                  {selectedDevis.verification.map((item, i) => (
+                    <div key={`${item.question}-${i}`} className="grid grid-cols-1 sm:grid-cols-2 gap-x-3">
+                      <dt className="text-gray-600">{item.question}</dt>
+                      <dd className="text-gray-800 font-medium">{item.reponse}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            )}
+            {selectedDevis.verificationEnvoyeeLe && (
+              <p className="mb-3 text-sm text-teal-800">
+                Liste de vérification envoyée au client le {new Date(selectedDevis.verificationEnvoyeeLe).toLocaleDateString('fr-CA')}.
+              </p>
+            )}
+
             {selectedDevis.fichiers?.length > 0 && (
               <div>
                 <span className="text-gray-600 text-sm">Fichiers du client (reçus en pièces jointes du courriel) :</span>
@@ -122,6 +155,7 @@ const DevisDetailModal = ({
                   <SelectContent>
                     <SelectItem value="En attente">En attente</SelectItem>
                     <SelectItem value="En cours">En cours</SelectItem>
+                    <SelectItem value="Dépôt reçu (50 %)">Dépôt reçu (50 %) : envoie la liste de vérification</SelectItem>
                     <SelectItem value="Terminé">Terminé</SelectItem>
                     <SelectItem value="Rejeté">Rejeté</SelectItem>
                   </SelectContent>

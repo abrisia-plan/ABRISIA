@@ -10,6 +10,8 @@ import { Send, CheckCircle, Loader2, Calculator, Paperclip, X } from 'lucide-rea
 import { useToast } from '../hooks/use-toast';
 import SEO from '../components/SEO';
 import { devisService, handleApiError } from '../services/api';
+import QuestionFields from '../components/QuestionFields';
+import { QUESTIONNAIRE, answersToList } from '../data/questionnaire';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -57,6 +59,10 @@ const Devis = () => {
     contactPreference: '',
     styles: []
   });
+
+  const [answers, setAnswers] = useState({});
+  const setAnswer = (id, value) => setAnswers(prev => ({ ...prev, [id]: value }));
+  const answeredCount = answersToList(QUESTIONNAIRE, answers).length;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [files, setFiles] = useState([]);
@@ -240,6 +246,7 @@ const Devis = () => {
         calcFloors: calcEstimate ? calcFloors : null,
         calcSurface: calcEstimate ? calcEstimate.surface : null,
         calcEstimate: calcEstimate ? calcEstimate.price : null,
+        questionnaire: answersToList(QUESTIONNAIRE, answers),
       };
       const response = files.length
         ? await devisService.submitWithFiles(payload, files)
@@ -256,6 +263,7 @@ const Devis = () => {
           prenom: '', nom: '', email: '', telephone: '', projectType: '', plansChoisis: [], notes: '',
           representationType: '', contactPreference: '', styles: []
         });
+        setAnswers({});
         setFiles([]);
         setFileError('');
       } else {
@@ -585,6 +593,32 @@ const Devis = () => {
                   </div>
                 </div>
 
+                {/* Questionnaire du projet (facultatif) */}
+                <details
+                  className="group border border-teal-200 rounded-lg bg-teal-50/40"
+                  open={searchParams.has('questionnaire')}
+                  data-testid="devis-questionnaire"
+                >
+                  <summary className="cursor-pointer list-none p-5 flex items-start justify-between gap-3">
+                    <span>
+                      <span className="block text-lg font-semibold text-slate-800">
+                        Questionnaire du projet <span className="text-sm font-normal text-slate-500">(facultatif)</span>
+                      </span>
+                      <span className="block text-sm text-slate-600 mt-1">
+                        Les questions de notre guide « Préparer votre projet ». Répondez à ce que vous savez déjà : ça nous permet de préparer votre devis plus vite.
+                        {answeredCount > 0 && <strong className="text-teal-800"> {answeredCount} réponse{answeredCount > 1 ? 's' : ''}.</strong>}
+                      </span>
+                    </span>
+                    <span className="text-teal-800 text-xl leading-none transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+                  </summary>
+                  <div className="px-5 pb-5 space-y-6">
+                    <QuestionFields sections={QUESTIONNAIRE} answers={answers} onChange={setAnswer} />
+                    <p className="text-sm text-slate-600">
+                      📎 Ajoutez plus bas votre certificat de localisation, des photos du terrain (vue d'ensemble, pente, accès) et vos images d'inspiration.
+                    </p>
+                  </div>
+                </details>
+
                 {/* Zone de notes */}
                 <div className="space-y-2">
                   <Label htmlFor="notes" className="text-slate-700 font-medium">
@@ -611,7 +645,7 @@ const Devis = () => {
                     Joindre des fichiers (optionnel)
                   </Label>
                   <p className="text-sm text-slate-600">
-                    Photos, croquis, plans PDF ou DWG, etc. Maximum {MAX_FILES} fichiers et {MAX_TOTAL_MB} Mo au total.
+                    Photos du terrain, croquis, certificat de localisation, plans PDF ou DWG, etc. Maximum {MAX_FILES} fichiers et {MAX_TOTAL_MB} Mo au total.
                   </p>
                   <label
                     htmlFor="files"

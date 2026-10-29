@@ -98,6 +98,25 @@ export const devisService = {
     return response.data;
   },
 
+  // Lien personnel envoyé au client par courriel (questionnaire, vérification)
+  getSuivi: async (devisId, token, etape) => {
+    const response = await api.get(`/devis/suivi/${devisId}`, { params: { t: token, etape } });
+    return response.data;
+  },
+
+  submitSuivi: async (devisId, token, etape, reponses, files) => {
+    const formData = new FormData();
+    formData.append('t', token);
+    formData.append('etape', etape);
+    formData.append('data', JSON.stringify(reponses));
+    files.forEach((file) => formData.append('files', file));
+    const response = await api.post(`/devis/suivi/${devisId}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 300000,
+    });
+    return response.data;
+  },
+
   getAll: async (statusFilter = null, limit = 50, skip = 0) => {
     const params = { limit, skip };
     if (statusFilter) params.status_filter = statusFilter;

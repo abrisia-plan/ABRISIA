@@ -3,6 +3,7 @@ from pydantic import ValidationError
 from typing import List
 import json
 import os
+import secrets
 from starlette.concurrency import run_in_threadpool
 from datetime import datetime
 from models import (
@@ -55,6 +56,7 @@ async def _create_zoho_lead_from_devis(devis_doc: dict):
                            + (f"Calculateur: {devis_doc['calculateur']['surface']} pi² ~ {devis_doc['calculateur']['estimation']} $\n" if devis_doc.get('calculateur') else "")
                            + 
                            f"Notes: {devis_doc.get('notes', '')}"
+                           + (f"\n\nQUESTIONNAIRE DU PROJET\n{questionnaire_text(devis_doc['questionnaire'])}" if devis_doc.get('questionnaire') else "")
                            + "".join(f"\nFichier reçu par courriel : {f['filename']}" for f in devis_doc.get('fichiers', [])),
         }
         # Champ dédié dans Zoho (à créer dans Zoho, puis indiquer son nom d'API
@@ -86,6 +88,32 @@ ALLOWED_EXTENSIONS = {
 }
 
 
+MAX_QUESTIONS = 40
+
+
+def clean_questionnaire(items) -> list:
+    """Garde seulement les réponses remplies, avec des longueurs raisonnables."""
+    cleaned = []
+    for item in (items or [])[:MAX_QUESTIONS]:
+        question = str(item.get("question") or "").strip()[:200]
+        reponse = str(item.get("reponse") or "").strip()[:1000]
+        if question and reponse:
+            cleaned.append({"section": str(item.get("section") or "").strip()[:100],
+                            "question": question, "reponse": reponse})
+    return cleaned
+
+
+def questionnaire_text(items) -> str:
+    """Le questionnaire en texte simple, regroupé par section (Zoho, assistant IA)."""
+    lines, section = [], None
+    for item in items or []:
+        if item.get("section") and item["section"] != section:
+            section = item["section"]
+            lines.append(f"\n{section.upper()}")
+        lines.append(f"- {item['question']} : {item['reponse']}")
+    return "\n".join(lines).strip()
+
+
 def _build_devis_doc(devis_data: DevisCreate, fichiers: list, source: str = "formulaire") -> dict:
     has_calc = devis_data.calcEstimate or devis_data.calcSurface
     return {
@@ -107,7 +135,10 @@ def _build_devis_doc(devis_data: DevisCreate, fichiers: list, source: str = "for
             "estimation": int(devis_data.calcEstimate) if devis_data.calcEstimate else None,
         } if has_calc else None,
         "notes": devis_data.notes,
+        "questionnaire": clean_questionnaire(devis_data.questionnaire),
         "fichiers": fichiers,
+        # Jeton du lien personnel envoyé au client (questionnaire, vérification)
+        "client_token": secrets.token_urlsafe(24),
         "source": source,
         "status": "En attente",
         "assigned_to": None,
@@ -239,6 +270,97 @@ async def submit_devis_with_files(
             detail="Erreur lors de la soumission du devis"
         )
 
+# Étapes du suivi par lien personnel : champ en base et nom affiché
+SUIVI_ETAPES = {
+    "questionnaire": ("questionnaire", "Questionnaire du projet"),
+    "verification": ("verification", "Vérification avant le début des dessins"),
+}
+# Statut à choisir dans l'admin quand le dépôt est reçu : envoie le lien de vérification
+STATUT_DEPOT = "Dépôt reçu (50 %)"
+
+
+async def _devis_for_client(devis_id: str, token: str) -> dict:
+    """Le devis d'un lien personnel, seulement si le jeton du lien est bon."""
+    if not ObjectId.is_valid(devis_id) or not token:
+        raise HTTPException(status_code=404, detail="Lien invalide ou expiré.")
+    devis = await get_database().devis.find_one({"_id": ObjectId(devis_id)})
+    if not devis or not devis.get("client_token") or not secrets.compare_digest(str(token), devis["client_token"]):
+        raise HTTPException(status_code=404, detail="Lien invalide ou expiré.")
+    return devis
+
+
+async def _read_uploads(files: List[UploadFile]):
+    """Vérifie et lit les fichiers envoyés : (pièces jointes, fiches nom + taille)."""
+    if len(files) > MAX_FILES:
+        raise HTTPException(status_code=400, detail=f"Maximum {MAX_FILES} fichiers par envoi.")
+    total = 0
+    for upload in files:
+        name = os.path.basename(upload.filename or "fichier")
+        if os.path.splitext(name)[1].lower() not in ALLOWED_EXTENSIONS:
+            raise HTTPException(status_code=400, detail=f"Le type de fichier « {name} » n'est pas accepté.")
+        total += file_size(upload.file)
+    if total > MAX_TOTAL_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Vos fichiers dépassent {MAX_TOTAL_MB} Mo au total. Retirez-en quelques-uns : vous pourrez nous les envoyer par courriel.",
+        )
+    attachments, fichiers = [], []
+    for upload in files:
+        name = os.path.basename(upload.filename or "fichier")
+        content = await upload.read()
+        attachments.append((name, content))
+        fichiers.append({"filename": name, "size": len(content)})
+    return attachments, fichiers
+
+
+@router.get("/devis/suivi/{devis_id}")
+async def get_suivi(devis_id: str, t: str = "", etape: str = "questionnaire"):
+    """Page du lien personnel : prénom du client et réponses déjà données (public, avec jeton)"""
+    if etape not in SUIVI_ETAPES:
+        raise HTTPException(status_code=404, detail="Étape inconnue.")
+    devis = await _devis_for_client(devis_id, t)
+    return {
+        "prenom": devis.get("prenom", ""),
+        "projectType": devis.get("project_type", ""),
+        "reponses": devis.get(SUIVI_ETAPES[etape][0], []),
+    }
+
+
+@router.post("/devis/suivi/{devis_id}", response_model=SuccessResponse)
+async def submit_suivi(
+    devis_id: str,
+    background_tasks: BackgroundTasks,
+    t: str = Form(...),
+    etape: str = Form("questionnaire"),
+    data: str = Form("[]"),
+    files: List[UploadFile] = File(default=[]),
+):
+    """Réponses du client par son lien personnel : ajoutées à sa demande (public, avec jeton)"""
+    if etape not in SUIVI_ETAPES:
+        raise HTTPException(status_code=404, detail="Étape inconnue.")
+    devis = await _devis_for_client(devis_id, t)
+    try:
+        reponses = clean_questionnaire(json.loads(data))
+    except (ValueError, AttributeError, TypeError):
+        raise HTTPException(status_code=422, detail="Réponses invalides.")
+    attachments, fichiers = await _read_uploads(files)
+    if not reponses and not fichiers:
+        raise HTTPException(status_code=400, detail="Répondez à au moins une question ou joignez un fichier.")
+
+    field, titre = SUIVI_ETAPES[etape]
+    update = {"updated_at": datetime.utcnow(), f"{field}_recu_le": datetime.utcnow()}
+    if reponses:
+        update[field] = reponses
+    await get_database().devis.update_one(
+        {"_id": devis["_id"]},
+        {"$set": update, "$push": {"fichiers": {"$each": fichiers}}},
+    )
+    devis.update(update)
+    background_tasks.add_task(email_service.send_suivi_notification, devis, titre, reponses, fichiers, attachments)
+    logger.info(f"✅ {titre} reçu pour le devis {devis_id} ({len(reponses)} réponse(s), {len(fichiers)} fichier(s))")
+    return SuccessResponse(success=True, message="Merci ! Vos réponses ont bien été ajoutées à votre dossier.")
+
+
 @router.get("/admin/devis", response_model=ListResponse)
 async def get_all_devis(
     status: str = None,
@@ -287,6 +409,9 @@ async def get_all_devis(
                 "calculateur": devis.get("calculateur"),
                 "source": devis.get("source", "formulaire"),
                 "notes": devis.get("notes", ""),
+                "questionnaire": devis.get("questionnaire", []),
+                "verification": devis.get("verification", []),
+                "verificationEnvoyeeLe": devis["verification_envoyee_le"].isoformat() if devis.get("verification_envoyee_le") else None,
                 "fichiers": devis.get("fichiers", []),
                 "status": devis["status"],
                 "assignedTo": devis.get("assigned_to"),
@@ -348,6 +473,23 @@ async def update_devis_status(
         
         if result.matched_count == 0:
             raise HTTPException(status_code=404, detail="Devis non trouvé")
+
+        # Dépôt reçu : le client reçoit (une seule fois) le lien de ce qu'il faut
+        # vérifier avant le début des dessins
+        if update_data.status == STATUT_DEPOT:
+            devis = await db.devis.find_one_and_update(
+                {"_id": ObjectId(devis_id), "verification_envoyee_le": None},
+                {"$set": {"verification_envoyee_le": datetime.utcnow()}},
+            )
+            if devis:
+                if not devis.get("client_token"):
+                    devis["client_token"] = secrets.token_urlsafe(24)
+                    await db.devis.update_one({"_id": devis["_id"]}, {"$set": {"client_token": devis["client_token"]}})
+                sent = await run_in_threadpool(email_service.send_verification_request, devis)
+                if not sent:
+                    # Le courriel n'est pas parti : on pourra réessayer en remettant le statut
+                    await db.devis.update_one({"_id": devis["_id"]}, {"$set": {"verification_envoyee_le": None}})
+                    raise HTTPException(status_code=502, detail="Statut enregistré, mais le courriel de vérification n'a pas pu partir. Réessayez.")
         
         # Mettre à jour le compteur de projets actifs du dessinateur
         if update_data.assigned_designer:

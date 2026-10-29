@@ -177,6 +177,7 @@ const DevisManager = () => {
     const statusConfig = {
       'En attente': { color: 'bg-amber-100 text-amber-800', icon: Clock },
       'En cours': { color: 'bg-blue-100 text-blue-800', icon: FileText },
+      'Dépôt reçu (50 %)': { color: 'bg-teal-100 text-teal-800', icon: Check },
       'Terminé': { color: 'bg-green-100 text-green-800', icon: Check },
       'Rejeté': { color: 'bg-red-100 text-red-800', icon: X },
     };

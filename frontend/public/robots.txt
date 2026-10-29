@@ -3,5 +3,6 @@ Allow: /
 Disallow: /admin
 Disallow: /espace-employe
 Disallow: /connexion-employe
+Disallow: /suivi/
 
 Sitemap: https://abrisia-plan.ca/sitemap.xml
