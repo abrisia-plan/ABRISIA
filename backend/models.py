@@ -646,7 +646,7 @@ class DevisCreate(BaseModel):
     calcFloors: Optional[int] = None
     calcSurface: Optional[float] = None
     calcEstimate: Optional[float] = None
-    # Questionnaire du projet (questions du guide « Préparer votre projet »),
+    # Questionnaire du projet (questions posées avant la soumission),
     # ex. [{"section": "Terrain", "question": "Municipalité", "reponse": "Alma"}]
     questionnaire: List[Dict[str, str]] = []
 

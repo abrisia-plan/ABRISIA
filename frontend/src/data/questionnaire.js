@@ -1,5 +1,5 @@
 // Questions envoyées aux clients, regroupées par section.
-// - QUESTIONNAIRE : avant la soumission (guide « Préparer votre projet »)
+// - QUESTIONNAIRE : avant la soumission
 // - VERIFICATION : après le dépôt de 50 %, avant le début des dessins
 // Tout est facultatif; seules les réponses remplies sont envoyées.
 
@@ -67,7 +67,7 @@ export const VERIFICATION = [
       { id: 'v_fondation', label: 'Type de fondation choisi', options: ETAT },
       { id: 'v_exterieur', label: 'Toiture et revêtements extérieurs choisis', options: ETAT },
       { id: 'v_chauffage', label: 'Chauffage et ventilation choisis', options: ETAT },
-      { id: 'v_appareils', label: 'Forfait sur mesure : liste de vos appareils (voir le guide des appareils)', options: ETAT },
+      { id: 'v_appareils', label: 'Forfait sur mesure : liste de vos appareils (voir le Guide des dimensions — meubles et appareils)', options: ETAT },
       { id: 'v_croquis', label: 'Croquis ou images d\'inspiration envoyés', options: ETAT },
     ],
   },
@@ -87,9 +87,10 @@ export const ETAPES = {
     titre: 'Questionnaire de votre projet',
     intro: 'Répondez à ce que vous savez déjà et joignez vos photos, croquis, certificat de localisation, PDF ou DWG. Nous nous en servons pour préparer votre soumission.',
     guides: [
-      ['Préparer votre projet avant de faire faire vos plans', '/guides/guide-preparer-son-projet.pdf'],
-      ['Comment faire un croquis de votre projet', '/guides/guide-faire-un-croquis.pdf'],
-      ['Votre permis de construction au Québec, étape par étape', '/guides/guide-permis-de-construction.pdf'],
+      ['Abrisia — Guide 1 : Avant la soumission', '/guides/guide-1-avant-la-soumission.pdf'],
+      ['Guide Démarrer mon projet', '/guides/guide-demarrer-mon-projet.pdf'],
+      ['Guide de croquis — Abrisia Plan', '/guides/guide-de-croquis.pdf'],
+      ['Abrisia — Guide 3 : Votre projet et votre municipalité', '/guides/guide-3-votre-projet-et-votre-municipalite.pdf'],
     ],
   },
   verification: {
@@ -97,9 +98,10 @@ export const ETAPES = {
     titre: 'À vérifier avant le début des dessins',
     intro: 'Merci pour votre dépôt ! Avant de commencer vos dessins, confirmez ces points et joignez les documents que vous avez. Ça évite de redessiner plus tard.',
     guides: [
-      ['À vérifier avant le début des dessins (version PDF)', '/guides/guide-verification-avant-dessins.pdf'],
-      ['Guide des appareils (forfaits sur mesure)', '/guides/guide-des-appareils.pdf'],
-      ['Comment faire un croquis de votre projet', '/guides/guide-faire-un-croquis.pdf'],
+      ['Abrisia — Guide 2 : Démarrage du contrat', '/guides/guide-2-demarrage-du-contrat.pdf'],
+      ['Abrisia — Guide 3 : Votre projet et votre municipalité', '/guides/guide-3-votre-projet-et-votre-municipalite.pdf'],
+      ['Guide des dimensions — meubles et appareils', '/guides/guide-des-dimensions-meubles-et-appareils.pdf'],
+      ['Guide de croquis — Abrisia Plan', '/guides/guide-de-croquis.pdf'],
     ],
   },
 };

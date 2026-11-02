@@ -605,7 +605,7 @@ const Devis = () => {
                         Questionnaire du projet <span className="text-sm font-normal text-slate-500">(facultatif)</span>
                       </span>
                       <span className="block text-sm text-slate-600 mt-1">
-                        Les questions de notre guide « Préparer votre projet ». Répondez à ce que vous savez déjà : ça nous permet de préparer votre devis plus vite.
+                        Répondez à ce que vous savez déjà : ça nous permet de préparer votre devis plus vite.
                         {answeredCount > 0 && <strong className="text-teal-800"> {answeredCount} réponse{answeredCount > 1 ? 's' : ''}.</strong>}
                       </span>
                     </span>

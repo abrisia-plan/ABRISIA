@@ -407,9 +407,10 @@ class EmailService:
                     'À vérifier avant le début des dessins',
                     'Cochez ce qui est fait et joignez vos documents (règles de la municipalité, certificat de localisation, photos, croquis).',
                     'Ouvrir ma liste de vérification',
-                    [('À vérifier avant le début des dessins (PDF)', 'guide-verification-avant-dessins.pdf'),
-                     ('Guide des appareils (forfaits sur mesure)', 'guide-des-appareils.pdf'),
-                     ('Comment faire un croquis de votre projet', 'guide-faire-un-croquis.pdf')])}
+                    [('Abrisia — Guide 2 : Démarrage du contrat', 'guide-2-demarrage-du-contrat.pdf'),
+                     ('Abrisia — Guide 3 : Votre projet et votre municipalité', 'guide-3-votre-projet-et-votre-municipalite.pdf'),
+                     ('Guide des dimensions — meubles et appareils', 'guide-des-dimensions-meubles-et-appareils.pdf'),
+                     ('Guide de croquis — Abrisia Plan', 'guide-de-croquis.pdf')])}
                 <p>Une question ? Répondez simplement à ce courriel.</p>
                 <p style="margin-top: 24px;">À bientôt,<br><strong>Abrisia Plan</strong></p>
             """
@@ -482,9 +483,10 @@ class EmailService:
                     'Avant votre soumission : le questionnaire de votre projet',
                     'Répondez à ce que vous savez déjà et joignez vos photos, croquis, certificat de localisation, PDF ou DWG, directement depuis votre téléphone. Vos réponses s\'ajoutent à votre demande.',
                     'Remplir mon questionnaire',
-                    [('Préparer votre projet avant de faire faire vos plans', 'guide-preparer-son-projet.pdf'),
-                     ('Comment faire un croquis de votre projet', 'guide-faire-un-croquis.pdf'),
-                     ('Votre permis de construction au Québec, étape par étape', 'guide-permis-de-construction.pdf')])}
+                    [('Abrisia — Guide 1 : Avant la soumission', 'guide-1-avant-la-soumission.pdf'),
+                     ('Guide Démarrer mon projet', 'guide-demarrer-mon-projet.pdf'),
+                     ('Guide de croquis — Abrisia Plan', 'guide-de-croquis.pdf'),
+                     ('Abrisia — Guide 3 : Votre projet et votre municipalité', 'guide-3-votre-projet-et-votre-municipalite.pdf')])}
                 <p style="margin-top: 24px;">À bientôt,<br><strong>Abrisia Plan</strong></p>
             """
             return self._send_email(to, "Nous avons bien reçu votre demande de devis – Abrisia Plan", self._wrap_email(body))
