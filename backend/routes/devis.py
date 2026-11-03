@@ -277,6 +277,7 @@ SUIVI_ETAPES = {
 }
 # Statut à choisir dans l'admin quand le dépôt est reçu : envoie le lien de vérification
 STATUT_DEPOT = "Dépôt reçu (50 %)"
+FORFAITS = {"permis", "complet", "sur_mesure"}
 
 
 async def _devis_for_client(devis_id: str, token: str) -> dict:
@@ -322,6 +323,7 @@ async def get_suivi(devis_id: str, t: str = "", etape: str = "questionnaire"):
     return {
         "prenom": devis.get("prenom", ""),
         "projectType": devis.get("project_type", ""),
+        "forfait": devis.get("forfait"),
         "reponses": devis.get(SUIVI_ETAPES[etape][0], []),
     }
 
@@ -411,6 +413,7 @@ async def get_all_devis(
                 "notes": devis.get("notes", ""),
                 "questionnaire": devis.get("questionnaire", []),
                 "verification": devis.get("verification", []),
+                "forfait": devis.get("forfait"),
                 "verificationEnvoyeeLe": devis["verification_envoyee_le"].isoformat() if devis.get("verification_envoyee_le") else None,
                 "fichiers": devis.get("fichiers", []),
                 "status": devis["status"],
@@ -459,6 +462,16 @@ async def update_devis_status(
         if update_data.assigned_designer is not None:
             # « non-assigne » = choix « Non assigné » dans l'admin
             update_fields["assigned_to"] = None if update_data.assigned_designer in ("", "non-assigne") else update_data.assigned_designer
+
+        if update_data.forfait is not None:
+            if update_data.forfait not in FORFAITS:
+                raise HTTPException(status_code=400, detail="Forfait inconnu.")
+            update_fields["forfait"] = update_data.forfait
+
+        if update_data.status == STATUT_DEPOT and "forfait" not in update_fields:
+            existing = await db.devis.find_one({"_id": ObjectId(devis_id)}, {"forfait": 1})
+            if not existing or existing.get("forfait") not in FORFAITS:
+                raise HTTPException(status_code=400, detail="Choisissez le forfait du client avant d'indiquer que le dépôt est reçu : le courriel en dépend.")
 
         for field in ("priority", "estimated_budget", "admin_notes"):
             value = getattr(update_data, field)

@@ -155,13 +155,32 @@ const DevisDetailModal = ({
                   <SelectContent>
                     <SelectItem value="En attente">En attente</SelectItem>
                     <SelectItem value="En cours">En cours</SelectItem>
-                    <SelectItem value="Dépôt reçu (50 %)">Dépôt reçu (50 %) : envoie la liste de vérification</SelectItem>
+                    <SelectItem value="Dépôt reçu (50 %)">Dépôt reçu (50 %) : envoie le courriel de dépôt</SelectItem>
                     <SelectItem value="Terminé">Terminé</SelectItem>
                     <SelectItem value="Rejeté">Rejeté</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
+              <div>
+                <Label>Forfait accepté</Label>
+                <Select
+                  value={updateForm.forfait || 'aucun'}
+                  onValueChange={(value) => setUpdateForm(prev => ({ ...prev, forfait: value === 'aucun' ? '' : value }))}
+                >
+                  <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="aucun">À choisir</SelectItem>
+                    <SelectItem value="permis">Plan pour permis</SelectItem>
+                    <SelectItem value="complet">Plan complet</SelectItem>
+                    <SelectItem value="sur_mesure">Sur mesure</SelectItem>
+                  </SelectContent>
+                </Select>
+                {updateForm.status === 'Dépôt reçu (50 %)' && !updateForm.forfait && (
+                  <p className="text-xs text-red-700 mt-1">Choisissez le forfait : le courriel de dépôt en dépend.</p>
+                )}
+              </div>
+
               <div>
                 <Label>Priorite</Label>
                 <Select

@@ -21,6 +21,30 @@ def _format_size(size):
         return f"{max(1, round(size / 1024))} Ko"
     return f"{size / 1024 / 1024:.1f} Mo"
 
+# Guides envoyés aux clients (frontend/public/guides), en liens dans les courriels.
+# Le Guide des dimensions et les documents internes ne sont jamais envoyés.
+GUIDE_1 = ('Abrisia — Guide 1 : Avant la soumission', 'guide-1-avant-la-soumission.pdf')
+GUIDE_CROQUIS = ('Guide de croquis — Abrisia Plan', 'guide-de-croquis.pdf')
+GUIDE_2 = ('Abrisia — Guide 2 : Démarrage du contrat', 'guide-2-demarrage-du-contrat.pdf')
+GUIDE_3 = ('Abrisia — Guide 3 : Votre projet et votre municipalité', 'guide-3-votre-projet-et-votre-municipalite.pdf')
+GUIDE_APPAREILS = ('Abrisia — Guide des appareils', 'guide-des-appareils.pdf')
+GUIDE_FICHE_CHOIX = ('Abrisia — Fiche de choix (sur mesure)', 'fiche-de-choix-sur-mesure.pdf')
+
+# Moyen de communication choisi -> mots du courriel de dépôt
+CONTACT_MOYENS = {'Par téléphone': 'téléphone', 'Par courriel': 'courriel', 'Par texto': 'texto',
+                  'telephone': 'téléphone', 'courriel': 'courriel', 'texto': 'texto'}
+
+_TEXTE_COMPLET = ("Nous commençons dès maintenant vos plans techniques. Pour la suite, voici la liste des dimensions "
+                  "standards des appareils que nous utilisons. Faites vos choix selon vos besoins : chaque appareil "
+                  "existe en version mini, standard ou grand, et en différents types.")
+# Courriel de confirmation du dépôt : texte selon le forfait
+FORFAIT_DEPOT_TEXTES = {
+    'permis': ["Nous commençons dès maintenant vos plans pour permis, et nous vous revenons très bientôt avec une première version."],
+    'complet': [_TEXTE_COMPLET],
+    'sur_mesure': [_TEXTE_COMPLET, "Vous trouverez aussi votre fiche de choix. Nous vous accompagnerons dans le choix de vos appareils."],
+}
+
+
 class EmailService:
     def __init__(self):
         self.smtp_server = os.getenv('SMTP_HOST', 'smtp.gmail.com')
@@ -391,32 +415,42 @@ class EmailService:
                 </div>"""
 
     def send_verification_request(self, devis_data):
-        """Après le dépôt de 50 % : lien de ce qu'il faut vérifier avant le début des dessins"""
+        """Après le dépôt : confirmation selon le forfait, liens des guides et lien de vérification"""
         try:
             to = (devis_data.get('email') or '').strip()
-            if not to:
+            forfait = devis_data.get('forfait')
+            if not to or forfait not in FORFAIT_DEPOT_TEXTES:
                 return False
-            prenom = html.escape(str(devis_data.get('prenom') or '')) or 'bonjour'
+            prenom = html.escape(str(devis_data.get('prenom') or ''))
+            moyen = CONTACT_MOYENS.get((devis_data.get('contact_preference') or '').strip(),
+                                       'le moyen de communication que vous préférez')
+            guides = [GUIDE_2]
+            if forfait in ('complet', 'sur_mesure'):
+                guides.append(GUIDE_APPAREILS)
+            if forfait == 'sur_mesure':
+                guides.append(GUIDE_FICHE_CHOIX)
+            paragraphes = "".join(f'<p>{texte}</p>' for texte in FORFAIT_DEPOT_TEXTES[forfait])
+            liens = "".join(
+                f'<p style="margin: 0 0 4px 0;">📄 <a href="{self.app_url}/guides/{fichier}" style="color: #0f766e;">{nom}</a></p>'
+                for nom, fichier in guides
+            )
+            link = self.client_link(devis_data, 'verification')
+            bouton = (f'<p style="margin: 20px 0;"><a href="{html.escape(link)}" style="display: inline-block; background: #0f766e; color: #ffffff; '
+                      f'text-decoration: none; padding: 10px 18px; border-radius: 999px; font-weight: bold;">Ouvrir ma liste de vérification</a></p>') if link else ''
             body = f"""
-                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Merci pour votre dépôt !</h2>
+                <h2 style="color: #0f766e; margin: 0 0 16px 0;">Dépôt reçu – votre projet est lancé !</h2>
                 <p>Bonjour {prenom},</p>
-                <p>Nous avons bien reçu votre dépôt de 50 %. Votre projet est maintenant dans notre horaire.</p>
-                <p>Avant de commencer vos dessins, prenez quelques minutes pour confirmer les points de la liste ci-dessous
-                et nous envoyer les documents que vous avez. Ça nous évite de redessiner plus tard, et à vous, des frais et des délais.</p>
-                {self._suivi_block(devis_data, 'verification',
-                    'À vérifier avant le début des dessins',
-                    'Cochez ce qui est fait et joignez vos documents (règles de la municipalité, certificat de localisation, photos, croquis).',
-                    'Ouvrir ma liste de vérification',
-                    [('Abrisia — Guide 2 : Démarrage du contrat', 'guide-2-demarrage-du-contrat.pdf'),
-                     ('Abrisia — Guide 3 : Votre projet et votre municipalité', 'guide-3-votre-projet-et-votre-municipalite.pdf'),
-                     ('Guide des dimensions — meubles et appareils', 'guide-des-dimensions-meubles-et-appareils.pdf'),
-                     ('Guide de croquis — Abrisia Plan', 'guide-de-croquis.pdf')])}
-                <p>Une question ? Répondez simplement à ce courriel.</p>
-                <p style="margin-top: 24px;">À bientôt,<br><strong>Abrisia Plan</strong></p>
+                <p>Merci pour votre confiance ! Nous avons bien reçu votre dépôt. Pour la suite, nous restons en contact par {html.escape(moyen)}, et vous recevrez par courriel les messages de suivi de votre projet.</p>
+                {paragraphes}
+                <div style="background: #f0fdfa; border-left: 4px solid #0f766e; border-radius: 6px; padding: 14px 16px; margin: 20px 0;">
+                    {liens}
+                </div>
+                {bouton}
+                <p style="margin-top: 24px;">Au plaisir,<br><strong>Abrisia Plan</strong></p>
             """
-            return self._send_email(to, "Votre dépôt est reçu : à vérifier avant le début des dessins – Abrisia Plan", self._wrap_email(body))
+            return self._send_email(to, "Dépôt reçu – votre projet est lancé !", self._wrap_email(body))
         except Exception as e:
-            logger.error(f"Erreur courriel de vérification: {str(e)}")
+            logger.error(f"Erreur courriel de dépôt: {str(e)}")
             return False
 
     def send_suivi_notification(self, devis_data, titre, reponses, fichiers, attachments=None):
@@ -478,15 +512,13 @@ class EmailService:
                 <p>Merci d'avoir pensé à Abrisia Plan pour votre projet. Votre demande de devis nous est bien parvenue.
                 Nous l'étudions et nous vous contacterons rapidement pour en discuter{' (' + pref.lower() + ')' if pref and pref.lower() != 'peu importe' else ''}.</p>
                 {f'<ul style="color: #334155; line-height: 1.8;">{lignes}</ul>' if lignes else ''}
+                <p>Nous communiquerons avec vous selon le moyen de communication que vous préférez. Les messages de suivi de votre projet vous sont envoyés automatiquement par courriel.</p>
                 <p>Vous avez oublié un détail ou un fichier ? Répondez simplement à ce courriel.</p>
                 {self._suivi_block(devis_data, 'questionnaire',
                     'Avant votre soumission : le questionnaire de votre projet',
                     'Répondez à ce que vous savez déjà et joignez vos photos, croquis, certificat de localisation, PDF ou DWG, directement depuis votre téléphone. Vos réponses s\'ajoutent à votre demande.',
                     'Remplir mon questionnaire',
-                    [('Abrisia — Guide 1 : Avant la soumission', 'guide-1-avant-la-soumission.pdf'),
-                     ('Guide Démarrer mon projet', 'guide-demarrer-mon-projet.pdf'),
-                     ('Guide de croquis — Abrisia Plan', 'guide-de-croquis.pdf'),
-                     ('Abrisia — Guide 3 : Votre projet et votre municipalité', 'guide-3-votre-projet-et-votre-municipalite.pdf')])}
+                    [GUIDE_1] + ([] if fichiers else [GUIDE_CROQUIS]))}
                 <p style="margin-top: 24px;">À bientôt,<br><strong>Abrisia Plan</strong></p>
             """
             return self._send_email(to, "Nous avons bien reçu votre demande de devis – Abrisia Plan", self._wrap_email(body))

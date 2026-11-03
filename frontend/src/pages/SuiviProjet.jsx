@@ -5,7 +5,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Send, CheckCircle, Loader2, Paperclip, X, FileText } from 'lucide-react';
 import QuestionFields from '../components/QuestionFields';
-import { ETAPES, answersToList, listToAnswers } from '../data/questionnaire';
+import { ETAPES, answersToList, listToAnswers, guidesFor, sectionsFor } from '../data/questionnaire';
 import { devisService, handleApiError } from '../services/api';
 
 const MAX_FILES = 10;
@@ -26,6 +26,7 @@ const SuiviProjet = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [prenom, setPrenom] = useState('');
+  const [forfait, setForfait] = useState(null);
   const [answers, setAnswers] = useState({});
   const [files, setFiles] = useState([]);
   const [fileError, setFileError] = useState('');
@@ -37,6 +38,7 @@ const SuiviProjet = () => {
     devisService.getSuivi(id, token, etape)
       .then((data) => {
         setPrenom(data.prenom || '');
+        setForfait(data.forfait || null);
         setAnswers(listToAnswers(config.sections, data.reponses));
       })
       .catch((err) => setError(handleApiError(err)))
@@ -71,7 +73,7 @@ const SuiviProjet = () => {
     setSubmitting(true);
     setError('');
     try {
-      await devisService.submitSuivi(id, token, etape, answersToList(config.sections, answers), files);
+      await devisService.submitSuivi(id, token, etape, answersToList(sectionsFor(etape, forfait), answers), files);
       setSent(true);
       setFiles([]);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -118,7 +120,7 @@ const SuiviProjet = () => {
                 <div className="p-4 rounded-lg bg-teal-50 border border-teal-200">
                   <p className="font-medium text-slate-800 mb-2">Nos guides, au besoin :</p>
                   <ul className="space-y-1">
-                    {config.guides.map(([nom, href]) => (
+                    {guidesFor(etape, forfait).map(([nom, href]) => (
                       <li key={href}>
                         <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-teal-800 underline">
                           <FileText className="h-4 w-4 shrink-0" />{nom}
@@ -129,7 +131,7 @@ const SuiviProjet = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
-                  <QuestionFields sections={config.sections} answers={answers} onChange={setAnswer} />
+                  <QuestionFields sections={sectionsFor(etape, forfait)} answers={answers} onChange={setAnswer} />
 
                   <div className="space-y-2">
                     <p className="text-slate-700 font-medium">Joindre des fichiers (optionnel)</p>

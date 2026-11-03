@@ -657,6 +657,8 @@ class DevisUpdate(BaseModel):
     priority: Optional[str] = None
     estimated_budget: Optional[float] = None
     admin_notes: Optional[str] = None
+    # Forfait accepté par le client : permis, complet ou sur_mesure
+    forfait: Optional[str] = None
 
 class DevisResponse(BaseModel):
     success: bool

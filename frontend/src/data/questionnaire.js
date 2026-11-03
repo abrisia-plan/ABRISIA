@@ -66,8 +66,7 @@ export const VERIFICATION = [
       { id: 'v_pieces', label: 'Liste finale des pièces et superficie confirmées', options: ETAT },
       { id: 'v_fondation', label: 'Type de fondation choisi', options: ETAT },
       { id: 'v_exterieur', label: 'Toiture et revêtements extérieurs choisis', options: ETAT },
-      { id: 'v_chauffage', label: 'Chauffage et ventilation choisis', options: ETAT },
-      { id: 'v_appareils', label: 'Forfait sur mesure : liste de vos appareils (voir le Guide des dimensions — meubles et appareils)', options: ETAT },
+      { id: 'v_appareils', label: 'Vos choix d\'appareils (voir le Guide des appareils)', options: ETAT, forfaits: ['complet', 'sur_mesure'] },
       { id: 'v_croquis', label: 'Croquis ou images d\'inspiration envoyés', options: ETAT },
     ],
   },
@@ -88,23 +87,31 @@ export const ETAPES = {
     intro: 'Répondez à ce que vous savez déjà et joignez vos photos, croquis, certificat de localisation, PDF ou DWG. Nous nous en servons pour préparer votre soumission.',
     guides: [
       ['Abrisia — Guide 1 : Avant la soumission', '/guides/guide-1-avant-la-soumission.pdf'],
-      ['Guide Démarrer mon projet', '/guides/guide-demarrer-mon-projet.pdf'],
       ['Guide de croquis — Abrisia Plan', '/guides/guide-de-croquis.pdf'],
-      ['Abrisia — Guide 3 : Votre projet et votre municipalité', '/guides/guide-3-votre-projet-et-votre-municipalite.pdf'],
     ],
   },
   verification: {
     sections: VERIFICATION,
     titre: 'À vérifier avant le début des dessins',
     intro: 'Merci pour votre dépôt ! Avant de commencer vos dessins, confirmez ces points et joignez les documents que vous avez. Ça évite de redessiner plus tard.',
+    // `forfaits` : envoyé seulement pour ces forfaits (Fiche de choix : sur mesure, jamais avant le dépôt)
     guides: [
       ['Abrisia — Guide 2 : Démarrage du contrat', '/guides/guide-2-demarrage-du-contrat.pdf'],
-      ['Abrisia — Guide 3 : Votre projet et votre municipalité', '/guides/guide-3-votre-projet-et-votre-municipalite.pdf'],
-      ['Guide des dimensions — meubles et appareils', '/guides/guide-des-dimensions-meubles-et-appareils.pdf'],
-      ['Guide de croquis — Abrisia Plan', '/guides/guide-de-croquis.pdf'],
+      ['Abrisia — Guide des appareils', '/guides/guide-des-appareils.pdf', ['complet', 'sur_mesure']],
+      ['Abrisia — Fiche de choix (sur mesure)', '/guides/fiche-de-choix-sur-mesure.pdf', ['sur_mesure']],
     ],
   },
 };
+
+// Garde ce qui s'applique au forfait du client (sans forfait connu : seulement ce qui vaut pour tous)
+const pourForfait = (forfaits, forfait) => !forfaits || (forfait && forfaits.includes(forfait));
+
+export const guidesFor = (etape, forfait) =>
+  ETAPES[etape].guides.filter(([, , forfaits]) => pourForfait(forfaits, forfait));
+
+export const sectionsFor = (etape, forfait) => ETAPES[etape].sections
+  .map(({ section, questions }) => ({ section, questions: questions.filter(q => pourForfait(q.forfaits, forfait)) }))
+  .filter(({ questions }) => questions.length);
 
 export const answersToList = (sections, answers) => sections.flatMap(({ section, questions }) =>
   questions

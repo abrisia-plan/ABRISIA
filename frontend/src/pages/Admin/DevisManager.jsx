@@ -48,8 +48,19 @@ const DevisManager = () => {
     assigned_designer: '',
     priority: '',
     estimated_budget: '',
-    admin_notes: ''
+    admin_notes: '',
+    forfait: ''
   });
+
+  // Forfait déjà choisi, sinon deviné d'après les plans cochés par le client (à confirmer)
+  const guessForfait = (devisItem) => {
+    if (devisItem.forfait) return devisItem.forfait;
+    const noms = (devisItem.plansChoisis || []).join(' ').toLowerCase();
+    if (noms.includes('sur mesure')) return 'sur_mesure';
+    if (noms.includes('complet')) return 'complet';
+    if (noms.includes('permis')) return 'permis';
+    return '';
+  };
 
   useEffect(() => {
     loadDevis();
@@ -112,7 +123,8 @@ const DevisManager = () => {
       assigned_designer: devisItem.assignedDesigner || '',
       priority: devisItem.priority || 'normal',
       estimated_budget: devisItem.estimatedBudget?.toString() || '',
-      admin_notes: devisItem.adminNotes || ''
+      admin_notes: devisItem.adminNotes || '',
+      forfait: guessForfait(devisItem)
     });
     setIsModalOpen(true);
   };
@@ -135,7 +147,8 @@ const DevisManager = () => {
           assigned_designer: updateForm.assigned_designer || null,
           priority: updateForm.priority,
           estimated_budget: updateForm.estimated_budget ? parseFloat(updateForm.estimated_budget) : null,
-          admin_notes: updateForm.admin_notes
+          admin_notes: updateForm.admin_notes,
+          forfait: updateForm.forfait || null
         })
       });
       
