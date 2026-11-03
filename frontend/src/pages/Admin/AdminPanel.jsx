@@ -40,6 +40,7 @@ import CandidaturesManager from './CandidaturesManager';
 import MessagesManager from './MessagesManager';
 import DevisManager from './DevisManager';
 import ChatbotNotesManager from './ChatbotNotesManager';
+import EmailTextsManager from './EmailTextsManager';
 import HomepageServicesManager from './HomepageServicesManager';
 import CalculatorRatesManager from './CalculatorRatesManager';
 import { marquerAppareilAdmin } from '../../lib/visits';
@@ -322,6 +323,14 @@ const AdminPanel = () => {
               Demandes de devis
             </Button>
             <Button 
+              variant={activeTab === 'courriels' ? 'default' : 'ghost'}
+              className={`w-full justify-start ${activeTab === 'courriels' ? 'bg-foret' : ''}`}
+              onClick={() => setActiveTab('courriels')}
+            >
+              <Mail className="w-4 h-4 mr-2" />
+              Courriels automatiques
+            </Button>
+            <Button 
               variant={activeTab === 'messages' ? 'default' : 'ghost'}
               className={`w-full justify-start ${activeTab === 'messages' ? 'bg-foret' : ''}`}
               onClick={() => setActiveTab('messages')}
@@ -404,6 +413,10 @@ const AdminPanel = () => {
               
               {activeTab === 'devis' && (
                 <DevisManager />
+              )}
+
+              {activeTab === 'courriels' && (
+                <EmailTextsManager />
               )}
               
               {activeTab === 'messages' && (

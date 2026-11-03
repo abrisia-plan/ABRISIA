@@ -78,6 +78,39 @@ async def create_zoho_deal(record: dict) -> dict:
         return r.json()
 
 
+async def add_zoho_note(email: str, title: str, content: str) -> bool:
+    """Ajoute une note dans la fiche Zoho du client (piste, sinon contact), trouvée par son courriel.
+
+    Sert au dossier client : chaque courriel envoyé par le site et chaque réponse
+    du client y sont notés. Un échec est seulement noté dans les journaux.
+    """
+    if not zoho_configured() or not email:
+        return False
+    try:
+        token = await get_zoho_token()
+        headers = {"Authorization": f"Zoho-oauthtoken {token}"}
+        async with httpx.AsyncClient(timeout=15) as client:
+            for module in ("Leads", "Contacts"):
+                r = await client.get(f"{ZOHO_API_DOMAIN}/crm/v7/{module}/search", headers=headers, params={"email": email})
+                if r.status_code == 204:
+                    continue
+                r.raise_for_status()
+                records = r.json().get("data") or []
+                if not records:
+                    continue
+                r = await client.post(
+                    f"{ZOHO_API_DOMAIN}/crm/v7/{module}/{records[0]['id']}/Notes",
+                    headers=headers,
+                    json={"data": [{"Note_Title": title[:120], "Note_Content": content[:30000]}]},
+                )
+                r.raise_for_status()
+                return True
+        logger.warning(f"Note Zoho non ajoutée : aucune fiche pour {email}")
+    except Exception as e:
+        logger.warning(f"Note Zoho non ajoutée ({title}) : {e}")
+    return False
+
+
 def zoho_configured() -> bool:
     return all([ZOHO_CLIENT_ID, ZOHO_CLIENT_SECRET, ZOHO_REFRESH_TOKEN])
 

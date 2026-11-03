@@ -26,6 +26,8 @@ from routes import auth, devis, designers, projects, cms, ecommerce, employees, 
 async def lifespan(app: FastAPI):
     # Startup
     await connect_to_mongo()
+    import email_texts
+    await email_texts.load()
     import file_storage
     logger.info(f"Stockage des fichiers : {'Cloudflare R2' if file_storage.USE_R2 else 'MongoDB'} ({file_storage.MAX_FILE_MB} Mo max par fichier)")
     logger.info("Application demarree")
